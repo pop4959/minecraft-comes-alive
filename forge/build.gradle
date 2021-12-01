@@ -12,7 +12,9 @@ architectury {
 }
 
 loom {
-  useFabricMixin = true
+  forge {
+    mixinConfig "mca.mixin.json"
+  }
 }
 
 dependencies {

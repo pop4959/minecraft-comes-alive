@@ -11,9 +11,9 @@ architectury {
   fabric()
 }
 
-minecraft {
-  refmapName = 'mca.mixin.refmap.json'
-  accessWidener 'src/main/resources/mca.aw'
+loom {
+  mixin.defaultRefmapName = 'mca.mixin.refmap.json'
+  accessWidenerPath = file('src/main/resources/mca.aw')
 }
 
 dependencies {
