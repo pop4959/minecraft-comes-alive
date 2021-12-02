@@ -2,12 +2,12 @@ package mca.util.network.datasync;
 
 import org.jetbrains.annotations.Nullable;
 
-import mca.util.NbtElementCompat;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 
 public class CEnumParameter<T extends Enum<T>> implements CParameter<T, Integer> {
     private final String id;
@@ -40,7 +40,7 @@ public class CEnumParameter<T extends Enum<T>> implements CParameter<T, Integer>
 
     @Override
     public T load(NbtCompound nbt) {
-        return nbt.contains(id, NbtElementCompat.NUMBER_TYPE) ? fromIndex(nbt.getInt(id)) : defaultValue;
+        return nbt.contains(id, NbtElement.NUMBER_TYPE) ? fromIndex(nbt.getInt(id)) : defaultValue;
     }
 
     @Override

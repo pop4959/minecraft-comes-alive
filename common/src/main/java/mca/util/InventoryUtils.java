@@ -114,7 +114,7 @@ public interface InventoryUtils {
             if (itemstack != ItemStack.EMPTY) {
                 NbtCompound nbt = new NbtCompound();
                 nbt.putByte("Slot", (byte)i);
-                itemstack.setTag(nbt);
+                itemstack.setNbt(nbt);
                 tagList.add(nbt);
             }
         }

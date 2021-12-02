@@ -17,7 +17,7 @@ public class ExtendedScreen extends Screen {
         int w = 0;
         if (!lines.isEmpty()) {
             for (OrderedText orderedText : lines) {
-                int j = this.textRenderer.getWidth(orderedText);
+                int j = textRenderer.getWidth(orderedText);
                 if (j > w) {
                     w = j;
                 }

@@ -8,6 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
 public class InteractionCloseRequest implements Message {
+    private static final long serialVersionUID = 1L;
+
     private final UUID villagerUUID;
 
     public InteractionCloseRequest(UUID uuid) {

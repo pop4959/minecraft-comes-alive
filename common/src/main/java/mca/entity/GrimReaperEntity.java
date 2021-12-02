@@ -46,7 +46,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
     public GrimReaperEntity(EntityType<? extends GrimReaperEntity> type, World world) {
         super(type, world);
 
-        this.experiencePoints = 100;
+        experiencePoints = 100;
 
         getTypeDataManager().register(this);
     }
@@ -58,9 +58,9 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
 
     public static DefaultAttributeContainer.Builder createAttributes() {
         return HostileEntity.createHostileAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 225.0F)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.30F)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 40.0D);
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 225F)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3F)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 40D);
     }
 
     @Override
@@ -81,21 +81,21 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
     @Override
     protected void initGoals() {
         //TODO seems to be ignored
-        this.goalSelector.add(5, new GrimReaperIdleGoal(this, 1));
+        goalSelector.add(5, new GrimReaperIdleGoal(this, 1));
 
-        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8));
-        this.goalSelector.add(7, new LookAroundGoal(this));
+        goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8));
+        goalSelector.add(7, new LookAroundGoal(this));
 
-        this.goalSelector.add(2, new GrimReaperRestGoal(this));
-        this.goalSelector.add(4, new GrimReaperMeleeGoal(this));
+        goalSelector.add(2, new GrimReaperRestGoal(this));
+        goalSelector.add(4, new GrimReaperMeleeGoal(this));
 
-        this.targetSelector.add(2, new GrimReaperTargetGoal(this));
+        targetSelector.add(2, new GrimReaperTargetGoal(this));
     }
 
     @Override
     public void checkDespawn() {
-        if (this.world.getDifficulty() == Difficulty.PEACEFUL && this.isDisallowedInPeaceful()) {
-            this.remove();
+        if (world.getDifficulty() == Difficulty.PEACEFUL && isDisallowedInPeaceful()) {
+            discard();
         }
     }
 
@@ -175,7 +175,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
             double deltaX = this.getX() - attacker.getX();
             double deltaZ = this.getZ() - attacker.getZ();
 
-            this.playSound(SoundsMCA.reaper_block, 1.0F, 1.0F);
+            playSound(SoundsMCA.reaper_block, 1.0F, 1.0F);
             requestTeleport(attacker.getX() - (deltaX * 2), attacker.getY() + 2, this.getZ() - (deltaZ * 2));
             return false;
         }
@@ -201,7 +201,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
 
                     requestTeleport(newX, owner.getY(), newZ);
                 }
-                arrow.remove();
+                arrow.discard();
             }
             return false;
         }
@@ -237,7 +237,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         bossInfo.setPercent(this.getHealth() / this.getMaxHealth());
 
         if (!Config.getInstance().allowGrimReaper) {
-            remove();
+            discard();
         }
 
         // Prevent flying off into oblivion on death...

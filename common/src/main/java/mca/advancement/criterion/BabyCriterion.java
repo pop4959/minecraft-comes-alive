@@ -13,20 +13,19 @@ import net.minecraft.util.Identifier;
 public class BabyCriterion extends AbstractCriterion<BabyCriterion.Conditions> {
     private static final Identifier ID = new Identifier("mca:baby");
 
-    public BabyCriterion() {
-    }
-
+    @Override
     public Identifier getId() {
         return ID;
     }
 
+    @Override
     public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
         NumberRange.IntRange c = NumberRange.IntRange.fromJson(json.get("count"));
         return new Conditions(player, c);
     }
 
     public void trigger(ServerPlayerEntity player, int c) {
-        this.test(player, (conditions) -> conditions.test(c));
+        trigger(player, (conditions) -> conditions.test(c));
     }
 
     public static class Conditions extends AbstractCriterionConditions {
@@ -41,6 +40,7 @@ public class BabyCriterion extends AbstractCriterion<BabyCriterion.Conditions> {
             return count.test(c);
         }
 
+        @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer serializer) {
             JsonObject json = super.toJson(serializer);
             json.add("count", count.toJson());

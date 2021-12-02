@@ -3,13 +3,13 @@ package mca.server.world.data;
 import mca.entity.VillagerEntityMCA;
 import mca.util.NbtHelper;
 import mca.util.WorldUtils;
-import mca.util.compat.PersistentStateCompat;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.PersistentState;
 
 import java.util.UUID;
 
-public class SavedVillagers extends PersistentStateCompat {
+public class SavedVillagers extends PersistentState {
     private static final String DATA_ID = "MCA-Villagers";
 
     private final NbtCompound villagerData;

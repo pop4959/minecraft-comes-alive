@@ -101,6 +101,7 @@ public class JewelerWorkbench extends Block/* implements BlockEntityProvider*/ {
         return state.rotate(mirrorIn.getRotation(state.get(FACING)));
     }
 
+    @Deprecated
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.isOf(newState.getBlock())) {

@@ -141,7 +141,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public void updateCustomSkin() {
         if (!getTrackedValue(CUSTOM_SKIN).isEmpty()) {
             gameProfile = new GameProfile(null, getTrackedValue(CUSTOM_SKIN));
-            gameProfile = SkullBlockEntity.loadProperties(gameProfile);
+            SkullBlockEntity.loadProperties(gameProfile, profile -> {
+                gameProfile = profile;
+            });
         } else {
             gameProfile = null;
         }
@@ -327,14 +329,14 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (damageDealt) {
             if (knockback > 0 && target instanceof LivingEntity) {
                 ((LivingEntity)target).takeKnockback(
-                        knockback / 2, MathHelper.sin(yaw * ((float)Math.PI / 180F)),
-                        -MathHelper.cos(yaw * ((float)Math.PI / 180F))
+                        knockback / 2, MathHelper.sin(getYaw() * ((float)Math.PI / 180F)),
+                        -MathHelper.cos(getYaw() * ((float)Math.PI / 180F))
                 );
 
                 setVelocity(getVelocity().multiply(0.6D, 1, 0.6));
             }
 
-            dealDamage(this, target);
+            applyDamageEffects(this, target);
             onAttacking(target);
         }
 
@@ -346,7 +348,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         ItemStack stack = player.getStackInHand(hand);
 
-        if (!stack.getItem().isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
+        if (!stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
             playWelcomeSound();
 
             //make sure dialogueType is synced in case the client needs it
@@ -543,7 +545,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             if (!world.isClient && infection >= POINT_OF_NO_RETURN && world.random.nextInt(2000) < infection) {
                 convertToZombie();
-                remove();
+                discard();
             }
         }
 
@@ -598,7 +600,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     private boolean convertToZombie() {
-        ZombieVillagerEntity zombie = method_29243(EntityType.ZOMBIE_VILLAGER, false);
+        ZombieVillagerEntity zombie = convertTo(EntityType.ZOMBIE_VILLAGER, false);
         if (zombie != null) {
             zombie.initialize((ServerWorld)world, world.getLocalDifficulty(zombie.getBlockPos()), SpawnReason.CONVERSION, new ZombieEntity.ZombieData(false, true), null);
             zombie.setVillagerData(getVillagerData());
@@ -685,10 +687,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         if (!(cause.getAttacker() instanceof ZombieEntity) && !(cause.getAttacker() instanceof ZombieVillagerEntity)) {
             if (getInfectionProgress() >= BABBLING_THRESHOLD) {
-                boolean wasRemoved = removed;
-                removed = false;
+                RemovalReason reason = getRemovalReason();
+                unsetRemoved();
                 convertToZombie();
-                removed = wasRemoved;
+                setRemoved(reason);
                 return;
             }
         }
@@ -914,15 +916,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return inventory;
     }
 
-    @Override
-    public boolean equip(int slot, ItemStack item) {
-        if (slot >= 300 && slot < 300 + getInventory().size()) {
-            getInventory().setStack(slot - 300, item);
-            return true;
-        }
-        return super.equip(slot, item);
-    }
-
     public void moveTowards(BlockPos pos, float speed, int closeEnoughDist) {
         this.brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(new BlockPosLookTarget(pos), speed, closeEnoughDist));
         this.lookAt(pos);
@@ -960,14 +953,14 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
-    public <T extends MobEntity> T method_29243/*convertTo*/(EntityType<T> type, boolean keepInventory) {
-        if (!removed && type == EntityType.ZOMBIE_VILLAGER) {
-            ZombieVillagerEntityMCA mob = super.method_29243(getGenetics().getGender().getZombieType(), keepInventory);
+    public <T extends MobEntity> T convertTo(EntityType<T> type, boolean keepInventory) {
+        if (!isRemoved() && type == EntityType.ZOMBIE_VILLAGER) {
+            ZombieVillagerEntityMCA mob = super.convertTo(getGenetics().getGender().getZombieType(), keepInventory);
             mob.copyVillagerAttributesFrom(this);
             return (T)mob;
         }
 
-        T mob = super.method_29243(type, keepInventory);
+        T mob = super.convertTo(type, keepInventory);
 
         if (mob instanceof VillagerLike<?>) {
             ((VillagerLike<?>)mob).copyVillagerAttributesFrom(this);
@@ -1049,7 +1042,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             double x = target.getX() - this.getX();
             double y = target.getBodyY(0.3333333333333333D) - persistentProjectileEntity.getY();
             double z = target.getZ() - this.getZ();
-            double vel = MathHelper.sqrt(x * x + z * z);
+            double vel = Math.sqrt(x * x + z * z);
             persistentProjectileEntity.setVelocity(x, y + vel * 0.20000000298023224D, z, 1.6F, 3);
             this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             this.world.spawnEntity(persistentProjectileEntity);

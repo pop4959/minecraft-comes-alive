@@ -8,13 +8,13 @@ import mca.SoundsMCA;
 import mca.entity.EntitiesMCA;
 import mca.entity.GrimReaperEntity;
 import mca.server.world.data.VillageManager;
-import mca.util.NbtElementCompat;
-import mca.util.compat.BlockCompat;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
@@ -35,7 +35,7 @@ public class ReaperSpawner {
 
     public ReaperSpawner(VillageManager manager, NbtCompound nbt) {
         this.manager = manager;
-        mca.util.NbtHelper.toList(nbt.getList("summons", NbtElementCompat.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon -> {
+        mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon -> {
             activeSummons.put(summon.position.asLong(), summon);
         });
     }
@@ -61,8 +61,8 @@ public class ReaperSpawner {
 
         EntityType.LIGHTNING_BOLT.spawn((ServerWorld)world, null, null, null, pos, SpawnReason.TRIGGERED, false, false);
 
-        world.setBlockState(pos.down(), Blocks.SOUL_SOIL.getDefaultState(), BlockCompat.NOTIFY_NEIGHBORS | BlockCompat.NOTIFY_LISTENERS);
-        world.setBlockState(pos, Blocks.SOUL_FIRE.getDefaultState(), BlockCompat.NOTIFY_NEIGHBORS | BlockCompat.NOTIFY_LISTENERS);
+        world.setBlockState(pos.down(), Blocks.SOUL_SOIL.getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
+        world.setBlockState(pos, Blocks.SOUL_FIRE.getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
     }
 
     private void start(BlockPos pos) {

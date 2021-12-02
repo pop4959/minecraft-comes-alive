@@ -10,7 +10,6 @@ import mca.server.world.data.Building;
 import mca.server.world.data.GraveyardManager;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
-import mca.util.compat.OptionalCompat;
 import mca.util.network.datasync.CDataManager;
 import mca.util.network.datasync.CDataParameter;
 import mca.util.network.datasync.CParameter;
@@ -113,13 +112,13 @@ public class Residency {
 
             //and no house
             if (entity.getTrackedValue(BUILDING) == -1) {
-                OptionalCompat.ifPresentOrElse(getHomeVillage(), this::seekNewHome, () -> setVillageId(-1));
+                getHomeVillage().ifPresentOrElse(this::seekNewHome, () -> setVillageId(-1));
             }
         }
 
         //check if his village and building still exists
         if (entity.age % 1200 == 0) {
-            OptionalCompat.ifPresentOrElse(getHomeVillage(), village -> {
+            getHomeVillage().ifPresentOrElse(village -> {
                 Optional<Building> building = village.getBuilding(entity.getTrackedValue(BUILDING));
                 if (!building.filter(b -> b.hasResident(entity.getUuid()) && !b.isCrowded()).isPresent()) {
                     if (building.isPresent()) {
@@ -212,9 +211,9 @@ public class Residency {
             village.addResident(entity, b.getId());
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public void setHome(PlayerEntity player) {
@@ -223,32 +222,26 @@ public class Residency {
         manager.processBuilding(player.getBlockPos(), true, false);
 
         //check if a bed can be found
-        Optional<Village> village = manager.findNearestVillage(player);
-        if (village.isPresent()) {
-            Optional<Building> building = village.get().getBuildingAt(player.getBlockPos());
-            if (building.isPresent()) {
-                if (building.get().hasFreeSpace()) {
+        manager.findNearestVillage(player).ifPresent(village -> {
+            village.getBuildingAt(player.getBlockPos()).ifPresentOrElse(building -> {
+                if (building.hasFreeSpace()) {
                     entity.sendChatMessage(player, "interaction.sethome.success");
 
                     //add to residents
-                    setBuilding(building.get(), player.getBlockPos());
-                    setVillageId(village.get().getId());
-                    village.get().addResident(entity, building.get().getId());
+                    setBuilding(building, player.getBlockPos());
+                    setVillageId(village.getId());
+                    village.addResident(entity, building.getId());
                 } else {
                     entity.sendChatMessage(player, "interaction.sethome.bedfail");
                 }
-            } else {
-                entity.sendChatMessage(player, "interaction.sethome.fail");
-            }
-        }
+            }, () -> entity.sendChatMessage(player, "interaction.sethome.fail"));
+        });
     }
 
     public void goHome(PlayerEntity player) {
-        OptionalCompat.ifPresentOrElse(getHome()
-                        .filter(p -> p.getDimension() == entity.world.getRegistryKey())
-                , home -> {
-                    entity.moveTowards(home.getPos());
-                    entity.sendChatMessage(player, "interaction.gohome.success");
-                }, () -> entity.sendChatMessage(player, "interaction.gohome.fail.nohome"));
+        getHome().filter(p -> p.getDimension() == entity.world.getRegistryKey()).ifPresentOrElse(home -> {
+            entity.moveTowards(home.getPos());
+            entity.sendChatMessage(player, "interaction.gohome.success");
+        }, () -> entity.sendChatMessage(player, "interaction.gohome.fail.nohome"));
     }
 }

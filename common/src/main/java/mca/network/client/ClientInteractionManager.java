@@ -1,7 +1,5 @@
 package mca.network.client;
 
-import net.minecraft.entity.player.PlayerEntity;
-
 public interface ClientInteractionManager {
     void handleGuiRequest(OpenGuiRequest message);
 

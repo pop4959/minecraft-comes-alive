@@ -17,8 +17,6 @@ import net.minecraft.util.Identifier;
 public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Conditions> {
     private static final Identifier ID = new Identifier("mca:family");
 
-    public FamilyCriterion() { }
-
     @Override
     public Identifier getId() {
         return ID;
@@ -37,7 +35,7 @@ public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Condition
         long c = familyTree.getRelatives(0, 1).count();
         long gc = familyTree.getRelatives(0, 2).count() - c;
 
-        test(player, condition -> condition.test((int)c, (int)gc));
+        trigger(player, condition -> condition.test((int)c, (int)gc));
     }
 
     public static class Conditions extends AbstractCriterionConditions {

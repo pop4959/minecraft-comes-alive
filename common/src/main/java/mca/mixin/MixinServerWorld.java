@@ -41,7 +41,9 @@ abstract class MixinServerWorld extends World implements StructureWorldAccess {
 }
 
 @Mixin(ProtoChunk.class)
-abstract class MixinProtoChunk implements Chunk {
+abstract class MixinProtoChunk extends Chunk {
+    MixinProtoChunk() {super(null, null, null, null, 0, null, null);}
+
     @Inject(method = "addEntity(Lnet/minecraft/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
     private void onAddEntity(Entity entity, CallbackInfo info) {
         if (SpawnQueue.getInstance().addVillager(entity)) {

@@ -13,20 +13,19 @@ import net.minecraft.util.Identifier;
 public class GenericEventCriterion extends AbstractCriterion<GenericEventCriterion.Conditions> {
     private static final Identifier ID = new Identifier("mca:generic_event");
 
-    public GenericEventCriterion() {
-    }
-
+    @Override
     public Identifier getId() {
         return ID;
     }
 
+    @Override
     public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
         String event = json.has("event") ? json.get("event").getAsString() : "";
         return new Conditions(player, event);
     }
 
     public void trigger(ServerPlayerEntity player, String event) {
-        this.test(player, (conditions) -> conditions.test(event));
+        trigger(player, (conditions) -> conditions.test(event));
     }
 
     public static class Conditions extends AbstractCriterionConditions {
@@ -41,6 +40,7 @@ public class GenericEventCriterion extends AbstractCriterion<GenericEventCriteri
             return this.event.equals(event);
         }
 
+        @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer serializer) {
             JsonObject json = super.toJson(serializer);
             json.add("event", new JsonPrimitive(event));

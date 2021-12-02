@@ -29,7 +29,7 @@ public class SpawnQueue {
             VillagerEntity e = villagerSpawnQueue.remove(0);
 
             if (e.world.canSetBlock(e.getBlockPos())) {
-                e.remove();
+                e.discard();
                 VillagerFactory.newVillager(e.world)
                     .withGender(Gender.getRandom())
                     .withPosition(e)
@@ -45,7 +45,7 @@ public class SpawnQueue {
             ZombieVillagerEntity e = zombieVillagerSpawnQueue.remove(0);
 
             if (e.world.canSetBlock(e.getBlockPos())) {
-                e.remove();
+                e.discard();
                 ZombieVillagerFactory.newVillager(e.world)
                         .withGender(Gender.getRandom())
                         .withPosition(e)

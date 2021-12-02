@@ -14,7 +14,9 @@ import net.minecraft.util.math.Vec3d;
 
 public class GrimReaperMeleeGoal extends Goal {
     private final static int COOLDOWN = 200;
+
     private final GrimReaperEntity reaper;
+
     private int blockDuration;
     private int attackDuration;
     private int retreatDuration;
@@ -27,7 +29,10 @@ public class GrimReaperMeleeGoal extends Goal {
     @Override
     public boolean canStart() {
         LivingEntity entityToAttack = reaper.getTarget();
-        return entityToAttack != null && reaper.squaredDistanceTo(entityToAttack) <= 144.0D && reaper.age > lastAttack + COOLDOWN && reaper.getAttackState() != ReaperAttackState.REST;
+        return entityToAttack != null
+                && reaper.squaredDistanceTo(entityToAttack) <= 144
+                && reaper.age > lastAttack + COOLDOWN
+                && reaper.getAttackState() != ReaperAttackState.REST;
     }
 
     @Override
@@ -70,13 +75,13 @@ public class GrimReaperMeleeGoal extends Goal {
                 reaper.requestTeleport(player.getX() - (dX * 2), player.getY() + 2, reaper.getZ() - (dZ * 2));
 
                 if (!reaper.world.isClient && reaper.getRandom().nextFloat() >= 0.20F) {
-                    int currentItem = player.inventory.selectedSlot;
+                    int currentItem = player.getInventory().selectedSlot;
                     int randomItem = reaper.getRandom().nextInt(9);
-                    ItemStack currentItemStack = player.inventory.getStack(currentItem);
-                    ItemStack randomItemStack = player.inventory.getStack(randomItem);
+                    ItemStack currentItemStack = player.getInventory().getStack(currentItem);
+                    ItemStack randomItemStack = player.getInventory().getStack(randomItem);
 
-                    player.inventory.setStack(currentItem, randomItemStack);
-                    player.inventory.setStack(randomItem, currentItemStack);
+                    player.getInventory().setStack(currentItem, randomItemStack);
+                    player.getInventory().setStack(randomItem, currentItemStack);
 
                     entityToAttack.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 200));
                 }

@@ -15,10 +15,14 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 
+import mca.cobalt.registration.Registration.BlockEntityTypeFactory;
 import mca.cobalt.registration.Registration.PoiFactory;
 import mca.cobalt.registration.Registration.ProfessionFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Activity;
@@ -34,6 +38,7 @@ import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
@@ -85,6 +90,13 @@ public class RegistrationImpl extends Registration.Impl {
     @Override
     public Supplier<DefaultParticleType> simpleParticle() {
         return () -> new DefaultParticleType(false);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTypeFactory<T> blockEntity() {
+        return (id, factory, blocks) -> {
+            return BlockEntityType.Builder.create(factory::apply, blocks).build(Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id.toString()));
+        };
     }
 
     @Override

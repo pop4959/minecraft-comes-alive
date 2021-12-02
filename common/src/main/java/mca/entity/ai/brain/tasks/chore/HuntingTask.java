@@ -97,7 +97,7 @@ public class HuntingTask extends AbstractChoreTask {
                 // search for EntityItems around the target and grab them
                 villager.world.getNonSpectatingEntities(ItemEntity.class, villager.getBoundingBox().expand(15, 3, 15)).forEach((item) -> {
                     villager.getInventory().addStack(item.getStack());
-                    item.remove();
+                    item.discard();
                 });
                 target = null;
             } else if (villager.squaredDistanceTo(target) <= 12.25F) {

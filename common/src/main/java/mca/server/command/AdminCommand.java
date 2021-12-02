@@ -7,6 +7,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 import mca.Config;
 import mca.entity.VillagerEntityMCA;
@@ -16,8 +17,10 @@ import mca.server.world.data.PlayerSaveData;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
@@ -26,7 +29,7 @@ import net.minecraft.util.Util;
 import static net.minecraft.util.Formatting.*;
 
 public class AdminCommand {
-    private static final ArrayList<VillagerEntityMCA> prevVillagersRemoved = new ArrayList<>();
+    private static final List<NbtCompound> storedVillagers = new ArrayList<>();
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("mca-admin")
@@ -114,7 +117,7 @@ public class AdminCommand {
         ItemStack heldStack = player.getMainHandStack();
 
         if (heldStack.getItem() instanceof BabyItem) {
-            heldStack.getOrCreateTag().putInt("age", Config.getInstance().babyGrowUpTime);
+            heldStack.getOrCreateNbt().putInt("age", Config.getInstance().babyGrowUpTime);
             success("Baby is old enough to place now.", ctx);
         } else {
             fail("Hold a baby first.", ctx);
@@ -129,11 +132,12 @@ public class AdminCommand {
     }
 
     private static int restoreClearedVillagers(CommandContext<ServerCommandSource> ctx) {
-        for (VillagerEntityMCA v : prevVillagersRemoved) {
-            v.removed = false;
-            ctx.getSource().getWorld().spawnEntity(v);
-        }
-        prevVillagersRemoved.clear();
+        storedVillagers.forEach(tag -> {
+            EntityType.getEntityFromNbt(tag, ctx.getSource().getWorld()).ifPresent(v -> {
+                ctx.getSource().getWorld().spawnEntity(v);
+            });
+        });
+        storedVillagers.clear();
         success("Restored cleared villagers.", ctx);
         return 0;
     }
@@ -147,10 +151,13 @@ public class AdminCommand {
     }
 
     private static int clearLoadedVillagers(final CommandContext<ServerCommandSource> ctx) {
-        prevVillagersRemoved.clear();
+        storedVillagers.clear();
         getLoadedVillagers(ctx).forEach(v -> {
-            prevVillagersRemoved.add(v);
-            v.remove();
+            NbtCompound tag = new NbtCompound();
+            if (v.saveSelfNbt(tag)) {
+                storedVillagers.add(tag);
+                v.discard();
+            }
         });
 
         success("Removed loaded villagers.", ctx);

@@ -95,7 +95,7 @@ public class GiftPredicate {
         });
         register("tag", (json, name) -> {
             Identifier id = new Identifier(JsonHelper.asString(json, name));
-            Tag<Item> tag = ServerTagManagerHolder.getTagManager().getItems().getTag(id);
+            Tag<Item> tag = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(id);
             if (tag == null) {
                throw new JsonSyntaxException("Unknown item tag '" + id + "'");
             }

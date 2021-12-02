@@ -4,7 +4,6 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.GetFamilyTreeRequest;
-import mca.util.compat.RenderSystemCompat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -31,6 +30,8 @@ import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class FamilyTreeScreen extends Screen {
     private static final int HORIZONTAL_SPACING = 20;
@@ -85,14 +86,14 @@ public class FamilyTreeScreen extends Screen {
     public void init() {
         focusEntity(focusedEntityId);
 
-        addButton(new ButtonWidget(width / 2 - 100, height - 25, 200, 20, new TranslatableText("gui.done"), sender -> {
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 25, 200, 20, new TranslatableText("gui.done"), sender -> {
             onClose();
         }));
     }
 
     @Override
     public void onClose() {
-        client.openScreen(parent);
+        client.setScreen(parent);
     }
 
     @Override
@@ -247,7 +248,7 @@ public class FamilyTreeScreen extends Screen {
                         children.add(new TreeNode(e, parsed, parsed.add(child)));
                     }
                 });
-                
+
                 FamilyTreeNode spouse = family.get(node.spouse());
 
                 if (spouse != null) {
@@ -313,7 +314,7 @@ public class FamilyTreeScreen extends Screen {
                 k += 20;
             }
 
-            Matrix4f matrix4f = matrices.peek().getModel();
+            Matrix4f matrix4f = matrices.peek().getPositionMatrix();
 
             TextRenderer r = MinecraftClient.getInstance().textRenderer;
 
@@ -333,7 +334,7 @@ public class FamilyTreeScreen extends Screen {
             immediate.draw();
             matrices.pop();
 
-            RenderSystemCompat.setShaderTexture(0, InteractScreen.ICON_TEXTURES);
+            RenderSystem.setShaderTexture(0, InteractScreen.ICON_TEXTURES);
 
             if (deceased) {
                 drawTexture(matrices, bounds.left + 6, bounds.top + 6, 0, 16, 16, 16, 16, 256, 256);

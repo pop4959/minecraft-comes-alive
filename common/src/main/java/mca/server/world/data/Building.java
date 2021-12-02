@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import mca.resources.API;
 import mca.resources.data.BuildingType;
-import mca.util.NbtElementCompat;
 import mca.util.NbtHelper;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
@@ -25,6 +24,7 @@ import net.minecraft.block.DoorBlock;
 import net.minecraft.block.enums.BedPart;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
@@ -111,19 +111,19 @@ public class Building implements Serializable, Iterable<UUID> {
 
         strictScan = v.getBoolean("strictScan");
 
-        NbtList res = v.getList("residents", NbtElementCompat.COMPOUND_TYPE);
+        NbtList res = v.getList("residents", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < res.size(); i++) {
             NbtCompound c = res.getCompound(i);
             residents.put(c.getUuid("uuid"), c.getString("name"));
         }
 
-        NbtList bl = v.getList("blocks", NbtElementCompat.COMPOUND_TYPE);
+        NbtList bl = v.getList("blocks", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < bl.size(); i++) {
             NbtCompound c = bl.getCompound(i);
             blocks.put(new Identifier(c.getString("name")), c.getInt("count"));
         }
 
-        NbtList p = v.getList("pois", NbtElementCompat.COMPOUND_TYPE);
+        NbtList p = v.getList("pois", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < p.size(); i++) {
             NbtCompound c = p.getCompound(i);
             pois.add(new BlockPos(c.getInt("x"), c.getInt("y"), c.getInt("z")));
@@ -187,7 +187,7 @@ public class Building implements Serializable, Iterable<UUID> {
                         PointOfInterestStorage.OccupationStatus.ANY)
                 .filter(p -> {
                     BlockState blockState = world.getBlockState(p.getPos());
-                    return blockState.getBlock().isIn(BlockTags.BEDS) && !(Boolean)blockState.get(BedBlock.OCCUPIED);
+                    return blockState.isIn(BlockTags.BEDS) && !(Boolean)blockState.get(BedBlock.OCCUPIED);
                 })
                 .map(PointOfInterest::getPos)
                 .filter(this::containsPos);
@@ -495,7 +495,7 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public int getBeds() {
         if (!getBuildingType().noBeds()) {
-            Tag<Block> tag = ServerTagManagerHolder.getTagManager().getBlocks().getTag(new Identifier("minecraft:beds"));
+            Tag<Block> tag = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY).getTag(new Identifier("minecraft:beds"));
             if (tag != null) {
                 return blocks.entrySet().stream().filter(e -> tag.contains(Registry.BLOCK.get(e.getKey()))).mapToInt(Map.Entry::getValue).sum();
             }

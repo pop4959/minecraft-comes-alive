@@ -7,12 +7,12 @@ import mca.client.model.VillagerEntityModelMCA;
 import mca.entity.Infectable;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
-import mca.util.compat.model.Dilation;
-import mca.util.compat.model.TexturedModelData;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.BipedEntityRenderer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.math.MatrixStack;
@@ -22,7 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
 public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>> extends BipedEntityRenderer<T, VillagerEntityModelMCA<T>> {
-    public VillagerLikeEntityMCARenderer(EntityRenderDispatcher ctx, VillagerEntityModelMCA<T> model) {
+    public VillagerLikeEntityMCARenderer(EntityRendererFactory.Context ctx, VillagerEntityModelMCA<T> model) {
         super(ctx, model, 0.5F);
         addFeature(new ArmorFeatureRenderer<>(this, createArmorModel(0.3f), createArmorModel(0.55f)));
     }

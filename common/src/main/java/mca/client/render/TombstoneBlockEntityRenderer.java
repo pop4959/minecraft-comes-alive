@@ -2,16 +2,14 @@ package mca.client.render;
 
 import java.util.List;
 
-import mca.block.BlocksMCA;
 import mca.block.TombstoneBlock;
 import mca.block.TombstoneBlock.Data;
-import mca.util.compat.TextRendererCompat;
 import mca.util.localization.FlowingText;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.OrderedText;
@@ -20,10 +18,12 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
-public class TombstoneBlockEntityRenderer extends BlockEntityRenderer<TombstoneBlock.Data> {
+public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<TombstoneBlock.Data> {
 
-    public TombstoneBlockEntityRenderer(BlockEntityRenderDispatcher context) {
-        super(context);
+    private final TextRenderer text;
+
+    public TombstoneBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
+        text = context.getTextRenderer();
     }
 
     @Override
@@ -54,8 +54,6 @@ public class TombstoneBlockEntityRenderer extends BlockEntityRenderer<TombstoneB
 
         int maxLineWidth = block.getLineWidth();
 
-        TextRenderer text = dispatcher.getTextRenderer();
-
         float y = drawText(text, text.wrapLines(new TranslatableText("block.mca.tombstone.header"), maxLineWidth), 0, matrices, vertexConsumers, light);
 
         y += 5;
@@ -80,7 +78,7 @@ public class TombstoneBlockEntityRenderer extends BlockEntityRenderer<TombstoneB
         for (OrderedText line : lines) {
             float x = -text.getWidth(line) / 2F;
 
-            TextRendererCompat.drawWithOutline(text, line, x, y, 0xFFFFFF, 0x000000, matrices.peek().getModel(), vertexConsumers, light);
+            text.drawWithOutline(line, x, y, 0xFFFFFF, 0x000000, matrices.peek().getPositionMatrix(), vertexConsumers, light);
 
             y += 10;
         }

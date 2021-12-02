@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 public final class BuildingType implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private final int size;
@@ -86,7 +87,7 @@ public final class BuildingType implements Serializable {
 
     public Set<Block> getBlockIds() {
         Set<Block> b = new HashSet<>();
-        TagGroup<Block> blocks = ServerTagManagerHolder.getTagManager().getBlocks();
+        TagGroup<Block> blocks = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
         for (Identifier id : blockIds().keySet()) {
             Tag<Block> tag = blocks.getTag(id);
             if (tag == null) {
@@ -109,7 +110,7 @@ public final class BuildingType implements Serializable {
         }
 
         //look for matching tag
-        TagGroup<Block> blocks = ServerTagManagerHolder.getTagManager().getBlocks();
+        TagGroup<Block> blocks = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
         for (Identifier id : blockIds().keySet()) {
             Tag<Block> tag = blocks.getTag(id);
             if (tag != null && tag.contains(Registry.BLOCK.get(b))) {

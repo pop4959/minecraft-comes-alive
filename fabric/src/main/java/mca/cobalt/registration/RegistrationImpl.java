@@ -8,18 +8,22 @@ import java.util.function.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 
+import mca.cobalt.registration.Registration.BlockEntityTypeFactory;
 import mca.cobalt.registration.Registration.PoiFactory;
 import mca.cobalt.registration.Registration.ProfessionFactory;
 import mca.mixin.MixinSensorType;
 import mca.mixin.MixinActivity;
 import mca.mixin.MixinMemoryModuleType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.world.poi.PointOfInterestHelper;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.fabricmc.fabric.api.tag.TagRegistry;
+import net.fabricmc.fabric.api.tag.TagFactory;
 import net.fabricmc.fabric.mixin.object.builder.VillagerProfessionAccessor;
 import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Activity;
@@ -33,6 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
@@ -48,6 +53,14 @@ public class RegistrationImpl extends Registration.Impl {
         return FabricParticleTypes::simple;
     }
 
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTypeFactory<T> blockEntity() {
+        return (id, factory, blocks) -> {
+            return FabricBlockEntityTypeBuilder.create(factory::apply, blocks).build(Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id.toString()));
+        };
+    }
+
     @Override
     public ItemGroup itemGroup(Identifier id, Supplier<ItemStack> icon) {
         return FabricItemGroupBuilder.create(id).icon(icon).build();
@@ -55,12 +68,12 @@ public class RegistrationImpl extends Registration.Impl {
 
     @Override
     public Function<Identifier, Tag<Block>> blockTag() {
-        return TagRegistry::block;
+        return TagFactory.BLOCK::create;
     }
 
     @Override
     public Function<Identifier, Tag<Item>> itemTag() {
-        return TagRegistry::item;
+        return TagFactory.ITEM::create;
     }
 
     @Override

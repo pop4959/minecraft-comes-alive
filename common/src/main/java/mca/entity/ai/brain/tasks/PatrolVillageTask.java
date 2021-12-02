@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Optional;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.server.world.data.Village;
-import net.minecraft.entity.ai.TargetFinder;
+import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
@@ -34,23 +33,20 @@ public class PatrolVillageTask extends Task<VillagerEntityMCA> {
         return !InteractTask.shouldRun(entity);
     }
 
+    @Override
     protected void run(ServerWorld serverWorld, VillagerEntityMCA villager, long l) {
-        Optional<BlockPos> blockPos = getNextPosition(villager);
-        blockPos.ifPresent(pos -> LookTargetUtil.walkTowards(villager, pos, this.speed, this.completionRange));
+        getNextPosition(villager).ifPresent(pos -> LookTargetUtil.walkTowards(villager, pos, speed, completionRange));
     }
 
     private Optional<BlockPos> getNextPosition(VillagerEntityMCA villager) {
-        Optional<Village> village = villager.getResidency().getHomeVillage();
-        if (village.isPresent()) {
-            BlockPos center = village.get().getCenter();
-            int size = village.get().getSize();
+        return villager.getResidency().getHomeVillage().map(village -> {
+            BlockPos center = village.getCenter();
+            int size = village.getSize();
             int x = center.getX() + villager.getRandom().nextInt(size * 2) - size;
             int z = center.getZ() + villager.getRandom().nextInt(size * 2) - size;
             Vec3d targetPos = new Vec3d(x, center.getY(), z);
-            Vec3d towards = TargetFinder.findGroundTargetTowards(villager, 32, 16, 0, targetPos, Math.PI * 0.5);
-            return towards == null ? Optional.empty() : Optional.of(new BlockPos(towards));
-        } else {
-            return Optional.empty();
-        }
+
+            return NoPenaltyTargeting.findTo(villager, 32, 16, targetPos, Math.PI * 0.5);
+        }).map(BlockPos::new);
     }
 }

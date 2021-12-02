@@ -7,18 +7,16 @@ import com.google.common.collect.ImmutableMap;
 
 import mca.entity.GrimReaperEntity;
 import mca.entity.ReaperAttackState;
-import mca.util.compat.model.ModelTransform;
-import mca.util.compat.model.BipedEntityModelCompat;
-import mca.util.compat.model.Dilation;
-import mca.util.compat.model.ModelData;
-import mca.util.compat.model.ModelPartCompat;
-import mca.util.compat.model.ModelPartBuilder;
-import mca.util.compat.model.ModelPartData;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 
 import static mca.client.model.ModelTransformSet.Op.*;
-import static mca.util.compat.model.EntityModelPartNames.*;
+import static net.minecraft.client.render.entity.model.EntityModelPartNames.*;
 
 public class GrimReaperEntityModel<T extends GrimReaperEntity> extends BipedEntityModel<T> {
     private static final Map<ReaperAttackState, ModelTransformSet> POSES = ImmutableMap.of(
@@ -59,22 +57,20 @@ public class GrimReaperEntityModel<T extends GrimReaperEntity> extends BipedEnti
             .with("scythe_handle", 0, 10, 0, 90, -20, 90, KEEP, KEEP)
             .build());
 
-    private final ModelPartCompat scythe;
+    private final ModelPart scythe;
 
     public ReaperAttackState reaperState = ReaperAttackState.IDLE;
 
     private final ModelTransform scytheTransform;
 
-    public GrimReaperEntityModel(ModelPartCompat tree) {
-        super(0, 0, 64, 64);
+    public GrimReaperEntityModel(ModelPart tree) {
+        super(tree);
         scythe = tree.getChild(LEFT_ARM).getChild("scythe_handle");
         scytheTransform = scythe.getTransform();
-
-        this.leftArm.addChild(scythe);
     }
 
     public static ModelData getModelData(Dilation dilation) {
-        ModelData modelData = BipedEntityModelCompat.getModelData(dilation, 0);
+        ModelData modelData = BipedEntityModel.getModelData(dilation, 0);
         ModelPartData data = modelData.getRoot();
 
         data.getChild(LEFT_ARM)
@@ -92,12 +88,12 @@ public class GrimReaperEntityModel<T extends GrimReaperEntity> extends BipedEnti
         super.setAngles(entity, f, g, h, i, j);
 
         body.setPivot(0, 0, 0);
-        ModelPartCompat.setAngles(body, 0, 0, 0);
+        body.setAngles(0, 0, 0);
 
         leftLeg.setPivot(1.9F, 12, 0);
-        ModelPartCompat.setAngles(leftLeg, 0, 0, 0);
+        leftLeg.setAngles(0, 0, 0);
         rightLeg.setPivot(-1.9F, 12, 0);
-        ModelPartCompat.setAngles(rightLeg, 0, 0, 0);
+        rightLeg.setAngles(0, 0, 0);
 
         scythe.setTransform(scytheTransform);
 

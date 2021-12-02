@@ -6,14 +6,20 @@ import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.server.world.data.GraveyardManager;
 import mca.server.world.data.GraveyardManager.TombstoneState;
-import mca.util.NbtElementCompat;
 import mca.util.NbtHelper;
 import mca.util.VoxelShapeUtil;
-import mca.util.compat.ItemStackCompat;
-import mca.util.compat.WorldEventsCompat;
 import mca.util.localization.FlowingText;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ShapeContext;
+import net.minecraft.block.SideShapeType;
+import net.minecraft.block.Waterloggable;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
@@ -27,6 +33,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
@@ -41,7 +48,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
@@ -52,12 +58,18 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldEvents;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.event.GameEvent;
+
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
@@ -161,6 +173,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         }
     }
 
+    @Deprecated
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         super.onStateReplaced(state, world, pos, newState, moved);
@@ -170,10 +183,20 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         }
     }
 
-    @Nullable
+
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return BlockEntityTypesMCA.TOMBSTONE.instantiate();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return BlockEntityTypesMCA.TOMBSTONE.instantiate(pos, state);
+    }
+
+
+    @Override
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        if (world.isClient) {
+            return null;
+        }
+        return (w, pos, s, data) -> ((Data)data).tick();
     }
 
     @Override
@@ -181,10 +204,11 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         builder.add(Properties.WATERLOGGED).add(Properties.HORIZONTAL_FACING);
     }
 
+    @Deprecated
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         if (state.get(Properties.WATERLOGGED)) {
-            world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.createAndScheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         if (direction == Direction.DOWN && !canPlaceAt(state, world, pos)) {
@@ -199,11 +223,12 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         if (requiresSolid) {
             pos = pos.down();
             return world.getBlockState(pos).isSideSolid(world, pos, Direction.UP, SideShapeType.FULL);
-        } else {
-            return true;
         }
+
+        return true;
     }
 
+    @Deprecated
     @Override
     public FluidState getFluidState(BlockState state) {
         return state.get(Properties.WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
@@ -263,10 +288,9 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                 );
             }
         });
-
-
     }
 
+    @Deprecated
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
         List<ItemStack> stacks = super.getDroppedStacks(state, builder);
@@ -293,9 +317,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         return stack.getItem() == Items.BONE || stack.getItem() == Items.SKELETON_SKULL;
     }
 
-    public static class Data extends BlockEntity implements Tickable {
-        public static Supplier<Data> constructor = Data::new;
-
+    public static class Data extends BlockEntity {
         private Optional<EntityData> entityData = Optional.empty();
 
         @Nullable
@@ -304,8 +326,8 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         private int resurrectionProgress;
         private boolean cure;
 
-        protected Data() {
-            super(BlockEntityTypesMCA.TOMBSTONE);
+        public Data(BlockPos pos, BlockState state) {
+            super(BlockEntityTypesMCA.TOMBSTONE, pos, state);
         }
 
         public boolean isResurrecting() {
@@ -320,12 +342,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
             sync();
         }
 
-        @Override
         public void tick() {
-            if (world.isClient) {
-                return;
-            }
-
             if (hasEntity() && resurrectionProgress > 0) {
                 resurrectionProgress++;
                 markDirty();
@@ -333,7 +350,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
                 if (resurrectionProgress % 30 == 0) {
                     world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), cure ? SoundEvents.BLOCK_BELL_USE : SoundEvents.ENTITY_POLAR_BEAR_AMBIENT, SoundCategory.BLOCKS, 1, 1);
-                    world.syncWorldEvent(WorldEventsCompat.BLOCK_BROKEN, pos, Block.getRawIdFromState(getCachedState()));
+                    world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(getCachedState()));
                 }
 
                 if (world.random.nextInt(10) > 5 && resurrectionProgress % 20 == 0) {
@@ -351,12 +368,11 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                             l.setHealth(l.getMaxHealth());
                             l.clearStatusEffects();
                             l.fallDistance = 0.0f;
-                            l.removed = false;
                             l.deathTime = 0;
                         }
 
                         if (cure && (entity instanceof ZombieVillagerEntity)) {
-                            entity = ((ZombieVillagerEntity) entity).method_29243(EntityType.VILLAGER, true);
+                            entity = ((ZombieVillagerEntity) entity).convertTo(EntityType.VILLAGER, true);
                         }
 
                         if (entity instanceof CompassionateEntity) {
@@ -380,7 +396,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
             world.setLightningTicksLeft(10);
             LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
             bolt.setCosmetic(true);
-            bolt.resetPosition(pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F);
+            bolt.updatePosition(pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F);
             world.spawnEntity(bolt);
         }
 
@@ -395,9 +411,8 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
             if (hasWorld()) {
                 world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_BELL_USE, SoundCategory.BLOCKS, 1, 1);
-                world.syncWorldEvent(WorldEventsCompat.BLOCK_BROKEN, pos, Block.getRawIdFromState(getCachedState()));
-                // TODO: 1.17
-                // world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos);
+                world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(getCachedState()));
+                world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos);
                 ((TombstoneBlock) getCachedState().getBlock()).updateNeighbors(getCachedState(), world, pos);
 
                 if (!world.isClient) {
@@ -446,56 +461,47 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         }
 
         protected void sync() {
-            world.updateListeners(this.getPos(), this.getCachedState(), this.getCachedState(), 3);
+            markDirty();
+            world.updateListeners(getPos(), getCachedState(), getCachedState(), 3);
         }
 
-        //@Override
-        public void fromClientTag(NbtCompound tag) {
-            entityData = tag.contains("entityData", NbtElementCompat.COMPOUND_TYPE) ? Optional.of(new EntityData(tag)) : Optional.empty();
+        @Override
+        public void readNbt(NbtCompound tag) {
+            entityData = tag.contains("entityData", NbtElement.COMPOUND_TYPE) ? Optional.of(new EntityData(tag)) : Optional.empty();
             resurrectionProgress = tag.getInt("resurrectionProgress");
             cure = tag.getBoolean("cure");
         }
 
-        //@Override
-        public NbtCompound toClientTag(NbtCompound tag) {
-            return writeNbt(tag);
-        }
-
         @Override
-        public void fromTag(BlockState state, NbtCompound nbt) {
-            super.fromTag(state, nbt);
-            fromClientTag(nbt);
+        public void writeNbt(NbtCompound nbt) {
+            entityData.ifPresent(data -> data.writeNbt(nbt));
+            nbt.putInt("resurrectionProgress", resurrectionProgress);
+            nbt.putBoolean("cure", cure);
         }
 
         @Override
         public NbtCompound toInitialChunkDataNbt() {
-            return this.writeNbt(new NbtCompound());
+            NbtCompound tag = new NbtCompound();
+            writeNbt(tag);
+            return tag;
         }
 
         @Override
         public BlockEntityUpdateS2CPacket toUpdatePacket() {
-            return new BlockEntityUpdateS2CPacket(this.pos, 127, this.toInitialChunkDataNbt());
-        }
-
-        @Override
-        public NbtCompound writeNbt(NbtCompound nbt) {
-            entityData.ifPresent(data -> data.writeNbt(nbt));
-            nbt.putInt("resurrectionProgress", resurrectionProgress);
-            nbt.putBoolean("cure", cure);
-            return super.writeNbt(nbt);
+            return BlockEntityUpdateS2CPacket.create(this, BlockEntity::toInitialChunkDataNbt);
         }
 
         public void readFromStack(ItemStack stack) {
-            entityData = Optional.ofNullable(stack).map(s -> s.getSubTag("entityData")).map(EntityData::new);
+            entityData = Optional.ofNullable(stack).map(s -> s.getSubNbt("entityData")).map(EntityData::new);
         }
 
         public void writeToStack(ItemStack stack) {
             entityData.ifPresent(data -> {
-                data.writeNbt(stack.getOrCreateSubTag("entityData"));
+                data.writeNbt(stack.getOrCreateSubNbt("entityData"));
                 getEntityName().ifPresent(name -> {
                     NbtHelper.computeIfAbsent(
-                            stack.getOrCreateSubTag(ItemStackCompat.DISPLAY_KEY),
-                            ItemStackCompat.LORE_KEY, NbtElementCompat.LIST_TYPE, NbtList::new)
+                            stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY),
+                            ItemStack.LORE_KEY, NbtElement.LIST_TYPE, NbtList::new)
                             .add(0, NbtString.of(name.asString()));
                 });
             });

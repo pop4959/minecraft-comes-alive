@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import mca.TagsMCA;
-import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Relationship;
 import mca.entity.ai.brain.VillagerBrain;
@@ -14,7 +13,6 @@ import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.CompassionateEntity;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.interaction.ZombieCommandHandler;
-import mca.network.client.OpenGuiRequest;
 import mca.resources.API;
 import mca.util.network.datasync.CDataManager;
 import net.minecraft.entity.EntityData;
@@ -146,7 +144,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
         ItemStack stack = player.getStackInHand(hand);
 
-        if (!stack.getItem().isIn(TagsMCA.Items.ZOMBIE_EGGS) && stack.getItem() != Items.GOLDEN_APPLE) {
+        if (!stack.isIn(TagsMCA.Items.ZOMBIE_EGGS) && stack.getItem() != Items.GOLDEN_APPLE) {
             if (player instanceof ServerPlayerEntity) {
                 String t = new String(new char[getRandom().nextInt(8) + 2]).replace("\0", ". ");
                 sendChatMessage(new LiteralText(t), player);
@@ -212,15 +210,15 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
-    public <T extends MobEntity> T method_29243/*convertTo*/(EntityType<T> type, boolean keepInventory) {
+    public <T extends MobEntity> T convertTo(EntityType<T> type, boolean keepInventory) {
 
-        if (!removed && type == EntityType.VILLAGER) {
-            VillagerEntityMCA mob = super.method_29243(getGenetics().getGender().getVillagerType(), keepInventory);
+        if (!isRemoved() && type == EntityType.VILLAGER) {
+            VillagerEntityMCA mob = super.convertTo(getGenetics().getGender().getVillagerType(), keepInventory);
             mob.copyVillagerAttributesFrom(this);
             return (T)mob;
         }
 
-        T mob = super.method_29243(type, keepInventory);
+        T mob = super.convertTo(type, keepInventory);
 
         if (mob instanceof VillagerLike<?>) {
             ((VillagerLike<?>)mob).copyVillagerAttributesFrom(this);

@@ -13,7 +13,7 @@ public class OpenGuiRequest implements Message {
     public final int villager;
 
     public OpenGuiRequest(OpenGuiRequest.Type gui, Entity villager) {
-        this(gui, villager.getEntityId());
+        this(gui, villager.getId());
     }
 
     public OpenGuiRequest(OpenGuiRequest.Type gui, int villager) {

@@ -6,7 +6,6 @@ import mca.resources.API;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -15,7 +14,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 
 public interface Messenger extends EntityWrapper {
-    TargetPredicate CAN_RECEIVE = new TargetPredicate().ignoreEntityTargetRules();
+    TargetPredicate CAN_RECEIVE = TargetPredicate.createNonAttackable();
 
     default boolean isSpeechImpaired() {
         return false;

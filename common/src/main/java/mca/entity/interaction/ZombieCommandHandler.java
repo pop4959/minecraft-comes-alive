@@ -19,7 +19,7 @@ public class ZombieCommandHandler extends EntityCommandHandler<ZombieVillagerEnt
             case "gift":
                 // zombies only accept one type of gift, and for now it's not brains
                 if (entity.interactMob(player, Hand.MAIN_HAND).isAccepted()) {
-                    if (!player.abilities.creativeMode) {
+                    if (!player.getAbilities().creativeMode) {
                         player.getStackInHand(Hand.MAIN_HAND).decrement(1);
                     }
                 }

@@ -27,10 +27,10 @@ public class ExtendedBookScreen extends Screen {
     }
 
     public boolean setPage(int index) {
-        int i = MathHelper.clamp(index, 0, this.book.getPageCount() - 1);
-        if (i != this.pageIndex) {
-            this.pageIndex = i;
-            this.updatePageButtons();
+        int i = MathHelper.clamp(index, 0, book.getPageCount() - 1);
+        if (i != pageIndex) {
+            pageIndex = i;
+            updatePageButtons();
             return true;
         } else {
             return false;
@@ -38,36 +38,36 @@ public class ExtendedBookScreen extends Screen {
     }
 
     protected boolean jumpToPage(int page) {
-        return this.setPage(page);
+        return setPage(page);
     }
 
     @Override
     protected void init() {
-        this.addCloseButton();
-        this.addPageButtons();
+        addCloseButton();
+        addPageButtons();
     }
 
     protected void addCloseButton() {
-        this.addButton(new ButtonWidget(this.width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (buttonWidget) -> this.client.openScreen(null)));
+        addDrawableChild(new ButtonWidget(width / 2 - 100, 196, 200, 20, ScreenTexts.DONE, (buttonWidget) -> this.client.setScreen(null)));
     }
 
     protected void addPageButtons() {
-        int i = (this.width - 192) / 2;
-        this.nextPageButton = this.addButton(new ExtendedPageTurnWidget(i + 116, 159, true, (buttonWidget) -> goToNextPage(), book.hasPageTurnSound(), book.getBackground()));
-        this.previousPageButton = this.addButton(new ExtendedPageTurnWidget(i + 43, 159, false, (buttonWidget) -> goToPreviousPage(), book.hasPageTurnSound(), book.getBackground()));
-        this.updatePageButtons();
+        int i = (width - 192) / 2;
+        nextPageButton = addDrawableChild(new ExtendedPageTurnWidget(i + 116, 159, true, (buttonWidget) -> goToNextPage(), book.hasPageTurnSound(), book.getBackground()));
+        previousPageButton = addDrawableChild(new ExtendedPageTurnWidget(i + 43, 159, false, (buttonWidget) -> goToPreviousPage(), book.hasPageTurnSound(), book.getBackground()));
+        updatePageButtons();
     }
 
     protected void goToPreviousPage() {
-        if (this.pageIndex > 0) {
-            --this.pageIndex;
+        if (pageIndex > 0) {
+            --pageIndex;
         }
         this.updatePageButtons();
     }
 
     protected void goToNextPage() {
-        if (this.pageIndex < book.getPageCount() - 1) {
-            ++this.pageIndex;
+        if (pageIndex < book.getPageCount() - 1) {
+            ++pageIndex;
         }
         this.updatePageButtons();
     }
@@ -81,17 +81,17 @@ public class ExtendedBookScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
-        } else {
-            switch (keyCode) {
-                case 266:
-                    this.previousPageButton.onPress();
-                    return true;
-                case 267:
-                    this.nextPageButton.onPress();
-                    return true;
-                default:
-                    return false;
-            }
+        }
+
+        switch (keyCode) {
+            case 266:
+                this.previousPageButton.onPress();
+                return true;
+            case 267:
+                this.nextPageButton.onPress();
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -105,16 +105,16 @@ public class ExtendedBookScreen extends Screen {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
+        renderBackground(matrices);
 
         // background
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         bindTexture(book.getBackground());
-        int i = (this.width - 192) / 2;
-        this.drawTexture(matrices, i, 2, 0, 0, 192, 192);
+        int i = (width - 192) / 2;
+        drawTexture(matrices, i, 2, 0, 0, 192, 192);
 
         // page number
-        Text pageIndexText = new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
+        Text pageIndexText = new TranslatableText("book.pageIndicator", pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
         int k = textRenderer.getWidth(pageIndexText);
         textRenderer.draw(matrices, pageIndexText, i - k + 192 - 44, 18.0f, 0);
 
@@ -127,35 +127,25 @@ public class ExtendedBookScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
     public boolean handleTextClick(Style style) {
         ClickEvent clickEvent = style.getClickEvent();
         if (clickEvent == null) {
             return false;
-        } else if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
-            String string = clickEvent.getValue();
+        }
 
+        if (clickEvent.getAction() == ClickEvent.Action.CHANGE_PAGE) {
             try {
-                int i = Integer.parseInt(string) - 1;
-                return this.jumpToPage(i);
+                return jumpToPage(Integer.parseInt(clickEvent.getValue()) - 1);
             } catch (Exception var5) {
                 return false;
             }
-        } else {
-            boolean bl = super.handleTextClick(style);
-            if (bl && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
-                this.client.openScreen(null);
-            }
-
-            return bl;
         }
+
+        boolean handled = super.handleTextClick(style);
+        if (handled && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
+            client.setScreen(null);
+        }
+
+        return handled;
     }
 }

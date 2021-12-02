@@ -5,14 +5,12 @@ import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.VillagerDimensions;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
-import mca.util.compat.model.ModelTransform;
-import mca.util.compat.model.BipedEntityModelCompat;
-import mca.util.compat.model.Dilation;
-import mca.util.compat.model.ModelData;
-import mca.util.compat.model.ModelPartCompat;
-import mca.util.compat.model.ModelPartBuilder;
-import mca.util.compat.model.ModelPartData;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,14 +27,14 @@ public class VillagerEntityBaseModelMCA<T extends MobEntity & VillagerLike<T>> e
     private float breastSize;
     private VillagerDimensions dimensions;
 
-    public VillagerEntityBaseModelMCA(ModelPartCompat root, boolean clothing) {
-        super(root.getOriginalDilation(), 0, root.getTextureWidth(), root.getTextureHeight());
+    public VillagerEntityBaseModelMCA(ModelPart root, boolean clothing) {
+        super(root);
         this.cloth = clothing;
         this.breasts = root.getChild(BREASTS);
     }
 
     public static ModelData getModelData(Dilation dilation, boolean clothing) {
-        ModelData modelData = BipedEntityModelCompat.getModelData(dilation, 0);
+        ModelData modelData = BipedEntityModel.getModelData(dilation, 0);
         ModelPartData data = modelData.getRoot();
 
         data.addChild(BREASTS, newBreasts(dilation, clothing, 0), ModelTransform.NONE);

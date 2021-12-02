@@ -73,7 +73,7 @@ public class VillagerEditorScreen extends Screen {
         assert villager != null;
         Genetics genetics = villager.getGenetics();
         for (Genetics.GeneType g : genes) {
-            addButton(new GeneSliderWidget(width / 2 + (right ? DATA_WIDTH / 2 : 0), y, DATA_WIDTH / 2, 20, new TranslatableText(g.getTranslationKey()), genetics.getGene(g), b -> genetics.setGene(g, b.floatValue())));
+            addDrawableChild(new GeneSliderWidget(width / 2 + (right ? DATA_WIDTH / 2 : 0), y, DATA_WIDTH / 2, 20, new TranslatableText(g.getTranslationKey()), genetics.getGene(g), b -> genetics.setGene(g, b.floatValue())));
             if (right) {
                 y += 20;
             }
@@ -84,21 +84,21 @@ public class VillagerEditorScreen extends Screen {
 
     private int integerChanger(int y, Consumer<Integer> onClick, Supplier<Text> content) {
         int bw = 22;
-        ButtonWidget current = addButton(new ButtonWidget(width / 2 + bw * 2, y, DATA_WIDTH - bw * 4, 20, content.get(), b -> {
+        ButtonWidget current = addDrawableChild(new ButtonWidget(width / 2 + bw * 2, y, DATA_WIDTH - bw * 4, 20, content.get(), b -> {
         }));
-        addButton(new ButtonWidget(width / 2, y, bw, 20, new LiteralText("-1"), b -> {
+        addDrawableChild(new ButtonWidget(width / 2, y, bw, 20, new LiteralText("-1"), b -> {
             onClick.accept(-1);
             current.setMessage(content.get());
         }));
-        addButton(new ButtonWidget(width / 2 + bw, y, bw, 20, new LiteralText("-10"), b -> {
+        addDrawableChild(new ButtonWidget(width / 2 + bw, y, bw, 20, new LiteralText("-10"), b -> {
             onClick.accept(-10);
             current.setMessage(content.get());
         }));
-        addButton(new ButtonWidget(width / 2 + DATA_WIDTH - bw * 2, y, bw, 20, new LiteralText("+10"), b -> {
+        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw * 2, y, bw, 20, new LiteralText("+10"), b -> {
             onClick.accept(10);
             current.setMessage(content.get());
         }));
-        addButton(new ButtonWidget(width / 2 + DATA_WIDTH - bw, y, bw, 20, new LiteralText("+1"), b -> {
+        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw, y, bw, 20, new LiteralText("+1"), b -> {
             onClick.accept(1);
             current.setMessage(content.get());
         }));
@@ -109,8 +109,7 @@ public class VillagerEditorScreen extends Screen {
         assert villager != null;
         this.page = page;
 
-        buttons.clear();
-        children.clear();
+        clearChildren();
 
         //page selection
         String[] pages;
@@ -122,12 +121,12 @@ public class VillagerEditorScreen extends Screen {
         int w = DATA_WIDTH * 2 / pages.length;
         int x = (int)(width / 2.0 - pages.length / 2.0 * w);
         for (String p : pages) {
-            addButton(new ButtonWidget(x, height / 2 - 105, w, 20, new TranslatableText(p), sender -> setPage(p))).active = !p.equals(page);
+            addDrawableChild(new ButtonWidget(x, height / 2 - 105, w, 20, new TranslatableText(p), sender -> setPage(p))).active = !p.equals(page);
             x += w;
         }
 
         //close
-        addButton(new ButtonWidget(width / 2 - DATA_WIDTH + 20, height / 2 + 85, DATA_WIDTH - 40, 20, new TranslatableText("gui.done"), sender -> {
+        addDrawableChild(new ButtonWidget(width / 2 - DATA_WIDTH + 20, height / 2 + 85, DATA_WIDTH - 40, 20, new TranslatableText("gui.done"), sender -> {
             syncVillagerData();
             onClose();
         }));
@@ -139,21 +138,21 @@ public class VillagerEditorScreen extends Screen {
         switch (page) {
             case "general":
                 //name
-                TextFieldWidget field = addButton(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                TextFieldWidget field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villager.getDefaultName().asString());
                 field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
                 y += 22;
 
                 //gender
-                addButton(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
+                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
                     villager.getGenetics().setGender(Gender.FEMALE);
                 }));
-                addButton(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> villager.getGenetics().setGender(Gender.MALE)));
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> villager.getGenetics().setGender(Gender.MALE)));
                 y += 22;
 
                 //age
-                addButton(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
+                addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
                     villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
                     villager.setBreedingAge(villagerBreedingAge);
                     villager.calculateDimensions();
@@ -165,19 +164,19 @@ public class VillagerEditorScreen extends Screen {
                 y = doubleGeneSliders(y, Genetics.SIZE, Genetics.WIDTH, Genetics.BREAST, Genetics.SKIN);
 
                 //clothes name
-                field = addButton(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villager.getClothes());
                 field.setChangedListener(villager::setClothes);
                 y += 22;
 
                 //clothes
-                addButton(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevClothing"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevClothing"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", -1);
                     sendCommand("clothing", compound);
                 }));
-                addButton(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.nextClothing"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.nextClothing"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", 1);
                     sendCommand("clothing", compound);
@@ -185,7 +184,7 @@ public class VillagerEditorScreen extends Screen {
                 y += 22;
 
                 //skin color
-                addButton(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
+                addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
                         genetics.getGene(Genetics.HEMOGLOBIN),
                         genetics.getGene(Genetics.MELANIN),
                         new Identifier("mca:textures/colormap/villager_skin.png"),
@@ -201,7 +200,7 @@ public class VillagerEditorScreen extends Screen {
                 y = doubleGeneSliders(y, Genetics.FACE);
 
                 //hair name
-                field = addButton(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villager.getHair().texture());
                 field.setChangedListener(name -> {
@@ -209,7 +208,7 @@ public class VillagerEditorScreen extends Screen {
                 });
                 y += 22;
 
-                TextFieldWidget field2 = addButton(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                TextFieldWidget field2 = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
                 field2.setMaxLength(32);
                 field2.setText(villager.getHair().overlay());
                 field2.setChangedListener(name -> {
@@ -218,12 +217,12 @@ public class VillagerEditorScreen extends Screen {
                 y += 22;
 
                 //hair
-                addButton(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevHair"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevHair"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", -1);
                     sendCommand("hair", compound);
                 }));
-                addButton(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.nextHair"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.nextHair"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", 1);
                     sendCommand("hair", compound);
@@ -231,7 +230,7 @@ public class VillagerEditorScreen extends Screen {
                 y += 22;
 
                 //hair color
-                addButton(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
+                addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
                         genetics.getGene(Genetics.PHEOMELANIN),
                         genetics.getGene(Genetics.EUMELANIN),
                         new Identifier("mca:textures/colormap/villager_hair.png"),
@@ -251,7 +250,7 @@ public class VillagerEditorScreen extends Screen {
                             row = 0;
                             y += 20;
                         }
-                        ButtonWidget widget = addButton(new ButtonWidget(width / 2 + DATA_WIDTH / 3 * row, y, DATA_WIDTH / 3, 20, p.getName(), b -> {
+                        ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 3 * row, y, DATA_WIDTH / 3, 20, p.getName(), b -> {
                             villager.getVillagerBrain().setPersonality(p);
                             personalityButtons.forEach(v -> v.active = true);
                             b.active = false;
@@ -265,9 +264,9 @@ public class VillagerEditorScreen extends Screen {
                 break;
             case "traits":
                 //traits
-                addButton(new ButtonWidget(width / 2, y, 32, 20, new LiteralText("<"), b -> setTraitPage(traitPage - 1)));
-                addButton(new ButtonWidget(width / 2 + DATA_WIDTH - 32, y, 32, 20, new LiteralText(">"), b -> setTraitPage(traitPage + 1)));
-                addButton(new ButtonWidget(width / 2 + 32, y, DATA_WIDTH - 32 * 2, 20, new TranslatableText("gui.villager_editor.page", traitPage + 1), b -> traitPage++));
+                addDrawableChild(new ButtonWidget(width / 2, y, 32, 20, new LiteralText("<"), b -> setTraitPage(traitPage - 1)));
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - 32, y, 32, 20, new LiteralText(">"), b -> setTraitPage(traitPage + 1)));
+                addDrawableChild(new ButtonWidget(width / 2 + 32, y, DATA_WIDTH - 32 * 2, 20, new TranslatableText("gui.villager_editor.page", traitPage + 1), b -> traitPage++));
 
                 y += 22;
                 Traits.Trait[] traits = Traits.Trait.values();
@@ -276,7 +275,7 @@ public class VillagerEditorScreen extends Screen {
                     if (index < traits.length) {
                         Traits.Trait t = traits[index];
                         MutableText name = t.getName().copy().formatted(villager.getTraits().hasTrait(t) ? Formatting.GREEN : Formatting.GRAY);
-                        addButton(new ButtonWidget(width / 2, y, DATA_WIDTH, 20, name, b -> {
+                        addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH, 20, name, b -> {
                             if (villager.getTraits().hasTrait(t)) {
                                 villager.getTraits().removeTrait(t);
                             } else {
@@ -302,7 +301,7 @@ public class VillagerEditorScreen extends Screen {
                         ProfessionsMCA.OUTLAW,
                 }) {
                     TranslatableText text = new TranslatableText("entity.minecraft.villager." + p);
-                    ButtonWidget widget = addButton(new ButtonWidget(width / 2 + (right ? DATA_WIDTH / 2 : 0), y, DATA_WIDTH / 2, 20, text, b -> {
+                    ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + (right ? DATA_WIDTH / 2 : 0), y, DATA_WIDTH / 2, 20, text, b -> {
                         NbtCompound compound = new NbtCompound();
                         compound.putString("profession", Registry.VILLAGER_PROFESSION.getId(p).toString());
                         syncVillagerData();
@@ -321,7 +320,7 @@ public class VillagerEditorScreen extends Screen {
                 y += 4;
 
                 //infection
-                addButton(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.infection"), villager.getInfectionProgress() / Infectable.MAX_INFECTION, b -> {
+                addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.infection"), villager.getInfectionProgress() / Infectable.MAX_INFECTION, b -> {
                     villager.setInfected(b > 0);
                     villager.setInfectionProgress(b.floatValue() * Infectable.MAX_INFECTION);
                 }));

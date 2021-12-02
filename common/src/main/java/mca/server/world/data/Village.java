@@ -19,7 +19,6 @@ import mca.resources.API;
 import mca.resources.PoolUtil;
 import mca.resources.Rank;
 import mca.resources.Tasks;
-import mca.util.NbtElementCompat;
 import mca.util.NbtHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -32,6 +31,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
@@ -320,11 +320,11 @@ public class Village implements Iterable<Building> {
 
     private void tryToPutIntoInventory(ServerWorld world, BlockPos p) {
         BlockState state = world.getBlockState(p);
-        Block block = state.getBlock();
-        if (block.hasBlockEntity()) {
+        if (state.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(p);
             if (blockEntity instanceof Inventory) {
                 Inventory inventory = (Inventory)blockEntity;
+                Block block = state.getBlock();
                 if (inventory instanceof ChestBlockEntity && block instanceof ChestBlock) {
                     inventory = ChestBlock.getInventory((ChestBlock)block, state, world, p, true);
                     if (inventory != null) {
@@ -586,7 +586,7 @@ public class Village implements Iterable<Building> {
             autoScan = true;
         }
 
-        NbtList b = v.getList("buildings", NbtElementCompat.COMPOUND_TYPE);
+        NbtList b = v.getList("buildings", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < b.size(); i++) {
             Building building = new Building(b.getCompound(i));
             buildings.put(building.getId(), building);

@@ -14,8 +14,6 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import mca.util.NbtHelper;
 import mca.util.WorldUtils;
-import mca.util.compat.OptionalCompat;
-import mca.util.compat.PersistentStateCompat;
 import net.minecraft.nbt.AbstractNbtNumber;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -26,6 +24,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.PersistentState;
 
 /**
  * Tracks the positions where a tombstone may be found and whether it is filled or empty.
@@ -33,7 +32,7 @@ import net.minecraft.util.math.MathHelper;
  * Because this structure can potentially be very large, we have to take special considerations into account.
  * Besides already using fast-collections we also try not to create or store any BlockPos instances without need.
  */
-public class GraveyardManager extends PersistentStateCompat {
+public class GraveyardManager extends PersistentState {
 
     private final Map<TombstoneState, Long2ObjectMap<ChunkBase>> tombstones = new EnumMap<>(TombstoneState.class);
 
@@ -128,7 +127,7 @@ public class GraveyardManager extends PersistentStateCompat {
             BlockPos.Mutable mutable = new BlockPos.Mutable();
 
             // first we check the immediate chunk
-            return OptionalCompat.or(getChunk(state, getChunkPos(pos), ChunkBase::empty).findNearest(pos, mutable), () -> {
+            return getChunk(state, getChunkPos(pos), ChunkBase::empty).findNearest(pos, mutable).or(() -> {
                 // then we iterate outwards checking surrounding chunks
                 BlockPos center = new BlockPos(ChunkSectionPos.getSectionCoord(pos.getX()), 0, ChunkSectionPos.getSectionCoord(pos.getZ()));
                 // luckily BlockPos has a useful utility for this already

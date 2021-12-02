@@ -19,7 +19,7 @@ public class MixinClientPlayNetworkHandler {
     public void onBlockEntityUpdate(BlockEntityUpdateS2CPacket packet, CallbackInfo info, BlockPos blockPos, BlockEntity entity) {
         if (entity instanceof TombstoneBlock.Data) {
             BlockEntity blockEntity = MinecraftClient.getInstance().world.getBlockEntity(packet.getPos());
-            blockEntity.fromTag(MinecraftClient.getInstance().world.getBlockState(packet.getPos()), packet.getNbt());
+            blockEntity.readNbt(packet.getNbt());
             info.cancel();
         }
     }

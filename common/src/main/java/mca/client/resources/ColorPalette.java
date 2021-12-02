@@ -49,13 +49,11 @@ public class ColorPalette {
     }
 
     private static void applyGreenShift(float[] color, float greenShift) {
+        float percentDown = 1 - greenShift / 1.8F;
 
-        float pecentDown = 1 - greenShift / 1.8F;
-        float perfenctUp = 1 + greenShift / 2F;
-
-        color[0] = MathHelper.clamp(color[0] * pecentDown, 0.0f, 1.0f);
-        color[1] = MathHelper.clamp(color[1] * pecentDown, 0.0f, 1.0f);
-        color[2] = MathHelper.clamp(color[2] * pecentDown, 0.0f, 1.0f);
+        color[0] = MathHelper.clamp(color[0] * percentDown, 0, 1);
+        color[1] = MathHelper.clamp(color[1] * percentDown, 0, 1);
+        color[2] = MathHelper.clamp(color[2] * percentDown, 0, 1);
     }
 
     private static int clampFloor(float v, int max) {

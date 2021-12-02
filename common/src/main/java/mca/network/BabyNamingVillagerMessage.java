@@ -19,7 +19,7 @@ public class BabyNamingVillagerMessage implements Message {
 
     @Override
     public void receive(PlayerEntity player) {
-        ItemStack stack = player.inventory.getStack(slot);
+        ItemStack stack = player.getInventory().getStack(slot);
         BabyTracker.getState(stack, (ServerWorld)player.world).ifPresent(state -> {
             state.setName(name);
             state.writeToItem(stack);

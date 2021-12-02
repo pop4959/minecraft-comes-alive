@@ -63,12 +63,12 @@ public class ScytheItem extends SwordItem {
         }
 
         LivingEntity living = (LivingEntity)entity;
-        boolean active = stack.getOrCreateTag().getBoolean("active");
+        boolean active = stack.getOrCreateNbt().getBoolean("active");
 
         Random r = entity.world.random;
 
         if (active != selected) {
-            stack.getOrCreateTag().putBoolean("active", selected);
+            stack.getOrCreateNbt().putBoolean("active", selected);
 
             float baseVolume = selected ? 0.75F : 0.25F;
             entity.world.playSound(null, entity.getBlockPos(), SoundsMCA.reaper_scythe_out, entity.getSoundCategory(),
@@ -142,11 +142,11 @@ public class ScytheItem extends SwordItem {
     }
 
     public static void setSoul(ItemStack stack, boolean soul) {
-        stack.getOrCreateTag().putBoolean("hasSoul", soul);
+        stack.getOrCreateNbt().putBoolean("hasSoul", soul);
     }
 
     public static boolean hasSoul(ItemStack stack) {
-        return stack.hasTag() && stack.getTag().getBoolean("hasSoul");
+        return stack.hasNbt() && stack.getNbt().getBoolean("hasSoul");
     }
 
     public static ActionResult use(ItemUsageContext context, boolean cure) {
@@ -159,12 +159,13 @@ public class ScytheItem extends SwordItem {
                 if (!context.getWorld().isClient) {
                     CriterionMCA.GENERIC_EVENT_CRITERION.trigger((ServerPlayerEntity)context.getPlayer(), cure ? "staffOfLife" : "scytheRevive");
                 }
+
                 if (!world.isClient && !data.isResurrecting()) {
                     data.startResurrecting(cure);
                     return ActionResult.SUCCESS;
-                } else {
-                    return ActionResult.PASS;
                 }
+
+                return ActionResult.PASS;
             }).orElse(ActionResult.FAIL);
         }
         return ActionResult.PASS;

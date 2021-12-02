@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import mca.client.gui.widget.RectangleWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.GetVillageRequest;
@@ -17,7 +20,6 @@ import mca.resources.data.BuildingType;
 import mca.resources.data.tasks.Task;
 import mca.server.world.data.Building;
 import mca.server.world.data.Village;
-import mca.util.compat.RenderSystemCompat;
 import mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -91,13 +93,13 @@ public class BlueprintScreen extends ExtendedScreen {
     private ButtonWidget[] createValueChanger(int x, int y, int w, int h, Consumer<Boolean> onPress) {
         ButtonWidget[] buttons = new ButtonWidget[3];
 
-        buttons[1] = addButton(new ButtonWidget(x - w / 2, y, w / 4, h,
+        buttons[1] = addDrawableChild(new ButtonWidget(x - w / 2, y, w / 4, h,
                 new LiteralText("<<"), (b) -> onPress.accept(false)));
 
-        buttons[2] = addButton(new ButtonWidget(x + w / 4, y, w / 4, h,
+        buttons[2] = addDrawableChild(new ButtonWidget(x + w / 4, y, w / 4, h,
                 new LiteralText(">>"), (b) -> onPress.accept(true)));
 
-        buttons[0] = addButton(new ButtonWidget(x - w / 4, y, w / 2, h,
+        buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
                 new LiteralText(""), (b) -> {
         }));
 
@@ -120,14 +122,13 @@ public class BlueprintScreen extends ExtendedScreen {
 
     private void setPage(String page) {
         if (page.equals("close")) {
-            MinecraftClient.getInstance().openScreen(null);
+            MinecraftClient.getInstance().setScreen(null);
             return;
         }
 
         this.page = page;
 
-        buttons.clear();
-        this.children.clear();
+        clearChildren();
 
         //page selection
         int bx = width / 2 - 180;
@@ -135,7 +136,7 @@ public class BlueprintScreen extends ExtendedScreen {
         if (!page.equals("empty") && !page.equals("waiting")) {
             for (String p : new String[] {"map", "rank", "catalog", "villagers", "rules", "close"}) {
                 ButtonWidget widget = new ButtonWidget(bx, by, 64, 20, new TranslatableText("gui.blueprint." + p), (b) -> setPage(p));
-                addButton(widget);
+                addDrawableChild(widget);
                 if (page.equals(p)) {
                     widget.active = false;
                 }
@@ -154,7 +155,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 } else {
                     text.formatted(Formatting.GRAY).formatted(Formatting.STRIKETHROUGH);
                 }
-                addButton(new ButtonWidget(bx, by, 96, 20, text, (b) -> {
+                addDrawableChild(new ButtonWidget(bx, by, 96, 20, text, (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.AUTO_SCAN));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     village.toggleAutoScan();
@@ -163,14 +164,14 @@ public class BlueprintScreen extends ExtendedScreen {
                 by += 22;
 
                 //restrict access
-                addButton(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.restrictAccess"), (b) -> {
+                addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.restrictAccess"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.RESTRICT));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
                 //add room
-                addButton(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.addRoom"), (b) -> {
+                addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.addRoom"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
@@ -179,14 +180,14 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 + 180 - 64 - 16;
                 by = height / 2 - 56 + 22 * 3;
-                addButton(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.addBuilding"), (b) -> {
+                addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.addBuilding"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
                 //remove building
-                addButton(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.removeBuilding"), (b) -> {
+                addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.removeBuilding"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.REMOVE));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
@@ -194,7 +195,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
                 //advanced
                 if (page != "advanced") {
-                    addButton(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.advanced"), (b) -> {
+                    addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.advanced"), (b) -> {
                         setPage("advanced");
                     }));
                     break;
@@ -217,7 +218,7 @@ public class BlueprintScreen extends ExtendedScreen {
                             button.active = false;
                             catalogButtons.forEach(b -> b.active = true);
                         }, new TranslatableText("buildingType." + bt.name()));
-                        catalogButtons.add(addButton(widget));
+                        catalogButtons.add(addDrawableChild(widget));
 
                         row++;
                         if (row > 4) {
@@ -228,17 +229,17 @@ public class BlueprintScreen extends ExtendedScreen {
                 }
                 break;
             case "villagers":
-                addButton(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 54, 20, 20, new LiteralText("<"), (b) -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 54, 20, 20, new LiteralText("<"), (b) -> {
                     if (pageNumber > 0) {
                         pageNumber--;
                     }
                 }));
-                addButton(new ButtonWidget(width / 2 + 24, height / 2 + 54, 20, 20, new LiteralText(">"), (b) -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 24, height / 2 + 54, 20, 20, new LiteralText(">"), (b) -> {
                     if (pageNumber < Math.ceil(village.getPopulation() / 9.0) - 1) {
                         pageNumber++;
                     }
                 }));
-                buttonPage = addButton(new ButtonWidget(width / 2 - 24, height / 2 + 54, 48, 20, new LiteralText("0/0)"), (b) -> {
+                buttonPage = addDrawableChild(new ButtonWidget(width / 2 - 24, height / 2 + 54, 48, 20, new LiteralText("0/0)"), (b) -> {
                 }));
                 break;
             case "rules":
@@ -333,7 +334,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
         transform.push();
 
-        RenderSystemCompat.setShaderTexture(0, ICON_TEXTURES);
+        RenderSystem.setShaderTexture(0, ICON_TEXTURES);
 
         //center and scale the map
         float sc = (float)mapSize / (village.getSize() + 3) * 2;
@@ -350,7 +351,7 @@ public class BlueprintScreen extends ExtendedScreen {
         }
 
         //buildings
-        List<Building> hoverBuildings = new LinkedList<Building>();
+        List<Building> hoverBuildings = new LinkedList<>();
         for (Building building : village.getBuildings().values()) {
             BuildingType bt = buildingTypes.get(building.getType());
 
@@ -573,7 +574,7 @@ public class BlueprintScreen extends ExtendedScreen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (page.equals("villagers") && selectedVillager != null) {
-            MinecraftClient.getInstance().openScreen(new FamilyTreeScreen(selectedVillager));
+            MinecraftClient.getInstance().setScreen(new FamilyTreeScreen(selectedVillager));
         }
 
         return super.mouseClicked(mouseX, mouseY, button);

@@ -10,16 +10,13 @@ import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.resources.Rank;
 import mca.resources.Tasks;
-import mca.util.NbtElementCompat;
 import mca.util.WorldUtils;
-import mca.util.compat.OptionalCompat;
-import mca.util.compat.PersistentStateCompat;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -27,6 +24,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.PersistentState;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +33,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class PlayerSaveData extends PersistentStateCompat implements EntityRelationship {
+public class PlayerSaveData extends PersistentState implements EntityRelationship {
     private final UUID playerId;
 
     private Optional<UUID> spouseUUID = Optional.empty();
@@ -65,8 +63,8 @@ public class PlayerSaveData extends PersistentStateCompat implements EntityRelat
     PlayerSaveData(ServerWorld world, NbtCompound nbt) {
         this.world = world;
         playerId = nbt.getUuid("playerId");
-        lastSeenVillage = nbt.contains("lastSeenVillage", NbtElementCompat.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
-        spouseUUID = nbt.contains("spouseUUID", NbtElementCompat.INT_TYPE) ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
+        lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
+        spouseUUID = nbt.contains("spouseUUID", NbtElement.INT_TYPE) ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
         spouseName = nbt.contains("spouseName") ? Optional.of(new LiteralText(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
 
@@ -116,9 +114,9 @@ public class PlayerSaveData extends PersistentStateCompat implements EntityRelat
 
     public void updateLastSeenVillage(VillageManager manager, ServerPlayerEntity self) {
         Optional<Village> prevVillage = getLastSeenVillage(manager);
-        Optional<Village> nextVillage = OptionalCompat.or(prevVillage
+        Optional<Village> nextVillage = prevVillage
                         .filter(v -> v.isWithinBorder(self))
-                , () -> manager.findNearestVillage(self));
+                        .or(() -> manager.findNearestVillage(self));
 
         setLastSeenVillage(self, prevVillage.orElse(null), nextVillage.orElse(null));
 

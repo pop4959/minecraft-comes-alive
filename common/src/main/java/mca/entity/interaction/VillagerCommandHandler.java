@@ -13,7 +13,6 @@ import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
-import mca.util.compat.OptionalCompat;
 import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -74,11 +73,11 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 if (entity.hasVehicle()) {
                     entity.stopRiding();
                 } else {
-                    OptionalCompat.ifPresentOrElse(entity.world.getOtherEntities(player, player.getBoundingBox()
+                    entity.world.getOtherEntities(player, player.getBoundingBox()
                                     .expand(10), e -> e instanceof Saddleable && ((Saddleable)e).isSaddled())
                             .stream()
                             .filter(horse -> !horse.hasPassengers())
-                            .min(Comparator.comparingDouble(a -> a.squaredDistanceTo(entity))), horse -> {
+                            .min(Comparator.comparingDouble(a -> a.squaredDistanceTo(entity))).ifPresentOrElse(horse -> {
                         entity.startRiding(horse, false);
                         entity.sendChatMessage(player, "interaction.ridehorse.success");
                     }, () -> entity.sendChatMessage(player, "interaction.ridehorse.fail.notnearby"));
@@ -135,14 +134,14 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 }
                 return true;
             case "divorcePapers":
-                player.inventory.insertStack(new ItemStack(ItemsMCA.DIVORCE_PAPERS));
+                player.getInventory().insertStack(new ItemStack(ItemsMCA.DIVORCE_PAPERS));
                 return true;
             case "divorceConfirm":
                 ItemStack papers = ItemsMCA.DIVORCE_PAPERS.getDefaultStack();
                 Memories memories = entity.getVillagerBrain().getMemoriesForPlayer(player);
-                if (player.inventory.contains(papers)) {
+                if (player.getInventory().contains(papers)) {
                     entity.sendChatMessage(player, "divorcePaper");
-                    player.inventory.removeOne(papers);
+                    player.getInventory().removeOne(papers);
                     memories.modHearts(-20);
                 } else {
                     entity.sendChatMessage(player, "divorce");

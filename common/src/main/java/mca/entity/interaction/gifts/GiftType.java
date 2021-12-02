@@ -4,7 +4,6 @@ import com.google.gson.JsonSyntaxException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +39,7 @@ public class GiftType {
             Integer satisfaction = element.getValue().getAsInt();
             if (string.charAt(0) == '#') {
                 Identifier identifier = new Identifier(string.substring(1));
-                Tag<Item> tag = ServerTagManagerHolder.getTagManager().getItems().getTag(identifier);
+                Tag<Item> tag = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(identifier);
                 if (tag != null) {
                     tags.put(tag, satisfaction);
                 } else {

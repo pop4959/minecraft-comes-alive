@@ -4,9 +4,7 @@ import java.util.Optional;
 
 import mca.client.gui.*;
 import mca.client.gui.BlueprintScreen;
-import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
-import mca.entity.ZombieVillagerEntityMCA;
 import mca.item.BabyItem;
 import mca.item.ExtendedWrittenBookItem;
 import mca.server.world.data.BabyTracker;
@@ -14,9 +12,7 @@ import mca.server.world.data.Village;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {
@@ -27,7 +23,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleGuiRequest(OpenGuiRequest message) {
         switch (message.gui) {
             case WHISTLE:
-                client.openScreen(new WhistleScreen());
+                client.setScreen(new WhistleScreen());
                 break;
             case BOOK:
                 if (client.player != null) {
@@ -35,29 +31,30 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                     if (item.getItem() instanceof ExtendedWrittenBookItem) {
                         ExtendedWrittenBookItem bookItem = (ExtendedWrittenBookItem)item.getItem();
                         ExtendedBookScreen book = new ExtendedBookScreen(bookItem.getBook());
-                        client.openScreen(book);
+                        client.setScreen(book);
                     }
                 }
                 break;
             case BLUEPRINT:
-                client.openScreen(new BlueprintScreen());
+                client.setScreen(new BlueprintScreen());
                 break;
             case INTERACT:
                 VillagerLike<?> villager = (VillagerLike<?>)client.world.getEntityById(message.villager);
-                client.openScreen(new InteractScreen(villager));
+                client.setScreen(new InteractScreen(villager));
                 break;
             case VILLAGER_EDITOR:
                 Entity entity = client.world.getEntityById(message.villager);
-                client.openScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
+                client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 break;
             case BABY_NAME:
                 if (client.player != null) {
                     ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);
                     if (item.getItem() instanceof BabyItem) {
-                        client.openScreen(new NameBabyScreen(client.player, item));
+                        client.setScreen(new NameBabyScreen(client.player, item));
                     }
                 }
                 break;
+            default:
         }
     }
 

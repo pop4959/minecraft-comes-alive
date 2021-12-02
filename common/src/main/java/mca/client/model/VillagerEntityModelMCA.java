@@ -3,15 +3,14 @@ package mca.client.model;
 import com.google.common.collect.ImmutableList;
 import mca.entity.VillagerLike;
 import net.minecraft.client.model.ModelPart;
-import mca.util.compat.model.ModelTransform;
-import mca.util.compat.model.PlayerEntityModelCompat;
-import mca.util.compat.model.Dilation;
-import mca.util.compat.model.EntityModelPartNames;
-import mca.util.compat.model.ModelData;
-import mca.util.compat.model.ModelPartBuilder;
-import mca.util.compat.model.ModelPartCompat;
-import mca.util.compat.model.ModelPartData;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.ModelData;
+import net.minecraft.client.model.ModelPartBuilder;
+import net.minecraft.client.model.ModelPartData;
+import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.entity.mob.MobEntity;
 
 public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> extends VillagerEntityBaseModelMCA<T> {
@@ -26,15 +25,13 @@ public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> exten
 
     private boolean wearsHidden;
 
-    public VillagerEntityModelMCA(ModelPartCompat tree, boolean clothing) {
+    public VillagerEntityModelMCA(ModelPart tree, boolean clothing) {
         super(tree, clothing);
-        /* @Compat(1.17) */ head = tree.getChild(EntityModelPartNames.HEAD);
-        /* @Compat(1.17) */ hat = tree.getChild(EntityModelPartNames.HAT);
-        /* @Compat(1.17) */ bodyWear = tree.getChild(EntityModelPartNames.JACKET);
-        /* @Compat(1.17) */ leftArmwear = tree.getChild("left_sleeve");
-        /* @Compat(1.17) */ rightArmwear = tree.getChild("right_sleeve");
-        /* @Compat(1.17) */ leftLegwear = tree.getChild("left_pants");
-        /* @Compat(1.17) */ rightLegwear = tree.getChild("right_pants");
+        bodyWear = tree.getChild(EntityModelPartNames.JACKET);
+        leftArmwear = tree.getChild("left_sleeve");
+        rightArmwear = tree.getChild("right_sleeve");
+        leftLegwear = tree.getChild("left_pants");
+        rightLegwear = tree.getChild("right_pants");
 
         breastsWear = tree.getChild(BREASTPLATE);
     }
@@ -54,7 +51,7 @@ public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> exten
     }
 
     public static ModelData clothingData(Dilation dilation) {
-        ModelData modelData = PlayerEntityModelCompat.getTexturedModelData(dilation, false);
+        ModelData modelData = PlayerEntityModel.getTexturedModelData(dilation, false);
         ModelPartData root = modelData.getRoot();
         root.addChild(BREASTS, newBreasts(dilation, true, 0), ModelTransform.NONE);
         root.addChild(BREASTPLATE, newBreasts(dilation.add(0.1F), true, 16), ModelTransform.NONE);
@@ -62,7 +59,7 @@ public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> exten
     }
 
     public static ModelData bodyData(Dilation dilation) {
-        ModelData modelData = PlayerEntityModelCompat.getTexturedModelData(dilation, false);
+        ModelData modelData = PlayerEntityModel.getTexturedModelData(dilation, false);
         ModelPartData root = modelData.getRoot();
         root.addChild(BREASTS, newBreasts(dilation, false, 0), ModelTransform.NONE);
         root.addChild(BREASTPLATE, newBreasts(dilation.add(0.1F), false, 16), ModelTransform.NONE);

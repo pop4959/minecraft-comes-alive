@@ -21,7 +21,6 @@ import mca.network.InteractionServerMessage;
 import mca.network.InteractionVillagerMessage;
 import mca.resources.data.Analysis;
 import mca.resources.data.Question;
-import mca.util.compat.RenderSystemCompat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,6 +33,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerProfession;
 import org.lwjgl.glfw.GLFW;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 public class InteractScreen extends AbstractDynamicScreen {
     public static final Identifier ICON_TEXTURES = new Identifier("mca:textures/gui.png");
@@ -71,7 +72,7 @@ public class InteractScreen extends AbstractDynamicScreen {
 
     @Override
     public void onClose() {
-        Objects.requireNonNull(this.client).openScreen(null);
+        Objects.requireNonNull(this.client).setScreen(null);
         NetworkHandler.sendToServer(new InteractionCloseRequest(villager.asEntity().getUuid()));
     }
 
@@ -98,9 +99,9 @@ public class InteractScreen extends AbstractDynamicScreen {
     @Override
     public boolean mouseScrolled(double x, double y, double d) {
         if (d < 0) {
-            player.inventory.selectedSlot = player.inventory.selectedSlot == 8 ? 0 : player.inventory.selectedSlot + 1;
+            player.getInventory().selectedSlot = player.getInventory().selectedSlot == 8 ? 0 : player.getInventory().selectedSlot + 1;
         } else if (d > 0) {
-            player.inventory.selectedSlot = player.inventory.selectedSlot == 0 ? 8 : player.inventory.selectedSlot - 1;
+            player.getInventory().selectedSlot = player.getInventory().selectedSlot == 0 ? 8 : player.getInventory().selectedSlot - 1;
         }
 
         return super.mouseScrolled(x, y, d);
@@ -145,7 +146,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         transform.push();
         transform.scale(iconScale, iconScale, iconScale);
 
-        RenderSystemCompat.setShaderTexture(0, ICON_TEXTURES);
+        RenderSystem.setShaderTexture(0, ICON_TEXTURES);
 
         if (villager instanceof CompassionateEntity<?>) {
             MarriageState marriageState = ((CompassionateEntity<?>)villager).getRelationships().getMarriageState();
@@ -358,10 +359,9 @@ public class InteractScreen extends AbstractDynamicScreen {
         } else if (id.equals("gui.button.clothing")) {
             setLayout("clothing");
         } else if (id.equals("gui.button.familyTree")) {
-            MinecraftClient.getInstance().openScreen(new FamilyTreeScreen(villager.asEntity().getUuid()));
+            MinecraftClient.getInstance().setScreen(new FamilyTreeScreen(villager.asEntity().getUuid()));
         } else if (id.equals("gui.button.talk")) {
-            children.clear();
-            buttons.clear();
+            clearChildren();
             NetworkHandler.sendToServer(new InteractionDialogueInitMessage(villager.asEntity().getUuid()));
         } else if (id.equals("gui.button.work")) {
             setLayout("work");

@@ -1,6 +1,5 @@
 package mca.item;
 
-import java.util.Random;
 import mca.ClientProxy;
 import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
@@ -108,12 +107,12 @@ public class BabyItem extends Item {
                 }
 
                 if (state.get().getName().isPresent() && world.getTime() % 1200 == 0) {
-                    stack.getTag().putInt("age", stack.getTag().getInt("age") + 1);
+                    stack.getNbt().putInt("age", stack.getNbt().getInt("age") + 1);
                 }
             } else {
                 BabyTracker.invalidate(stack);
             }
-        } else if (!stack.hasTag() || !stack.getTag().getBoolean("invalidated")) {
+        } else if (!stack.hasNbt() || !stack.getNbt().getBoolean("invalidated")) {
             // legacy and items obtained by creative
             BabyTracker.get((ServerWorld)world).getPairing(entity.getUuid(), entity.getUuid()).addChild(state -> {
                 state.setGender(gender);
@@ -240,7 +239,7 @@ public class BabyItem extends Item {
 
         getClientState(stack).ifPresent(state -> {
             PlayerEntity player = ClientProxy.getClientPlayer();
-            NbtCompound nbt = stack.getTag();
+            NbtCompound nbt = stack.getNbt();
 
             int age = nbt.getInt("age") * 1200 + (int)(world == null ? 0 : world.getTime() % 1200);
 
@@ -250,7 +249,7 @@ public class BabyItem extends Item {
                 tooltip.add(new TranslatableText("item.mca.baby.name", new LiteralText(state.getName().get()).formatted(gender.getColor())).formatted(Formatting.GRAY));
 
                 if (age > 0) {
-                    tooltip.add(new TranslatableText("item.mca.baby.age", ChatUtil.ticksToString(age)).formatted(Formatting.GRAY));
+                    tooltip.add(new TranslatableText("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
                 }
             }
 
@@ -313,7 +312,7 @@ public class BabyItem extends Item {
     }
 
     public static boolean hasBeenInvalidated(ItemStack stack) {
-        return (stack.hasTag() && stack.getTag().getBoolean("invalidated")) || BabyTracker.getStateId(stack).map(id -> {
+        return (stack.hasNbt() && stack.getNbt().getBoolean("invalidated")) || BabyTracker.getStateId(stack).map(id -> {
             Optional<ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(id);
 
             return loaded != null && !loaded.isPresent();
@@ -325,6 +324,6 @@ public class BabyItem extends Item {
     }
 
     private static boolean isReadyToGrowUp(ItemStack stack) {
-        return stack.hasTag() && canGrow(stack.getTag().getInt("age") * 1200);
+        return stack.hasNbt() && canGrow(stack.getNbt().getInt("age") * 1200);
     }
 }

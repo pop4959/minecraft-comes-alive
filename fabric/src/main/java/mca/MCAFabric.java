@@ -2,7 +2,6 @@ package mca;
 
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
-import mca.block.TombstoneBlockData;
 import mca.cobalt.network.NetworkHandlerImpl;
 import mca.cobalt.registration.RegistrationImpl;
 import mca.entity.EntitiesMCA;
@@ -32,8 +31,6 @@ public final class MCAFabric implements ModInitializer {
     public void onInitialize() {
         new RegistrationImpl();
         new NetworkHandlerImpl();
-
-        TombstoneBlockData.bootstrap();
 
         BlocksMCA.bootstrap();
         ItemsMCA.bootstrap();

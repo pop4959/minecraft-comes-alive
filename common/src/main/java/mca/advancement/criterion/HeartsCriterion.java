@@ -14,13 +14,12 @@ import net.minecraft.util.Identifier;
 public class HeartsCriterion extends AbstractCriterion<HeartsCriterion.Conditions> {
     private static final Identifier ID = new Identifier("mca:hearts");
 
-    public HeartsCriterion() {
-    }
-
+    @Override
     public Identifier getId() {
         return ID;
     }
 
+    @Override
     public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
         NumberRange.IntRange hearts = NumberRange.IntRange.fromJson(json.get("hearts"));
         NumberRange.IntRange increase = NumberRange.IntRange.fromJson(json.get("increase"));
@@ -29,7 +28,7 @@ public class HeartsCriterion extends AbstractCriterion<HeartsCriterion.Condition
     }
 
     public void trigger(ServerPlayerEntity player, int hearts, int increase, String source) {
-        this.test(player, (conditions) -> conditions.test(hearts, increase, source));
+        trigger(player, (conditions) -> conditions.test(hearts, increase, source));
     }
 
     public static class Conditions extends AbstractCriterionConditions {
@@ -49,6 +48,7 @@ public class HeartsCriterion extends AbstractCriterion<HeartsCriterion.Condition
                     && (this.source.isEmpty() || this.source.equals(source));
         }
 
+        @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer serializer) {
             JsonObject json = super.toJson(serializer);
             json.add("hearts", hearts.toJson());

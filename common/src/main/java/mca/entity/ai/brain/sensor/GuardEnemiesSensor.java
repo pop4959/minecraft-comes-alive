@@ -2,13 +2,13 @@ package mca.entity.ai.brain.sensor;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.server.world.ServerWorld;
@@ -32,19 +32,21 @@ public class GuardEnemiesSensor extends Sensor<LivingEntity> {
             .put(EntityType.SLIME, 0)
             .build();
 
+    @Override
     public Set<MemoryModuleType<?>> getOutputMemoryModules() {
         return ImmutableSet.of(MemoryModuleTypeMCA.NEAREST_GUARD_ENEMY);
     }
 
+    @Override
     protected void sense(ServerWorld world, LivingEntity entity) {
         entity.getBrain().remember(MemoryModuleTypeMCA.NEAREST_GUARD_ENEMY, this.getNearestHostile(entity));
     }
 
     private Optional<LivingEntity> getNearestHostile(LivingEntity entity) {
-        return getVisibleMobs(entity).flatMap((list) -> list.stream().filter(this::isHostile).min((a, b) -> this.compareEntities(entity, a, b)));
+        return getVisibleMobs(entity).flatMap((list) -> list.stream(this::isHostile).min((a, b) -> this.compareEntities(entity, a, b)));
     }
 
-    private Optional<List<LivingEntity>> getVisibleMobs(LivingEntity entity) {
+    private Optional<LivingTargetCache> getVisibleMobs(LivingEntity entity) {
         return entity.getBrain().getOptionalMemory(MemoryModuleType.VISIBLE_MOBS);
     }
 

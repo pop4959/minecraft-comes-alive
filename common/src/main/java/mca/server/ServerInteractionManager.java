@@ -7,7 +7,6 @@ import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
-import mca.util.compat.OptionalCompat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -238,14 +237,14 @@ public class ServerInteractionManager {
      */
     public void procreate(ServerPlayerEntity sender) {
         // Ensure the sender is married.
-        PlayerSaveData senderData = PlayerSaveData.get(sender.getServerWorld(), sender.getUuid());
+        PlayerSaveData senderData = PlayerSaveData.get(sender.getWorld(), sender.getUuid());
         if (!senderData.isMarried()) {
             failMessage(sender, new TranslatableText("server.notMarried"));
             return;
         }
 
         // Ensure we don't already have a baby
-        BabyTracker.Pairing pairing = BabyTracker.get(sender.getServerWorld()).getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
+        BabyTracker.Pairing pairing = BabyTracker.get(sender.getWorld()).getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
         if (pairing.getChildCount() > 0) {
             failMessage(sender, new TranslatableText("server.babyPresent"));
             return;
@@ -257,7 +256,7 @@ public class ServerInteractionManager {
         }
 
         // Ensure the spouse is online.
-        OptionalCompat.ifPresentOrElse(senderData.getSpouse().filter(e -> e instanceof PlayerEntity).map(PlayerEntity.class::cast), spouse -> {
+        senderData.getSpouse().filter(e -> e instanceof PlayerEntity).map(PlayerEntity.class::cast).ifPresentOrElse(spouse -> {
             // If the spouse is online and has previously sent a procreation request that hasn't expired, we can continue.
             // Otherwise we notify the spouse that they must also enter the command.
             if (!procreateMap.containsKey(spouse.getUuid())) {

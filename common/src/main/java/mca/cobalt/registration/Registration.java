@@ -10,6 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Activity;
@@ -24,6 +27,7 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
@@ -36,6 +40,13 @@ public class Registration {
     }
 
     public static class ObjectBuilders {
+
+        public static class BlockEntityTypes {
+            public static <T extends BlockEntity> BlockEntityType<T> create(Identifier id, BiFunction<BlockPos, BlockState, T> factory, Block ... blocks) {
+                return INSTANCE.<T>blockEntity().apply(id, factory, blocks);
+            }
+        }
+
         public static class ItemGroups {
             public static ItemGroup create(Identifier id, Supplier<ItemStack> icon) {
                 return INSTANCE.itemGroup(id, icon);
@@ -104,6 +115,8 @@ public class Registration {
 
         public abstract ItemGroup itemGroup(Identifier id, Supplier<ItemStack> icon);
 
+        public abstract <T extends BlockEntity> BlockEntityTypeFactory<T> blockEntity();
+
         public abstract Supplier<DefaultParticleType> simpleParticle();
 
         public abstract Function<Identifier, Tag<Block>> blockTag();
@@ -121,6 +134,10 @@ public class Registration {
         public abstract PoiFactory<PointOfInterestType> poi();
 
         public abstract ProfessionFactory<VillagerProfession> profession();
+    }
+
+    protected interface BlockEntityTypeFactory<T extends BlockEntity> {
+        BlockEntityType<T> apply(Identifier id, BiFunction<BlockPos, BlockState, T> factory, Block...blocks);
     }
 
     protected interface PoiFactory<T> {

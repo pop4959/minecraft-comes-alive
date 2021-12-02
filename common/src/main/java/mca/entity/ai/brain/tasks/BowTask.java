@@ -12,6 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 
 public class BowTask<E extends MobEntity & CrossbowUser> extends Task<E> {
+
 	private int lastShot;
 	private final int fireInterval;
 
@@ -21,11 +22,12 @@ public class BowTask<E extends MobEntity & CrossbowUser> extends Task<E> {
 		this.fireInterval = fireInterval;
 	}
 
-	protected boolean shouldRun(ServerWorld serverWorld, E mobEntity) {
+	@Override
+    protected boolean shouldRun(ServerWorld serverWorld, E mobEntity) {
 		LivingEntity livingEntity = getAttackTarget(mobEntity);
 		return mobEntity.age - lastShot > fireInterval && mobEntity.isHolding(Items.BOW)
 				&& LookTargetUtil.isVisibleInMemory(mobEntity, livingEntity)
-				&& LookTargetUtil.method_25940(mobEntity, livingEntity, 0);
+				&& LookTargetUtil.isTargetWithinAttackRange(mobEntity, livingEntity, 0);
 	}
 
 	@Override

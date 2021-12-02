@@ -2,6 +2,7 @@ package mca.entity.ai.relationship.family;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
@@ -20,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
-import mca.util.NbtElementCompat;
 import mca.util.NbtHelper;
 
 public final class FamilyTreeNode implements Serializable {
@@ -67,7 +67,7 @@ public final class FamilyTreeNode implements Serializable {
             nbt.getUuid("father"),
             nbt.getUuid("mother")
         );
-        children.addAll(NbtHelper.toList(nbt.getList("children", NbtElementCompat.COMPOUND_TYPE), c -> ((NbtCompound)c).getUuid("uuid")));
+        children.addAll(NbtHelper.toList(nbt.getList("children", NbtElement.COMPOUND_TYPE), c -> ((NbtCompound)c).getUuid("uuid")));
         profession = nbt.getString("profession");
         deceased = nbt.getBoolean("isDeceased");
         if (nbt.containsUuid("spouse")) {

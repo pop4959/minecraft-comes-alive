@@ -7,13 +7,13 @@ import mca.client.render.layer.FaceLayer;
 import mca.client.render.layer.HairLayer;
 import mca.client.render.layer.SkinLayer;
 import mca.entity.ZombieVillagerEntityMCA;
-import mca.util.compat.model.Dilation;
-import mca.util.compat.model.ModelData;
-import mca.util.compat.model.TexturedModelData;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.ModelData;
+import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 
 public class ZombieVillagerEntityMCARenderer extends VillagerLikeEntityMCARenderer<ZombieVillagerEntityMCA> {
-    public ZombieVillagerEntityMCARenderer(EntityRenderDispatcher ctx) {
+    public ZombieVillagerEntityMCARenderer(EntityRendererFactory.Context ctx) {
         super(ctx, createModel(VillagerEntityModelMCA.bodyData(Dilation.NONE), false).hideWears());
 
         addFeature(new SkinLayer<>(this, model));

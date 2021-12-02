@@ -49,7 +49,7 @@ public class BabyBunker {
 
     public void push(PlayerEntity player) {
         // If a player dies while holding a baby, remember it until they respawn.
-        List<ItemStack> babies = player.inventory.main.stream()
+        List<ItemStack> babies = player.getInventory().main.stream()
                 .filter(s -> s.getItem() instanceof BabyItem)
                 .collect(Collectors.toList());
 

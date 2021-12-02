@@ -14,21 +14,19 @@ import net.minecraft.util.Identifier;
 public class RankCriterion extends AbstractCriterion<RankCriterion.Conditions> {
     private static final Identifier ID = new Identifier("mca:rank");
 
-    public RankCriterion() {
-
-    }
-
+    @Override
     public Identifier getId() {
         return ID;
     }
 
+    @Override
     public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
         Rank rank = Rank.fromName(json.get("rank").getAsString());
         return new Conditions(player, rank);
     }
 
     public void trigger(ServerPlayerEntity player, Rank rank) {
-        this.test(player, (conditions) -> conditions.test(rank));
+        trigger(player, (conditions) -> conditions.test(rank));
     }
 
     public static class Conditions extends AbstractCriterionConditions {
@@ -43,6 +41,7 @@ public class RankCriterion extends AbstractCriterion<RankCriterion.Conditions> {
             return this.rank == rank;
         }
 
+        @Override
         public JsonObject toJson(AdvancementEntityPredicateSerializer serializer) {
             JsonObject json = super.toJson(serializer);
             json.add("rank", new JsonPrimitive(rank.name()));
