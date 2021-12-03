@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public interface TaskUtils {
     /**
-     * Finds a y position given an x,y,z coordinate triple that is assumed to be the world's "ground".
+     * Finds a y position given an x,y,z coordinate that is assumed to be the world's "ground".
      *
      * @param world The world in which blocks will be tested
      * @param x     X coordinate
@@ -22,13 +22,10 @@ public interface TaskUtils {
      * @return Integer representing the air block above the first non-air block given the provided ordered triples.
      */
     static int getSpawnSafeTopLevel(World world, int x, int y, int z) {
-        Block block = Blocks.AIR;
-        while (block == Blocks.AIR && y > 0) {
-            y--;
-            block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
-        }
+        BlockPos.Mutable pos = new BlockPos.Mutable(x, Math.min(y, world.getTopY()), z);
+        while (world.isAir(pos.move(Direction.DOWN)) && pos.getY() > world.getBottomY()) {}
 
-        return y + 1;
+        return pos.getY() + 1;
     }
 
     static List<BlockPos> getNearbyBlocks(BlockPos origin, World world, @Nullable Predicate<BlockState> filter, int xzDist, int yDist) {
