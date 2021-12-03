@@ -20,6 +20,7 @@ public interface TagsMCA {
     public interface Items {
         Tag<Item> VILLAGER_EGGS = register("villager_eggs");
         Tag<Item> ZOMBIE_EGGS = register("zombie_eggs");
+        Tag<Item> VILLAGER_PLANTABLE = register("villager_plantable");
 
         Tag<Item> BABIES = register("babies");
 

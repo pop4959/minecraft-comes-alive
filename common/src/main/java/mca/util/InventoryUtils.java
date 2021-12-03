@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.inventory.Inventory;
@@ -17,6 +19,11 @@ import net.minecraft.nbt.NbtList;
 import org.jetbrains.annotations.Nullable;
 
 public interface InventoryUtils {
+
+    static Stream<ItemStack> stream(Inventory inventory) {
+        return IntStream.range(0, inventory.size()).mapToObj(inventory::getStack);
+    }
+
     static int getFirstSlotContainingItem(Inventory inv, Predicate<ItemStack> predicate) {
         for (int i = 0; i < inv.size(); i++) {
             ItemStack stack = inv.getStack(i);
@@ -44,7 +51,7 @@ public interface InventoryUtils {
      * @return The item stack containing the item of the specified type with the highest max damage.
      */
     static ItemStack getBestItemOfType(Inventory inv, @Nullable Class<?> type) {
-        if (type == null) {return ItemStack.EMPTY;} else return inv.getStack(getBestItemOfTypeSlot(inv, type));
+        return type == null ? ItemStack.EMPTY : inv.getStack(getBestItemOfTypeSlot(inv, type));
     }
 
     static int getBestItemOfTypeSlot(Inventory inv, Class<?> type) {
@@ -66,8 +73,7 @@ public interface InventoryUtils {
     }
 
     static Optional<ArmorItem> getBestArmor(Inventory inv, EquipmentSlot slot) {
-        return IntStream.range(0, inv.size())
-                .mapToObj(inv::getStack)
+        return stream(inv)
                 .filter(s -> s.getItem() instanceof ArmorItem)
                 .map(s -> (ArmorItem)s.getItem())
                 .filter(a -> a.getSlotType() == slot)
@@ -75,8 +81,7 @@ public interface InventoryUtils {
     }
 
     static Optional<SwordItem> getBestSword(Inventory inv) {
-        return IntStream.range(0, inv.size())
-                .mapToObj(inv::getStack)
+        return stream(inv)
                 .filter(s -> s.getItem() instanceof SwordItem)
                 .map(s -> (SwordItem)s.getItem())
                 .min(Comparator.comparingDouble(SwordItem::getAttackDamage));

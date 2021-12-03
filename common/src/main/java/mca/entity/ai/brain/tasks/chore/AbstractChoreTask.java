@@ -13,10 +13,9 @@ import java.util.Optional;
 public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
     protected VillagerEntityMCA villager;
 
-    public AbstractChoreTask(Map<MemoryModuleType<?>, MemoryModuleState> p_i51504_1_) {
-        super(p_i51504_1_);
+    public AbstractChoreTask(Map<MemoryModuleType<?>, MemoryModuleState> requirements) {
+        super(requirements);
     }
-
 
     @Override
     protected void keepRunning(ServerWorld world, VillagerEntityMCA entity, long time) {

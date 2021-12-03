@@ -1,13 +1,12 @@
 package mca.entity.ai;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -29,35 +28,13 @@ public interface TaskUtils {
     }
 
     static List<BlockPos> getNearbyBlocks(BlockPos origin, World world, @Nullable Predicate<BlockState> filter, int xzDist, int yDist) {
-        final List<BlockPos> pointsList = new ArrayList<>();
-        for (int x = -xzDist; x <= xzDist; x++) {
-            for (int y = -yDist; y <= yDist; y++) {
-                for (int z = -xzDist; z <= xzDist; z++) {
-                    if (x != 0 || y != 0 || z != 0) {
-                        BlockPos pos = new BlockPos(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
-                        if (filter != null && filter.test(world.getBlockState(pos))) {
-                            pointsList.add(pos);
-                        } else if (filter == null) {
-                            pointsList.add(pos);
-                        }
-                    }
-                }
-            }
-        }
-        return pointsList;
+        return BlockPos.streamOutwards(origin, xzDist, yDist, xzDist)
+                .filter(pos -> !origin.equals(pos) && (filter == null || filter.test(world.getBlockState(pos))))
+                .toList();
     }
 
+    @Nullable
     static BlockPos getNearestPoint(BlockPos origin, List<BlockPos> blocks) {
-        double closest = 10000.0D;
-        BlockPos returnPoint = null;
-        for (BlockPos point : blocks) {
-            double distance = origin.getSquaredDistance(point.getX(), point.getY(), point.getZ(), true);
-            if (distance < closest) {
-                closest = distance;
-                returnPoint = point;
-            }
-        }
-
-        return returnPoint;
+        return blocks.stream().min(Comparator.comparing(origin::getSquaredDistance)).orElse(null);
     }
 }
