@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import mca.entity.ai.DialogueType;
 import mca.util.localization.PooledTranslationStorage;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.util.Language;
@@ -30,9 +31,13 @@ abstract class MixinTranslationStorage extends Language {
 
     @Inject(method = "get(Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
     private void onGet(String key, CallbackInfoReturnable<String> info) {
+        key = DialogueType.applyFallback(key);
+
         String unpooled = getPool().get(key);
         if (unpooled != null) {
             info.setReturnValue(unpooled);
+        } else {
+            info.setReturnValue(translations.getOrDefault(key, key));
         }
     }
 

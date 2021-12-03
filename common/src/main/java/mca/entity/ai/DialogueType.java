@@ -1,8 +1,12 @@
 package mca.entity.ai;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import mca.entity.ai.relationship.AgeState;
+import net.minecraft.util.Language;
 
 public enum DialogueType {
     ADULT(null),
@@ -24,13 +28,7 @@ public enum DialogueType {
 
     private static final DialogueType[] VALUES = values();
 
-    public static final Map<String, DialogueType> MAP = new HashMap<String, DialogueType>();
-
-    static {
-        for (DialogueType value : VALUES) {
-            MAP.put(value.name(), value);
-        }
-    }
+    public static final Map<String, DialogueType> MAP = Arrays.stream(VALUES).collect(Collectors.toMap(DialogueType::name, Function.identity()));
 
     public DialogueType toChild() {
         switch (this) {
@@ -59,5 +57,31 @@ public enum DialogueType {
             return UNASSIGNED;
         }
         return VALUES[id];
+    }
+
+    public static String applyFallback(String key) {
+        int split = key.indexOf(".");
+
+        if (split <= 0) {
+            return key;
+        }
+
+        DialogueType type = DialogueType.MAP.get(key.substring(0, split));
+        if (type == null) {
+            return key;
+        }
+
+        String phrase = key.substring(split + 1);
+
+        while (type != null) {
+            String s = type.name().toLowerCase() + "." + phrase;
+
+            if (Language.getInstance().hasTranslation(s)) {
+                return s;
+            }
+
+            type = type.fallback;
+        }
+        return phrase;
     }
 }
