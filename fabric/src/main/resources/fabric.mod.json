@@ -13,7 +13,6 @@
   },
   "license": "GNU",
   "icon": "mca.png",
-  "accessWidener": "mca.aw",
   "environment": "*",
   "entrypoints": {
     "main": [

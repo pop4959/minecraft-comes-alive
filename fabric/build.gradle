@@ -13,7 +13,6 @@ architectury {
 
 loom {
   mixin.defaultRefmapName = 'mca.mixin.refmap.json'
-  accessWidenerPath = file('src/main/resources/mca.aw')
 }
 
 dependencies {

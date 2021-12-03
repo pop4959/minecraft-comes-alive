@@ -8,7 +8,6 @@ architectury {
 
 loom {
   mixin.defaultRefmapName = 'mca.mixin.refmap.json' // remove to make it forge runClient compatible
-  accessWidenerPath = file('src/main/resources/mca.aw')
 }
 
 java {
