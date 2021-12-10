@@ -110,3 +110,23 @@
 * Fixed a crash
 * Fixed opposite gender bug
 * Fixed villager marrying relatives
+* Guards now attack mca zombie villagers
+* No more sliding baby zombie villagers
+* Slightly enhanced village boundary determination
+* Fixed uninitialized zombie villager babies
+* Fixed flower pots with flowers not being recognized
+* Lost babies can now be retrieved by the spouse
+* Fixed crash on dedicated server when using randomized baby name
+* Village will now interact with each other
+* Iron golems will now slap the villager when hit accidentally and then chill
+* Guards will now support their citizen and have a custom dialogue when the player is the attacker
+* Improved archer AI
+* Fixed villager getting stuck in doors
+* Guards no longer panic when a raid happens
+* A wiped-out village will only send a last, bigger bountyhunter wave
+* Added all items to recipe book
+* Reworked female villager model
+* Fixed a bunch of marriage issues caused on death
+* Spouse and parents can now be modified in the villager editor
+* Fixed guard spam
+* Rank Mayor can now make villagers guards or archers manually

@@ -2,6 +2,7 @@ package mca.network;
 
 import mca.cobalt.network.NetworkHandler;
 import mca.network.client.AnalysisResults;
+import mca.network.client.BabyNameResponse;
 import mca.network.client.GetChildDataResponse;
 import mca.network.client.GetFamilyTreeResponse;
 import mca.network.client.GetInteractDataResponse;
@@ -11,6 +12,7 @@ import mca.network.client.GetVillagerResponse;
 import mca.network.client.InteractionDialogueResponse;
 import mca.network.client.OpenGuiRequest;
 import mca.network.client.GetFamilyResponse;
+import mca.network.client.ShowToastRequest;
 
 public interface MessagesMCA {
     static void bootstrap() {
@@ -40,5 +42,8 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(VillagerEditorSyncRequest.class);
         NetworkHandler.registerMessage(AnalysisResults.class);
         NetworkHandler.registerMessage(InteractionCloseRequest.class);
+        NetworkHandler.registerMessage(ShowToastRequest.class);
+        NetworkHandler.registerMessage(BabyNameRequest.class);
+        NetworkHandler.registerMessage(BabyNameResponse.class);
     }
 }

@@ -2,11 +2,14 @@ package mca.server;
 
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import mca.Config;
+import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
+import mca.network.client.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -50,7 +53,11 @@ public class ServerInteractionManager {
     public void onPlayerJoin(ServerPlayerEntity player) {
         PlayerSaveData playerData = PlayerSaveData.get((ServerWorld)player.world, player.getUuid());
         if (!playerData.isEntityDataSet()) {
-            infoMessage(player, new TranslatableText("server.playerNotCustomized"));
+            NetworkHandler.sendToPlayer(new ShowToastRequest(
+                    SystemToast.Type.TUTORIAL_HINT,
+                    "server.playerNotCustomized.title",
+                    "server.playerNotCustomized.description"
+            ), player);
         }
     }
 
@@ -243,15 +250,21 @@ public class ServerInteractionManager {
             return;
         }
 
-        // Ensure we don't already have a baby
-        BabyTracker.Pairing pairing = BabyTracker.get(sender.getWorld()).getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
-        if (pairing.getChildCount() > 0) {
-            failMessage(sender, new TranslatableText("server.babyPresent"));
+        // Ensure the spouse is a player
+        if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
+            failMessage(sender, new TranslatableText("server.marriedToVillager"));
             return;
         }
 
-        if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
-            failMessage(sender, new TranslatableText("server.marriedToVillager"));
+        // Ensure we don't already have a baby
+        BabyTracker.Pairing pairing = BabyTracker.get(sender.getWorld()).getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
+        if (pairing.getChildCount() > 0) {
+            if (pairing.locateBaby(sender).getRight().wasFound()) {
+                failMessage(sender, new TranslatableText("server.babyPresent"));
+            } else {
+                failMessage(sender, new TranslatableText("server.babyLost"));
+                pairing.reconstructBaby(sender);
+            }
             return;
         }
 

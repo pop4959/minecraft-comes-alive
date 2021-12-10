@@ -123,9 +123,8 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     if (pairing.locateBaby(player).getRight().wasFound()) {
                         entity.sendChatMessage(player, "interaction.procreate.fail.hasbaby");
                     } else {
-                        //entity.sendChatMessage(player, "interaction.procreate.fail.lostbaby");
-                        //todo phrase does not exist and we lack a Plan B in case the loss is caused by a bug
-                        entity.getRelationships().startProcreating();
+                        entity.sendChatMessage(player, "interaction.procreate.fail.lostbaby");
+                        pairing.reconstructBaby(player);
                     }
                 } else if (memory.getHearts() < 100) {
                     entity.sendChatMessage(player, "interaction.procreate.fail.lowhearts");
@@ -162,7 +161,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 return true;
             case "infected":
                 entity.setInfected(!entity.isInfected());
-                return false;
+                return true;
             case "stopworking":
                 entity.getVillagerBrain().abandonJob();
                 return true;
@@ -173,6 +172,16 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 } else {
                     entity.sendChatMessage(player, "armor.disabled");
                 }
+                return true;
+            case "profession.none":
+                entity.setProfession(VillagerProfession.NONE);
+                return true;
+            case "profession.guard":
+                entity.setProfession(ProfessionsMCA.GUARD);
+                return true;
+            case "profession.archer":
+                entity.setProfession(ProfessionsMCA.ARCHER);
+                return true;
         }
 
         return super.handle(player, command);

@@ -30,8 +30,9 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
     private VillagerEntityBaseModelMCA<T> createArmorModel(float modelSize) {
         return new VillagerEntityBaseModelMCA<>(
                 TexturedModelData.of(
-                                VillagerEntityBaseModelMCA.getModelData(new Dilation(modelSize), true), 64, 32)
-                        .createModel(), true);
+                        VillagerEntityBaseModelMCA.getModelData(new Dilation(modelSize)), 64, 32)
+                .createModel()
+        );
     }
 
     @Override
@@ -52,17 +53,17 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
             MinecraftClient minecraftClient = MinecraftClient.getInstance();
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraftClient.getSkinProvider().getTextures(entity.getGameProfile());
             return map.containsKey(MinecraftProfileTexture.Type.SKIN) ? RenderLayer.getEntityTranslucent(minecraftClient.getSkinProvider().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN)) : RenderLayer.getEntityCutoutNoCull(DefaultSkinHelper.getTexture(PlayerEntity.getUuidFromProfile(entity.getGameProfile())));
-        } else {
-            //setting the type to null prevents it from rendering
-            //we need a skin layer anyways because of the color
-            return null;
         }
+
+        //setting the type to null prevents it from rendering
+        //we need a skin layer anyways because of the color
+        return null;
     }
 
     @Override
     protected boolean hasLabel(T villager) {
         return MinecraftClient.getInstance().player != null
-                && MinecraftClient.getInstance().player.squaredDistanceTo(villager) < 25;
+            && MinecraftClient.getInstance().player.squaredDistanceTo(villager) < 25;
     }
 
     @Override

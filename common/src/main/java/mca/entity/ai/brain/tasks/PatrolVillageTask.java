@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Optional;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
+import mca.util.BlockBoxExtended;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -40,11 +41,10 @@ public class PatrolVillageTask extends Task<VillagerEntityMCA> {
 
     private Optional<BlockPos> getNextPosition(VillagerEntityMCA villager) {
         return villager.getResidency().getHomeVillage().map(village -> {
-            BlockPos center = village.getCenter();
-            int size = village.getSize();
-            int x = center.getX() + villager.getRandom().nextInt(size * 2) - size;
-            int z = center.getZ() + villager.getRandom().nextInt(size * 2) - size;
-            Vec3d targetPos = new Vec3d(x, center.getY(), z);
+            BlockBoxExtended box = village.getBox();
+            int x = box.getMinX() + villager.getRandom().nextInt(box.getBlockCountX());
+            int z = box.getMinZ() + villager.getRandom().nextInt(box.getBlockCountZ());
+            Vec3d targetPos = new Vec3d(x, box.getCenter().getY(), z);
 
             return NoPenaltyTargeting.findTo(villager, 32, 16, targetPos, Math.PI * 0.5);
         }).map(BlockPos::new);

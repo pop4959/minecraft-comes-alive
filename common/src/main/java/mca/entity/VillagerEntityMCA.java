@@ -1,14 +1,29 @@
 package mca.entity;
 
 import com.mojang.authlib.GameProfile;
-import com.google.common.base.Strings;
 import com.mojang.serialization.Dynamic;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 import mca.Config;
 import mca.ParticleTypesMCA;
 import mca.SoundsMCA;
 import mca.TagsMCA;
 import mca.advancement.criterion.CriterionMCA;
-import mca.entity.ai.*;
+import mca.entity.ai.BreedableRelationship;
+import mca.entity.ai.Genetics;
+import mca.entity.ai.Memories;
+import mca.entity.ai.MemoryModuleTypeMCA;
+import mca.entity.ai.Messenger;
+import mca.entity.ai.Mood;
+import mca.entity.ai.MoveState;
+import mca.entity.ai.ProfessionsMCA;
+import mca.entity.ai.Residency;
+import mca.entity.ai.Traits;
+import mca.entity.ai.VillagerNavigation;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.brain.VillagerTasksMCA;
 import mca.entity.ai.relationship.AgeState;
@@ -18,21 +33,30 @@ import mca.entity.ai.relationship.Personality;
 import mca.entity.ai.relationship.VillagerDimensions;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
-import mca.resources.API;
 import mca.resources.ClothingList;
+import mca.server.world.data.Village;
 import mca.util.InventoryUtils;
 import mca.util.network.datasync.CDataManager;
 import mca.util.network.datasync.CDataParameter;
 import mca.util.network.datasync.CParameter;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
+import net.minecraft.entity.CrossbowUser;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityData;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.brain.BlockPosLookTarget;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.ai.control.JumpControl;
 import net.minecraft.entity.ai.control.MoveControl;
+import net.minecraft.entity.ai.goal.GoalSelector;
+import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -43,6 +67,7 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -83,10 +108,6 @@ import net.minecraft.village.VillagerType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-
-import java.util.List;
-import java.util.function.Predicate;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -212,32 +233,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
         EntityData data = super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
 
-        if (spawnReason != SpawnReason.CONVERSION) {
-            if (spawnReason != SpawnReason.BREEDING) {
-                genetics.randomize();
-                traits.randomize();
-            }
-
-            if (genetics.getGender() == Gender.UNASSIGNED) {
-                genetics.setGender(Gender.getRandom());
-            }
-
-            if (Strings.isNullOrEmpty(getTrackedValue(VILLAGER_NAME))) {
-                setName(API.getVillagePool().pickCitizenName(getGenetics().getGender()));
-            }
-
-            initializeSkin();
-
-            mcaBrain.randomize();
-        }
-
-        calculateDimensions();
+        initialize(spawnReason);
 
         setAgeState(AgeState.byCurrentAge(getBreedingAge()));
-
-        if (getAgeState() != AgeState.ADULT) {
-            setProfession(ProfessionsMCA.CHILD);
-        }
 
         return data;
     }
@@ -252,7 +250,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public boolean isProfessionImportant() {
-        return getProfession() == ProfessionsMCA.ARCHER || getProfession() == ProfessionsMCA.GUARD || getProfession() == ProfessionsMCA.OUTLAW || getProfession() == ProfessionsMCA.CHILD;
+        return getProfession() == ProfessionsMCA.ARCHER || getProfession() == ProfessionsMCA.GUARD || getProfession() == ProfessionsMCA.OUTLAW;
     }
 
     @Override
@@ -303,6 +301,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             return false;
         }
 
+        //player just get a beating
+        attackedEntity(target);
+
         //we don't use attributes
         // why not?
         float damage = getProfession() == ProfessionsMCA.GUARD ? 9 : 3;
@@ -341,6 +342,18 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
 
         return damageDealt;
+    }
+
+    private void attackedEntity(Entity target) {
+        if (target instanceof PlayerEntity) {
+            int bounty = getSmallBounty();
+            if (bounty <= 1) {
+                getBrain().forget(MemoryModuleType.ATTACK_TARGET);
+                getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY);
+            } else {
+                getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY, bounty - 1);
+            }
+        }
     }
 
     @Override
@@ -415,7 +428,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (!world.isClient) {
             //scream and loose hearts
             if (source.getAttacker() instanceof PlayerEntity) {
-                sendChatMessage((PlayerEntity)source.getAttacker(), "villager.hurt");
+                if (!isGuard() || getSmallBounty() == 0) {
+                    if (getHealth() < getMaxHealth() / 2) {
+                        sendChatMessage((PlayerEntity)source.getAttacker(), "villager.badly_hurt");
+                    } else {
+                        sendChatMessage((PlayerEntity)source.getAttacker(), "villager.hurt");
+                    }
+                }
 
                 //loose hearts, the weaker the villager, the more it is scared. The first hit might be an accident.
                 int trustIssues = (int)((1.0 - getHealth() / getMaxHealth() * 0.75) * (3.0 + 2.0 * damageAmount));
@@ -438,16 +457,56 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         Entity attacker = source != null ? source.getAttacker() : null;
 
         // Notify the surrounding guards when a villager is attacked. Yoinks!
-        if (attacker instanceof LivingEntity && !isHostile()) {
+        if (attacker instanceof LivingEntity && !isHostile() && !isFriend(attacker.getType())) {
             Vec3d pos = getPos();
-            world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(16)).forEach(v -> {
-                if (v.squaredDistanceTo(v) <= 100 && v.getProfession() == ProfessionsMCA.GUARD) {
-                    v.setTarget((LivingEntity)attacker);
+            world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
+                if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64) && (v.isGuard())) {
+                    if (source.getAttacker() instanceof PlayerEntity) {
+                        int bounty = v.getSmallBounty();
+                        if (bounty > 0) {
+                            // ok, that was enough
+                            v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
+                        } else {
+                            // just a warning
+                            v.sendChatMessage((PlayerEntity)source.getAttacker(), "villager.warning");
+                        }
+                        v.getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY, bounty + 1);
+                    } else {
+                        // non players get attacked straight away
+                        v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
+                    }
                 }
             });
         }
 
+        // Iron Golem got his revenge, now chill
+        if (attacker instanceof IronGolemEntity) {
+            ((IronGolemEntity)attacker).stopAnger();
+
+            //kill the damn tracker goals
+            try {
+                Field targetSelector = MobEntity.class.getDeclaredField("targetSelector");
+                ((GoalSelector)targetSelector.get(attacker)).getRunningGoals().forEach(g -> {
+                    if (g.getGoal() instanceof TrackTargetGoal) {
+                        g.getGoal().stop();
+                    }
+                });
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                //e.printStackTrace();
+            }
+
+            damageAmount *= 0.0;
+        }
+
         return super.damage(source, damageAmount);
+    }
+
+    public boolean isGuard() {
+        return getProfession() == ProfessionsMCA.GUARD || getProfession() == ProfessionsMCA.ARCHER;
+    }
+
+    private int getSmallBounty() {
+        return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY).orElse(0);
     }
 
     @Override
@@ -472,11 +531,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             }
 
             residency.tick();
-
-            // Grow up
-            if (getProfession() == ProfessionsMCA.CHILD && getAgeState() == AgeState.ADULT) {
-                setProfession(VillagerProfession.NONE);
-            }
 
             relations.tick(age);
 
@@ -697,6 +751,17 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         if (!relations.onDeath(cause)) {
             relations.onTragedy(cause, null);
+        }
+
+        //distribute the hearts across the other villagers
+        //this prevents rapid drops in village reputation as well as bounty hunters to know what you did
+        Optional<Village> village = residency.getHomeVillage();
+        if (village.isPresent()) {
+            Map<UUID, Memories> memories = mcaBrain.getMemories();
+            for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
+                village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
+                village.get().markDirty((ServerWorld)world);
+            }
         }
 
         residency.leaveHome();
@@ -998,6 +1063,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return getProfession() == ProfessionsMCA.OUTLAW;
     }
 
+    //friends will not get slapped in revenge
+    public boolean isFriend(EntityType<?> type) {
+        return type == EntityType.IRON_GOLEM || type == EntitiesMCA.FEMALE_VILLAGER || type == EntitiesMCA.MALE_VILLAGER;
+    }
+
     @Override
     public boolean canUseRangedWeapon(RangedWeaponItem weapon) {
         return true;
@@ -1033,6 +1103,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void attack(LivingEntity target, float pullProgress) {
         setTarget(target);
+        attackedEntity(target);
 
         if (isHolding(Items.CROSSBOW)) {
             this.shoot(this, 1.75F);

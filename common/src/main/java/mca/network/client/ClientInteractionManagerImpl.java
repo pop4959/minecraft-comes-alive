@@ -74,6 +74,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
             InteractScreen gui = (InteractScreen)screen;
             gui.setConstraints(message.constraints);
             gui.setParents(message.father, message.mother);
+            gui.setSpouse(message.marriageState, message.spouse);
         }
     }
 
@@ -134,5 +135,14 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleAnalysisResults(AnalysisResults message) {
         InteractScreen.setAnalysis(message.analysis);
+    }
+
+    @Override
+    public void handleBabyNameResponse(BabyNameResponse message) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof NameBabyScreen) {
+            NameBabyScreen gui = (NameBabyScreen)screen;
+            gui.setBabyName(message.getName());
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
+import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
 import net.minecraft.entity.EntityType;
@@ -11,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 
@@ -30,6 +32,8 @@ public class GuardEnemiesSensor extends Sensor<LivingEntity> {
             .put(EntityType.SPIDER, 0)
             .put(EntityType.SKELETON, 0)
             .put(EntityType.SLIME, 0)
+            .put(EntitiesMCA.FEMALE_ZOMBIE_VILLAGER, 3)
+            .put(EntitiesMCA.MALE_ZOMBIE_VILLAGER, 3)
             .build();
 
     @Override
@@ -51,7 +55,7 @@ public class GuardEnemiesSensor extends Sensor<LivingEntity> {
     }
 
     private int compareEntities(LivingEntity entity, LivingEntity hostile1, LivingEntity hostile2) {
-        int i = getPriority(hostile2) - getPriority(hostile1);
+        int i = getPriority(hostile2, entity) - getPriority(hostile1, entity);
         return i == 0 ? compareDistances(entity, hostile1, hostile2) : i;
     }
 
@@ -59,16 +63,19 @@ public class GuardEnemiesSensor extends Sensor<LivingEntity> {
         return MathHelper.floor(hostile1.squaredDistanceTo(entity) - hostile2.squaredDistanceTo(entity));
     }
 
-    private int getPriority(LivingEntity entity) {
+    private int getPriority(LivingEntity entity, LivingEntity guard) {
         if (entity instanceof VillagerEntityMCA) {
-            VillagerEntityMCA villager = (VillagerEntityMCA) entity;
+            VillagerEntityMCA villager = (VillagerEntityMCA)entity;
             return villager.isHostile() ? 10 : -1;
+        } else if (entity instanceof MobEntity && (((MobEntity)entity).getTarget() == guard)) {
+            //priority is irrelevant if this entity is currently an active threat
+            return 9;
         } else {
             return PRIORITIES.getOrDefault(entity.getType(), -1);
         }
     }
 
     private boolean isHostile(LivingEntity entity) {
-        return getPriority(entity) >= 0;
+        return getPriority(entity, null) >= 0;
     }
 }

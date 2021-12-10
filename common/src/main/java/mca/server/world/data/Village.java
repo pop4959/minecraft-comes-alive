@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -19,6 +20,7 @@ import mca.resources.API;
 import mca.resources.PoolUtil;
 import mca.resources.Rank;
 import mca.resources.Tasks;
+import mca.util.BlockBoxExtended;
 import mca.util.NbtHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -46,11 +48,10 @@ import net.minecraft.village.VillagerProfession;
 public class Village implements Iterable<Building> {
 
     private static final int MOVE_IN_COOLDOWN = 1200;
-    private static final int MIN_SIZE = 32;
     private static final int MAX_STORAGE_SIZE = 1024;
 
-    public final static double BORDER_MARGIN = 32.0;
-    public final static double MERGE_MARGIN = 128.0;
+    public final static int BORDER_MARGIN = 32;
+    public final static int MERGE_MARGIN = 128;
 
     private String name = API.getVillagePool().pickVillageName("village");
 
@@ -63,14 +64,13 @@ public class Village implements Iterable<Building> {
     public long lastMoveIn;
     private int id;
 
-    private int centerX, centerY, centerZ;
-    private int size = MIN_SIZE;
-
     private int taxes = 0;
     private int populationThreshold = 50;
     private int marriageThreshold = 50;
 
     private boolean autoScan = true;
+
+    private BlockBoxExtended box;
 
     public Village() {
     }
@@ -91,8 +91,8 @@ public class Village implements Iterable<Building> {
         return isWithinBorder(pos, BORDER_MARGIN);
     }
 
-    public boolean isWithinBorder(BlockPos pos, double margin) {
-        return getCenter().getSquaredDistance(pos) < Math.pow(getSize() + margin, 2.0);
+    public boolean isWithinBorder(BlockPos pos, int margin) {
+        return box.expand(margin).contains(pos);
     }
 
     @Override
@@ -124,6 +124,7 @@ public class Village implements Iterable<Building> {
 
     private void calculateDimensions() {
         if (buildings.size() == 0) {
+            box = new BlockBoxExtended(0, 0, 0, 0, 0, 0);
             return;
         }
 
@@ -145,19 +146,15 @@ public class Village implements Iterable<Building> {
             sz = Math.min(building.getPos0().getZ(), sz);
         }
 
-        centerX = (ex + sx) / 2;
-        centerY = (ey + sy) / 2;
-        centerZ = (ez + sz) / 2;
-
-        size = Math.max(ez - sz, Math.max(ex - sx, ey - sy));
+        box = new BlockBoxExtended(sx, sy, sz, ex, ey, ez);
     }
 
-    public BlockPos getCenter() {
-        return new BlockPos(centerX, centerY, centerZ);
+    public Vec3i getCenter() {
+        return box.getCenter();
     }
 
-    public int getSize() {
-        return size;
+    public BlockBoxExtended getBox() {
+        return box;
     }
 
     public int getTaxes() {
@@ -184,6 +181,18 @@ public class Village implements Iterable<Building> {
         this.marriageThreshold = marriageThreshold;
     }
 
+    public boolean isAutoScan() {
+        return autoScan;
+    }
+
+    public void setAutoScan(boolean autoScan) {
+        this.autoScan = autoScan;
+    }
+
+    public void toggleAutoScan() {
+        setAutoScan(!isAutoScan());
+    }
+
     public String getName() {
         return name;
     }
@@ -208,10 +217,14 @@ public class Village implements Iterable<Building> {
         return residents;
     }
 
-    public List<VillagerEntityMCA> getResidents(ServerWorld world) {
+    public Stream<UUID> getResidentsUUIDs() {
         return getBuildings().values()
                 .stream()
-                .flatMap(building -> building.getResidents().keySet().stream())
+                .flatMap(building -> building.getResidents().keySet().stream());
+    }
+
+    public List<VillagerEntityMCA> getResidents(ServerWorld world) {
+        return getResidentsUUIDs()
                 .map(world::getEntity)
                 .filter(v -> v instanceof VillagerEntityMCA)
                 .map(VillagerEntityMCA.class::cast)
@@ -288,6 +301,10 @@ public class Village implements Iterable<Building> {
             }
 
             deliverTaxes(world);
+        }
+
+        if (time % 24000 == 0) {
+            cleanReputation();
         }
 
         if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time) {
@@ -371,18 +388,23 @@ public class Village implements Iterable<Building> {
 
         // Count up the guards
         int guards = 0;
+        int citizen = 0;
         List<VillagerEntityMCA> villagers = getResidents(world);
         List<VillagerEntityMCA> nonGuards = new LinkedList<>();
         for (VillagerEntityMCA villager : villagers) {
-            if (villager.getProfession() == ProfessionsMCA.GUARD || villager.getProfession() == ProfessionsMCA.ARCHER) {
+            if (villager.isGuard()) {
                 guards++;
-            } else if (!villager.isBaby() && !villager.isProfessionImportant()) {
-                nonGuards.add(villager);
+            } else {
+                if (!villager.isBaby() && !villager.isProfessionImportant()) {
+                    nonGuards.add(villager);
+                }
+                citizen++;
             }
         }
 
-        // todo if not all villagers are loaded undefined behavior can happen
-        // todo what happen about people who are missing in action?
+        // Count all unloaded villagers against the guard limit
+        // This is statistical and may not be accurate, but it's better than nothing
+        guards += Math.ceil((getPopulation() - guards - citizen) / (float)Config.getInstance().guardSpawnRate);
 
         // Spawn a new guard if we don't have enough
         if (nonGuards.size() > 0 && guards < guardCapacity) {
@@ -445,7 +467,7 @@ public class Village implements Iterable<Building> {
         });
     }
 
-    private void markDirty(ServerWorld world) {
+    public void markDirty(ServerWorld world) {
         VillageManager.get(world).markDirty();
     }
 
@@ -476,6 +498,17 @@ public class Village implements Iterable<Building> {
         }
     }
 
+    // removes all villagers no longer living here
+    public void cleanReputation() {
+        Set<UUID> residents = getResidentsUUIDs().collect(Collectors.toSet());
+        for (Map<UUID, Integer> map : reputation.values()) {
+            Set<UUID> toRemove = map.keySet().stream().filter(v -> !residents.contains(v)).collect(Collectors.toSet());
+            for (UUID uuid : toRemove) {
+                map.remove(uuid);
+            }
+        }
+    }
+
     public void setReputation(PlayerEntity player, VillagerEntityMCA villager, int rep) {
         reputation.computeIfAbsent(player.getUuid(), i -> new HashMap<>()).put(villager.getUuid(), rep);
         markDirty((ServerWorld)player.world);
@@ -488,9 +521,18 @@ public class Village implements Iterable<Building> {
         return hearts / residents;
     }
 
-    public void pushHearts(PlayerEntity player, int rep) {
-        unspentHearts.put(player.getUuid(), unspentHearts.getOrDefault(player.getUuid(), 0) + rep);
+    public void resetHearts(PlayerEntity player) {
+        unspentHearts.remove(player.getUuid());
         markDirty((ServerWorld)player.world);
+    }
+
+    public void pushHearts(PlayerEntity player, int rep) {
+        pushHearts(player.getUuid(), rep);
+        markDirty((ServerWorld)player.world);
+    }
+
+    public void pushHearts(UUID player, int rep) {
+        unspentHearts.put(player, unspentHearts.getOrDefault(player, 0) + rep);
     }
 
     public int popHearts(PlayerEntity player) {
@@ -537,18 +579,6 @@ public class Village implements Iterable<Building> {
         } else {
             return 0;
         }
-    }
-
-    public boolean isAutoScan() {
-        return autoScan;
-    }
-
-    public void setAutoScan(boolean autoScan) {
-        this.autoScan = autoScan;
-    }
-
-    public void toggleAutoScan() {
-        setAutoScan(!isAutoScan());
     }
 
     public NbtCompound save() {

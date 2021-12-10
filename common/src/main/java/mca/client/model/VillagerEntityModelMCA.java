@@ -25,8 +25,8 @@ public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> exten
 
     private boolean wearsHidden;
 
-    public VillagerEntityModelMCA(ModelPart tree, boolean clothing) {
-        super(tree, clothing);
+    public VillagerEntityModelMCA(ModelPart tree) {
+        super(tree);
         bodyWear = tree.getChild(EntityModelPartNames.JACKET);
         leftArmwear = tree.getChild("left_sleeve");
         rightArmwear = tree.getChild("right_sleeve");
@@ -44,25 +44,17 @@ public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> exten
     //    hood - 3 (clothing.hat 0.075 + 0.5 = 0.575)
 
     public static ModelData hairData(Dilation dilation) {
-        ModelData modelData = clothingData(dilation);
+        ModelData modelData = bodyData(dilation);
         ModelPartData root = modelData.getRoot();
         root.addChild(EntityModelPartNames.HAT, ModelPartBuilder.create().uv(32, 0).cuboid(-4, -8, -4, 8, 8, 8, dilation.add(0.3F)), ModelTransform.NONE);
-        return modelData;
-    }
-
-    public static ModelData clothingData(Dilation dilation) {
-        ModelData modelData = PlayerEntityModel.getTexturedModelData(dilation, false);
-        ModelPartData root = modelData.getRoot();
-        root.addChild(BREASTS, newBreasts(dilation, true, 0), ModelTransform.NONE);
-        root.addChild(BREASTPLATE, newBreasts(dilation.add(0.1F), true, 16), ModelTransform.NONE);
         return modelData;
     }
 
     public static ModelData bodyData(Dilation dilation) {
         ModelData modelData = PlayerEntityModel.getTexturedModelData(dilation, false);
         ModelPartData root = modelData.getRoot();
-        root.addChild(BREASTS, newBreasts(dilation, false, 0), ModelTransform.NONE);
-        root.addChild(BREASTPLATE, newBreasts(dilation.add(0.1F), false, 16), ModelTransform.NONE);
+        root.addChild(BREASTS, newBreasts(dilation, 0), ModelTransform.NONE);
+        root.addChild(BREASTPLATE, newBreasts(dilation.add(0.1F), 16), ModelTransform.NONE);
         return modelData;
     }
 

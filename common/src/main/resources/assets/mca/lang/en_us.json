@@ -111,9 +111,10 @@
   "item.mca.blueprint": "Blueprint",
   "item.mca.blueprint.tooltip": "Right-click to manage the village you are currently in",
 
-  "tag.mca:town_center": "Bells",
+  "tag.mca:town_center": "Bell",
   "tag.mca:tombstones": "Tombstone",
-  "tag.minecraft:beds": "Beds",
+  "tag.minecraft:beds": "Bed",
+  "tag.minecraft:flower_pots": "Flower Pot",
 
   "block.mca.rose_gold_block": "Rose Gold Block",
   "block.mca.rose_gold_ore": "Rose Gold Ore",
@@ -367,6 +368,10 @@
   "gui.button.call": "Call",
   "gui.button.familyTree": "Family Tree",
   "gui.button.armor": "Armor",
+  "gui.button.professions": "Professions",
+  "gui.button.profession.none": "Villager",
+  "gui.button.profession.guard": "Guard",
+  "gui.button.profession.archer": "Archer",
 
   "gui.title.namebaby.male": "It's a boy!",
   "gui.title.namebaby.female": "It's a girl!",
@@ -419,10 +424,17 @@
   "gui.villager_editor.infection": "Infection",
   "gui.villager_editor.age": "Age",
   "gui.villager_editor.page": "Page %1$s",
+  "gui.villager_editor.uuid_unknown": "UUID '%1$s' is unknown.",
+  "gui.villager_editor.name_unknown": "Name '%1$s' is unknown.",
+  "gui.villager_editor.name_not_unique": "Name '%1$s' is not unique, consider using the UUID instead.",
+  "gui.villager_editor.relation.father": "Father",
+  "gui.villager_editor.relation.mother": "Mother",
+  "gui.villager_editor.relation.spouse": "Spouse",
 
   "marriage.married": "Married",
   "marriage.divorced": "Divorced",
   "marriage.engaged": "Engaged",
+  "marriage.widow": "Widow",
 
   "server.noProposals": "You have no active proposals.",
   "server.proposals": "You have active proposals from:",
@@ -432,6 +444,7 @@
   "server.procreationRequest": "%1$s has requested procreation. To accept, type /mca procreate within 10 seconds.",
   "server.marriedToVillager": "You cannot use this command when married to a villager.",
   "server.babyPresent": "You already have a baby with this partner.",
+  "server.babyLost": "Stop loosing the baby! Here, I retrieved it for you.",
   "server.notMarried": "You cannot procreate if you are not married.",
   "server.alreadyMarried": "You cannot send a proposal since you are already married.",
   "server.proposedToYourself": "You cannot propose to yourself.",
@@ -445,7 +458,8 @@
   "server.endMarriageNotMarried": "You are not married.",
   "server.endMarriage": "Your marriage to %1$s has ended.",
   "server.marriageEnded": "%1$s has ended their marriage with you.",
-  "server.playerNotCustomized": "Customize your player by typing /mca editor!",
+  "server.playerNotCustomized.title": "Customize your player!",
+  "server.playerNotCustomized.description": "Type '/mca editor'",
 
   "gene.size": "Size",
   "gene.width": "Width",
@@ -462,6 +476,7 @@
   "events.marry": "%1$s and %2$s are now married!",
   "events.baby": "%1$s and %2$s have born a baby!",
   "events.bountyHunters": "%1$s sent bounty hunters after you!",
+  "events.bountyHuntersFinal": "%1$s has been wiped out, a large group of bounty hunters try to avenge it!",
 
   "advancement.mca.baby": "Next Generation",
   "advancement.mca.baby.description": "Have your first baby",

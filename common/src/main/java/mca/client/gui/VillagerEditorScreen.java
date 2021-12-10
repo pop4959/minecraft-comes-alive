@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
+import mca.client.gui.widget.NamedTextFieldWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.Infectable;
@@ -50,6 +51,7 @@ public class VillagerEditorScreen extends Screen {
     private int traitPage = 0;
     private static final int TRAITS_PER_PAGE = 8;
     private long initialTime;
+    private NbtCompound villagerData;
 
     public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
         super(new TranslatableText("gui.VillagerEditorScreen.title"));
@@ -134,15 +136,16 @@ public class VillagerEditorScreen extends Screen {
         int y = height / 2 - 80;
         int margin = 40;
         Genetics genetics = villager.getGenetics();
+        TextFieldWidget field;
 
         switch (page) {
             case "general":
                 //name
-                TextFieldWidget field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villager.getDefaultName().asString());
                 field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
-                y += 22;
+                y += 20;
 
                 //gender
                 addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
@@ -157,18 +160,28 @@ public class VillagerEditorScreen extends Screen {
                     villager.setBreedingAge(villagerBreedingAge);
                     villager.calculateDimensions();
                 }));
-                y += 22;
+                y += 28;
+
+                //relations
+                for (String who : new String[] {"father", "mother", "spouse"}) {
+                    field = addDrawableChild(new NamedTextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18,
+                            new TranslatableText("gui.villager_editor.relation." + who)));
+                    field.setMaxLength(32);
+                    field.setText(villagerData.getString("tree_" + who + "_name"));
+                    field.setChangedListener(name -> villagerData.putString("tree_" + who + "_new", name));
+                    y += 20;
+                }
                 break;
             case "body":
                 //genes
                 y = doubleGeneSliders(y, Genetics.SIZE, Genetics.WIDTH, Genetics.BREAST, Genetics.SKIN);
 
                 //clothes name
-                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villager.getClothes());
                 field.setChangedListener(villager::setClothes);
-                y += 22;
+                y += 20;
 
                 //clothes
                 addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevClothing"), b -> {
@@ -200,21 +213,21 @@ public class VillagerEditorScreen extends Screen {
                 y = doubleGeneSliders(y, Genetics.FACE);
 
                 //hair name
-                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villager.getHair().texture());
                 field.setChangedListener(name -> {
                     villager.setHair(new Hair(name, villager.getHair().overlay()));
                 });
-                y += 22;
+                y += 20;
 
-                TextFieldWidget field2 = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 20, new TranslatableText("structure_block.structure_name")));
+                TextFieldWidget field2 = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field2.setMaxLength(32);
                 field2.setText(villager.getHair().overlay());
                 field2.setChangedListener(name -> {
                     villager.setHair(new Hair(villager.getHair().texture(), name));
                 });
-                y += 22;
+                y += 20;
 
                 //hair
                 addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevHair"), b -> {
@@ -375,6 +388,7 @@ public class VillagerEditorScreen extends Screen {
 
     public void setVillagerData(NbtCompound villagerData) {
         if (villager != null) {
+            this.villagerData = villagerData;
             villager.readCustomDataFromNbt(villagerData);
             villagerBreedingAge = villagerData.getInt("Age");
             villager.setBreedingAge(villagerBreedingAge);
@@ -394,7 +408,7 @@ public class VillagerEditorScreen extends Screen {
 
     private void syncVillagerData() {
         assert villager != null;
-        NbtCompound nbt = new NbtCompound();
+        NbtCompound nbt = villagerData;
         ((MobEntity)villager).writeCustomDataToNbt(nbt);
         nbt.putInt("Age", villagerBreedingAge);
         NetworkHandler.sendToServer(new VillagerEditorSyncRequest("sync", villagerUUID, nbt));

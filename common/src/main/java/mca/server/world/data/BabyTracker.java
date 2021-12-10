@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 
@@ -35,7 +36,8 @@ public class BabyTracker extends PersistentState {
 
     private final Map<Key, Pairing> pairings = new HashMap<>();
 
-    BabyTracker(ServerWorld world) {}
+    BabyTracker(ServerWorld world) {
+    }
 
     BabyTracker(ServerWorld world, NbtCompound nbt) {
         nbt.getList("pairings", NbtElement.COMPOUND_TYPE).forEach(element -> {
@@ -183,6 +185,14 @@ public class BabyTracker extends PersistentState {
             tag.put("children", NbtHelper.fromList(children, child -> child.writeToNbt(new NbtCompound())));
             return tag;
         }
+
+        public void reconstructBaby(ServerPlayerEntity player) {
+            getChildren().forEach(c -> {
+                ItemStack stack = new ItemStack(c.getGender() == Gender.MALE ? ItemsMCA.BABY_BOY : ItemsMCA.BABY_GIRL);
+                c.writeToNbt(stack.getOrCreateSubNbt("childData"));
+                player.getInventory().insertStack(stack);
+            });
+        }
     }
 
     public static class ChildSaveState {
@@ -233,6 +243,10 @@ public class BabyTracker extends PersistentState {
 
         public long getSeed() {
             return seed;
+        }
+
+        public Gender getGender() {
+            return gender;
         }
 
         public NbtCompound writeToNbt(NbtCompound tag) {
@@ -294,7 +308,7 @@ public class BabyTracker extends PersistentState {
         }
 
         public ChildSaveState setSeed(long seed) {
-            this.seed= seed;
+            this.seed = seed;
             markDirty();
             return this;
         }

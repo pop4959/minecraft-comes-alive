@@ -9,7 +9,6 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerFactory;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Memories;
-import mca.entity.ai.ProfessionsMCA;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
@@ -34,7 +33,11 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.StringHelper;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,9 +45,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -79,18 +84,37 @@ public class BabyItem extends Item {
         if (!hasBeenInvalidated(stack)) {
             player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-
         if (world.isClient || !(entity instanceof PlayerEntity)) {
             return;
         }
 
+        // remove duplicates
+        if (entity instanceof ServerPlayerEntity) {
+            if (world.getTime() % 20 == 0) {
+                Set<UUID> found = new HashSet<>();
+                ServerPlayerEntity player = (ServerPlayerEntity)entity;
+                for (int i = player.getInventory().size() - 1; i >= 0; i--) {
+                    ItemStack s = player.getInventory().getStack(i);
+                    final int sl = i;
+                    BabyTracker.getStateId(s).ifPresent(id -> {
+                        if (found.contains(id)) {
+                            player.getInventory().removeStack(sl);
+                        } else {
+                            found.add(id);
+                        }
+                    });
+                }
+            }
+        }
+
+        // update
         if (BabyTracker.hasState(stack)) {
             Optional<MutableChildSaveState> state = BabyTracker.getState(stack, (ServerWorld)world);
             if (state.isPresent()) {
@@ -124,7 +148,7 @@ public class BabyItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        return getClientCheckedState(stack).flatMap(state -> state.getName()).map(s -> {
+        return getClientCheckedState(stack).flatMap(ChildSaveState::getName).map(s -> {
             return (Text)new TranslatableText(getTranslationKey(stack) + ".named", s);
         }).orElseGet(() -> super.getName(stack));
     }
@@ -184,7 +208,6 @@ public class BabyItem extends Item {
                 .withName(state.getName().orElse("Unnamed"))
                 .withPosition(player.getPos())
                 .withGender(gender)
-                .withProfession(ProfessionsMCA.CHILD)
                 .withAge(-AgeState.getMaxAge())
                 .build();
 
@@ -279,6 +302,7 @@ public class BabyItem extends Item {
         return BabyTracker.getState(stack).map(state -> {
             Optional<ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(state.getId());
 
+            //noinspection OptionalAssignedToNull
             if (loaded == null) {
                 return state;
             }
