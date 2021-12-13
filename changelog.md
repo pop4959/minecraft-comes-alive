@@ -130,3 +130,6 @@
 * Spouse and parents can now be modified in the villager editor
 * Fixed guard spam
 * Rank Mayor can now make villagers guards or archers manually
+* If the Grim Reaper summoning fails, feedback on why is given
+* Villager are now silent by default, configurable
+* Villages can now be renamed

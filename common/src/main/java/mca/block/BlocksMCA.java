@@ -15,6 +15,7 @@ public interface BlocksMCA {
     Block ROSE_GOLD_ORE = register("rose_gold_ore", new OreBlock(Block.Settings.copy(Blocks.GOLD_ORE)));
 
     Block JEWELER_WORKBENCH = register("jeweler_workbench", new JewelerWorkbench(Block.Settings.copy(Blocks.OAK_WOOD).nonOpaque()));
+    Block INFERNAL_FLAME = register("infernal_flame", new InfernalFlameBlock(Block.Settings.copy(Blocks.SOUL_FIRE)));
 
     Block GRAVELLING_HEADSTONE = register("gravelling_headstone", new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 100, 50, new Vec3d(0, -25, 40), -90.0f,true, TombstoneBlock.GRAVELLING_SHAPE));
     Block UPRIGHT_HEADSTONE = register("upright_headstone", new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 90, 50, new Vec3d(0, -55, 23),0.0f, true, TombstoneBlock.UPRIGHT_SHAPE));

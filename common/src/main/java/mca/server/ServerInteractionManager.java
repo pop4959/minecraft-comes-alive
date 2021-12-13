@@ -9,7 +9,6 @@ import mca.entity.ai.relationship.MarriageState;
 import mca.network.client.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
-import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -54,7 +53,6 @@ public class ServerInteractionManager {
         PlayerSaveData playerData = PlayerSaveData.get((ServerWorld)player.world, player.getUuid());
         if (!playerData.isEntityDataSet()) {
             NetworkHandler.sendToPlayer(new ShowToastRequest(
-                    SystemToast.Type.TUTORIAL_HINT,
                     "server.playerNotCustomized.title",
                     "server.playerNotCustomized.description"
             ), player);

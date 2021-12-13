@@ -119,6 +119,7 @@
   "block.mca.rose_gold_block": "Rose Gold Block",
   "block.mca.rose_gold_ore": "Rose Gold Ore",
   "block.mca.jeweler_workbench": "Jeweler Workbench",
+  "block.mca.infernal_flame": "Infernal Flame",
   "block.mca.upright_headstone": "Upright Headstone",
   "block.mca.slanted_headstone": "Slanted Headstone",
   "block.mca.cross_headstone": "Cross Headstone",
@@ -287,6 +288,9 @@
   "gui.blueprint.addRoom": "Add Room",
   "gui.blueprint.advanced": "Advanced",
   "gui.blueprint.restrictAccess": "Restrict Access",
+  "gui.blueprint.renameVillage": "Rename Village",
+  "gui.blueprint.rename": "rename",
+  "gui.blueprint.cancel": "cancel",
 
   "blueprint.noBuilding": "You need to stand within a building",
 
@@ -425,11 +429,16 @@
   "gui.villager_editor.age": "Age",
   "gui.villager_editor.page": "Page %1$s",
   "gui.villager_editor.uuid_unknown": "UUID '%1$s' is unknown.",
-  "gui.villager_editor.name_unknown": "Name '%1$s' is unknown.",
+  "gui.villager_editor.uuid_known": "UUID '%1$s' (%2$s) has been assigned.",
+  "gui.villager_editor.name_created": "Name '%1$s' is unknown, an entry has been created.",
+  "gui.villager_editor.name_unique": "Name '%1$s' is unique and has been assigned.",
   "gui.villager_editor.name_not_unique": "Name '%1$s' is not unique, consider using the UUID instead.",
   "gui.villager_editor.relation.father": "Father",
   "gui.villager_editor.relation.mother": "Mother",
   "gui.villager_editor.relation.spouse": "Spouse",
+
+  "reaper.day": "The reaper fears the sunlight.",
+  "reaper.totems": "Three obsidian pillars, lit with fire, are required.",
 
   "marriage.married": "Married",
   "marriage.divorced": "Divorced",
