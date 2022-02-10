@@ -23,10 +23,6 @@ public class API {
         return instance.villageComponents;
     }
 
-    public static String getRandomSupporter() {
-        return instance.pickSupporter();
-    }
-
     public static String getRandomWord(String from) {
         return instance.pickWord(from);
     }
@@ -60,25 +56,17 @@ public class API {
     static class Data {
         final VillageComponents villageComponents = new VillageComponents(rng);
 
-        private final List<String> supporters = new ArrayList<>();
-
         private final Map<String, List<String>> words = new HashMap<>();
 
         void init(ResourceManager manager) {
             try {
                 villageComponents.load();
 
-                supporters.addAll(Arrays.asList(Resources.read("api/names/supporters.json", String[].class)));
-
                 words.put("zombie", Arrays.asList(Resources.read("api/names/zombie_words.json", String[].class)));
                 words.put("baby", Arrays.asList(Resources.read("api/names/baby_words.json", String[].class)));
             } catch (BrokenResourceException e) {
                 MCA.LOGGER.error("Could not load MCA resources", e);
             }
-        }
-
-        public String pickSupporter() {
-            return PoolUtil.pickOne(supporters, "nobody", rng);
         }
 
         public String pickWord(String from) {

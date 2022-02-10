@@ -1,6 +1,7 @@
 package mca.server.world.data;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,8 +15,10 @@ import java.util.stream.Stream;
 import mca.Config;
 import mca.entity.EquipmentSet;
 import mca.entity.VillagerEntityMCA;
+import mca.entity.ai.Memories;
 import mca.entity.ai.ProfessionsMCA;
 import mca.entity.ai.relationship.Gender;
+import mca.entity.ai.relationship.family.FamilyTree;
 import mca.resources.API;
 import mca.resources.PoolUtil;
 import mca.resources.Rank;
@@ -65,7 +68,7 @@ public class Village implements Iterable<Building> {
     private int id;
 
     private int taxes = 0;
-    private int populationThreshold = 50;
+    private int populationThreshold = 75;
     private int marriageThreshold = 50;
 
     private boolean autoScan = true;
@@ -255,9 +258,9 @@ public class Village implements Iterable<Building> {
             Text msg;
             float r = MathHelper.lerp(0.5f, getTaxes() / 100.0f, world.random.nextFloat());
             if (getTaxes() == 0.0f) {
-                r = 0.0f;
-            }
-            if (r < 0.1) {
+                msg = new TranslatableText("gui.village.taxes.no", getName()).formatted(Formatting.GREEN);
+                moodImpact = 5;
+            } else if (r < 0.1) {
                 msg = new TranslatableText("gui.village.taxes.more", getName()).formatted(Formatting.GREEN);
                 taxes += getPopulation() * 0.25;
             } else if (r < 0.3) {
@@ -390,7 +393,7 @@ public class Village implements Iterable<Building> {
             if (villager.isGuard()) {
                 guards++;
             } else {
-                if (!villager.isBaby() && !villager.isProfessionImportant()) {
+                if (!villager.isBaby() && !villager.isProfessionImportant() && villager.getExperience() == 0 && villager.getVillagerData().getLevel() <= 1) {
                     nonGuards.add(villager);
                 }
                 citizen++;
@@ -416,13 +419,14 @@ public class Village implements Iterable<Building> {
 
         int population = getPopulation();
         int maxPopulation = getMaxPopulation();
-        if (population >= maxPopulation * Config.getInstance().childrenLimit / 100F) {
+        if (population >= maxPopulation * getPopulationThreshold() / 100F) {
             return;
         }
 
         // look for married women without baby
         PoolUtil.pick(getResidents(world), world.random)
                 .filter(villager -> villager.getGenetics().getGender() == Gender.FEMALE)
+                .filter(villager -> world.random.nextFloat () < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
                 .ifPresent(villager -> {
                     villager.getRelationships().getSpouse().ifPresent(spouse -> villager.sendEventMessage(new TranslatableText("events.baby", villager.getName(), spouse.getName())));
@@ -441,25 +445,27 @@ public class Village implements Iterable<Building> {
                 .filter(v -> !v.getRelationships().isMarried() && !v.isBaby())
                 .collect(Collectors.toList());
 
-        if (availableVillagers.size() < allVillagers.size() * Config.getInstance().marriageLimit / 100f) {
+        if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * getMarriageThreshold() / 100f) {
             return; // The village is too small.
         }
 
-        // pick a random villager
-        PoolUtil.pop(availableVillagers, world.random).ifPresent(suitor -> {
-            // Find a potential mate
-            PoolUtil.pop(availableVillagers.stream()
-                    .filter(i -> suitor.getGenetics().getGender().isMutuallyAttracted(i.getGenetics().getGender()))
-                    .filter(i -> !suitor.getRelationships().getFamilyEntry().isRelative(i.getUuid()))
-                    .collect(Collectors.toList()), world.random).ifPresent(mate -> {
-                // smash their bodies together like nobody's business!
-                suitor.getRelationships().marry(mate);
-                mate.getRelationships().marry(suitor);
+        //use the one with the least max hearts
+        //this feels random yet respects relationships
+        availableVillagers.sort(Comparator.comparingInt(a -> a.getVillagerBrain().getMemories().values().stream().map(Memories::getHearts).max(Integer::compare).orElse(0)));
 
-                // tell everyone about it
-                suitor.sendEventMessage(new TranslatableText("events.marry", suitor.getName(), mate.getName()));
-            });
-        });
+        VillagerEntityMCA suitor = availableVillagers.remove(0);
+
+        // Find a potential mate
+        availableVillagers.stream()
+                .filter(i -> suitor.getGenetics().getGender().isMutuallyAttracted(i.getGenetics().getGender()))
+                .filter(i -> !suitor.getRelationships().getFamilyEntry().isRelative(i.getUuid()))
+                .findFirst().ifPresent(mate -> {
+                    suitor.getRelationships().marry(mate);
+                    mate.getRelationships().marry(suitor);
+
+                    // tell everyone about it
+                    suitor.sendEventMessage(new TranslatableText("events.marry", suitor.getName(), mate.getName()));
+                });
     }
 
     public void markDirty(ServerWorld world) {
@@ -474,7 +480,11 @@ public class Village implements Iterable<Building> {
     }
 
     public void removeResident(VillagerEntityMCA villager) {
-        buildings.values().forEach(b -> b.getResidents().remove(villager.getUuid()));
+        removeResident(villager.getUuid());
+    }
+
+    public void removeResident(UUID uuid) {
+        buildings.values().forEach(b -> b.getResidents().remove(uuid));
     }
 
     public EquipmentSet getGuardEquipment(VillagerProfession profession) {

@@ -31,7 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class BabyTracker extends PersistentState {
     public static BabyTracker get(ServerWorld world) {
-        return WorldUtils.loadData(world, nbt -> new BabyTracker(world, nbt), BabyTracker::new, "mca_baby_tracker");
+        return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new BabyTracker(world, nbt), BabyTracker::new, "mca_baby_tracker");
     }
 
     private final Map<Key, Pairing> pairings = new HashMap<>();
@@ -53,8 +53,10 @@ public class BabyTracker extends PersistentState {
     }
 
     public boolean hasActiveBaby(UUID mother, UUID father) {
-        Key key = new Key(mother, father);
-        return pairings.containsKey(key) && getPairing(key).getChildCount() > 0;
+        //todo temporary disabled
+        return false;
+        //Key key = new Key(mother, father);
+        //return pairings.containsKey(key) && getPairing(key).getChildCount() > 0;
     }
 
     public Pairing getPairing(UUID mother, UUID father) {

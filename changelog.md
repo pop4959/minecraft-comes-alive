@@ -142,3 +142,35 @@
 * Added Family Tree item to search
 * Fixed crash
 * Fixed reaper summoning on some server
+
+# 7.0.7
+
+* Experienced villagers no longer become guards
+* The king can assign archers and guards at will
+* Fixed king rank
+* Can no longer pickup teens
+* Fixed curing zombie villagers
+* Added missing translations
+* Added book of supporter
+* Fixed gift desaturation not working
+* Improved teleportation, especially when following the player
+* Fixed the pixel gap of headstones
+* Fixed sleeping villagers not waking up when moved around
+* Added letter of condolence
+* Fixed dimension issues with player and villager data
+* Added mail system, used to notify the player about the death of family members
+* Glass roofs are now supported
+* Added more jobless skins
+* Updated translations and fixed wrong variable syntax
+* Added some admin commands
+* Temporary disabled baby tracker
+* You can now trade with family
+* Fixed inventory duplication bug
+* Fixed deadlock in relation with reaper spawner
+* Villager marriages now respect player hearts
+* Fixed gifting golden apple not reducing by 1
+* Fixed crash when hovering over unmarried villagers marriage-symbol
+* Villagers will also update baby time
+* Fixed datapack crash on some system locales
+* Hopefully fixed stuck-at-sleeping issues after loading world
+* Adding a building will also look for graveyards to decrease player confusion

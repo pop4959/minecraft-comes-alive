@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.client.OpenGuiRequest;
 import mca.server.ServerInteractionManager;
+import mca.server.world.data.PlayerSaveData;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
@@ -28,6 +29,7 @@ public class Command {
                 .then(register("separate", Command::separate))
                 .then(register("reject").then(CommandManager.argument("target", EntityArgumentType.player()).executes(Command::reject)))
                 .then(register("editor", Command::editor))
+                .then(register("mail", Command::mail))
         );
     }
 
@@ -36,8 +38,18 @@ public class Command {
         return 0;
     }
 
+    private static int mail(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+        PlayerSaveData data = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
+        while (data.hasMail()) {
+            player.getInventory().offerOrDrop(data.getMail());
+        }
+        return 0;
+    }
+
     private static int displayHelp(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         sendMessage(ctx.getSource().getPlayer(), Formatting.DARK_RED + "--- " + Formatting.GOLD + "PLAYER COMMANDS" + Formatting.DARK_RED + " ---");
+        sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca editor" + Formatting.GOLD + " - Choose your genetics and stuff.");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca propose <PlayerName>" + Formatting.GOLD + " - Proposes marriage to the given player.");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca proposals " + Formatting.GOLD + " - Shows all active proposals.");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca accept <PlayerName>" + Formatting.GOLD + " - Accepts the player's marriage request.");

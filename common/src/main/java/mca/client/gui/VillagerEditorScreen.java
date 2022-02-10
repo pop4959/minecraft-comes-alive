@@ -123,7 +123,7 @@ public class VillagerEditorScreen extends Screen {
         int w = DATA_WIDTH * 2 / pages.length;
         int x = (int)(width / 2.0 - pages.length / 2.0 * w);
         for (String p : pages) {
-            addDrawableChild(new ButtonWidget(x, height / 2 - 105, w, 20, new TranslatableText(p), sender -> setPage(p))).active = !p.equals(page);
+            addDrawableChild(new ButtonWidget(x, height / 2 - 105, w, 20, new TranslatableText("gui.villager_editor.page." + p), sender -> setPage(p))).active = !p.equals(page);
             x += w;
         }
 
@@ -143,7 +143,7 @@ public class VillagerEditorScreen extends Screen {
                 //name
                 field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
-                field.setText(villager.getDefaultName().asString());
+                field.setText(villager.getName().asString());
                 field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
                 y += 20;
 

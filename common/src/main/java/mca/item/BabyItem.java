@@ -91,7 +91,7 @@ public class BabyItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        if (world.isClient || !(entity instanceof PlayerEntity)) {
+        if (world.isClient) {
             return;
         }
 
@@ -250,7 +250,7 @@ public class BabyItem extends Item {
                     CriterionMCA.FAMILY.trigger((ServerPlayerEntity)ply);
 
                     // set proper dialogue type
-                    Memories memories = child.getVillagerBrain().getMemoriesForPlayer(player);
+                    Memories memories = child.getVillagerBrain().getMemoriesForPlayer((PlayerEntity) ply);
                     memories.setHearts(Config.getInstance().childInitialHearts);
                 });
 
