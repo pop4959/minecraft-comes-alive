@@ -3,7 +3,6 @@ package mca.network.client;
 import java.util.Optional;
 
 import mca.client.gui.*;
-import mca.client.gui.BlueprintScreen;
 import mca.entity.VillagerLike;
 import mca.item.BabyItem;
 import mca.item.ExtendedWrittenBookItem;
@@ -54,6 +53,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                         client.setScreen(new NameBabyScreen(client.player, item));
                     }
                 }
+                break;
+            case FAMILY_TREE:
+                client.setScreen(new FamilyTreeSearchScreen());
                 break;
             default:
         }
@@ -150,5 +152,14 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleToastMessage(ShowToastRequest message) {
         SystemToast.add(client.getToastManager(), SystemToast.Type.TUTORIAL_HINT, message.getTitle(), message.getMessage());
+    }
+
+    @Override
+    public void handleFamilyTreeUUIDResponse(FamilyTreeUUIDResponse response) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof FamilyTreeSearchScreen) {
+            FamilyTreeSearchScreen gui = (FamilyTreeSearchScreen)screen;
+            gui.setList(response.getList());
+        }
     }
 }

@@ -33,7 +33,6 @@ import mca.entity.ai.relationship.Personality;
 import mca.entity.ai.relationship.VillagerDimensions;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
-import mca.resources.ClothingList;
 import mca.server.world.data.Village;
 import mca.util.InventoryUtils;
 import mca.util.network.datasync.CDataManager;
@@ -255,11 +254,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void setVillagerData(VillagerData data) {
-        if (!world.isClient && getProfession() != data.getProfession() && data.getProfession() != ProfessionsMCA.OUTLAW) {
+        boolean hasChanged = !world.isClient && getProfession() != data.getProfession() && data.getProfession() != ProfessionsMCA.OUTLAW;
+        super.setVillagerData(data);
+        if (hasChanged) {
             randomizeClothes();
             getRelationships().getFamilyEntry().setProfession(data.getProfession());
         }
-        super.setVillagerData(data);
     }
 
     @Override
