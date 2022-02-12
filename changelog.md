@@ -174,3 +174,14 @@
 * Fixed datapack crash on some system locales
 * Hopefully fixed stuck-at-sleeping issues after loading world
 * Adding a building will also look for graveyards to decrease player confusion
+
+# 7.0.8
+
+* Readded blacksmith functionality
+* Fixed scaling-flickering with iguana tweaks
+* Added text when trying to assign to invalid buildings
+* Improved interaction layout
+* Staff of Life can no longer be enchanted
+* Fixed chores phrase names
+* Command kill no longer counts as murder
+* Added config flag to disable name tags

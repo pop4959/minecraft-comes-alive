@@ -242,7 +242,7 @@
   "buildingType.bigHouse": "Big House",
   "buildingType.bigHouse.description": "Families love to live in the same house, but that requires a few extra beds.",
   "buildingType.blacksmith": "Blacksmith",
-  "buildingType.blacksmith.description": "Currently removed",
+  "buildingType.blacksmith.description": "A place to produce highest quality equipment for the guards and archers.",
   "buildingType.storage": "Storage",
   "buildingType.storage.description": "A place to store taxes.",
   "buildingType.graveyard": "Graveyard",
@@ -259,7 +259,7 @@
   "buildingType.armory": "Armory",
   "buildingType.armory.description": "Upgrades the guards default armor.",
   "buildingType.infirmary": "Infirmary",
-  "buildingType.infirmary.description": "Reduces the chance of infection by 50%!",
+  "buildingType.infirmary.description": "Reduces the chance of infection by 50%! Sick villagers tend to gather here.",
 
   "task.reputation": "Reach %1$s average hearts",
   "task.population": "Reach a population of %1$s",

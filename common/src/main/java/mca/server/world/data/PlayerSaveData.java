@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
+import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
@@ -176,11 +177,15 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     protected void onLeave(PlayerEntity self, Village village) {
-        self.sendMessage(new TranslatableText("gui.village.left", village.getName()).formatted(Formatting.GOLD), true);
+        if (Config.getInstance().enterVillageNotification) {
+            self.sendMessage(new TranslatableText("gui.village.left", village.getName()).formatted(Formatting.GOLD), true);
+        }
     }
 
     protected void onEnter(PlayerEntity self, Village village) {
-        self.sendMessage(new TranslatableText("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
+        if (Config.getInstance().enterVillageNotification) {
+            self.sendMessage(new TranslatableText("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
+        }
         village.deliverTaxes(world);
     }
 

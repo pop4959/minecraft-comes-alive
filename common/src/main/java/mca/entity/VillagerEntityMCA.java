@@ -3,7 +3,6 @@ package mca.entity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
 import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -277,16 +276,20 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void setBreedingAge(int age) {
         super.setBreedingAge(age);
-        setTrackedValue(GROWTH_AMOUNT, age);
-        setAgeState(AgeState.byCurrentAge(age));
 
-        AgeState current = getAgeState();
+        // high quality iguana tweaks reborn LivestockSlowdownFeature fix
+        if (age != -2) {
+            setTrackedValue(GROWTH_AMOUNT, age);
+            setAgeState(AgeState.byCurrentAge(age));
 
-        AgeState next = current.getNext();
-        if (current != next) {
-            dimensions.interpolate(current, getAgeState(), AgeState.getDelta(age));
-        } else {
-            dimensions.set(current);
+            AgeState current = getAgeState();
+
+            AgeState next = current.getNext();
+            if (current != next) {
+                dimensions.interpolate(current, getAgeState(), AgeState.getDelta(age));
+            } else {
+                dimensions.set(current);
+            }
         }
     }
 
@@ -298,13 +301,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public boolean tryAttack(Entity target) {
+        //player just get a beating
+        attackedEntity(target);
+
         //villager is peaceful and won't hurt as long as not necessary
         if (mcaBrain.getPersonality() == Personality.PEACEFUL && getHealth() == getMaxHealth()) {
             return false;
         }
-
-        //player just get a beating
-        attackedEntity(target);
 
         //we don't use attributes
         // why not?
@@ -360,10 +363,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
-
         ItemStack stack = player.getStackInHand(hand);
-
-        if (!stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
+        if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
             playWelcomeSound();
 
             //make sure dialogueType is synced in case the client needs it
