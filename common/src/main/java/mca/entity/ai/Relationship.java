@@ -96,7 +96,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
     @Override
     public Stream<Entity> getParents() {
-        return getFamilyEntry().parents().map(((ServerWorld)entity.world)::getEntity).filter(Objects::nonNull);
+        return getFamilyEntry().streamParents().map(((ServerWorld)entity.world)::getEntity).filter(Objects::nonNull);
     }
 
     @Override
@@ -132,25 +132,27 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
         if (!entity.isHostile()) {
             WorldUtils
                     .getCloseEntities(entity.world, entity, 32, VillagerEntityMCA.class)
-                    .forEach(villager -> villager.getRelationships().onTragedy(cause, burialSite, RelationshipType.STRANGER));
+                    .forEach(villager -> villager.getRelationships().onTragedy(cause, burialSite, RelationshipType.STRANGER, entity));
         }
 
-        onTragedy(cause, burialSite, RelationshipType.SELF);
+        onTragedy(cause, burialSite, RelationshipType.SELF, entity);
     }
 
     @Override
-    public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type) {
-        int moodAffect = 10;
+    public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity with) {
+        if (!cause.isOutOfWorld()) {
+            int moodAffect = 10;
 
-        moodAffect /= type.getInverseProximity();
-        moodAffect *= type.getProximityAmplifier();
+            moodAffect /= type.getInverseProximity();
+            moodAffect *= type.getProximityAmplifier();
 
-        entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
-        entity.getVillagerBrain().modifyMoodValue(-moodAffect);
+            entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
+            entity.getVillagerBrain().modifyMoodValue(-moodAffect);
 
-        // seen murder
-        if (cause.getAttacker() instanceof PlayerEntity) {
-            entity.getVillagerBrain().getMemoriesForPlayer((PlayerEntity)cause.getAttacker()).modHearts(-20);
+            // seen murder
+            if (cause.getAttacker() instanceof PlayerEntity) {
+                entity.getVillagerBrain().getMemoriesForPlayer((PlayerEntity)cause.getAttacker()).modHearts(-20);
+            }
         }
 
         if (burialSite != null && type != RelationshipType.STRANGER) {
@@ -159,7 +161,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
             entity.getBrain().remember(MemoryModuleType.LOOK_TARGET, new BlockPosLookTarget(burialSite));
         }
 
-        EntityRelationship.super.onTragedy(cause, burialSite, type);
+        EntityRelationship.super.onTragedy(cause, burialSite, type, with);
     }
 
     @Override
@@ -190,8 +192,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
     @Override
     public void endMarriage(MarriageState newState) {
-        getFamilyEntry().setMarriageState(newState);
-        getFamilyEntry().updateMarriage(null, null);
+        getFamilyEntry().updateMarriage(null, newState);
     }
 
     public GiftSaturation getGiftSaturation() {

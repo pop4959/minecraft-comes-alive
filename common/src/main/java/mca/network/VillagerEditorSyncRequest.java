@@ -101,7 +101,7 @@ public class VillagerEditorSyncRequest extends S2CNbtDataMessage {
         return Gender.byId(villagerData.getInt("gender"));
     }
 
-    private Optional<FamilyTreeNode> getUuid(PlayerEntity e, FamilyTree tree, String name, Gender gender) {
+    private Optional<FamilyTreeNode> getFamilyNode(PlayerEntity e, FamilyTree tree, String name, Gender gender) {
         try {
             UUID uuid = UUID.fromString(name);
             Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
@@ -121,6 +121,9 @@ public class VillagerEditorSyncRequest extends S2CNbtDataMessage {
             } else {
                 if (nodes.size() > 1) {
                     e.sendMessage(new TranslatableText("gui.villager_editor.name_not_unique", name).formatted(Formatting.RED), true);
+
+                    String uuids = nodes.stream().map(FamilyTreeNode::id).map(UUID::toString).collect(Collectors.joining(", "));
+                    e.sendMessage(new TranslatableText("gui.villager_editor.list_of_ids", uuids), false);
                 } else {
                     e.sendMessage(new TranslatableText("gui.villager_editor.name_unique", name), true);
                 }
@@ -141,7 +144,7 @@ public class VillagerEditorSyncRequest extends S2CNbtDataMessage {
             if (name.isEmpty()) {
                 entry.removeFather();
             } else {
-                getUuid(e, tree, name, Gender.MALE).ifPresent(entry::setFather);
+                getFamilyNode(e, tree, name, Gender.MALE).ifPresent(entry::setFather);
             }
         }
 
@@ -150,16 +153,20 @@ public class VillagerEditorSyncRequest extends S2CNbtDataMessage {
             if (name.isEmpty()) {
                 entry.removeMother();
             } else {
-                getUuid(e, tree, name, Gender.FEMALE).ifPresent(entry::setMother);
+                getFamilyNode(e, tree, name, Gender.FEMALE).ifPresent(entry::setMother);
             }
         }
 
         if (villagerData.contains("tree_spouse_new")) {
             String name = villagerData.getString("tree_spouse_new");
             if (name.isEmpty()) {
+                Optional.of(entry.spouse()).flatMap(tree::getOrEmpty).ifPresent(node -> node.updateMarriage(null, null));
                 entry.updateMarriage(null, null);
             } else {
-                getUuid(e, tree, name, entry.gender().opposite()).ifPresent(entry::updateMarriage);
+                getFamilyNode(e, tree, name, entry.gender().opposite()).ifPresent(node -> {
+                    entry.updateMarriage(node);
+                    node.updateMarriage(entry);
+                });
             }
         }
     }

@@ -2,6 +2,7 @@ package mca.client.gui;
 
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
+import mca.entity.ai.MoveState;
 import mca.entity.ai.ProfessionsMCA;
 import mca.resources.Rank;
 import mca.entity.ai.Relationship;
@@ -30,6 +31,9 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     BABY("baby", (villager, player) -> villager.getAgeState() == AgeState.BABY),
     NOT_BABY("!baby", (villager, player) -> villager.getAgeState() != AgeState.BABY),
 
+    TEEN("teen", (villager, player) -> villager.getAgeState() == AgeState.TEEN),
+    NOT_TEEN("!teen", (villager, player) -> villager.getAgeState() != AgeState.TEEN),
+
     ADULT("adult", (villager, player) -> villager.getAgeState() == AgeState.ADULT),
     NOT_ADULT("!adult", (villager, player) -> villager.getAgeState() != AgeState.ADULT),
 
@@ -57,8 +61,17 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     MAYOR("mayor", (villager, player) -> isRankAtLeast(villager, player, Rank.MAYOR)),
     NOT_MAYOR("!mayor", (villager, player) -> !isRankAtLeast(villager, player, Rank.MAYOR)),
 
+    KING("king", (villager, player) -> isRankAtLeast(villager, player, Rank.KING)),
+    NOT_KING("!king", (villager, player) -> !isRankAtLeast(villager, player, Rank.KING)),
+
     ORPHAN("orphan", Relationship.IS_ORPHAN.asConstraint()),
-    NOT_ORPHAN("!orphan", Relationship.IS_ORPHAN.negate().asConstraint());
+    NOT_ORPHAN("!orphan", Relationship.IS_ORPHAN.negate().asConstraint()),
+
+    FOLLOWING("following", (villager, player) -> villager.getVillagerBrain().getMoveState() == MoveState.FOLLOW),
+    NOT_FOLLOWING("!following", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.FOLLOW),
+
+    STAYING("staying", (villager, player) -> villager.getVillagerBrain().getMoveState() == MoveState.STAY),
+    NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY);
 
     private static boolean isRankAtLeast(VillagerLike<?> villager, Entity player, Rank rank) {
         return player instanceof PlayerEntity && villager instanceof VillagerEntityMCA && ((VillagerEntityMCA)villager).getResidency().getHomeVillage()

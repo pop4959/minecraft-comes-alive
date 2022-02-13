@@ -11,7 +11,11 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
@@ -24,13 +28,16 @@ public class ExtendedBookScreen extends Screen {
     public ExtendedBookScreen(Book book) {
         super(NarratorManager.EMPTY);
         this.book = book;
+        book.open();
+        book.setPage(0, false);
     }
 
     public boolean setPage(int index) {
-        int i = MathHelper.clamp(index, 0, book.getPageCount() - 1);
-        if (i != pageIndex) {
-            pageIndex = i;
-            updatePageButtons();
+        int i = MathHelper.clamp(index, 0, this.book.getPageCount() - 1);
+        if (i != this.pageIndex) {
+            book.setPage(i, false);
+            this.pageIndex = i;
+            this.updatePageButtons();
             return true;
         } else {
             return false;
@@ -59,17 +66,23 @@ public class ExtendedBookScreen extends Screen {
     }
 
     protected void goToPreviousPage() {
-        if (pageIndex > 0) {
-            --pageIndex;
+        if (book.getPage(this.pageIndex).previousPage()) {
+            if (this.pageIndex > 0) {
+                --this.pageIndex;
+                book.setPage(this.pageIndex, true);
+            }
+            this.updatePageButtons();
         }
-        this.updatePageButtons();
     }
 
     protected void goToNextPage() {
-        if (pageIndex < book.getPageCount() - 1) {
-            ++pageIndex;
+        if (book.getPage(this.pageIndex).nextPage()) {
+            if (this.pageIndex < book.getPageCount() - 1) {
+                ++this.pageIndex;
+                book.setPage(this.pageIndex, false);
+            }
+            this.updatePageButtons();
         }
-        this.updatePageButtons();
     }
 
     private void updatePageButtons() {
@@ -114,9 +127,11 @@ public class ExtendedBookScreen extends Screen {
         drawTexture(matrices, i, 2, 0, 0, 192, 192);
 
         // page number
-        Text pageIndexText = new TranslatableText("book.pageIndicator", pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
-        int k = textRenderer.getWidth(pageIndexText);
-        textRenderer.draw(matrices, pageIndexText, i - k + 192 - 44, 18.0f, 0);
+        if (book.getPageCount() > 1) {
+            Text pageIndexText = new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
+            int k = textRenderer.getWidth(pageIndexText);
+            textRenderer.draw(matrices, pageIndexText, i - k + 192 - 44, 18.0f, 0);
+        }
 
         Page page = book.getPage(pageIndex);
         if (page != null) {
@@ -124,6 +139,11 @@ public class ExtendedBookScreen extends Screen {
         }
 
         super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override

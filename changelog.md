@@ -133,3 +133,59 @@
 * If the Grim Reaper summoning fails, feedback on why is given
 * Villager are now silent by default, configurable
 * Villages can now be renamed
+* Unlocked King rank
+
+# 7.0.6
+
+* Fixed guards aggression towards mobs
+* Fixed profession change not always switching clothes
+* Added Family Tree item to search
+* Fixed crash
+* Fixed reaper summoning on some server
+
+# 7.0.7
+
+* Experienced villagers no longer become guards
+* The king can assign archers and guards at will
+* Fixed king rank
+* Can no longer pickup teens
+* Fixed curing zombie villagers
+* Added missing translations
+* Added book of supporter
+* Fixed gift desaturation not working
+* Improved teleportation, especially when following the player
+* Fixed the pixel gap of headstones
+* Fixed sleeping villagers not waking up when moved around
+* Added letter of condolence
+* Fixed dimension issues with player and villager data
+* Added mail system, used to notify the player about the death of family members
+* Glass roofs are now supported
+* Added more jobless skins
+* Updated translations and fixed wrong variable syntax
+* Added some admin commands
+* Temporary disabled baby tracker
+* You can now trade with family
+* Fixed inventory duplication bug
+* Fixed deadlock in relation with reaper spawner
+* Villager marriages now respect player hearts
+* Fixed gifting golden apple not reducing by 1
+* Fixed crash when hovering over unmarried villagers marriage-symbol
+* Villagers will also update baby time
+* Fixed datapack crash on some system locales
+* Hopefully fixed stuck-at-sleeping issues after loading world
+* Adding a building will also look for graveyards to decrease player confusion
+
+# 7.0.8
+
+* Readded blacksmith functionality
+* Fixed scaling-flickering with iguana tweaks
+* Added text when trying to assign to invalid buildings
+* Improved interaction layout
+* Staff of Life can no longer be enchanted
+* Fixed chores phrase names
+* Command kill no longer counts as murder
+* Added config flag to disable name tags
+* Fixed log spam regarding invalid bounding boxes
+* Fixed issues when assigning family in editor
+* Buildings now support modded chests
+* Villagers will now use your editor name

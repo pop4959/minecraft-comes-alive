@@ -33,7 +33,6 @@ import mca.entity.ai.relationship.Personality;
 import mca.entity.ai.relationship.VillagerDimensions;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
-import mca.resources.ClothingList;
 import mca.server.world.data.Village;
 import mca.util.InventoryUtils;
 import mca.util.network.datasync.CDataManager;
@@ -98,6 +97,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -132,7 +132,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private final BreedableRelationship relations = new BreedableRelationship(this);
 
     private final VillagerCommandHandler interactions = new VillagerCommandHandler(this);
-    private final SimpleInventory inventory = new SimpleInventory(27);
+    private final UpdatableInventory inventory = new UpdatableInventory(27);
 
     private final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.UNASSIGNED);
 
@@ -255,11 +255,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void setVillagerData(VillagerData data) {
-        if (!world.isClient && getProfession() != data.getProfession() && data.getProfession() != ProfessionsMCA.OUTLAW) {
-            setTrackedValue(CLOTHES, ClothingList.getInstance().byGender(getGenetics().getGender()).byProfession(data.getProfession()).pickOne());
+        boolean hasChanged = !world.isClient && getProfession() != data.getProfession() && data.getProfession() != ProfessionsMCA.OUTLAW;
+        super.setVillagerData(data);
+        if (hasChanged) {
+            randomizeClothes();
             getRelationships().getFamilyEntry().setProfession(data.getProfession());
         }
-        super.setVillagerData(data);
     }
 
     @Override
@@ -275,16 +276,20 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void setBreedingAge(int age) {
         super.setBreedingAge(age);
-        setTrackedValue(GROWTH_AMOUNT, age);
-        setAgeState(AgeState.byCurrentAge(age));
 
-        AgeState current = getAgeState();
+        // high quality iguana tweaks reborn LivestockSlowdownFeature fix
+        if (age != -2) {
+            setTrackedValue(GROWTH_AMOUNT, age);
+            setAgeState(AgeState.byCurrentAge(age));
 
-        AgeState next = current.getNext();
-        if (current != next) {
-            dimensions.interpolate(current, getAgeState(), AgeState.getDelta(age));
-        } else {
-            dimensions.set(current);
+            AgeState current = getAgeState();
+
+            AgeState next = current.getNext();
+            if (current != next) {
+                dimensions.interpolate(current, getAgeState(), AgeState.getDelta(age));
+            } else {
+                dimensions.set(current);
+            }
         }
     }
 
@@ -296,13 +301,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public boolean tryAttack(Entity target) {
+        //player just get a beating
+        attackedEntity(target);
+
         //villager is peaceful and won't hurt as long as not necessary
         if (mcaBrain.getPersonality() == Personality.PEACEFUL && getHealth() == getMaxHealth()) {
             return false;
         }
-
-        //player just get a beating
-        attackedEntity(target);
 
         //we don't use attributes
         // why not?
@@ -358,10 +363,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
-
         ItemStack stack = player.getStackInHand(hand);
-
-        if (!stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
+        if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
             playWelcomeSound();
 
             //make sure dialogueType is synced in case the client needs it
@@ -534,12 +537,14 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             relations.tick(age);
 
+            inventory.update(this);
+
             // Brain and pregnancy depend on the above states, so we tick them last
             // Every 1 second
             mcaBrain.think();
 
             // pop a item from the desaturation queue
-            if (age % Config.getInstance().giftDesaturationReset != 0) {
+            if (age % Config.getInstance().giftDesaturationReset == 0) {
                 getRelationships().getGiftSaturation().pop();
             }
         }
@@ -890,8 +895,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public final Text getDefaultName() {
-        return new LiteralText(getTrackedValue(VILLAGER_NAME));
+    @Nullable
+    public final Text getCustomName() {
+        String value = getTrackedValue(VILLAGER_NAME);
+        return value.isEmpty() ? null : new LiteralText(value);
     }
 
     @Override
@@ -952,6 +959,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 }
 
                 reinitializeBrain((ServerWorld)world);
+
+                // set age specific clothes
+                randomizeClothes();
             }
             return true;
         }
@@ -1053,6 +1063,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         speed *= genetics.getGene(Genetics.SIZE);
 
         setMovementSpeed(speed);
+
+        inventory.clear();
         InventoryUtils.readFromNBT(inventory, nbt);
     }
 

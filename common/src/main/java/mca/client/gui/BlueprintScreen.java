@@ -68,11 +68,6 @@ public class BlueprintScreen extends ExtendedScreen {
         super(new LiteralText("Blueprint"));
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-    }
-
     private void saveVillage() {
         NetworkHandler.sendToServer(new SaveVillageMessage(village));
     }
@@ -135,12 +130,15 @@ public class BlueprintScreen extends ExtendedScreen {
         //page selection
         int bx = width / 2 - 180;
         int by = height / 2 - 56;
-        if (!page.equals("rename") && !page.equals("empty") && !page.equals("waiting")) {
-            for (String p : new String[] {"map", "rank", "catalog", "villagers", "rules", "close"}) {
-                ButtonWidget widget = new ButtonWidget(bx, by, 64, 20, new TranslatableText("gui.blueprint." + p), (b) -> setPage(p));
-                addDrawableChild(widget);
-                if (page.equals(p)) {
-                    widget.active = false;
+        if (!page.equals("rename")) {
+            if (!page.equals("empty") && !page.equals("waiting")) {
+                for (String p : new String[] {"map", "rank", "catalog", "villagers", "rules", "close"}) {
+                    ButtonWidget widget = new ButtonWidget(bx, by, 80, 20, new TranslatableText("gui.blueprint." + p), (b) -> setPage(p));
+                    addDrawableChild(widget);
+                    if (page.equals(p)) {
+                        widget.active = false;
+                    }
+                    by += 22;
                 }
                 by += 22;
             }
@@ -222,7 +220,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 for (BuildingType bt : buildingTypes.values()) {
                     if (bt.visible()) {
                         TexturedButtonWidget widget = new TexturedButtonWidget(
-                                row * size + x - 10, col * size + y - 10, 20, 20, bt.iconU(), bt.iconV() + 20, 20, ICON_TEXTURES, 256, 256, button -> {
+                                row * size + x + 10, col * size + y - 10, 20, 20, bt.iconU(), bt.iconV() + 20, 20, ICON_TEXTURES, 256, 256, button -> {
                             selectBuilding(bt);
                             button.active = false;
                             catalogButtons.forEach(b -> b.active = true);
@@ -414,7 +412,7 @@ public class BlueprintScreen extends ExtendedScreen {
         //get tooltips
         List<List<Text>> tooltips = new LinkedList<>();
         for (Building b : hoverBuildings) {
-            tooltips.add(getBuildingBlueprint(b));
+            tooltips.add(getBuildingTooltip(b));
         }
 
         //get height
@@ -431,7 +429,7 @@ public class BlueprintScreen extends ExtendedScreen {
         }
     }
 
-    private List<Text> getBuildingBlueprint(Building hoverBuilding) {
+    private List<Text> getBuildingTooltip(Building hoverBuilding) {
         List<Text> lines = new LinkedList<>();
 
         //name
@@ -482,14 +480,14 @@ public class BlueprintScreen extends ExtendedScreen {
         //title
         transform.push();
         transform.scale(2.0f, 2.0f, 2.0f);
-        drawCenteredText(transform, textRenderer, "Building Catalog", width / 4, height / 4 - 52, 0xffffffff);
+        drawCenteredText(transform, textRenderer, new TranslatableText("gui.blueprint.catalogFull"), width / 4, height / 4 - 52, 0xffffffff);
         transform.pop();
 
         //explanation
-        drawCenteredText(transform, textRenderer, new TranslatableText("Build special buildings by fulfilling those conditions!").formatted(Formatting.GRAY), width / 2, height / 2 - 82, 0xffffffff);
+        drawCenteredText(transform, textRenderer, new TranslatableText("gui.blueprint.catalogHint").formatted(Formatting.GRAY), width / 2, height / 2 - 82, 0xffffffff);
 
         //building
-        int x = width / 2 + 15;
+        int x = width / 2 + 35;
         int y = height / 2 - 50;
         if (selectedBuilding != null) {
             //name

@@ -84,8 +84,12 @@ public class HarvestingTask extends AbstractChoreTask {
     protected void run(ServerWorld world, VillagerEntityMCA villager, long time) {
         super.run(world, villager, time);
         if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
-            if (swapItem(stack -> stack.getItem() instanceof HoeItem) == ITEM_MISSING) {
-                abandonJobWithMessage("chore.chopping.nohoe");
+            int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof HoeItem);
+            if (i == -1) {
+                abandonJobWithMessage("chore.harvesting.nohoe");
+            } else {
+                ItemStack stack = villager.getInventory().getStack(i);
+                villager.setStackInHand(Hand.MAIN_HAND, stack);
             }
         }
     }
@@ -127,10 +131,12 @@ public class HarvestingTask extends AbstractChoreTask {
             this.villager = villager;
         }
 
-        if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
-            if (swapItem(stack -> stack.getItem() instanceof HoeItem) == ITEM_MISSING) {
-                abandonJobWithMessage("chore.chopping.nohoe");
-            }
+        if (!InventoryUtils.contains(villager.getInventory(), HoeItem.class) && !villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+            abandonJobWithMessage("chore.harvesting.nohoe");
+        } else if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+            int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof HoeItem);
+            ItemStack stack = villager.getInventory().getStack(i);
+            villager.setStackInHand(Hand.MAIN_HAND, stack);
         }
 
         BlockPos fertileFarmLand = searchUnusedFarmLand(16, 3);

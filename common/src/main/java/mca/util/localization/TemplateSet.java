@@ -1,15 +1,17 @@
 package mca.util.localization;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mca.resources.API;
+import mca.resources.Supporters;
 
 class TemplateSet {
-    static final TemplateSet INSTANCE = new TemplateSet().with("supporter", API::getRandomSupporter);
+    static final TemplateSet INSTANCE = new TemplateSet().with("supporter", Supporters::getRandomSupporter);
 
     private final Map<String, Supplier<String>> variables = new HashMap<>();
 
@@ -33,10 +35,10 @@ class TemplateSet {
 
         while (matcher.find()) {
             String found = matcher.group();
-            String replacement = computed.get(found.toLowerCase());
+            String replacement = computed.get(found.toLowerCase(Locale.ENGLISH));
             if (replacement == null) {
                 replacement = variables.get(name).get();
-                computed.put(found.toLowerCase(), replacement);
+                computed.put(found.toLowerCase(Locale.ENGLISH), replacement);
             }
 
             matcher.appendReplacement(buffer, replacement);

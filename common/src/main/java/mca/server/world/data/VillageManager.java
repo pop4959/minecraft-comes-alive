@@ -14,6 +14,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import mca.Config;
+import mca.MCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.resources.API;
 import mca.resources.data.BuildingType;
@@ -80,7 +81,12 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         for (int i = 0; i < v.size(); i++) {
             Village village = new Village();
             village.load(v.getCompound(i));
-            villages.put(village.getId(), village);
+            if (village.getBuildings().isEmpty()) {
+                MCA.LOGGER.warn("Empty village detected (" + village.getName() + "), removing...");
+                markDirty();
+            } else {
+                villages.put(village.getId(), village);
+            }
         }
     }
 
@@ -170,7 +176,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     }
 
     private void startBountyHunterWave(ServerPlayerEntity player, Village sender) {
-        int count = -sender.getReputation(player) / 5 + 3;
+        int count = Math.min(30, -sender.getReputation(player) / 5 + 3);
 
         if (sender.getPopulation() == 0) {
             //the village has been wiped out, lets send one last wave
@@ -241,34 +247,37 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     }
 
     //returns the scan-source blocks of all buildings, used to check for overlaps
-    private Set<BlockPos> getBlockedSet(Optional<Village> village) {
-        return village.map(buildings -> buildings.getBuildings().values().stream()
+    private Set<BlockPos> getBlockedSet(Village village) {
+        return village.getBuildings().values().stream()
                 .filter(b -> !b.getBuildingType().grouped())
                 .map(Building::getSourceBlock)
-                .collect(Collectors.toSet())).orElse(new HashSet<>());
+                .collect(Collectors.toSet());
     }
 
     //processed a building at given position
     public Building.validationResult processBuilding(BlockPos pos, boolean enforce, boolean strictScan) {
         //find the closest village
-        Optional<Village> village = findNearestVillage(pos, Village.MERGE_MARGIN);
+        Optional<Village> optionalVillage = findNearestVillage(pos, Village.MERGE_MARGIN);
 
         //check if this might be a grouped building
         BuildingType groupedBuildingType = isGroupedBuildingBLock(pos);
 
         //block existing buildings to prevent overlaps
-        Set<BlockPos> blocked = getBlockedSet(village);
+        Set<BlockPos> blocked = new HashSet<>();
 
         //look for existing building
         boolean found = false;
         List<Integer> toRemove = new LinkedList<>();
-        if (village.isPresent()) {
+        if (optionalVillage.isPresent()) {
+            Village village = optionalVillage.get();
+
+            blocked = getBlockedSet(village);
             if (groupedBuildingType != null) {
                 String name = groupedBuildingType.name();
                 double range = groupedBuildingType.mergeRange() * groupedBuildingType.mergeRange();
 
                 //add POI to the nearest one
-                Optional<Building> building = village.get().getBuildings().values().stream()
+                Optional<Building> building = village.getBuildings().values().stream()
                         .filter(b -> b.getType().equals(name))
                         .min((a, b) -> (int)(a.getCenter().getSquaredDistance(pos) - b.getCenter().getSquaredDistance(pos)))
                         .filter(b -> b.getCenter().getSquaredDistance(pos) < range);
@@ -280,7 +289,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                 }
             } else {
                 //verify affected buildings
-                for (Building b : village.get().getBuildings().values()) {
+                for (Building b : village.getBuildings().values()) {
                     if (b.containsPos(pos)) {
                         if (!enforce) {
                             found = true;
@@ -291,39 +300,37 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                     }
                 }
             }
-        }
 
-        //verify all poi buildings
-        village.ifPresent(buildings -> buildings.getBuildings().values().stream()
-                .filter(b -> enforce || world.getTime() - b.getLastScan() > Building.SCAN_COOLDOWN)
-                .filter(b -> b.getBuildingType().grouped())
-                .filter(b -> b.getCenter().getSquaredDistance(pos) < 64.0)
-                .forEach(b -> {
-                    b.validatePois(world);
-                    if (b.getPois().size() == 0) {
-                        toRemove.add(b.getId());
-                    }
-                }));
+            //verify all poi buildings
+            village.getBuildings().values().stream()
+                    .filter(b -> enforce || world.getTime() - b.getLastScan() > Building.SCAN_COOLDOWN)
+                    .filter(b -> b.getBuildingType().grouped())
+                    .filter(b -> b.getCenter().getSquaredDistance(pos) < 1024.0)
+                    .forEach(b -> {
+                        b.validatePois(world);
+                        if (b.getPois().size() == 0) {
+                            toRemove.add(b.getId());
+                        }
+                    });
 
-        //remove buildings which became invalid for whatever reason
-        for (int id : toRemove) {
-            village.get().removeBuilding(id);
-
-            //village is now empty
-            if (village.get().getBuildings().size() == 0) {
-                villages.remove(village.get().getId());
+            //remove buildings which became invalid for whatever reason
+            for (int id : toRemove) {
+                village.removeBuilding(id);
+                markDirty();
             }
 
-            markDirty();
+            //village is empty
+            if (village.getBuildings().isEmpty()) {
+                villages.remove(village.getId());
+                optionalVillage = Optional.empty();
+                markDirty();
+            }
         }
 
         //add a new building, if no overlap has been found or the player enforced a full add
         if (!found && !blocked.contains(pos)) {
             //create new village
-            if (!village.isPresent()) {
-                village = Optional.of(new Village(lastVillageId++));
-                villages.put(village.get().getId(), village.get());
-            }
+            Village village = optionalVillage.orElse(new Village(lastVillageId++));
 
             //create new building
             Building building = new Building(pos, strictScan);
@@ -336,7 +343,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                 Building.validationResult result = building.validateBuilding(world, blocked);
                 if (result == Building.validationResult.SUCCESS) {
                     //the building is valid, but might be identical to an old one with an existing one
-                    if (village.get().getBuildings().values().stream().anyMatch(b -> b.isIdentical(building))) {
+                    if (village.getBuildings().values().stream().anyMatch(b -> b.isIdentical(building))) {
                         return Building.validationResult.IDENTICAL;
                     }
                 } else {
@@ -346,8 +353,9 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             }
 
             //add to building list
+            villages.put(village.getId(), village);
             building.setId(lastBuildingId++);
-            village.get().addBuilding(building);
+            village.addBuilding(building);
             markDirty();
         }
 

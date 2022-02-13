@@ -210,8 +210,12 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default void initializeSkin() {
-        setClothes(ClothingList.getInstance().getPool(this).pickOne());
+        randomizeClothes();
         setHair(HairList.getInstance().pickOne(this));
+    }
+
+    default void randomizeClothes() {
+        setClothes(ClothingList.getInstance().getPool(this).pickOne());
     }
 
     @SuppressWarnings("unchecked")

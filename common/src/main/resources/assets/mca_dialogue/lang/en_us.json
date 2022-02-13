@@ -166,6 +166,8 @@
   "interaction.sethome.fail3": "That is no building!",
   "interaction.sethome.bedfail1": "Nice home, but all beds seem to be reserved.",
   "interaction.sethome.bedfail2": "There are no empty beds!",
+  "interaction.sethome.bedfail.infirmary1": "This is a infirmary, the bed is reserved for sick people.",
+  "interaction.sethome.bedfail.blocked1": "This building has been marked as blocked.",
   "adult.interaction.setworkplace.success1": "Sure thing, %1$s.",
   "spouse.interaction.setworkplace.success1": "I really like this place.",
   "child.interaction.setworkplace.success1": "Okay fine!",
@@ -208,6 +210,10 @@
 
   "armor.enabled": "Okay, I will always wear my armor. If I have any.",
   "armor.disabled": "Fine, I will only wear my armor in case we are under attack.",
+
+  "profession.set.none": "Alright, I will find myself a job soon.",
+  "profession.set.guard": "I am honored to serve as a guard protecting this village.",
+  "profession.set.archer": "I will join the defense of the village as an archer.",
 
   "adult.gift.cake.success1": "What's this? A cake? Oh...oh my. I...need to find my spouse.",
   "adult.gift.cake.success2": "A cake! How thoughtful! I...wait, what's this odd feeling?",

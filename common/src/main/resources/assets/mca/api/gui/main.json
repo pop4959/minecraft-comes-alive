@@ -27,29 +27,19 @@
     "height": 20,
     "notifyServer": true,
     "targetServer": false,
-    "constraints": "!family,trader,adult",
+    "constraints": "trader,adult",
     "hideOnFail": true
   },
   {
     "identifier": "gui.button.inventory",
     "x": 140,
-    "y": -73,
+    "y": -52,
     "width": 65,
     "height": 20,
     "notifyServer": true,
     "targetServer": false,
     "constraints": "family",
     "hideOnFail": true
-  },
-  {
-    "identifier": "gui.button.command",
-    "x": 140,
-    "y": -52,
-    "width": 65,
-    "height": 20,
-    "notifyServer": false,
-    "targetServer": false,
-    "constraints": ""
   },
   {
     "identifier": "gui.button.work",

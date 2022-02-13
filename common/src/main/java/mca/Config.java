@@ -36,9 +36,7 @@ public final class Config implements Serializable {
     public int roseGoldSpawnWeight = 6;
     public boolean allowRoseGoldGeneration = true;
     public int marriageChance = 5;
-    public int marriageLimit = 50;
     public int childrenChance = 5;
-    public int childrenLimit = 50;
     public int giftDesaturationQueueLength = 16;
     public float giftDesaturationFactor = 0.5f;
     public double giftDesaturationExponent = 0.85;
@@ -60,6 +58,8 @@ public final class Config implements Serializable {
     public float interactionFatigue = 0.05f;
     public int interactionFatigueCooldown = 4800;
     public float taxesFactor = 0.5f;
+    public boolean enterVillageNotification = true;
+    public boolean showNameTags = true;
 
     public static File getConfigFile() {
         return new File("./config/mca.json");

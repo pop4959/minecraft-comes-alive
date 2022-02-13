@@ -1,8 +1,10 @@
 package mca.network;
 
+import java.util.Locale;
 import java.util.Optional;
 import mca.cobalt.network.Message;
 import mca.server.world.data.Building;
+import mca.server.world.data.GraveyardManager;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +27,10 @@ public class ReportBuildingMessage implements Message {
             case ADD:
             case ADD_ROOM:
                 Building.validationResult result = villages.processBuilding(e.getBlockPos(), true, action == Action.ADD_ROOM);
-                e.sendMessage(new TranslatableText("blueprint.scan." + result.name().toLowerCase()), true);
+                e.sendMessage(new TranslatableText("blueprint.scan." + result.name().toLowerCase(Locale.ENGLISH)), true);
+
+                // also add tombstones
+                GraveyardManager.get((ServerWorld)e.world).reportToVillageManager(e);
                 break;
             case AUTO_SCAN:
                 villages.findNearestVillage(e).ifPresent(Village::toggleAutoScan);
@@ -57,6 +62,6 @@ public class ReportBuildingMessage implements Message {
         AUTO_SCAN,
         ADD_ROOM,
         ADD,
-        REMOVE;
+        REMOVE
     }
 }
