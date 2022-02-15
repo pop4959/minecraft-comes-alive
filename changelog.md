@@ -189,3 +189,5 @@
 * Fixed issues when assigning family in editor
 * Buildings now support modded chests
 * Villagers will now use your editor name
+* Fixed letter author and creative mode usage
+* Strengthened Grim Reaper

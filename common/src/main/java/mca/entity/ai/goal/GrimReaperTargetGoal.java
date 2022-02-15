@@ -4,8 +4,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Comparator;
+import java.util.List;
 
 public class GrimReaperTargetGoal extends Goal {
     private final TargetPredicate attackTargeting = TargetPredicate.createAttackable().setBaseMaxDistance(64.0D);
@@ -20,21 +22,23 @@ public class GrimReaperTargetGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        if (nextScanTick > 0) {
-            nextScanTick--;
-            return false;
-        }
+        if (this.nextScanTick > 0) {
+            this.nextScanTick--;
+        } else {
+            this.nextScanTick = 20;
+            List<PlayerEntity> list = mob.world.getPlayers(this.attackTargeting, mob, mob.getBoundingBox().expand(48.0D, 64.0D, 48.0D));
+            if (!list.isEmpty()) {
+                list.sort(Comparator.comparing(Entity::getY).reversed());
 
-        nextScanTick = 20;
-        return mob.world.getPlayers(attackTargeting, mob, mob.getBoundingBox().expand(48, 64, 48))
-                .stream()
-                .sorted(Comparator.comparing(Entity::getY).reversed())
-                .filter(player -> mob.isTarget(player, TargetPredicate.DEFAULT))
-                .findFirst()
-                .map(player -> {
-                    mob.setTarget(player);
-                    return true;
-                }).orElse(false);
+                for (PlayerEntity playerentity : list) {
+                    if (mob.isTarget(playerentity, TargetPredicate.DEFAULT)) {
+                        mob.setTarget(playerentity);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
