@@ -49,6 +49,7 @@ public class ReportBuildingMessage implements Message {
                         }
                     } else {
                         village.get().removeBuilding(building.get().getId());
+                        village.get().markDirty((ServerWorld)e.world);
                     }
                 } else {
                     e.sendMessage(new TranslatableText("blueprint.noBuilding"), true);
