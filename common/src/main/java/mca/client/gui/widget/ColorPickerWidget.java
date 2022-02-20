@@ -33,15 +33,14 @@ public class ColorPickerWidget extends ClickableWidget {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
         RenderSystem.setShaderColor(1, 1, 1, alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        minecraftClient.getTextureManager().bindTexture(texture);
+        RenderSystem.setShaderTexture(0, texture);
         DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, width, height);
 
-        minecraftClient.getTextureManager().bindTexture(MCA_GUI_ICONS_TEXTURE);
+        RenderSystem.setShaderTexture(0, MCA_GUI_ICONS_TEXTURE);
         DrawableHelper.drawTexture(matrices, (int)(x + valueX * width) - 8, (int)(y + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
 
         RectangleWidget.drawRectangle(matrices, x, y, x + width, y + height, 0xaaffffff);

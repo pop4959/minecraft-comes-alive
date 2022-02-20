@@ -20,7 +20,7 @@ public class ExtendedPageTurnWidget extends PageTurnWidget {
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        MinecraftClient.getInstance().getTextureManager().bindTexture(texture);
+        RenderSystem.setShaderTexture(0, texture);
 
         int i = 0;
         int j = 192;

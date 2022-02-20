@@ -23,7 +23,7 @@ public class ScribbleTextPage extends TextPage {
         // scribble
         int i = (screen.width - 192) / 2;
         RenderSystem.enableBlend();
-        screen.bindTexture(scribble);
+        RenderSystem.setShaderTexture(0, scribble);
         DrawableHelper.drawTexture(matrices, i + 28, 32, 0, 0, 128, 128, 128, 128);
         RenderSystem.disableBlend();
 
