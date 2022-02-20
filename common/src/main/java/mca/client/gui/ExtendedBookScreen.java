@@ -7,6 +7,7 @@ import mca.client.gui.widget.ExtendedPageTurnWidget;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ScreenTexts;
+import net.minecraft.client.gui.screen.ingame.BookScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.util.NarratorManager;
@@ -108,10 +109,6 @@ public class ExtendedBookScreen extends Screen {
         }
     }
 
-    public void bindTexture(Identifier tex) {
-        this.client.getTextureManager().bindTexture(tex);
-    }
-
     public TextRenderer getTextRenderer() {
         return textRenderer;
     }
@@ -122,7 +119,7 @@ public class ExtendedBookScreen extends Screen {
 
         // background
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        bindTexture(book.getBackground());
+        RenderSystem.setShaderTexture(0, book.getBackground());
         int i = (width - 192) / 2;
         drawTexture(matrices, i, 2, 0, 0, 192, 192);
 
