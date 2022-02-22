@@ -19,5 +19,6 @@
   "mca:miner": { "count": 5 },
   "mca:archer": { "count": 5 },
   "mca:guard": { "count": 5 },
-  "mca:child": { "count": 10 }
+  "mca:child": { "count": 10 },
+  "mca:baby": { "count": 10 }
 }

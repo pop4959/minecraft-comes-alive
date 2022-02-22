@@ -74,6 +74,9 @@ public class ClothingList extends JsonDataLoader {
         switch (villager.getAgeState()) {
             case BABY:
             case TODDLER:
+                return ClothingList.getInstance()
+                        .byGender(villager.getGenetics().getGender())
+                        .byIdentifier(new Identifier("mca:baby"));
             case CHILD:
             case TEEN:
                 return ClothingList.getInstance()

@@ -193,3 +193,9 @@
 * Strengthened Grim Reaper
 * Added mod support for atmospheric, autumity, berry good, buzzier bees, environmental, neopolitan, and upgrade aquatic
 * Villager now recognize and estimate the value of every (modded) armor, tool, sword, bow and food as a gift (accuracy not guaranteed)
+
+# 7.1.0
+
+* Ported to 1.18
+* Fixed missing chest tag
+* Added baby clothes
