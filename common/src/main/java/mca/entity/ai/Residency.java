@@ -225,12 +225,17 @@ public class Residency {
                 if (building.hasFreeSpace()) {
                     entity.sendChatMessage(player, "interaction.sethome.success");
 
+                    //remove from old home
+                    setHomeLess();
+
                     //add to residents
                     setBuilding(building, player.getBlockPos());
                     setVillageId(village.getId());
                     village.addResident(entity, building.getId());
                 } else if (building.getBuildingType().noBeds()) {
                     entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
+                } else if (building.getBeds() == 0) {
+                    entity.sendChatMessage(player, "interaction.sethome.nobeds");
                 } else {
                     entity.sendChatMessage(player, "interaction.sethome.bedfail");
                 }

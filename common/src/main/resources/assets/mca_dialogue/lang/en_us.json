@@ -164,6 +164,7 @@
   "interaction.sethome.fail1": "This doesn't look like a safe home point for me.",
   "interaction.sethome.fail2": "Is there another place nearby?",
   "interaction.sethome.fail3": "That is no building!",
+  "interaction.sethome.nobeds": "This home has no beds!",
   "interaction.sethome.bedfail1": "Nice home, but all beds seem to be reserved.",
   "interaction.sethome.bedfail2": "There are no empty beds!",
   "interaction.sethome.bedfail.infirmary1": "This is a infirmary, the bed is reserved for sick people.",
