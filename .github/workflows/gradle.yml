@@ -26,31 +26,23 @@ jobs:
         with:
           name: fabric_artifacts
           path: ./fabric/build/libs/
-      # - name: Release Build
-      #   uses: softprops/action-gh-release@v1
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   with:
-      #     body_path: CHANGELOG.md
-      #     files: "./build/libs/**"
-      # - name: Build Success
-      #   uses: rjstone/discord-webhook-notify@v1
-      #   if: success()
-      #   with:
-      #     severity: info
-      #     details: Build Succeeded!
-      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      # - name: Build Failure
-      #   uses: rjstone/discord-webhook-notify@v1
-      #   if: failure()
-      #   with:
-      #     severity: error
-      #     details: Build Failed!
-      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      # - name: Build Cancelled
-      #   uses: rjstone/discord-webhook-notify@v1
-      #   if: cancelled()
-      #   with:
-      #     severity: warn
-      #     details: Build Canceled!
-      #     webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Get tag
+        if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+      - name: "Upload to CurseForge"
+        uses: itsmeow/curseforge-upload@v3
+        if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
+        with:
+          file_path: "fabric/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-fabric.jar"
+          game_endpoint: "minecraft"
+          relations: "fabric-api:requiredDependency"
+          game_versions: "Minecraft 1.18:1.18.1,Java 17,Fabric"
+          project_id: "535291"
+          token: "${{ secrets.CF_API_TOKEN }}"
+          changelog_type: "markdown"
+          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.18/changelog.md)"
+          release_type: "alpha"
+        
+      
       
