@@ -32,8 +32,10 @@ Or you can Join the [Discord Community](https://discord.gg/MDcv8kmYHP) for quest
 
 ## Credits
 These individuals made substantial contributions to (vanilla) MCA - without them, continued progress may have been impossible.
+ - WildBamaBoy
  - SheWolfDeadly
  - ntzrmtthihu777
  - ko2fan
  - Akjosch
  - Innectic
+ - Sollace
