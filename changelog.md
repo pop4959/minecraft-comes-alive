@@ -200,3 +200,4 @@
 * Fixed missing chest tag
 * Added baby clothes
 * Fixed villagers not fully moving out of the old building
+* Fixed incompatibility with eldritch mobs

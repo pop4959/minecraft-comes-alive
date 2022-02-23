@@ -97,7 +97,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -142,16 +141,19 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public VillagerEntityMCA(EntityType<VillagerEntityMCA> type, World w, Gender gender) {
         super(type, w);
         inventory.addListener(this::onInvChange);
-
-        //register has to be here, not in initialize, since the super call is called before the field init
-        // and the data manager requires those fields
-        getTypeDataManager().register(this);
         genetics.setGender(gender);
     }
 
-    private GameProfile gameProfile;
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+
+        getTypeDataManager().register(this);
+    }
 
     private boolean recalcDimensionsBlocked;
+
+    private GameProfile gameProfile;
 
     @Override
     public GameProfile getGameProfile() {
@@ -881,9 +883,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public final Text getDisplayName() {
         Text name = super.getDisplayName();
 
-        MoveState state = getVillagerBrain().getMoveState();
-        if (state != MoveState.MOVE) {
-            name = name.shallowCopy().append(" (").append(getVillagerBrain().getMoveState().getName()).append(")");
+        if (getVillagerBrain() != null) {
+            MoveState state = getVillagerBrain().getMoveState();
+            if (state != MoveState.MOVE) {
+                name = name.shallowCopy().append(" (").append(getVillagerBrain().getMoveState().getName()).append(")");
+            }
         }
 
         if (isInfected()) {
@@ -969,7 +973,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return false;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public float getScaleFactor() {
         return Math.min(0.999f, getRawScaleFactor());
