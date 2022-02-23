@@ -623,7 +623,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 sendChatToAllAround("sirben");
             }
 
-            //strengthen experience villagers
+            //strengthen experienced villagers
             EntityAttributeInstance instance = this.getAttributes().getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH);
             if (instance != null) {
                 int level = this.getVillagerData().getLevel() - 1;

@@ -52,11 +52,14 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
     public ZombieVillagerEntityMCA(EntityType<? extends ZombieVillagerEntity> type, World world, Gender gender) {
         super(type, world);
-
-        //register has to be here, not in initialize, since the super call is called before the field init
-        // and the data manager requires those fields
-        getTypeDataManager().register(this);
         genetics.setGender(gender);
+    }
+
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+
+        getTypeDataManager().register(this);
     }
 
     @Override
