@@ -13,11 +13,6 @@ public interface SoundsMCA {
     SoundEvent reaper_block = register("reaper.block");
     SoundEvent reaper_summon = register("reaper.summon");
 
-    SoundEvent working_anvil = register("working.anvil");
-    SoundEvent working_page = register("working.page");
-    SoundEvent working_saw = register("working.saw");
-    SoundEvent working_sharpen = register("working.sharpen");
-
     SoundEvent VILLAGER_BABY_LAUGH = register("villager_baby_laugh");//TODO:
 
     SoundEvent VILLAGER_MALE_SCREAM = register("villager_male_scream");
