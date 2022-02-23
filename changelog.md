@@ -201,3 +201,4 @@
 * Added baby clothes
 * Fixed villagers not fully moving out of the old building
 * Fixed incompatibility with eldritch mobs
+* Villager get 5 extra hearts per level

@@ -58,6 +58,8 @@ import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.TrackedData;
@@ -124,6 +126,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
+
+    final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
 
     private final Genetics genetics = new Genetics(this);
     private final Traits traits = new Traits(this);
@@ -591,33 +595,41 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     produceParticles(mood.getParticle());
                 }
             }
-        }
+        } else {
+            // infection
+            float infection = getInfectionProgress();
+            if (infection > 0) {
+                if (this.age % 120 == 0 && infection > FEVER_THRESHOLD && world.random.nextInt(200) > 150) {
+                    sendChatToAllAround("villager.sickness");
+                }
 
-        // infection
-        float infection = getInfectionProgress();
-        if (!world.isClient && infection > 0) {
-            if (this.age % 120 == 0 && infection > FEVER_THRESHOLD && world.random.nextInt(200) > 150) {
-                sendChatToAllAround("villager.sickness");
+                prevInfectionProgress = infection;
+                infection += 0.02F;
+                setInfectionProgress(infection);
+
+                if (!world.isClient && infection >= POINT_OF_NO_RETURN && world.random.nextInt(2000) < infection) {
+                    convertToZombie();
+                    discard();
+                }
             }
 
-            prevInfectionProgress = infection;
-            infection += 0.02F;
-            setInfectionProgress(infection);
-
-            if (!world.isClient && infection >= POINT_OF_NO_RETURN && world.random.nextInt(2000) < infection) {
-                convertToZombie();
-                discard();
+            // panic screams
+            if (this.age % 90 == 0 && mcaBrain.isPanicking()) {
+                sendChatToAllAround("villager.scream");
             }
-        }
 
-        // panic screams
-        if (!world.isClient && this.age % 90 == 0 && mcaBrain.isPanicking()) {
-            sendChatToAllAround("villager.scream");
-        }
+            // sirben noises
+            if (this.age % 60 == 0 && random.nextInt(50) == 0 && traits.hasTrait(Traits.Trait.SIRBEN)) {
+                sendChatToAllAround("sirben");
+            }
 
-        // sirben noises
-        if (!world.isClient && this.age % 60 == 0 && random.nextInt(50) == 0 && traits.hasTrait(Traits.Trait.SIRBEN)) {
-            sendChatToAllAround("sirben");
+            //strengthen experience villagers
+            EntityAttributeInstance instance = this.getAttributes().getCustomInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+            if (instance != null) {
+                int level = this.getVillagerData().getLevel() - 1;
+                instance.removeModifier(EXTRA_HEALTH_EFFECT_ID);
+                instance.addTemporaryModifier(new EntityAttributeModifier(EXTRA_HEALTH_EFFECT_ID, "level health boost", Config.getInstance().villagerHealthBonusPerLevel * level, EntityAttributeModifier.Operation.ADDITION));
+            }
         }
     }
 
