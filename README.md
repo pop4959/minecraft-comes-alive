@@ -22,6 +22,13 @@ MCA is usually compatible with every mod, except when it comes to recognising it
 
 Following mods have the required resourcepacks included and are therefore fully compatible:
 - Farmer's Delight
+- Atmospheric
+- Autumity
+- Berry Good
+- Buzzier Bees
+- Environmental
+- Neopolitan
+- Upgrade Aquatic
 
 ## Contributing
 Any contributions to are welcome. Simply clone into your workspace, set it up, make your changes, and submit a pull request for review.
