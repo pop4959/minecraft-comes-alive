@@ -49,9 +49,9 @@
   "item.mca.baby.owner": "Parent: %s",
   "item.mca.baby.owner.you": "You",
   "item.mca.baby.give_name": "Right-click to name",
-  "item.mca.baby.no_drop1": "You cannot drop a baby, you monster",
-  "item.mca.baby.no_drop2": "I'm watching you, mister",
-  "item.mca.baby.no_drop3": "Please don't drop the baby!",
+  "item.mca.baby.no_drop/1": "You cannot drop a baby, you monster",
+  "item.mca.baby.no_drop/2": "I'm watching you, mister",
+  "item.mca.baby.no_drop/3": "Please don't drop the baby!",
 
   "item.mca.male_villager_spawn_egg": "Male Villager Spawn Egg",
   "item.mca.female_villager_spawn_egg": "Female Villager Spawn Egg",
@@ -405,8 +405,8 @@
   "gui.label.staying": "Staying",
   "gui.label.following": "Following",
 
-  "gui.info.gift.line1": "Gift Available",
-  "gui.info.gift.line2": "(Click to take)",
+  "gui.info.gift.line.1": "Gift Available",
+  "gui.info.gift.line.2": "(Click to take)",
 
   "gui.interact.label.married": "Married to %1$s",
   "gui.interact.label.engaged": "Engaged to %1$s",

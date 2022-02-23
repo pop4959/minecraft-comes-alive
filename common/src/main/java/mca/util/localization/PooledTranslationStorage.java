@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import mca.resources.PoolUtil;
 
 public class PooledTranslationStorage {
-    private static final Pattern TRAILING_NUMBERS_PATTERN = Pattern.compile("[0-9]+$");
-    private static final Predicate<String> TRAILING_NUMERS_PREDICATE = TRAILING_NUMBERS_PATTERN.asPredicate();
+    private static final Pattern TRAILING_NUMBERS_PATTERN = Pattern.compile("/[0-9]+$");
+    private static final Predicate<String> TRAILING_NUMBERS_PREDICATE = TRAILING_NUMBERS_PATTERN.asPredicate();
 
     private final Map<String, List<String>> multiTranslations = new HashMap<>();
 
@@ -27,7 +27,7 @@ public class PooledTranslationStorage {
     }
 
     private void addTranslation(String key, String value) {
-        if (TRAILING_NUMERS_PREDICATE.test(key)) {
+        if (TRAILING_NUMBERS_PREDICATE.test(key)) {
             multiTranslations
                 .computeIfAbsent(TRAILING_NUMBERS_PATTERN.matcher(key).replaceAll(""), k -> new ArrayList<>())
                 .add(value);

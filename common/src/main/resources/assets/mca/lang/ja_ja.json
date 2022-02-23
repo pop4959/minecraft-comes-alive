@@ -1,4 +1,4 @@
-{
+﻿{
 	"entity.minecraft.villager.mca.archer": "アーチャー",
 	"entity.minecraft.villager.mca.baker": "パン屋",
 	"entity.minecraft.villager.mca.child": "子ども",
@@ -42,8 +42,8 @@
 	"gui.button.trade": "取引",
 	"gui.button.work": "作業",
 	"gui.button.yes": "はい",
-	"gui.info.gift.line1": "利用可能なギフト",
-	"gui.info.gift.line2": "(クリックして取得)",
+	"gui.info.gift.line.1": "利用可能なギフト",
+	"gui.info.gift.line.2": "(クリックして取得)",
 	"gui.interact.label.age": "Age: %1$s",
 	"gui.interact.label.engaged": "Engaged to %1$s",
 	"gui.interact.label.happiness": "Happiness: %1$s",
