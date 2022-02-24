@@ -119,14 +119,6 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         }
     }
 
-    default float getRawScaleFactor() {
-        if (getGenetics() == null) {
-            return 1.0f;
-        } else {
-            return getGenetics().getVerticalScaleFactor() * getTraits().getVerticalScaleFactor() * getVillagerDimensions().getHeight() * Config.getInstance().villagerHeight;
-        }
-    }
-
     default String getClothes() {
         return getTrackedValue(CLOTHES);
     }
@@ -176,10 +168,18 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default float getHorizontalScaleFactor() {
-        if (getGenetics() == null) {
-            return 1.0f;
+        if (getGenetics() == null || Config.getInstance().useSquidwardModels) {
+            return asEntity().isBaby() ? 0.5f : 1.0f;
         } else {
             return Math.min(0.999f, getGenetics().getHorizontalScaleFactor() * getTraits().getHorizontalScaleFactor() * getVillagerDimensions().getWidth());
+        }
+    }
+
+    default float getRawScaleFactor() {
+        if (getGenetics() == null || Config.getInstance().useSquidwardModels) {
+            return asEntity().isBaby() ? 0.5f : 1.0f;
+        } else {
+            return getGenetics().getVerticalScaleFactor() * getTraits().getVerticalScaleFactor() * getVillagerDimensions().getHeight() * Config.getInstance().villagerHeight;
         }
     }
 

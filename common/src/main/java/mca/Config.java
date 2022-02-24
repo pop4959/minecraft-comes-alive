@@ -61,6 +61,7 @@ public final class Config implements Serializable {
     public boolean enterVillageNotification = true;
     public boolean showNameTags = true;
     public int villagerHealthBonusPerLevel = 5;
+    public boolean useSquidwardModels = false;
 
     public static File getConfigFile() {
         return new File("./config/mca.json");
