@@ -31,19 +31,20 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
-        if (entity.hasVehicle() || world.getTime() - cooldown < 40L) {
-            return false;
-        }
-        cooldown = world.getTime();
-
         boolean b = shouldRunInner(world, entity);
-        if (!b && entity.isSleeping()) {
-            entity.wakeUp();
+        if (!b) {
+            if (entity.isSleeping()) {
+                entity.wakeUp();
+            }
         }
         return b;
     }
 
     private boolean shouldRunInner(ServerWorld world, VillagerEntityMCA entity) {
+        if (entity.hasVehicle() && world.getTime() - cooldown > 40L) {
+            return false;
+        }
+
         Brain<?> brain = entity.getBrain();
         GlobalPos globalPos = brain.getOptionalMemory(MemoryModuleType.HOME).get();
         if (world.getRegistryKey() != globalPos.getDimension()) {
