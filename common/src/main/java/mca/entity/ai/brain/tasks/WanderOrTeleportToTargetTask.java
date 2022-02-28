@@ -39,7 +39,8 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
         BlockPos targetPos = walkTarget.getLookTarget().getBlockPos();
 
         // If the target is more than x blocks away, teleport to it immediately.
-        if (targetPos.getSquaredDistance(entity.getBlockPos()) > TELEPORT_LIMIT_SQ) {
+        // teleporting disabled for now, only causes problems and is not really important anyways
+        if (targetPos.getSquaredDistance(entity.getBlockPos()) > TELEPORT_LIMIT_SQ && false) {
             // The target location is fuzzed and then adjusted to ensure the entity doesn't land in any walls.
             targetPos = targetPos.add(FuzzyPositionsCompat.localFuzz(world.random, 5, 0));
             targetPos = FuzzyPositionsCompat.downWhile(targetPos, 1, p -> !world.getBlockState(p.down()).isFullCube(world, p));

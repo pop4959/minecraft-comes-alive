@@ -207,3 +207,4 @@
 * Villager get 5 extra hearts per level
 * Added config flag to use squidward models
 * Fixed sleeping
+* Villager can no longer teleport
