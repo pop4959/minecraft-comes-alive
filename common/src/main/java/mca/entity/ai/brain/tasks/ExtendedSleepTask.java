@@ -31,54 +31,50 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
-        if (entity.hasVehicle() && world.getTime() - cooldown > 40L) {
+        boolean b = shouldRunInner(world, entity);
+        if (!b) {
             if (entity.isSleeping()) {
                 entity.wakeUp();
             }
+        }
+        return b;
+    }
+
+    private boolean shouldRunInner(ServerWorld world, VillagerEntityMCA entity) {
+        if (entity.hasVehicle() && world.getTime() - cooldown > 40L) {
             return false;
         }
 
-            Brain<?> brain = entity.getBrain();
-            GlobalPos globalPos = brain.getOptionalMemory(MemoryModuleType.HOME).get();
-            if (world.getRegistryKey() != globalPos.getDimension()) {
-                if (entity.isSleeping()) {
-                    entity.wakeUp();
+        Brain<?> brain = entity.getBrain();
+        GlobalPos globalPos = brain.getOptionalMemory(MemoryModuleType.HOME).get();
+        if (world.getRegistryKey() != globalPos.getDimension()) {
+            return false;
+        } else {
+            // wait a few seconds after wakeup
+            Optional<Long> optional = brain.getOptionalMemory(MemoryModuleType.LAST_WOKEN);
+            if (optional.isPresent()) {
+                long l = world.getTime() - optional.get();
+                if (l > 0L && l < 100L) {
+                    return false;
                 }
-                return false;
-            } else {
-                // wait a few seconds after wakeup
-                Optional<Long> optional = brain.getOptionalMemory(MemoryModuleType.LAST_WOKEN);
-                if (optional.isPresent()) {
-                    long l = world.getTime() - optional.get();
-                    if (l > 0L && l < 100L) {
-                        if (entity.isSleeping()) {
-                            entity.wakeUp();
-                        }
-                        return false;
-                    }
+            }
 
-                // look for nearest bed
-                Optional<Building> building = entity.getResidency().getHomeBuilding();
-                if (building.isPresent()) {
-                    Optional<BlockPos> bed = building.get().findClosestEmptyBed(world, globalPos.getPos());
-                    if (bed.isPresent()) {
-                        this.bed = bed.get();
-                        if (globalPos.getPos().isWithinDistance(entity.getPos(), 2.0D)) {
-                            return true;
-                        } else {
-                            brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(globalPos.getPos(), speed, 1));
-                            if (entity.isSleeping()) {
-                                entity.wakeUp();
-                            }
-                            return false;
-                        }
+            // look for nearest bed
+            Optional<Building> building = entity.getResidency().getHomeBuilding();
+            if (building.isPresent()) {
+                Optional<BlockPos> bed = building.get().findClosestEmptyBed(world, globalPos.getPos());
+                if (bed.isPresent()) {
+                    this.bed = bed.get();
+                    if (globalPos.getPos().isWithinDistance(entity.getPos(), 2.0D)) {
+                        return true;
+                    } else {
+                        brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(globalPos.getPos(), speed, 1));
+                        return false;
                     }
                 }
             }
         }
-        if (entity.isSleeping()) {
-            entity.wakeUp();
-        }
+
         return false;
     }
 

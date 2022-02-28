@@ -2,10 +2,8 @@ package mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import mca.client.gui.Constraint;
 

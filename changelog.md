@@ -206,3 +206,4 @@
 * Fixed incompatibility with eldritch mobs
 * Villager get 5 extra hearts per level
 * Added config flag to use squidward models
+* Fixed sleeping
