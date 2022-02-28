@@ -208,3 +208,5 @@
 * Added config flag to use squidward models
 * Fixed sleeping
 * Villager can no longer teleport into unsafe locations
+* Different ages will now move at different speed
+* Genes now affect speed
