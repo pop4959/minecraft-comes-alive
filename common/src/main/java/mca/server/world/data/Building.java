@@ -28,8 +28,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -494,10 +492,7 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public int getBeds() {
         if (!getBuildingType().noBeds()) {
-            Tag<Block> tag = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY).getTag(new Identifier("minecraft:beds"));
-            if (tag != null) {
-                return blocks.entrySet().stream().filter(e -> tag.contains(Registry.BLOCK.get(e.getKey()))).mapToInt(Map.Entry::getValue).sum();
-            }
+            return blocks.entrySet().stream().filter(e -> Registry.BLOCK.get(e.getKey()).getRegistryEntry().isIn(BlockTags.BEDS)).mapToInt(Map.Entry::getValue).sum();
         }
         return 0;
     }

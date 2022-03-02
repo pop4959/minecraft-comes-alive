@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import mca.entity.ai.Traits;
+import net.minecraft.tag.TagKey;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -23,8 +24,6 @@ import mca.entity.ai.relationship.Personality;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
@@ -96,7 +95,7 @@ public class GiftPredicate {
         });
         register("tag", (json, name) -> {
             Identifier id = new Identifier(JsonHelper.asString(json, name));
-            Tag<Item> tag = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(id);
+            TagKey<Item> tag = TagKey.of(Registry.ITEM.getKey(), id);
             if (tag == null) {
                throw new JsonSyntaxException("Unknown item tag '" + id + "'");
             }

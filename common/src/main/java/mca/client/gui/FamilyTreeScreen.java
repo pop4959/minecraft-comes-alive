@@ -64,7 +64,7 @@ public class FamilyTreeScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return false;
     }
 
@@ -87,12 +87,12 @@ public class FamilyTreeScreen extends Screen {
         focusEntity(focusedEntityId);
 
         addDrawableChild(new ButtonWidget(width / 2 - 100, height - 25, 200, 20, new TranslatableText("gui.done"), sender -> {
-            onClose();
+            close();
         }));
     }
 
     @Override
-    public void onClose() {
+    public void close() {
         client.setScreen(parent);
     }
 

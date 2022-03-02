@@ -19,7 +19,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.world.poi.PointOfInterestHelper;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.fabricmc.fabric.api.tag.TagFactory;
 import net.fabricmc.fabric.mixin.object.builder.VillagerProfessionAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -35,7 +34,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
@@ -67,13 +66,13 @@ public class RegistrationImpl extends Registration.Impl {
     }
 
     @Override
-    public Function<Identifier, Tag<Block>> blockTag() {
-        return TagFactory.BLOCK::create;
+    public Function<Identifier, TagKey<Block>> blockTag() {
+        return id -> TagKey.of(Registry.BLOCK_KEY, id);
     }
 
     @Override
-    public Function<Identifier, Tag<Item>> itemTag() {
-        return TagFactory.ITEM::create;
+    public Function<Identifier, TagKey<Item>> itemTag() {
+        return id -> TagKey.of(Registry.ITEM_KEY, id);
     }
 
     @Override

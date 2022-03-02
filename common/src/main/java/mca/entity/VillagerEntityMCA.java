@@ -408,7 +408,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         double d = random.nextDouble();
 
         if (d < 0.5D) {
-            return VillagerType.forBiome(world.getBiomeKey(getBlockPos()));
+            return VillagerType.forBiome(world.getBiome(getBlockPos()));
         }
 
         if (d < 0.75D) {
