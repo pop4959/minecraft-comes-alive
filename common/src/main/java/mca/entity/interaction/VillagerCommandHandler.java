@@ -211,7 +211,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
         }
 
-        entity.setCurrentCustomer(player);
+        entity.setCustomer(player);
         entity.sendOffers(player, entity.getDisplayName(), entity.getVillagerData().getLevel());
     }
 }

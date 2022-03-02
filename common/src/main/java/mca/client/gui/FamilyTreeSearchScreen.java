@@ -32,7 +32,7 @@ public class FamilyTreeSearchScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return false;
     }
 
@@ -45,7 +45,7 @@ public class FamilyTreeSearchScreen extends Screen {
         setFocused(field);
 
         addDrawableChild(new ButtonWidget(width / 2 - 44, height / 2 + 82, 88, 20, new TranslatableText("gui.done"), sender -> {
-            onClose();
+            close();
         }));
 
         addDrawableChild(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 60, 20, 20, new LiteralText("<"), (b) -> {

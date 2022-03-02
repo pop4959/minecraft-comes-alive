@@ -7,12 +7,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import mca.util.RegistryHelper;
 import net.minecraft.block.Block;
-import net.minecraft.tag.ServerTagManagerHolder;
-import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagGroup;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 
 public final class BuildingType implements Serializable {
     private static final long serialVersionUID = 2215455350801127280L;
@@ -87,13 +88,13 @@ public final class BuildingType implements Serializable {
 
     public Set<Block> getBlockIds() {
         Set<Block> b = new HashSet<>();
-        TagGroup<Block> blocks = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
         for (Identifier id : blockIds().keySet()) {
-            Tag<Block> tag = blocks.getTag(id);
-            if (tag == null) {
+            TagKey<Block> tag = TagKey.of(Registry.BLOCK.getKey(), id);
+            if (tag == null || RegistryHelper.isTagEmpty(tag)) {
                 Registry.BLOCK.getOrEmpty(id).ifPresent(b::add);
             } else {
-                b.addAll(tag.values());
+                var entries = RegistryHelper.getEntries(tag);
+                entries.ifPresent(registryEntries -> b.addAll(registryEntries.stream().map(RegistryEntry::value).toList()));
             }
         }
         return b;
@@ -110,10 +111,9 @@ public final class BuildingType implements Serializable {
         }
 
         //look for matching tag
-        TagGroup<Block> blocks = ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
         for (Identifier id : blockIds().keySet()) {
-            Tag<Block> tag = blocks.getTag(id);
-            if (tag != null && tag.contains(Registry.BLOCK.get(b))) {
+            TagKey<Block> tag = TagKey.of(Registry.BLOCK.getKey(), id);
+            if (tag != null && Registry.BLOCK.get(b).getRegistryEntry().isIn(tag)) {
                 return Optional.of(id);
             }
         }

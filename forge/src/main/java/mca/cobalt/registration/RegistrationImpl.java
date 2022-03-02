@@ -37,6 +37,7 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
@@ -110,13 +111,13 @@ public class RegistrationImpl extends Registration.Impl {
     }
 
     @Override
-    public Function<Identifier, Tag<Block>> blockTag() {
-        return id -> new TagReg<>(id, BlockTags::getTagGroup);
+    public Function<Identifier, TagKey<Block>> blockTag() {
+        return id -> TagKey.of(Registry.BLOCK_KEY, id);
     }
 
     @Override
-    public Function<Identifier, Tag<Item>> itemTag() {
-        return id -> new TagReg<>(id, ItemTags::getTagGroup);
+    public Function<Identifier, TagKey<Item>> itemTag() {
+        return id -> TagKey.of(Registry.ITEM_KEY, id);
     }
 
     @SuppressWarnings("deprecation")

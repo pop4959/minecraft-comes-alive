@@ -5,6 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import net.minecraft.tag.TagKey;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -25,7 +26,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -66,11 +66,11 @@ public class Registration {
         }
 
         public static class Tags {
-            public static Tag<Block> block(Identifier id) {
+            public static TagKey<Block> block(Identifier id) {
                 return INSTANCE.blockTag().apply(id);
             }
 
-            public static Tag<Item> item(Identifier id) {
+            public static TagKey<Item> item(Identifier id) {
                 return INSTANCE.itemTag().apply(id);
             }
         }
@@ -119,9 +119,9 @@ public class Registration {
 
         public abstract Supplier<DefaultParticleType> simpleParticle();
 
-        public abstract Function<Identifier, Tag<Block>> blockTag();
+        public abstract Function<Identifier, TagKey<Block>> blockTag();
 
-        public abstract Function<Identifier, Tag<Item>> itemTag();
+        public abstract Function<Identifier, TagKey<Item>> itemTag();
 
         public abstract Function<Identifier, Activity> activity();
 

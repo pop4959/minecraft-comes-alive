@@ -22,7 +22,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
-import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -37,9 +37,9 @@ public final class MCAClient {
     @SubscribeEvent
     public static void data(FMLConstructModEvent event) {
         new ClientProxyImpl();
-        ((ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager()).registerReloader(new MCAScreens());
-        ((ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager()).registerReloader(new ColorPaletteLoader());
-        ((ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager()).registerReloader(new Supporters());
+        ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new MCAScreens());
+        ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new ColorPaletteLoader());
+        ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new Supporters());
     }
 
     @SubscribeEvent

@@ -284,7 +284,7 @@ public class BlueprintScreen extends ExtendedScreen {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return false;
     }
 
