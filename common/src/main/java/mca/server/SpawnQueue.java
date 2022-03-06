@@ -32,6 +32,7 @@ public class SpawnQueue {
                 VillagerFactory.newVillager(e.world)
                         .withName(e.getName().getString())
                         .withGender(Gender.getRandom())
+                        .withAge(e.getBreedingAge())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
