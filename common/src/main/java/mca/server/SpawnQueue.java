@@ -30,10 +30,11 @@ public class SpawnQueue {
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
                 VillagerFactory.newVillager(e.world)
+                        .withName(e.getName().getString())
                         .withGender(Gender.getRandom())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
-                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
+                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
                         .spawn(((IVillagerEntity)e).getSpawnReason());
             } else {
                 villagerSpawnQueue.add(e);
@@ -46,6 +47,7 @@ public class SpawnQueue {
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
                 ZombieVillagerFactory.newVillager(e.world)
+                        .withName(e.getName().getString())
                         .withGender(Gender.getRandom())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())

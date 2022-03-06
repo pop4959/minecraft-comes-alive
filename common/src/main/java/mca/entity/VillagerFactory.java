@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.village.TradeOfferList;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
@@ -26,6 +27,7 @@ public class VillagerFactory {
     private Optional<VillagerProfession> profession = Optional.empty();
     private Optional<VillagerType> type = Optional.empty();
     private OptionalInt level = OptionalInt.empty();
+    private Optional<TradeOfferList> offers = Optional.empty();
 
     private OptionalInt age = OptionalInt.empty();
     private Optional<Vec3d> position = Optional.empty();
@@ -56,6 +58,12 @@ public class VillagerFactory {
     public VillagerFactory withProfession(VillagerProfession prof, int level) {
         withProfession(prof);
         this.level = OptionalInt.of(level);
+        return this;
+    }
+
+    public VillagerFactory withProfession(VillagerProfession prof, int level, TradeOfferList offers) {
+        withProfession(prof, level);
+        this.offers = Optional.of(offers);
         return this;
     }
 
@@ -109,6 +117,7 @@ public class VillagerFactory {
                 level.orElseGet(data::getLevel)
             )
         );
+        offers.ifPresent(villager::setOffers);
         return villager;
     }
 }
