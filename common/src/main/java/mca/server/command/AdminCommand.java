@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import mca.Config;
+import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTree;
@@ -30,7 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Util;
 
@@ -206,7 +207,7 @@ public class AdminCommand {
 
     private static int forceFullHearts(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         PlayerEntity player = ctx.getSource().getPlayer();
-        getLoadedVillagers(ctx).forEach(v -> v.getVillagerBrain().getMemoriesForPlayer(player).setHearts(100));
+        getLoadedVillagers(ctx).forEach(v -> v.getVillagerBrain().getMemoriesForPlayer(player).setHearts(1000));
         return 0;
     }
 
@@ -244,7 +245,8 @@ public class AdminCommand {
     }
 
     private static Stream<VillagerEntityMCA> getLoadedVillagers(final CommandContext<ServerCommandSource> ctx) {
-        return ctx.getSource().getWorld().getEntitiesByType(null, e -> e instanceof VillagerEntityMCA).stream().map(VillagerEntityMCA.class::cast);
+        ServerWorld world = ctx.getSource().getWorld();
+        return Stream.concat(world.getEntitiesByType(EntitiesMCA.FEMALE_VILLAGER, x-> true).stream(),world.getEntitiesByType(EntitiesMCA.MALE_VILLAGER, x-> true).stream()).map(VillagerEntityMCA.class::cast);
     }
 
     private static void success(String message, CommandContext<ServerCommandSource> ctx) {
