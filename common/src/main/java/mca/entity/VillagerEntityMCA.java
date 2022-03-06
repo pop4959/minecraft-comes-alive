@@ -2,12 +2,14 @@ package mca.entity;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+
 import mca.Config;
 import mca.MCA;
 import mca.ParticleTypesMCA;
@@ -617,7 +619,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 setInfectionProgress(infection);
 
                 if (!world.isClient && infection >= POINT_OF_NO_RETURN && world.random.nextInt(2000) < infection) {
-                    convertToZombie();
+                    convertTo(EntityType.ZOMBIE_VILLAGER, false);
                     discard();
                 }
             }
@@ -679,22 +681,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             heal(stack.getItem().getFoodComponent().getHunger() / 4F);
         }
         return super.eatFood(world, stack);
-    }
-
-    private boolean convertToZombie() {
-        ZombieVillagerEntity zombie = convertTo(EntityType.ZOMBIE_VILLAGER, false);
-        if (zombie != null) {
-            zombie.initialize((ServerWorld)world, world.getLocalDifficulty(zombie.getBlockPos()), SpawnReason.CONVERSION, new ZombieEntity.ZombieData(false, true), null);
-            zombie.setVillagerData(getVillagerData());
-            zombie.setGossipData(getGossip().serialize(NbtOps.INSTANCE).getValue());
-            zombie.setOfferData(getOffers().toNbt());
-            zombie.setXp(getExperience());
-
-            world.syncWorldEvent((PlayerEntity)null, 1026, this.getBlockPos(), 0);
-            zombie.setUuid(getUuid());
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -772,7 +758,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (getInfectionProgress() >= BABBLING_THRESHOLD) {
                 RemovalReason reason = getRemovalReason();
                 unsetRemoved();
-                convertToZombie();
+                convertTo(EntityType.ZOMBIE_VILLAGER, false);
                 setRemoved(reason);
                 return;
             }
@@ -898,6 +884,39 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public final void playSurprisedSound() {
         if (Config.getInstance().useVoices) {
             playSound(getSurprisedSound(), getSoundVolume(), getSoundPitch());
+        }
+    }
+
+    @Override
+    public SoundEvent getYesSound() {
+        if (Config.getInstance().useVoices) {
+            //todo
+            return null;
+        } else if (Config.getInstance().useVanillaVoices) {
+            return super.getYesSound();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    protected SoundEvent getTradingSound(boolean sold) {
+        if (Config.getInstance().useVoices) {
+            //todo
+            return null;
+        } else if (Config.getInstance().useVanillaVoices) {
+            return super.getTradingSound(sold);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void playCelebrateSound() {
+        if (Config.getInstance().useVoices) {
+            //todo
+        } else if (Config.getInstance().useVanillaVoices) {
+            super.playCelebrateSound();
         }
     }
 
@@ -1056,20 +1075,43 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     }
 
+    public void setInventory(UpdatableInventory inventory) {
+        NbtCompound nbt = new NbtCompound();
+        InventoryUtils.saveToNBT(inventory, nbt);
+        InventoryUtils.readFromNBT(this.inventory, nbt);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
     public <T extends MobEntity> T convertTo(EntityType<T> type, boolean keepInventory) {
+        residency.leaveHome();
+
+        T mob;
         if (!isRemoved() && type == EntityType.ZOMBIE_VILLAGER) {
-            ZombieVillagerEntityMCA mob = super.convertTo(getGenetics().getGender().getZombieType(), keepInventory);
-            mob.copyVillagerAttributesFrom(this);
-            return (T)mob;
+            mob = (T)super.convertTo(getGenetics().getGender().getZombieType(), keepInventory);
+        } else {
+            mob = super.convertTo(type, keepInventory);
         }
 
-        T mob = super.convertTo(type, keepInventory);
+        if (mob instanceof VillagerLike<?> zombie) {
+            zombie.copyVillagerAttributesFrom(this);
+        }
 
-        if (mob instanceof VillagerLike<?>) {
-            ((VillagerLike<?>)mob).copyVillagerAttributesFrom(this);
+        if (mob instanceof ZombieVillagerEntity zombie) {
+            zombie.initialize((ServerWorld)world, world.getLocalDifficulty(zombie.getBlockPos()), SpawnReason.CONVERSION, new ZombieEntity.ZombieData(false, true), null);
+            zombie.setVillagerData(getVillagerData());
+            zombie.setGossipData(getGossip().serialize(NbtOps.INSTANCE).getValue());
+            zombie.setOfferData(getOffers().toNbt());
+            zombie.setXp(getExperience());
+            zombie.setUuid(getUuid());
+            zombie.setPersistent();
+
+            world.syncWorldEvent((PlayerEntity)null, 1026, this.getBlockPos(), 0);
+        }
+
+        if (mob instanceof ZombieVillagerEntityMCA zombie) {
+            zombie.setInventory(inventory);
         }
 
         return mob;

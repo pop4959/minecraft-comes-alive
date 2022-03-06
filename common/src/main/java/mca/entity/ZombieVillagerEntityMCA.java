@@ -1,6 +1,7 @@
 package mca.entity;
 
 import mca.entity.ai.Traits;
+import mca.util.InventoryUtils;
 import net.minecraft.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     private final Relationship<ZombieVillagerEntityMCA> relations = new Relationship<>(this);
 
     private final ZombieCommandHandler interactions = new ZombieCommandHandler(this);
+    private final UpdatableInventory inventory = new UpdatableInventory(27);
 
     public ZombieVillagerEntityMCA(EntityType<? extends ZombieVillagerEntity> type, World world, Gender gender) {
         super(type, world);
@@ -204,27 +206,42 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
 
-        if (!world.isClient) {
-            relations.onDeath(cause);
+        if (world.isClient) {
+            return;
         }
+
+        InventoryUtils.dropAllItems(this, inventory);
+
+        if (!relations.onDeath(cause)) {
+            relations.onTragedy(cause, null);
+        }
+    }
+
+    public void setInventory(UpdatableInventory inventory) {
+        NbtCompound nbt = new NbtCompound();
+        InventoryUtils.saveToNBT(inventory, nbt);
+        InventoryUtils.readFromNBT(this.inventory, nbt);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
     public <T extends MobEntity> T convertTo(EntityType<T> type, boolean keepInventory) {
-
+        T mob;
         if (!isRemoved() && type == EntityType.VILLAGER) {
-            VillagerEntityMCA mob = super.convertTo(getGenetics().getGender().getVillagerType(), keepInventory);
-            mob.copyVillagerAttributesFrom(this);
-            mob.setInfected(false);
-            return (T)mob;
+            mob = (T)super.convertTo(getGenetics().getGender().getVillagerType(), keepInventory);
+        } else {
+            mob = super.convertTo(type, keepInventory);
         }
 
-        T mob = super.convertTo(type, keepInventory);
+        if (mob instanceof VillagerLike<?> villager) {
+            villager.copyVillagerAttributesFrom(this);
+            villager.setInfected(false);
+        }
 
-        if (mob instanceof VillagerLike<?>) {
-            ((VillagerLike<?>)mob).copyVillagerAttributesFrom(this);
+        if (mob instanceof VillagerEntityMCA villager) {
+            villager.setUuid(getUuid());
+            villager.setInventory(inventory);
         }
 
         return mob;
@@ -234,8 +251,12 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
         getTypeDataManager().load(this, nbt);
-        updateSpeed();
         relations.readFromNbt(nbt);
+
+        updateSpeed();
+
+        inventory.clear();
+        InventoryUtils.readFromNBT(inventory, nbt);
     }
 
     @Override
@@ -243,6 +264,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         super.writeCustomDataToNbt(nbt);
         getTypeDataManager().save(this, nbt);
         relations.writeToNbt(nbt);
+        InventoryUtils.saveToNBT(inventory, nbt);
     }
 
     @Override
