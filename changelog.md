@@ -210,3 +210,4 @@
 * Villager can no longer teleport into unsafe locations
 * Different ages will now move at different speed
 * Genes now affect speed
+* Converted villagers will now retain custom nbt data and age

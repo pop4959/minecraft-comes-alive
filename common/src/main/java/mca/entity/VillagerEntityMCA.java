@@ -276,6 +276,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
+    public void setCustomName(@Nullable Text name) {
+        super.setCustomName(name);
+
+        setName(name.getString());
+    }
+
+    @Override
     public int getBreedingAge() {
         return super.getBreedingAge();
     }
