@@ -57,7 +57,9 @@ public interface EntityRelationship {
 
         // end the marriage for both the deceased one and the spouse
         if (type == RelationshipType.SPOUSE || type == RelationshipType.SELF) {
-            endMarriage(MarriageState.WIDOW);
+            if (getMarriageState().isMarried()) {
+                endMarriage(MarriageState.WIDOW);
+            }
         }
     }
 
