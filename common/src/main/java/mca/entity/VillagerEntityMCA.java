@@ -902,6 +902,39 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
+    public SoundEvent getYesSound() {
+        if (Config.getInstance().useVoices) {
+            //todo
+            return null;
+        } else if (Config.getInstance().useVanillaVoices) {
+            return super.getYesSound();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    protected SoundEvent getTradingSound(boolean sold) {
+        if (Config.getInstance().useVoices) {
+            //todo
+            return null;
+        } else if (Config.getInstance().useVanillaVoices) {
+            return super.getTradingSound(sold);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void playCelebrateSound() {
+        if (Config.getInstance().useVoices) {
+            //todo
+        } else if (Config.getInstance().useVanillaVoices) {
+            super.playCelebrateSound();
+        }
+    }
+
+    @Override
     public final Text getDisplayName() {
         Text name = super.getDisplayName();
 
