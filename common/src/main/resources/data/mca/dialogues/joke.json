@@ -9,7 +9,7 @@
           "baseChance": 0,
           "conditions": [
             {
-              "chance": 3,
+              "chance": 5,
               "personality": "witty"
             },
             {
@@ -17,7 +17,7 @@
               "personality": "friendly"
             },
             {
-              "chance": 5,
+              "chance": 7,
               "mood": "depressed"
             },
             {
@@ -25,7 +25,7 @@
               "mood": "sad"
             },
             {
-              "chance": 5,
+              "chance": 4,
               "mood": "giggly"
             }
           ],
