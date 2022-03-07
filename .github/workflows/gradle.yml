@@ -40,7 +40,7 @@ jobs:
         with:
           file_path: "forge/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-forge.jar"
           game_endpoint: "minecraft"
-          game_versions: "Minecraft 1.18.2,Java 17,Forge"
+          game_versions: "Minecraft 1.18.1:1.18.2,Java 17,Forge"
           project_id: "535291"
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"
@@ -53,7 +53,7 @@ jobs:
           file_path: "fabric/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-fabric.jar"
           game_endpoint: "minecraft"
           relations: "fabric-api:requiredDependency"
-          game_versions: "Minecraft 1.18.2,Java 17,Fabric"
+          game_versions: "Minecraft 1.18.1:1.18.2,Java 17,Fabric"
           project_id: "535291"
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"
