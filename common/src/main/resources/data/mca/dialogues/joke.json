@@ -6,7 +6,7 @@
       "name": "creative",
       "results": [
         {
-          "baseChance": 0,
+          "baseChance": 3,
           "conditions": [
             {
               "chance": 5,
