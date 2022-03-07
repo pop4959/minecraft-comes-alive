@@ -17,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
     private long startTime;
-    private long cooldown;
     private final float speed;
     private BlockPos bed;
 
@@ -41,7 +40,7 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
     }
 
     private boolean shouldRunInner(ServerWorld world, VillagerEntityMCA entity) {
-        if (entity.hasVehicle() && world.getTime() - cooldown > 40L) {
+        if (entity.hasVehicle()) {
             return false;
         }
 
