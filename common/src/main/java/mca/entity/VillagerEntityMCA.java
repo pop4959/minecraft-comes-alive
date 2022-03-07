@@ -281,7 +281,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public void setCustomName(@Nullable Text name) {
         super.setCustomName(name);
 
-        setName(name.getString());
+        if (!world.isClient) {
+            setName(name.getString());
+        }
     }
 
     @Override
