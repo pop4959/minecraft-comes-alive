@@ -196,13 +196,14 @@
 
 # 7.1.0
 
-* Ported to 1.18
+* Ported to 1.18 (And 1.18.1)
 * Fixed missing chest tag
 * Added baby clothes
 * Fixed villagers not fully moving out of the old building
 
-# 7.1.1
+# 7.2.0
 
+* Ported to 1.18.2
 * Fixed incompatibility with eldritch mobs
 * Villager get 5 extra hearts per level
 * Added config flag to use squidward models

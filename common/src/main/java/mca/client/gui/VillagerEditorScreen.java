@@ -141,10 +141,18 @@ public class VillagerEditorScreen extends Screen {
         switch (page) {
             case "general":
                 //name
+                Text villagerName = villager.getName();
+                if (villagerName == null || villagerName.asString().isEmpty()) {
+                    // Failsafe-conditions for empty names
+                    // TODO: Possibly add randomizer support here...
+                    if (villagerUUID.equals(playerUUID)) {
+                        villagerName = client.player.getName();
+                    }
+                }
                 field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
-                field.setText(villager.getName().asString());
-                field.setChangedListener(villager::setName);
+                field.setText(villagerName.asString());
+                field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
                 y += 20;
 
                 //gender
@@ -383,7 +391,7 @@ public class VillagerEditorScreen extends Screen {
             return;
         }
 
-        long time = MinecraftClient.getInstance().world.getTime();
+        long time = client.world.getTime();
         villager.age += time - initialTime;
         initialTime = time;
 
@@ -399,7 +407,7 @@ public class VillagerEditorScreen extends Screen {
             villagerBreedingAge = villagerData.getInt("Age");
             villager.setBreedingAge(villagerBreedingAge);
             villager.calculateDimensions();
-            initialTime = MinecraftClient.getInstance().world.getTime();
+            initialTime = client.world.getTime();
         }
         if (page.equals("loading")) {
             setPage("general");
