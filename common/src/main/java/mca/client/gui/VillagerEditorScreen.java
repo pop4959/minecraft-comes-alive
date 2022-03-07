@@ -39,6 +39,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
+import static mca.entity.VillagerLike.VILLAGER_NAME;
+
 public class VillagerEditorScreen extends Screen {
     private final UUID villagerUUID;
     private final UUID playerUUID;
@@ -150,7 +152,7 @@ public class VillagerEditorScreen extends Screen {
                 field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 field.setMaxLength(32);
                 field.setText(villagerName.asString());
-                field.setChangedListener(villager::setName);
+                field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
                 y += 20;
 
                 //gender
