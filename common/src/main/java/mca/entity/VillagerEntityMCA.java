@@ -889,7 +889,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
     }
 
-    @Override
+    // TODO: Use these methods when useVoices is ready to be implemented
+    /*@Override
     public SoundEvent getYesSound() {
         if (Config.getInstance().useVoices) {
             //todo
@@ -920,7 +921,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();
         }
-    }
+    }*/
 
     @Override
     public final Text getDisplayName() {
