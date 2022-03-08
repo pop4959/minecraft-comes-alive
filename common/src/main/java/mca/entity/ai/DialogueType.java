@@ -1,6 +1,7 @@
 package mca.entity.ai;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,7 +75,7 @@ public enum DialogueType {
         String phrase = key.substring(split + 1);
 
         while (type != null) {
-            String s = type.name().toLowerCase() + "." + phrase;
+            String s = type.name().toLowerCase(Locale.ENGLISH) + "." + phrase;
 
             if (Language.getInstance().hasTranslation(s)) {
                 return s;
