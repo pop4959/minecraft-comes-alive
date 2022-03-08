@@ -383,12 +383,14 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get()) {
-            playWelcomeSound();
+            if (!getVillagerBrain().isPanicking()) {
+                playWelcomeSound();
 
-            //make sure dialogueType is synced in case the client needs it
-            getDialogueType(player);
+                //make sure dialogueType is synced in case the client needs it
+                getDialogueType(player);
 
-            return interactions.interactAt(player, pos, hand);
+                return interactions.interactAt(player, pos, hand);
+            }
         }
         return super.interactAt(player, pos, hand);
     }
@@ -396,7 +398,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get()) {
+        if (stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get() && !getVillagerBrain().isPanicking()) {
             return super.interactMob(player, hand);
         } else {
             return ActionResult.PASS;
