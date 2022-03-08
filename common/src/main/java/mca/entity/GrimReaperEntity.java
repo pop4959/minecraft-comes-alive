@@ -116,7 +116,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
     protected EntityNavigation createNavigation(World world) {
         BirdNavigation navigator = new BirdNavigation(this, world) {
             @Override
-            public boolean isValidPosition(BlockPos p_188555_1_) {
+            public boolean isValidPosition(BlockPos pos) {
                 return true;
             }
 

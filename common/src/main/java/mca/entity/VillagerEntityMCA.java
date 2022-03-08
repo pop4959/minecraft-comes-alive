@@ -1047,12 +1047,16 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public void moveTowards(BlockPos pos, float speed, int closeEnoughDist) {
-        this.brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(new BlockPosLookTarget(pos), speed, closeEnoughDist));
+        this.brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(pos, speed, closeEnoughDist));
         this.lookAt(pos);
     }
 
+    public void moveTowards(BlockPos pos, float speed) {
+        moveTowards(pos, speed, 1);
+    }
+
     public void moveTowards(BlockPos pos) {
-        moveTowards(pos, 0.5F, 1);
+        moveTowards(pos, 1);
     }
 
     public void lookAt(BlockPos pos) {
