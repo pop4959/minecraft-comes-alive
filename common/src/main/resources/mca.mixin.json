@@ -6,6 +6,7 @@
   "mixins": [
     "MixinActivity",
     "MixinCriteria",
+    "MixinDefaultParticleType",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinPlayerEntity",
@@ -15,6 +16,7 @@
     "MixinServerWorld",
     "MixinTargetPredicate",
     "MixinVillagerEntity",
+    "MixinVillagerProfession",
     "MixinZombieVillagerEntity"
   ],
   "client": [
