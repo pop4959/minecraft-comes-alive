@@ -120,10 +120,6 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
                 return true;
             }
 
-            @Override
-            public void tick() {
-                super.tick();
-            }
         };
         navigator.setCanPathThroughDoors(false);
         navigator.setCanSwim(false);
@@ -153,13 +149,10 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         setTrackedValue(ATTACK_STAGE, state);
 
         switch (state) {
-            case PRE:
-                playSound(SoundsMCA.reaper_scythe_out.get(), 1, 1);
-                break;
-            case POST:
-                playSound(SoundsMCA.reaper_scythe_swing.get(), 1, 1);
-                break;
-            default:
+            case PRE -> playSound(SoundsMCA.reaper_scythe_out.get(), 1, 1);
+            case POST -> playSound(SoundsMCA.reaper_scythe_swing.get(), 1, 1);
+            default -> {
+            }
         }
     }
 

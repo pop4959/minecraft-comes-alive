@@ -32,16 +32,12 @@ public enum DialogueType {
     public static final Map<String, DialogueType> MAP = Arrays.stream(VALUES).collect(Collectors.toMap(DialogueType::name, Function.identity()));
 
     public DialogueType toChild() {
-        switch (this) {
-            case TODDLER:
-                return TODDLERP;
-            case CHILD:
-                return CHILDP;
-            case TEEN:
-                return TEENP;
-            default:
-                return UNASSIGNED;
-        }
+        return switch (this) {
+            case TODDLER -> TODDLERP;
+            case CHILD -> CHILDP;
+            case TEEN -> TEENP;
+            default -> UNASSIGNED;
+        };
     }
 
     public static DialogueType fromAge(AgeState state) {
