@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import mca.Config;
 import mca.resources.API;
 import mca.resources.data.BuildingType;
 import mca.util.NbtHelper;
@@ -281,8 +283,8 @@ public class Building implements Serializable, Iterable<UUID> {
         done.add(center);
 
         //const
-        final int maxSize = 1024 * 8;
-        final int maxRadius = 320;
+        final int maxSize = Config.getInstance().maxBuildingSize;
+        final int maxRadius = Config.getInstance().maxBuildingRadius;
 
         //fill the building
         int scanSize = 0;
