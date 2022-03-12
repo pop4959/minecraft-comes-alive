@@ -46,7 +46,7 @@
           ],
           "actions": {
             "next": "hug.fail",
-            "negative": 5
+            "negative": 4
           }
         }
       ]

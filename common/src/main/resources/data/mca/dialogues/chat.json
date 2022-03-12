@@ -47,7 +47,7 @@
           ],
           "actions": {
             "next": "chat.fail",
-            "negative": 5
+            "negative": 2
           }
         }
       ]
