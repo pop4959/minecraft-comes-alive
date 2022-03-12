@@ -29,7 +29,7 @@ public class InteractTask extends Task<VillagerEntityMCA> {
 
     public static boolean shouldRun(VillagerEntityMCA villager) {
         return villager.isAlive()
-                && villager.getInteractions().getInteractingPlayer().filter(player -> villager.squaredDistanceTo(player) <= 16).isPresent()
+                && villager.getInteractions().getInteractingPlayer().filter(player -> villager.squaredDistanceTo(player) <= 25).isPresent()
                 && !villager.isTouchingWater()
                 && !villager.velocityModified
                 && villager.getVillagerBrain().getCurrentJob() == Chore.NONE;
