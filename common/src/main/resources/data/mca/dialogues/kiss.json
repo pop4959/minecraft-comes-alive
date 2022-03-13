@@ -38,7 +38,7 @@
           ],
           "actions": {
             "next": "kiss.success",
-            "positive": 10
+            "positive": 8
           }
         },
         {
@@ -56,7 +56,7 @@
           ],
           "actions": {
             "next": "kiss.fail",
-            "negative": 10
+            "negative": 8
           }
         }
       ]

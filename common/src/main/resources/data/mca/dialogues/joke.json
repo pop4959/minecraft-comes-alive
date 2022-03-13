@@ -41,7 +41,7 @@
           ],
           "actions": {
             "next": "joke.creative.failed",
-            "negative": 5
+            "negative": 2
           }
         }
       ]

@@ -54,7 +54,7 @@ public class Village implements Iterable<Building> {
     private static final int MAX_STORAGE_SIZE = 1024;
 
     public final static int BORDER_MARGIN = 32;
-    public final static int MERGE_MARGIN = 128;
+    public final static int MERGE_MARGIN = 64;
 
     private String name = API.getVillagePool().pickVillageName("village");
 
@@ -103,11 +103,6 @@ public class Village implements Iterable<Building> {
         return buildings.values().iterator();
     }
 
-    public void addBuilding(Building building) {
-        buildings.put(building.getId(), building);
-        calculateDimensions();
-    }
-
     public void removeBuilding(int id) {
         buildings.remove(id);
         if (!buildings.isEmpty()) {
@@ -123,7 +118,7 @@ public class Village implements Iterable<Building> {
         return getBuildings().values().stream().filter(b -> b.containsPos(pos)).findAny();
     }
 
-    private void calculateDimensions() {
+    public void calculateDimensions() {
         int sx = Integer.MAX_VALUE;
         int sy = Integer.MAX_VALUE;
         int sz = Integer.MAX_VALUE;
@@ -639,5 +634,11 @@ public class Village implements Iterable<Building> {
         if (!buildings.isEmpty()) {
             calculateDimensions();
         }
+    }
+
+    public void merge(Village village) {
+        buildings.putAll(village.buildings);
+        unspentMood += village.unspentMood;
+        calculateDimensions();
     }
 }

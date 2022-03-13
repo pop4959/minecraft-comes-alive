@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import mca.Config;
 import mca.MCA;
 import mca.advancement.criterion.CriterionMCA;
@@ -43,10 +44,11 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.SpawnHelper;
 
 public class VillageManager extends PersistentState implements Iterable<Village> {
-
     private final Map<Integer, Village> villages = new HashMap<>();
 
     public final Set<BlockPos> cache = ConcurrentHashMap.newKeySet();
+
+    public final Map<Integer, Integer> buildingToVillages = new HashMap<>();
 
     private final List<BlockPos> buildingQueue = new LinkedList<>();
 
@@ -77,15 +79,22 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         reapers = nbt.contains("reapers", NbtElement.COMPOUND_TYPE) ? new ReaperSpawner(this, nbt.getCompound("reapers")) : new ReaperSpawner(this);
         babies = nbt.contains("babies", NbtElement.COMPOUND_TYPE) ? new BabyBunker(this, nbt.getCompound("babies")) : new BabyBunker(this);
 
-        NbtList v = nbt.getList("villages", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < v.size(); i++) {
+        NbtList villageList = nbt.getList("villages", NbtElement.COMPOUND_TYPE);
+        for (int i = 0; i < villageList.size(); i++) {
             Village village = new Village();
-            village.load(v.getCompound(i));
+            village.load(villageList.getCompound(i));
             if (village.getBuildings().isEmpty()) {
                 MCA.LOGGER.warn("Empty village detected (" + village.getName() + "), removing...");
                 markDirty();
             } else {
                 villages.put(village.getId(), village);
+            }
+        }
+
+        //create a mapping from building id to its village id
+        for (Village v : villages.values()) {
+            for (Building b : v.getBuildings().values()) {
+                buildingToVillages.put(b.getId(), v.getId());
             }
         }
     }
@@ -128,6 +137,10 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         return findVillages(v -> v.isWithinBorder(p, margin)).min((a, b) -> (int)(a.getCenter().getSquaredDistance(p) - b.getCenter().getSquaredDistance(p)));
     }
 
+    public boolean isWithinHorizontalBoundaries(BlockPos p) {
+        return villages.values().stream().anyMatch(v -> v.getBox().expand(0, 1000, 0).contains(p));
+    }
+
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
         nbt.putInt("lastBuildingId", lastBuildingId);
@@ -151,7 +164,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         //send bounty hunters
         if (world.getTimeOfDay() % Config.getInstance().bountyHunterInterval / 10 == 0 && world.getDifficulty() != Difficulty.PEACEFUL) {
             world.getPlayers().forEach(player -> {
-                if (world.random.nextInt(10) == 0 && PlayerSaveData.get(world, player.getUuid()).getLastSeenVillage(this).isEmpty()) {
+                if (world.random.nextInt(10) == 0 && !isWithinHorizontalBoundaries(player.getBlockPos())) {
                     villages.values().stream()
                             .filter(v -> v.getReputation(player) < Config.getInstance().bountyHunterThreshold)
                             .min(Comparator.comparingInt(v -> v.getReputation(player)))
@@ -186,7 +199,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             count *= 2;
         } else {
             //slightly increase your reputation
-            sender.pushHearts(player, sender.getPopulation() * 5);
+            sender.pushHearts(player, sender.getPopulation() * count);
         }
 
         //trigger advancement
@@ -355,7 +368,26 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             //add to building list
             villages.put(village.getId(), village);
             building.setId(lastBuildingId++);
-            village.addBuilding(building);
+            village.getBuildings().put(building.getId(), building);
+            village.calculateDimensions();
+            buildingToVillages.put(building.getId(), village.getId());
+
+            //attempt to merge
+            villages.values().stream()
+                    .filter(v -> v != village)
+                    .filter(v -> v.getBox().expand(Village.MERGE_MARGIN).intersects(village.getBox()))
+                    .findAny()
+                    .ifPresent(v -> {
+                                if (v.getPopulation() > village.getPopulation()) {
+                                    merge(v, village);
+                                    villages.remove(village.getId());
+                                } else {
+                                    merge(village, v);
+                                    villages.remove(v.getId());
+                                }
+                            }
+                    );
+
             markDirty();
         }
 
@@ -368,5 +400,17 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
     public void setBuildingCooldown(int buildingCooldown) {
         this.buildingCooldown = buildingCooldown;
+    }
+
+    public int mapBuildingToVillage(Integer buildingId) {
+        return buildingToVillages.getOrDefault(buildingId, -1);
+    }
+
+    public void merge(Village into, Village from) {
+        into.merge(from);
+
+        for (Building b : from.getBuildings().values()) {
+            buildingToVillages.put(b.getId(), into.getId());
+        }
     }
 }
