@@ -22,8 +22,10 @@ public final class Config implements Serializable {
     public static final int VERSION = 1;
 
     public int version = 0;
+  
     public final boolean overwriteOriginalVillagers = true;
     public final boolean overwriteOriginalZombieVillagers = true;
+    public final boolean villagerTagsHacks = true;
     public final boolean enableInfection = true;
     public final int infectionChance = 5;
     public final boolean allowGrimReaper = true;
