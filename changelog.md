@@ -215,3 +215,6 @@
 * Fixed inventory disappearing on convert
 * Fixed marriage and family tree loss on convert
 * Maximum building size and radius are now configurable
+* Fixed UI Scaling issues with interaction buttons
+* Fixed issues of bounty hunters spawning within villages if your y value is below its bounds
+* Added Village Merging
