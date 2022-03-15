@@ -34,19 +34,6 @@ jobs:
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
         id: tag
         uses: dawidd6/action-get-tag@v1
-      - name: "Upload Forge to CurseForge"
-        uses: itsmeow/curseforge-upload@v3
-        if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
-        with:
-          file_path: "forge/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-forge.jar"
-          display_name: "[Forge 1.18.1] MCA Reborn - ${{steps.tag.outputs.tag}}"
-          game_endpoint: "minecraft"
-          game_versions: "Minecraft 1.18:1.18.1,Java 17,Forge"
-          project_id: "535291"
-          token: "${{ secrets.CF_API_TOKEN }}"
-          changelog_type: "markdown"
-          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.18/changelog.md)"
-          release_type: "beta"
       - name: "Upload Fabric to CurseForge"
         uses: itsmeow/curseforge-upload@v3
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
@@ -61,6 +48,19 @@ jobs:
           changelog_type: "markdown"
           changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.18/changelog.md)"
           release_type: "beta"
+        - name: "Upload Forge to CurseForge"
+          uses: itsmeow/curseforge-upload@v3
+          if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
+          with:
+            file_path: "forge/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-forge.jar"
+            display_name: "[Forge 1.18.1] MCA Reborn - ${{steps.tag.outputs.tag}}"
+            game_endpoint: "minecraft"
+            game_versions: "Minecraft 1.18:1.18.1,Java 17,Forge"
+            project_id: "535291"
+            token: "${{ secrets.CF_API_TOKEN }}"
+            changelog_type: "markdown"
+            changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.18/changelog.md)"
+            release_type: "beta"
         
       
       
