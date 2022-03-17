@@ -229,7 +229,7 @@ public class Village implements Iterable<Building> {
     public int getMaxPopulation() {
         int residents = 0;
         for (Building b : this) {
-            residents += b.getBeds();
+            residents += b.getBedCount();
         }
         return residents;
     }

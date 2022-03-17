@@ -446,14 +446,9 @@ public class BlueprintScreen extends ExtendedScreen {
             lines.add(new LiteralText(name));
         }
 
-        //pois
-        if (hoverBuilding.getPois().size() > 0) {
-            lines.add(new TranslatableText("gui.blueprint.pois", hoverBuilding.getPois().size()).formatted(Formatting.GRAY));
-        }
-
         //present blocks
-        for (Map.Entry<Identifier, Integer> block : hoverBuilding.getBlocks().entrySet()) {
-            lines.add(new LiteralText(block.getValue() + " x ").append(getBlockName(block.getKey())).formatted(Formatting.GRAY));
+        for (Map.Entry<Identifier, List<BlockPos>> block : hoverBuilding.getBlocks().entrySet()) {
+            lines.add(new LiteralText(block.getValue().size() + " x ").append(getBlockName(block.getKey())).formatted(Formatting.GRAY));
         }
 
         return lines;
@@ -505,7 +500,7 @@ public class BlueprintScreen extends ExtendedScreen {
             textRenderer.drawWithShadow(transform, size, x, y + 20, 0xffdddddd);
 
             //required blocks
-            for (Map.Entry<Identifier, Integer> b : selectedBuilding.blockIds().entrySet()) {
+            for (Map.Entry<Identifier, Integer> b : selectedBuilding.getGroups().entrySet()) {
                 textRenderer.drawWithShadow(transform, new LiteralText(b.getValue() + " x ").append(getBlockName(b.getKey())), x, y + 32, 0xffffffff);
                 y += 10;
             }

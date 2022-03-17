@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.poi.PointOfInterestStorage;
@@ -158,7 +159,12 @@ public class Residency {
     }
 
     private void setBuilding(Building b) {
-        setBuilding(b, b.getCenter());
+        List<BlockPos> group = b.getBlocksOfGroup(new Identifier("minecraft:beds"));
+        if (group.size() > 0) {
+            setBuilding(b, group.get(b.getResidents().size() % group.size()));
+        } else {
+            setBuilding(b, b.getCenter());
+        }
     }
 
     private void setBuilding(Building b, BlockPos p) {
@@ -223,7 +229,7 @@ public class Residency {
                     village.addResident(entity, building.getId());
                 } else if (building.getBuildingType().noBeds()) {
                     entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
-                } else if (building.getBeds() == 0) {
+                } else if (building.getBedCount() == 0) {
                     entity.sendChatMessage(player, "interaction.sethome.nobeds");
                 } else {
                     entity.sendChatMessage(player, "interaction.sethome.bedfail");
