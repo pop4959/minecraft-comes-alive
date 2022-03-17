@@ -768,9 +768,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             }
         }
 
-        if (!relations.onDeath(cause)) {
-            relations.onTragedy(cause, null);
-        }
+        relations.onDeath(cause);
 
         //distribute the hearts across the other villagers
         //this prevents rapid drops in village reputation as well as bounty hunters to know what you did

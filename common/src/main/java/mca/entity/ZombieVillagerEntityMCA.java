@@ -214,9 +214,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
         InventoryUtils.dropAllItems(this, inventory);
 
-        if (!relations.onDeath(cause)) {
-            relations.onTragedy(cause, null);
-        }
+        relations.onDeath(cause);
     }
 
     public void setInventory(UpdatableInventory inventory) {
