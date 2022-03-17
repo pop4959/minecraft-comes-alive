@@ -43,14 +43,7 @@ import mca.util.network.datasync.CDataParameter;
 import mca.util.network.datasync.CParameter;
 import net.minecraft.block.entity.SkullBlockEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.CrossbowUser;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.brain.BlockPosLookTarget;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -1184,6 +1177,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void postShoot() {
 
+    }
+
+    @Override
+    public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
+        getTraits().addTrait(Traits.Trait.ELECTRIFIED);
     }
 
     @Override

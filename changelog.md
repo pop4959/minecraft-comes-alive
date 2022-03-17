@@ -218,3 +218,5 @@
 * Fixed UI Scaling issues with interaction buttons
 * Fixed issues of bounty hunters spawning within villages if your y value is below its bounds
 * Added Village Merging
+* Fixed villagers struck by lighting
+* Added electrified trait
