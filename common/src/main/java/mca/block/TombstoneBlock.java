@@ -378,21 +378,25 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                             mob.setBreedingAge(mob.getBreedingAge());
                         }
 
+                        boolean alreadySpawned = false;
                         if (cure && (entity instanceof ZombieVillagerEntity)) {
                             // spawnEntity is called here, so don't call it twice
                             entity = ((ZombieVillagerEntity) entity).convertTo(EntityType.VILLAGER, true);
-                        } else {
-                            if (entity instanceof CompassionateEntity) {
-                                ((CompassionateEntity<?>)entity).getRelationships().getFamilyEntry().setDeceased(false);
-                            }
+                            alreadySpawned = true;
+                        }
 
-                            if (entity instanceof Infectable) {
-                                ((Infectable) entity).setInfectionProgress(cure
-                                        ? Infectable.MIN_INFECTION
-                                        : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), ((Infectable) entity).getInfectionProgress())
-                                );
-                            }
+                        if (entity instanceof CompassionateEntity) {
+                            ((CompassionateEntity<?>)entity).getRelationships().getFamilyEntry().setDeceased(false);
+                        }
 
+                        if (entity instanceof Infectable) {
+                            ((Infectable) entity).setInfectionProgress(cure
+                                    ? Infectable.MIN_INFECTION
+                                    : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), ((Infectable) entity).getInfectionProgress())
+                            );
+                        }
+
+                        if (!alreadySpawned) {
                             world.spawnEntity(entity);
                         }
                     });
