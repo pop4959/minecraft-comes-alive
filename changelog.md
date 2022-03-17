@@ -220,3 +220,4 @@
 * Added Village Merging
 * Fixed villagers struck by lighting
 * Added electrified trait
+* Increased button widths to better support different languages
