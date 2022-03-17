@@ -378,8 +378,11 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                             mob.setBreedingAge(mob.getBreedingAge());
                         }
 
+                        boolean alreadySpawned = false;
                         if (cure && (entity instanceof ZombieVillagerEntity)) {
+                            // spawnEntity is called here, so don't call it twice
                             entity = ((ZombieVillagerEntity) entity).convertTo(EntityType.VILLAGER, true);
+                            alreadySpawned = true;
                         }
 
                         if (entity instanceof CompassionateEntity) {
@@ -393,7 +396,9 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                             );
                         }
 
-                        world.spawnEntity(entity);
+                        if (!alreadySpawned) {
+                            world.spawnEntity(entity);
+                        }
                     });
                 }
             }
