@@ -56,7 +56,7 @@ public class GreetPlayerTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected boolean shouldKeepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        return !talked && !villager.getVillagerBrain().isPanicking();
+        return !talked && !villager.getVillagerBrain().isPanicking() && !villager.isSleeping();
     }
 
     @Override
