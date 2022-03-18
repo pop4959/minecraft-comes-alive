@@ -1,6 +1,8 @@
 package mca.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -14,12 +16,14 @@ import net.minecraft.util.Nameable;
 
 @Mixin(PlayerInventory.class)
 abstract class MixinPlayerInventory implements Inventory, Nameable {
+    @Shadow @Final public PlayerEntity player;
+
     @Inject(method = "dropSelectedItem(Z)Lnet/minecraft/item/ItemStack;",
             at = @At("HEAD"),
             cancellable = true)
     public void onDropSelectedItem(boolean dropEntireStack, CallbackInfoReturnable<ItemStack> info) {
         ItemStack stack = ((PlayerInventory)(Object)this).getMainHandStack();
-        if (stack.getItem() instanceof BabyItem && !((BabyItem)stack.getItem()).onDropped(stack, (PlayerEntity)(Object)this)) {
+        if (stack.getItem() instanceof BabyItem && !((BabyItem)stack.getItem()).onDropped(stack, this.player)) {
             info.setReturnValue(ItemStack.EMPTY);
         }
     }

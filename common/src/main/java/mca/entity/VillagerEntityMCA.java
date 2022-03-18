@@ -362,13 +362,28 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private void attackedEntity(Entity target) {
         if (target instanceof PlayerEntity) {
-            int bounty = getSmallBounty();
-            if (bounty <= 1) {
-                getBrain().forget(MemoryModuleType.ATTACK_TARGET);
-                getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
-            } else {
-                getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty - 1);
-            }
+            pardonPlayers((PlayerEntity)target);
+        }
+    }
+
+    /**
+     * decrease the personal bounty counter by one
+     */
+    private void pardonPlayers() {
+        int bounty = getSmallBounty();
+        if (bounty <= 1) {
+            getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
+            getBrain().forget(MemoryModuleType.ATTACK_TARGET);
+        } else {
+            getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty - 1);
+        }
+    }
+
+    private void pardonPlayers(PlayerEntity attacker) {
+        pardonPlayers();
+        int bounty = getSmallBounty();
+        if (bounty <= getMaxWarnings(attacker)) {
+            getBrain().forget(MemoryModuleType.ATTACK_TARGET);
         }
     }
 
@@ -480,10 +495,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64) && (v.isGuard())) {
                     if (source.getAttacker() instanceof PlayerEntity) {
                         int bounty = v.getSmallBounty();
-                        if (bounty > 0) {
+                        int maxWarning = v.getMaxWarnings((PlayerEntity)attacker);
+                        if (bounty > maxWarning) {
                             // ok, that was enough
                             v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
-                        } else {
+                        } else if (bounty == 0 || bounty == maxWarning) {
                             // just a warning
                             v.sendChatMessage((PlayerEntity)source.getAttacker(), "villager.warning");
                         }
@@ -526,6 +542,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY.get()).orElse(0);
     }
 
+    private int getMaxWarnings(PlayerEntity attacker) {
+        return getVillagerBrain().getMemoriesForPlayer(attacker).getHearts() / Config.getInstance().heartsForPardonHit;
+    }
+
     @Override
     public void tickMovement() {
         tickHandSwing();
@@ -552,6 +572,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             relations.tick(age);
 
             inventory.update(this);
+
+            if (age % Config.getInstance().pardonPlayerTicks == 0) {
+                pardonPlayers();
+            }
 
             // Brain and pregnancy depend on the above states, so we tick them last
             // Every 1 second

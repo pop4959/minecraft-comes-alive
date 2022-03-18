@@ -4,38 +4,22 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
-import mca.entity.EntitiesMCA;
+
+import mca.Config;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 
 public class GuardEnemiesSensor extends Sensor<LivingEntity> {
-    private static final ImmutableMap<EntityType<?>, Integer> PRIORITIES = ImmutableMap.<EntityType<?>, Integer>builder()
-            .put(EntityType.DROWNED, 2)
-            .put(EntityType.EVOKER, 3)
-            .put(EntityType.HUSK, 2)
-            .put(EntityType.ILLUSIONER, 3)
-            .put(EntityType.PILLAGER, 3)
-            .put(EntityType.RAVAGER, 3)
-            .put(EntityType.VEX, 0)
-            .put(EntityType.VINDICATOR, 4)
-            .put(EntityType.ZOGLIN, 2)
-            .put(EntityType.ZOMBIE, 4)
-            .put(EntityType.ZOMBIE_VILLAGER, 3)
-            .put(EntityType.SPIDER, 0)
-            .put(EntityType.SKELETON, 0)
-            .put(EntityType.SLIME, 0)
-            .put(EntitiesMCA.FEMALE_ZOMBIE_VILLAGER.get(), 3)
-            .put(EntitiesMCA.MALE_ZOMBIE_VILLAGER.get(), 3)
-            .build();
-
     @Override
     public Set<MemoryModuleType<?>> getOutputMemoryModules() {
         return ImmutableSet.of(MemoryModuleTypeMCA.NEAREST_GUARD_ENEMY.get());
@@ -70,7 +54,14 @@ public class GuardEnemiesSensor extends Sensor<LivingEntity> {
             //priority is irrelevant if this entity is currently an active threat
             return 9;
         } else {
-            return PRIORITIES.getOrDefault(entity.getType(), -1);
+            Identifier id = Registry.ENTITY_TYPE.getId(entity.getType());
+            if (Config.getInstance().guardsTargetEntities.containsKey(id.toString())) {
+                return Config.getInstance().guardsTargetEntities.get(id.toString());
+            } else if (Config.getInstance().guardsTargetMonsters && entity instanceof Monster) {
+                return 3;
+            } else {
+                return -1;
+            }
         }
     }
 
