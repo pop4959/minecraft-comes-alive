@@ -362,7 +362,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private void attackedEntity(Entity target) {
         if (target instanceof PlayerEntity) {
-            pardonPlayers();
+            pardonPlayers((PlayerEntity)target);
         }
     }
 
@@ -372,10 +372,18 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private void pardonPlayers() {
         int bounty = getSmallBounty();
         if (bounty <= 1) {
-            getBrain().forget(MemoryModuleType.ATTACK_TARGET);
             getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY);
+            getBrain().forget(MemoryModuleType.ATTACK_TARGET);
         } else {
             getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY, bounty - 1);
+        }
+    }
+
+    private void pardonPlayers(PlayerEntity attacker) {
+        pardonPlayers();
+        int bounty = getSmallBounty();
+        if (bounty <= getMaxWarnings(attacker)) {
+            getBrain().forget(MemoryModuleType.ATTACK_TARGET);
         }
     }
 
@@ -487,7 +495,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64) && (v.isGuard())) {
                     if (source.getAttacker() instanceof PlayerEntity) {
                         int bounty = v.getSmallBounty();
-                        int maxWarning = getVillagerBrain().getMemoriesForPlayer((PlayerEntity)attacker).getHearts() / Config.getInstance().heartsForPardonHit;
+                        int maxWarning = v.getMaxWarnings((PlayerEntity)attacker);
                         if (bounty > maxWarning) {
                             // ok, that was enough
                             v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
@@ -532,6 +540,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private int getSmallBounty() {
         return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY).orElse(0);
+    }
+
+    private int getMaxWarnings(PlayerEntity attacker) {
+        return getVillagerBrain().getMemoriesForPlayer(attacker).getHearts() / Config.getInstance().heartsForPardonHit;
     }
 
     @Override
