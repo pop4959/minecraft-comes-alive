@@ -47,7 +47,7 @@ public class VillagerEditorScreen extends Screen {
     private int villagerBreedingAge;
     private String page;
     private final VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
-    private static final int DATA_WIDTH = 150;
+    private static final int DATA_WIDTH = 175;
     private int traitPage = 0;
     private static final int TRAITS_PER_PAGE = 8;
     private long initialTime;
@@ -269,13 +269,14 @@ public class VillagerEditorScreen extends Screen {
                 //personality
                 List<ButtonWidget> personalityButtons = new LinkedList<>();
                 int row = 0;
+                final int BUTTONS_PER_ROW = 2;
                 for (Personality p : Personality.values()) {
                     if (p != Personality.UNASSIGNED) {
-                        if (row == 3) {
+                        if (row == BUTTONS_PER_ROW) {
                             row = 0;
                             y += 20;
                         }
-                        ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 3 * row, y, DATA_WIDTH / 3, 20, p.getName(), b -> {
+                        ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / BUTTONS_PER_ROW * row, y, DATA_WIDTH / BUTTONS_PER_ROW, 20, p.getName(), b -> {
                             villager.getVillagerBrain().setPersonality(p);
                             personalityButtons.forEach(v -> v.active = true);
                             b.active = false;

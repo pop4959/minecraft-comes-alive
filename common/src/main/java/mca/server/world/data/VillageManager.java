@@ -38,6 +38,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.PersistentState;
@@ -249,10 +250,10 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         return processBuilding(pos, false, false);
     }
 
-    private BuildingType isGroupedBuildingBLock(BlockPos pos) {
+    private BuildingType getGroupedBuildingType(BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
         for (BuildingType bt : API.getVillagePool()) {
-            if (bt.grouped() && bt.getGroup(block).isPresent()) {
+            if (bt.grouped() && bt.getBlockToGroup().containsKey(Registry.BLOCK.getId(block))) {
                 return bt;
             }
         }
@@ -273,7 +274,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         Optional<Village> optionalVillage = findNearestVillage(pos, Village.MERGE_MARGIN);
 
         //check if this might be a grouped building
-        BuildingType groupedBuildingType = isGroupedBuildingBLock(pos);
+        BuildingType groupedBuildingType = getGroupedBuildingType(pos);
 
         //block existing buildings to prevent overlaps
         Set<BlockPos> blocked = new HashSet<>();
@@ -297,7 +298,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
                 if (building.isPresent()) {
                     found = true;
-                    building.get().addPoi(world, pos);
+                    building.get().addPOI(world, pos);
                     markDirty();
                 }
             } else {
@@ -320,8 +321,8 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                     .filter(b -> b.getBuildingType().grouped())
                     .filter(b -> b.getCenter().getSquaredDistance(pos) < 1024.0)
                     .forEach(b -> {
-                        b.validatePois(world);
-                        if (b.getPois().size() == 0) {
+                        b.validateBlocks(world);
+                        if (b.getBlockPosStream().findAny().isEmpty()) {
                             toRemove.add(b.getId());
                         }
                     });
@@ -350,7 +351,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             if (groupedBuildingType != null) {
                 //add initial poi
                 building.setType(groupedBuildingType.name());
-                building.addPoi(world, pos);
+                building.addPOI(world, pos);
             } else {
                 //check its boundaries, count the blocks, etc
                 Building.validationResult result = building.validateBuilding(world, blocked);
@@ -392,10 +393,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         }
 
         return Building.validationResult.SUCCESS;
-    }
-
-    public int getBuildingCooldown() {
-        return buildingCooldown;
     }
 
     public void setBuildingCooldown(int buildingCooldown) {

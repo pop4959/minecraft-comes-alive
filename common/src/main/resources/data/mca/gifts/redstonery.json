@@ -7,6 +7,10 @@
     {
       "profession": "minecraft:cleric",
       "satisfaction_boost": 10
+    },
+    {
+      "trait": "electrified",
+      "satisfaction_boost": 10
     }
   ],
   "items": {

@@ -123,6 +123,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
                             return true;
                         }
                     }
+                    onTragedy(cause, null);
                     return false;
                 }).isPresent();
     }

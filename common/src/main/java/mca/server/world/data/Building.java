@@ -2,17 +2,7 @@ package mca.server.world.data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import mca.Config;
@@ -51,8 +41,7 @@ public class Building implements Serializable, Iterable<UUID> {
     };
 
     private final Map<UUID, String> residents = new HashMap<>();
-    private final Map<Identifier, Integer> blocks = new HashMap<>();
-    private final Queue<BlockPos> pois = new LinkedList<>();
+    private final Map<Identifier, List<BlockPos>> blocks = new HashMap<>();
 
     private String type = "building";
 
@@ -118,17 +107,12 @@ public class Building implements Serializable, Iterable<UUID> {
             residents.put(c.getUuid("uuid"), c.getString("name"));
         }
 
-        NbtList bl = v.getList("blocks", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < bl.size(); i++) {
-            NbtCompound c = bl.getCompound(i);
-            blocks.put(new Identifier(c.getString("name")), c.getInt("count"));
-        }
-
-        NbtList p = v.getList("pois", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < p.size(); i++) {
-            NbtCompound c = p.getCompound(i);
-            pois.add(new BlockPos(c.getInt("x"), c.getInt("y"), c.getInt("z")));
-        }
+        blocks.putAll(NbtHelper.toMap(v.getCompound("blocks2"),
+                Identifier::new,
+                l -> NbtHelper.toList(l, e -> {
+                    NbtCompound c = (NbtCompound)e;
+                    return new BlockPos(c.getInt("x"), c.getInt("y"), c.getInt("z"));
+                })));
     }
 
     public NbtCompound save() {
@@ -154,30 +138,30 @@ public class Building implements Serializable, Iterable<UUID> {
             return entry;
         }));
 
-        v.put("blocks", NbtHelper.fromList(blocks.entrySet(), block -> {
-            NbtCompound entry = new NbtCompound();
-            entry.putString("name", block.getKey().toString());
-            entry.putInt("count", block.getValue());
-            return entry;
-        }));
-
-        v.put("pois", NbtHelper.fromList(pois, p -> {
-            NbtCompound entry = new NbtCompound();
-            entry.putInt("x", p.getX());
-            entry.putInt("y", p.getY());
-            entry.putInt("z", p.getZ());
-            return entry;
-        }));
+        NbtCompound b = new NbtCompound();
+        NbtHelper.fromMap(
+                b,
+                blocks,
+                Identifier::toString,
+                e -> NbtHelper.fromList(e, p -> {
+                    NbtCompound entry = new NbtCompound();
+                    entry.putInt("x", p.getX());
+                    entry.putInt("y", p.getY());
+                    entry.putInt("z", p.getZ());
+                    return entry;
+                })
+        );
+        v.put("blocks2", b);
 
         return v;
     }
 
     public boolean hasFreeSpace() {
-        return getBeds() > getResidents().size();
+        return getBedCount() > getResidents().size();
     }
 
     public boolean isCrowded() {
-        return getBeds() < getResidents().size();
+        return getBedCount() < getResidents().size();
     }
 
     public Stream<BlockPos> findEmptyBed(ServerWorld world) {
@@ -224,26 +208,34 @@ public class Building implements Serializable, Iterable<UUID> {
         return new BlockPos(posX, posY, posZ);
     }
 
-    public void validatePois(World world) {
+    public void validateBlocks(World world) {
         setLastScan(world.getTime());
 
-        //remove all invalid pois
-        List<BlockPos> mask = pois.stream()
-                .filter(p -> getBuildingType().getGroup(world.getBlockState(p).getBlock()).isEmpty()).toList();
-        pois.removeAll(mask);
+        //remove all invalid blocks
+        for (Map.Entry<Identifier, List<BlockPos>> positions : blocks.entrySet()) {
+            List<BlockPos> mask = positions.getValue().stream()
+                    .filter(p -> !Registry.BLOCK.getId(world.getBlockState(p).getBlock()).equals(positions.getKey()))
+                    .toList();
+            positions.getValue().removeAll(mask);
+        }
     }
 
-    public void addPoi(World world, BlockPos pos) {
-        //validate grouped buildings by checking all the pois
-        pois.remove(pos);
-        pois.add(pos);
+    public Stream<BlockPos> getBlockPosStream() {
+        return blocks.values().stream().flatMap(Collection::stream);
+    }
 
-        validatePois(world);
+    public void addPOI(World world, BlockPos pos) {
+        Block block = world.getBlockState(pos).getBlock();
+        removeBlock(block, pos);
+        addBlock(block, pos);
+
+        //validate grouped buildings
+        validateBlocks(world);
 
         //mean center
-        int n = pois.size();
+        int n = (int)getBlockPosStream().count();
         if (n > 0) {
-            BlockPos center = pois.stream().reduce(BlockPos.ORIGIN, BlockPos::add);
+            BlockPos center = getBlockPosStream().reduce(BlockPos.ORIGIN, BlockPos::add);
             pos0X = center.getX() / n;
             pos0Y = center.getY() / n;
             pos0Z = center.getZ() / n;
@@ -266,7 +258,6 @@ public class Building implements Serializable, Iterable<UUID> {
     public validationResult validateBuilding(World world, Set<BlockPos> blocked) {
         //clear old building
         blocks.clear();
-        pois.clear();
         size = 0;
 
         setLastScan(world.getTime());
@@ -360,9 +351,9 @@ public class Building implements Serializable, Iterable<UUID> {
             return validationResult.NO_DOOR;
         } else {
             //fetch all interesting block types
-            Set<Block> blockTypes = new HashSet<>();
+            Set<Identifier> blockTypes = new HashSet<>();
             for (BuildingType bt : API.getVillagePool()) {
-                blockTypes.addAll(bt.getBlockIds());
+                blockTypes.addAll(bt.getBlockToGroup().keySet());
             }
 
             //dimensions
@@ -384,14 +375,14 @@ public class Building implements Serializable, Iterable<UUID> {
                 //count blocks types
                 BlockState blockState = world.getBlockState(p);
                 Block block = blockState.getBlock();
-                if (blockTypes.contains(block)) {
+                if (blockTypes.contains(Registry.BLOCK.getId(block))) {
                     if (block instanceof BedBlock) {
                         // TODO look for better solution
                         if (blockState.get(BedBlock.PART) == BedPart.HEAD) {
-                            increaseBlock(block);
+                            addBlock(block, p);
                         }
                     } else {
-                        increaseBlock(block);
+                        addBlock(block, p);
                     }
                 }
             }
@@ -421,13 +412,8 @@ public class Building implements Serializable, Iterable<UUID> {
         for (BuildingType bt : API.getVillagePool()) {
             if (bt.priority() > bestPriority && size >= bt.size()) {
                 //get an overview of the satisfied blocks
-                //this is necessary as each building may require tag instead of a single id to be satisfied
-                HashMap<Identifier, Integer> available = new HashMap<>();
-                for (Map.Entry<Identifier, Integer> entry : blocks.entrySet()) {
-                    bt.getGroup(entry.getKey()).ifPresent(v -> available.put(v, available.getOrDefault(v, 0) + entry.getValue()));
-                }
-
-                boolean valid = bt.blockIds().entrySet().stream().noneMatch(e -> available.getOrDefault(e.getKey(), 0) < e.getValue());
+                Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
+                boolean valid = bt.getGroups().entrySet().stream().noneMatch(e -> !available.containsKey(e.getKey()) || available.get(e.getKey()).size() < e.getValue());
                 if (valid) {
                     bestPriority = bt.priority();
                     type = bt.name();
@@ -461,13 +447,23 @@ public class Building implements Serializable, Iterable<UUID> {
         return residents.containsKey(id);
     }
 
-    public Map<Identifier, Integer> getBlocks() {
+    public Map<Identifier, List<BlockPos>> getBlocks() {
         return blocks;
     }
 
-    public void increaseBlock(Block block) {
+    public void addBlock(Block block, BlockPos p) {
         Identifier key = Registry.BLOCK.getId(block);
-        blocks.put(key, blocks.getOrDefault(key, 0) + 1);
+        if (!blocks.containsKey(key)) {
+            blocks.put(key, new ArrayList<>());
+        }
+        blocks.get(key).add(p);
+    }
+
+    public void removeBlock(Block block, BlockPos p) {
+        Identifier key = Registry.BLOCK.getId(block);
+        if (blocks.containsKey(key)) {
+            blocks.get(key).remove(p);
+        }
     }
 
     public int getId() {
@@ -492,19 +488,17 @@ public class Building implements Serializable, Iterable<UUID> {
         return pos0X == b.pos0X && pos1X == b.pos1X && pos0Y == b.pos0Y && pos1Y == b.pos1Y && pos0Z == b.pos0Z && pos1Z == b.pos1Z;
     }
 
-    public int getBeds() {
-        if (!getBuildingType().noBeds()) {
-            return blocks.entrySet().stream().filter(e -> Registry.BLOCK.get(e.getKey()).getRegistryEntry().isIn(BlockTags.BEDS)).mapToInt(Map.Entry::getValue).sum();
-        }
-        return 0;
+    public int getBedCount() {
+        return getBlocksOfGroup(new Identifier("minecraft:beds")).size();
+    }
+
+    public List<BlockPos> getBlocksOfGroup(Identifier i) {
+        Map<Identifier, List<BlockPos>> groups = getBuildingType().getGroups(blocks);
+        return groups.getOrDefault(i, new ArrayList<>());
     }
 
     public int getSize() {
         return size;
-    }
-
-    public Queue<BlockPos> getPois() {
-        return pois;
     }
 
     public long getLastScan() {

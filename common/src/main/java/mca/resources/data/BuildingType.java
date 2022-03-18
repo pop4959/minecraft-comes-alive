@@ -2,17 +2,14 @@ package mca.resources.data;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import mca.MCA;
 import mca.util.RegistryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 
@@ -26,7 +23,8 @@ public final class BuildingType implements Serializable {
     private final int priority;
     private final boolean visible;
     private final Map<String, Integer> blocks;
-    private transient Map<Identifier, Integer> blockIds;
+    private transient Map<Identifier, Identifier> blockToGroup;
+    private transient Map<Identifier, Integer> groups;
     private final boolean icon;
     private final int iconU;
     private final int iconV;
@@ -46,7 +44,7 @@ public final class BuildingType implements Serializable {
         this.visible = visible;
         this.noBeds = noBeds;
         this.blocks = Collections.emptyMap();
-        this.blockIds = null;
+        this.blockToGroup = null;
         this.icon = false;
         this.iconU = 0;
         this.iconV = 0;
@@ -78,49 +76,56 @@ public final class BuildingType implements Serializable {
         return (int)Long.parseLong(color, 16);
     }
 
-    public Map<Identifier, Integer> blockIds() {
-        if (blockIds == null) {
-            blockIds = new HashMap<>();
-            for (Map.Entry<String, Integer> id : blocks.entrySet()) {
-                blockIds.put(new Identifier(id.getKey().replace("#", "")), id.getValue());
+    /**
+     * @return a mapping between block identifiers and groups (tags or individual blocks)
+     */
+    public Map<Identifier, Identifier> getBlockToGroup() {
+        if (blockToGroup == null) {
+            blockToGroup = new HashMap<>();
+            groups = new HashMap<>();
+            for (Map.Entry<String, Integer> requirement : blocks.entrySet()) {
+                Identifier identifier;
+                if (requirement.getKey().startsWith("#")) {
+                    identifier = new Identifier(requirement.getKey().substring(1));
+                    TagKey<Block> tag = TagKey.of(Registry.BLOCK.getKey(), identifier);
+                    if (tag == null || RegistryHelper.isTagEmpty(tag)) {
+                        MCA.LOGGER.error("Unknown building type tag " + identifier);
+                    } else {
+                        var entries = RegistryHelper.getEntries(tag);
+                        entries.ifPresent(registryEntries -> {
+                            for (Block b : registryEntries.stream().map(RegistryEntry::value).toList()) {
+                                blockToGroup.putIfAbsent(Registry.BLOCK.getId(b), identifier);
+                            }
+                        });
+                    }
+                } else {
+                    identifier = new Identifier(requirement.getKey());
+                    blockToGroup.put(identifier, identifier);
+                }
+                groups.put(identifier, requirement.getValue());
             }
         }
-        return blockIds;
+        return blockToGroup;
     }
 
-    public Set<Block> getBlockIds() {
-        Set<Block> b = new HashSet<>();
-        for (Identifier id : blockIds().keySet()) {
-            TagKey<Block> tag = TagKey.of(Registry.BLOCK.getKey(), id);
-            if (tag == null || RegistryHelper.isTagEmpty(tag)) {
-                Registry.BLOCK.getOrEmpty(id).ifPresent(b::add);
-            } else {
-                var entries = RegistryHelper.getEntries(tag);
-                entries.ifPresent(registryEntries -> b.addAll(registryEntries.stream().map(RegistryEntry::value).toList()));
-            }
-        }
-        return b;
+    public Map<Identifier, Integer> getGroups() {
+        getBlockToGroup();
+        return groups;
     }
 
-    public Optional<Identifier> getGroup(Block b) {
-        return getGroup(Registry.BLOCK.getId(b));
-    }
-
-    public Optional<Identifier> getGroup(Identifier b) {
-        //look for id match
-        if (blockIds().containsKey(b)) {
-            return Optional.ofNullable(b);
+    /**
+     * @param blocks the map of block positions per block type of building
+     *
+     * @return a filtered and grouped map of block types relevant for this building type
+     */
+    public Map<Identifier, List<BlockPos>> getGroups(Map<Identifier, List<BlockPos>> blocks) {
+        HashMap<Identifier, List<BlockPos>> available = new HashMap<>();
+        for (Map.Entry<Identifier, List<BlockPos>> entry : blocks.entrySet()) {
+            Optional.ofNullable(getBlockToGroup().get(entry.getKey())).ifPresent(v -> {
+                available.computeIfAbsent(v, k -> new LinkedList<>()).addAll(entry.getValue());
+            });
         }
-
-        //look for matching tag
-        for (Identifier id : blockIds().keySet()) {
-            TagKey<Block> tag = TagKey.of(Registry.BLOCK.getKey(), id);
-            if (tag != null && Registry.BLOCK.get(b).getRegistryEntry().isIn(tag)) {
-                return Optional.of(id);
-            }
-        }
-
-        return Optional.empty();
+        return available;
     }
 
     public boolean isIcon() {
