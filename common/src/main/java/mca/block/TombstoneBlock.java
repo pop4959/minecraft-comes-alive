@@ -363,6 +363,8 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
                     createEntity(world, true).ifPresent(entity -> {
                         generateLightning();
+                        entity.extinguish();
+                        entity.resetNetherPortalCooldown();
                         entity.setPosition(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
                         if (entity instanceof LivingEntity) {
                             LivingEntity l = (LivingEntity) entity;
