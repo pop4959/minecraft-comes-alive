@@ -66,6 +66,8 @@ public final class Config implements Serializable {
     public boolean useSquidwardModels = false;
     public int maxBuildingSize = 8192;
     public int maxBuildingRadius = 320;
+    public int heartsForPardonHit = 30;
+    public int pardonPlayerTicks = 1200;
 
     public static File getConfigFile() {
         return new File("./config/mca.json");
