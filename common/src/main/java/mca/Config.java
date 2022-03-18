@@ -1,13 +1,16 @@
 package mca;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Map;
 
 public final class Config implements Serializable {
     @Serial
@@ -68,6 +71,26 @@ public final class Config implements Serializable {
     public int maxBuildingRadius = 320;
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
+    public boolean guardsTargetMonsters = false;
+    public Map<String, Integer> guardsTargetEntities = ImmutableMap.<String, Integer>builder()
+            .put("minecraft:creeper", -1)
+            .put("minecraft:drowned", 2)
+            .put("minecraft:evoker", 3)
+            .put("minecraft:husk", 2)
+            .put("minecraft:illusioner", 3)
+            .put("minecraft:pillager", 3)
+            .put("minecraft:ravager", 3)
+            .put("minecraft:vex", 0)
+            .put("minecraft:vindicator", 4)
+            .put("minecraft:zoglin", 2)
+            .put("minecraft:zombie", 4)
+            .put("minecraft:zombie_villager", 3)
+            .put("minecraft:spider", 0)
+            .put("minecraft:skeleton", 0)
+            .put("minecraft:slime", 0)
+            .put("mca:female_zombie_villager", 3)
+            .put("mca:male_zombie_villager", 3)
+            .build();
 
     public static File getConfigFile() {
         return new File("./config/mca.json");
