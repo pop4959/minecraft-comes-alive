@@ -587,6 +587,9 @@
   "advancement.mca.chores": "Chores",
   "advancement.mca.chores.description": "Let your children do the work.",
 
+  "advancement.mca.baby_smelted": "You are a horrible person!",
+  "advancement.mca.baby_smelted.description": "Abort a baby by unconventional means.",
+
   "notify.spouseendedmarriage": "%1$s has ended their marriage with you.",
   "notify.child.grownup": "%1$s has grown into an adult!",
   "notify.revival.disabled": "Revivals have been disabled by the server administrator.",
