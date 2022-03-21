@@ -13,9 +13,6 @@ import net.minecraft.util.Identifier;
 public class BabySmeltedCriterion extends AbstractCriterion<BabySmeltedCriterion.Conditions> {
     private static final Identifier ID = new Identifier("mca:baby_smelted");
 
-    public static final Identifier BOY_RECIPE_ID = new Identifier("mca:baby_boy_smelting");
-    public static final Identifier GIRL_RECIPE_ID = new Identifier("mca:baby_girl_smelting");
-
     @Override
     public Identifier getId() {
         return ID;

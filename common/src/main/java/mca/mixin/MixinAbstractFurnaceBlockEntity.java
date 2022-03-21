@@ -1,7 +1,7 @@
 package mca.mixin;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import mca.advancement.criterion.BabySmeltedCriterion;
+import mca.MCA;
 import mca.advancement.criterion.CriterionMCA;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,9 +24,11 @@ public class MixinAbstractFurnaceBlockEntity {
     public void onDropExperience(ServerPlayerEntity player, CallbackInfo ci) {
         recipesUsed.forEach((identifier, count) -> {
             // Note: This could become a switch case possibly if this grows too big
-            if (identifier.equals(BabySmeltedCriterion.BOY_RECIPE_ID) ||
-                    identifier.equals(BabySmeltedCriterion.GIRL_RECIPE_ID)) {
-                CriterionMCA.BABY_SMELTED_CRITERION.trigger(player, count);
+            if (identifier.getNamespace().equals(MCA.MOD_ID)) {
+                final String path = identifier.getPath();
+                if (path.startsWith("baby_boy") || path.startsWith("baby_girl")) {
+                    CriterionMCA.BABY_SMELTED_CRITERION.trigger(player, count);
+                }
             }
         });
     }
