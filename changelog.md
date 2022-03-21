@@ -222,3 +222,5 @@
 * Added electrified trait
 * Increased button widths to better support different languages
 * Decrease revenge aggression based on the guards' relation to you
+* Added guard target list to config
+* Added aborting children by unconventional means
