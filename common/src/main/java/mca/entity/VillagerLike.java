@@ -34,6 +34,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerDataContainer;
 
 import java.util.Optional;
@@ -124,6 +125,8 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
             return false;
         }
     }
+
+    default Identifier getProfessionId() { return null; }
 
     default String getClothes() {
         return getTrackedValue(CLOTHES);

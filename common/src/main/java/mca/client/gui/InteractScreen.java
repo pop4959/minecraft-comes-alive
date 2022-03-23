@@ -195,6 +195,8 @@ public class InteractScreen extends AbstractDynamicScreen {
         String prof = profession.toString();
         if (prof.equals("none")) {
             prof = "mca.none";
+        } else {
+            prof = villager.getProfessionId().getPath();
         }
         renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : new TranslatableText("entity.minecraft.villager." + prof), 10, 30 + h);
 
