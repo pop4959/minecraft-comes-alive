@@ -118,7 +118,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
     private void setPage(String page) {
         if (page.equals("close")) {
-            MinecraftClient.getInstance().setScreen(null);
+            client.setScreen(null);
             return;
         }
 
@@ -126,12 +126,15 @@ public class BlueprintScreen extends ExtendedScreen {
 
         clearChildren();
 
+        // back button
+        addDrawableChild(new ButtonWidget(5, 5, 20, 20, new TranslatableText("gui.button.backarrow"), (b) -> setPage("close")));
+
         //page selection
         int bx = width / 2 - 180;
         int by = height / 2 - 56;
         if (!page.equals("rename")) {
             if (!page.equals("empty") && !page.equals("waiting")) {
-                for (String p : new String[] {"map", "rank", "catalog", "villagers", "rules", "close"}) {
+                for (String p : new String[] {"map", "rank", "catalog", "villagers", "rules", "refresh"}) {
                     ButtonWidget widget = new ButtonWidget(bx, by, 80, 20, new TranslatableText("gui.blueprint." + p), (b) -> setPage(p));
                     addDrawableChild(widget);
                     if (page.equals(p)) {
@@ -144,6 +147,11 @@ public class BlueprintScreen extends ExtendedScreen {
         }
 
         switch (page) {
+            case "refresh":
+                NetworkHandler.sendToServer(new GetVillageRequest());
+                client.player.sendMessage(new TranslatableText("blueprint.refreshed"), true);
+                setPage("map");
+                break;
             case "advanced":
                 //add building
                 bx = width / 2 + 180 - 64 - 16;
@@ -589,7 +597,7 @@ public class BlueprintScreen extends ExtendedScreen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (page.equals("villagers") && selectedVillager != null) {
-            MinecraftClient.getInstance().setScreen(new FamilyTreeScreen(selectedVillager));
+            client.setScreen(new FamilyTreeScreen(selectedVillager));
         }
 
         return super.mouseClicked(mouseX, mouseY, button);

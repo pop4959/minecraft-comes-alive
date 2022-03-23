@@ -291,6 +291,7 @@
   "gui.blueprint.catalog": "Catalog",
   "gui.blueprint.villagers": "Villagers",
   "gui.blueprint.rules": "Rules",
+  "gui.blueprint.refresh": "Refresh",
   "gui.blueprint.close": "Close",
   "gui.blueprint.addBuilding": "Add Building",
   "gui.blueprint.removeBuilding": "Remove Building",
@@ -460,6 +461,7 @@
   "gui.villager_editor.page.debug": "Debug",
 
   "blueprint.noBuilding": "You need to stand within a building",
+  "blueprint.refreshed": "Buildings refreshed!",
 
   "blueprint.scan.overlap": "Building overlaps with existing one!",
   "blueprint.scan.block_limit": "Building has too large volume!",
