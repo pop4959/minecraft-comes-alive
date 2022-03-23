@@ -95,10 +95,12 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
@@ -244,6 +246,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public final VillagerProfession getProfession() {
         return getVillagerData().getProfession();
+    }
+
+    public Identifier getProfessionId() {
+        return Registry.VILLAGER_PROFESSION.getId(getProfession());
     }
 
     public final void setProfession(VillagerProfession profession) {

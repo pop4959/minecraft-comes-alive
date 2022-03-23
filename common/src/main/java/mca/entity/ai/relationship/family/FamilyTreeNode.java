@@ -110,7 +110,11 @@ public final class FamilyTreeNode implements Serializable {
     }
 
     public VillagerProfession getProfession() {
-        return Registry.VILLAGER_PROFESSION.get(Identifier.tryParse(profession));
+        return Registry.VILLAGER_PROFESSION.get(getProfessionId());
+    }
+
+    public Identifier getProfessionId() {
+        return Identifier.tryParse(profession);
     }
 
     public boolean isPlayer() {
