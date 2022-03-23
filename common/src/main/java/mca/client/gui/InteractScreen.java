@@ -6,6 +6,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
@@ -196,7 +198,8 @@ public class InteractScreen extends AbstractDynamicScreen {
         if (prof.equals("none")) {
             prof = "mca.none";
         } else {
-            prof = villager.getProfessionId().getPath();
+            prof = villager.getProfessionName();
+            MCA.LOGGER.info(prof);
         }
         renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : new TranslatableText("entity.minecraft.villager." + prof), 10, 30 + h);
 

@@ -117,6 +117,10 @@ public final class FamilyTreeNode implements Serializable {
         return Identifier.tryParse(profession);
     }
 
+    public String getProfessionName() {
+        return getProfessionId().toString().replace(":", ".");
+    }
+
     public boolean isPlayer() {
         return isPlayer;
     }

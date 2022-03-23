@@ -229,7 +229,7 @@ public class FamilyTreeScreen extends Screen {
             this.id = node.id();
             this.deceased = node.isDeceased();
             this.label.add(new LiteralText(node.getName().isEmpty() ? "???" : node.getName()).formatted(node.gender().getColor()));
-            this.label.add(new TranslatableText("entity.minecraft.villager." + node.getProfessionId().getPath()).formatted(Formatting.GRAY));
+            this.label.add(new TranslatableText("entity.minecraft.villager." + node.getProfessionName()).formatted(Formatting.GRAY));
 
             FamilyTreeNode father = family.get(node.father());
             FamilyTreeNode mother = family.get(node.mother());
