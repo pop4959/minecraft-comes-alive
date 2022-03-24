@@ -1,4 +1,5 @@
 {
+  "silent": true,
   "answers": [
     {
       "name": "apologize",
@@ -7,17 +8,6 @@
         {
           "actions": {
             "next": "apologize"
-          }
-        }
-      ]
-    },
-    {
-      "name": "greet",
-      "constraints": "!baby",
-      "results": [
-        {
-          "actions": {
-            "next": "greet"
           }
         }
       ]

@@ -45,6 +45,12 @@ public class Actions {
             };
         });
 
+        register("say", JsonHelper::asString, id -> {
+            return (villager, player) -> {
+                villager.sendChatMessage(player, "dialogue." + id);
+            };
+        });
+
         register("quit", (a, b) -> a, id -> {
             return (villager, player) -> {
                 villager.getInteractions().stopInteracting();

@@ -17,7 +17,8 @@
             }
           ],
           "actions": {
-            "next": "greet.success",
+            "say": "greet.success",
+            "next": "main",
             "positive": 4
           }
         },
@@ -42,7 +43,8 @@
             }
           ],
           "actions": {
-            "next": "greet.fail",
+            "say": "greet.fail",
+            "next": "main",
             "negative": 2
           }
         }
@@ -76,7 +78,8 @@
             }
           ],
           "actions": {
-            "next": "greet.success",
+            "say": "greet.success",
+            "next": "main",
             "positive": 6
           }
         },
@@ -90,7 +93,8 @@
             }
           ],
           "actions": {
-            "next": "greet.fail",
+            "say": "greet.fail",
+            "next": "main",
             "negative": 2
           }
         }
@@ -116,7 +120,8 @@
             }
           ],
           "actions": {
-            "next": "shake_hand.success",
+            "say": "shake_hand.success",
+            "next": "main",
             "positive": 3
           }
         },
@@ -134,7 +139,8 @@
             }
           ],
           "actions": {
-            "next": "shake_hand.fail",
+            "say": "shake_hand.fail",
+            "next": "main",
             "negative": 2
           }
         }

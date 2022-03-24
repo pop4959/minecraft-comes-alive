@@ -9,7 +9,16 @@
           "conditions": [
           ],
           "actions": {
+            "say": "main",
             "next": "main"
+          }
+        },
+        {
+          "baseChance": 5,
+          "conditions": [
+          ],
+          "actions": {
+            "next": "greet"
           }
         },
         {
