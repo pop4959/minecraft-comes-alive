@@ -32,9 +32,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
 
 import static net.minecraft.util.Formatting.*;
 
@@ -66,13 +66,16 @@ public class AdminCommand {
 
     private static int listVillages(CommandContext<ServerCommandSource> ctx) {
         for (Village village : VillageManager.get(ctx.getSource().getWorld())) {
-            success(String.format("%d: %s with %d buildings and %d/%d villager",
+            final BlockPos pos = village.getBox().getCenter();
+            success(String.format("%d: %s with %d buildings and %d/%d villager(s)",
                     village.getId(),
                     village.getName(),
                     village.getBuildings().size(),
                     village.getPopulation(),
                     village.getMaxPopulation()
-            ), ctx);
+            ), ctx,
+                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("chat.coordinates.tooltip")),
+                    new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + pos.getX() + " ~ " + pos.getZ()));
         }
         return 0;
     }
@@ -278,12 +281,30 @@ public class AdminCommand {
         return Stream.concat(world.getEntitiesByType(EntitiesMCA.FEMALE_VILLAGER.get(), x-> true).stream(),world.getEntitiesByType(EntitiesMCA.MALE_VILLAGER.get(), x-> true).stream()).map(VillagerEntityMCA.class::cast);
     }
 
-    private static void success(String message, CommandContext<ServerCommandSource> ctx) {
-        ctx.getSource().sendFeedback(new LiteralText(message).formatted(GREEN), true);
+    private static void success(String message, CommandContext<ServerCommandSource> ctx, Object... events) {
+        MutableText data = new LiteralText(message).formatted(GREEN);
+        for (Object evt : events) {
+            if (evt instanceof ClickEvent clickEvent) {
+                data.styled((style -> style.withClickEvent(clickEvent)));
+            }
+            if (evt instanceof HoverEvent hoverEvent) {
+                data.styled((style -> style.withHoverEvent(hoverEvent)));
+            }
+        }
+        ctx.getSource().sendFeedback(data, true);
     }
 
-    private static void fail(String message, CommandContext<ServerCommandSource> ctx) {
-        ctx.getSource().sendError(new LiteralText(message).formatted(RED));
+    private static void fail(String message, CommandContext<ServerCommandSource> ctx, Object... events) {
+        MutableText data = new LiteralText(message).formatted(RED);
+        for (Object evt : events) {
+            if (evt instanceof ClickEvent clickEvent) {
+                data.styled((style -> style.withClickEvent(clickEvent)));
+            }
+            if (evt instanceof HoverEvent hoverEvent) {
+                data.styled((style -> style.withHoverEvent(hoverEvent)));
+            }
+        }
+        ctx.getSource().sendError(data);
     }
 
     private static int displayHelp(CommandContext<ServerCommandSource> ctx) {
