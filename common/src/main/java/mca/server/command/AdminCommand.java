@@ -20,6 +20,7 @@ import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.BabyItem;
+import mca.server.world.data.Building;
 import mca.server.world.data.PlayerSaveData;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
@@ -33,6 +34,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 
 import static net.minecraft.util.Formatting.*;
@@ -45,6 +47,7 @@ public class AdminCommand {
                 .then(register("help", AdminCommand::displayHelp))
                 .then(register("clearLoadedVillagers", AdminCommand::clearLoadedVillagers))
                 .then(register("restoreClearedVillagers", AdminCommand::restoreClearedVillagers))
+                .then(register("forceBuildingType").then(CommandManager.argument("type", StringArgumentType.string()).executes(AdminCommand::forceBuildingType)).executes(AdminCommand::clearForcedBuildingType))
                 .then(register("forceFullHearts", AdminCommand::forceFullHearts))
                 .then(register("forceBabyGrowth", AdminCommand::forceBabyGrowth))
                 .then(register("forceChildGrowth", AdminCommand::forceChildGrowth))
@@ -135,6 +138,33 @@ public class AdminCommand {
             fail("Village with this ID does not exist.", ctx);
         }
         return 0;
+    }
+
+    private static int setBuildingType(CommandContext<ServerCommandSource> ctx, String type) throws CommandSyntaxException {
+        PlayerEntity e = ctx.getSource().getPlayer();
+        VillageManager villages = VillageManager.get(ctx.getSource().getWorld());
+        Optional<Village> village = villages.findNearestVillage(e);
+
+        Optional<Building> building = village.flatMap(v -> v.getBuildings().values().stream().filter((b) ->
+                b.containsPos(e.getBlockPos())).findAny());
+        if (building.isPresent()) {
+            if (building.get().getType().equals(type)) {
+                building.get().determineType();
+            } else {
+                building.get().setForcedType(type);
+            }
+        } else {
+            fail(new TranslatableText("blueprint.noBuilding").getString(), ctx);
+        }
+        return 0;
+    }
+
+    private static int forceBuildingType(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        return setBuildingType(ctx, StringArgumentType.getString(ctx, "type"));
+    }
+
+    private static int clearForcedBuildingType(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        return setBuildingType(ctx, null);
     }
 
     private static int removeVillage(CommandContext<ServerCommandSource> ctx) {
@@ -264,6 +294,7 @@ public class AdminCommand {
         }
 
         sendMessage(player, DARK_RED + "--- " + GOLD + "OP COMMANDS" + DARK_RED + " ---");
+        sendMessage(player, WHITE + " /mca-admin forceBuildingType id " + GOLD + " - Force a building's type. " + RED + "(Must be a valid building type)");
         sendMessage(player, WHITE + " /mca-admin forceFullHearts " + GOLD + " - Force all hearts on all villagers.");
         sendMessage(player, WHITE + " /mca-admin forceBabyGrowth " + GOLD + " - Force your baby to grow up.");
         sendMessage(player, WHITE + " /mca-admin forceChildGrowth " + GOLD + " - Force nearby children to grow.");
