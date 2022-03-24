@@ -99,7 +99,7 @@
     "visible": false,
     "priority": 1,
     "blocks": {
-      "minecraft:cauldron": 1
+      "#minecraft:cauldrons": 1
     }
   },
   {
@@ -263,7 +263,7 @@
     "priority": 4,
     "blocks": {
       "minecraft:brewing_stand": 1,
-      "minecraft:cauldron": 1,
+      "#minecraft:cauldrons": 1,
       "#minecraft:beds": 1,
       "#minecraft:flower_pots": 1
     },
