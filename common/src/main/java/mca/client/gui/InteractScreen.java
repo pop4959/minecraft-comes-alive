@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
@@ -34,7 +33,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.village.VillagerProfession;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -182,9 +180,6 @@ public class InteractScreen extends AbstractDynamicScreen {
     }
 
     private void drawTextPopups(MatrixStack transform) {
-        //general information
-        VillagerProfession profession = villager.getVillagerData().getProfession();
-
         //name or state tip (gifting, ...)
         int h = 17;
         if (inGiftMode) {
@@ -194,13 +189,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         }
 
         //age or profession
-        String prof = profession.toString();
-        if (prof.equals("none")) {
-            prof = "mca.none";
-        } else {
-            prof = villager.getProfessionName();
-        }
-        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : new TranslatableText("entity.minecraft.villager." + prof), 10, 30 + h);
+        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : new TranslatableText("entity.minecraft.villager." + villager.getProfessionName()), 10, 30 + h);
 
         VillagerBrain<?> brain = villager.getVillagerBrain();
 
