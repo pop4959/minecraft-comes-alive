@@ -364,6 +364,9 @@
   "spouse.divorce/1": "I hate you, %1$s!",
   "spouse.divorcePaper/1": "Okay...",
 
+  "dialogue.busy/1": "We already talked a lot today, I need to go back to work.",
+  "dialogue.goaway/1": "No, go away.",
+
   "adult.dialogue.main/1": "Why, hello there!",
   "adult.dialogue.main/2": "Hey! How are you today?",
   "adult.dialogue.main/3": "Hey, good to see you!",
@@ -609,7 +612,6 @@
   "dialogue.greet.shake_hand": "*Shake hands*",
 
   "dialogue.greet.success/1": "That's good, glad to hear!",
-  "dialogue.greet.getBetter/1": "Aww, I hope whatever you're dealing with gets better",
   "dialogue.greet.fail/1": "Hmm.",
   "dialogue.greet.fail/2": "Glad to hear...",
 

@@ -87,14 +87,14 @@ public class Dialogues extends JsonDataLoader {
         for (Result r : answer.getResults()) {
             IntAnalysis a = r.getChances(villager, player);
             analysis.add(a);
-            total += a.getTotal();
+            total += Math.max(0, a.getTotal());
         }
 
         //choose weighted random
         int chosen = -1;
         total = total == 0 ? 0 : villager.getRandom().nextInt(total);
         for (IntAnalysis a : analysis) {
-            total -= a.getTotal();
+            total -= Math.max(0, a.getTotal());
             chosen++;
             if (total <= 0) {
                 break;

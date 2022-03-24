@@ -1,0 +1,38 @@
+{
+  "auto": true,
+  "silent": true,
+  "answers": [
+    {
+      "results": [
+        {
+          "baseChance": 5,
+          "conditions": [
+          ],
+          "actions": {
+            "next": "main"
+          }
+        },
+        {
+          "baseChance": -3,
+          "applyFatigue": true,
+          "conditions": [
+
+          ],
+          "actions": {
+            "next": "busy"
+          }
+        },
+        {
+          "baseChance": -5,
+          "applyFatigue": true,
+          "conditions": [
+
+          ],
+          "actions": {
+            "next": "goaway"
+          }
+        }
+      ]
+    }
+  ]
+}

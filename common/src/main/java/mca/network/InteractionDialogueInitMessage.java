@@ -27,8 +27,12 @@ public class InteractionDialogueInitMessage implements Message {
     public void receive(PlayerEntity player) {
         Entity v = ((ServerWorld)player.world).getEntity(villagerUUID);
         if (v instanceof VillagerEntityMCA villager) {
-            Question question = Dialogues.getInstance().getQuestion("main");
-            NetworkHandler.sendToPlayer(new InteractionDialogueResponse(question, player, villager), (ServerPlayerEntity)player);
+            Question question = Dialogues.getInstance().getQuestion("root");
+            if (question.isAuto()) {
+                Dialogues.getInstance().selectAnswer(villager, (ServerPlayerEntity)player, question.getId(), question.getAnswers().get(0).getName());
+            } else {
+                NetworkHandler.sendToPlayer(new InteractionDialogueResponse(question, player, villager), (ServerPlayerEntity)player);
+            }
         }
     }
 }
