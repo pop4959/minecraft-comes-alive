@@ -1,0 +1,39 @@
+{
+  "group": "kiss",
+  "auto": true,
+  "answers": [
+    {
+      "name": "",
+      "results": [
+        {
+          "baseChance": 10,
+          "conditions": [
+            {
+              "chance": 5,
+              "mood": "talkative"
+            },
+            {
+              "chance": 5,
+              "hearts_min": 20
+            }
+          ],
+          "actions": {
+            "command": "location"
+          }
+        },
+        {
+          "baseChance": 5,
+          "conditions": [
+            {
+              "chance": 5,
+              "hearts_max": -5
+            }
+          ],
+          "actions": {
+            "next": "rumors.fail"
+          }
+        }
+      ]
+    }
+  ]
+}
