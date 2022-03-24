@@ -172,7 +172,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
                 //restrict access
                 addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.restrictAccess"), (b) -> {
-                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.RESTRICT));
+                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FORCE_TYPE, "blocked"));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;

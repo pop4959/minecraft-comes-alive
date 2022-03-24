@@ -17,9 +17,15 @@ public class ReportBuildingMessage implements Message {
     private static final long serialVersionUID = 3510050513221709603L;
 
     private final Action action;
+    private final String data;
+
+    public ReportBuildingMessage(Action action, String data) {
+        this.action = action;
+        this.data = data;
+    }
 
     public ReportBuildingMessage(Action action) {
-        this.action = action;
+        this(action, null);
     }
 
     @Override
@@ -34,16 +40,16 @@ public class ReportBuildingMessage implements Message {
                 GraveyardManager.get((ServerWorld)e.world).reportToVillageManager(e);
             }
             case AUTO_SCAN -> villages.findNearestVillage(e).ifPresent(Village::toggleAutoScan);
-            case RESTRICT, REMOVE -> {
+            case FORCE_TYPE, REMOVE -> {
                 Optional<Village> village = villages.findNearestVillage(e);
                 Optional<Building> building = village.flatMap(v -> v.getBuildings().values().stream().filter((b) ->
                         b.containsPos(e.getBlockPos())).findAny());
                 if (building.isPresent()) {
-                    if (action == Action.RESTRICT) {
-                        if (building.get().getType().equals("blocked")) {
+                    if (action == Action.FORCE_TYPE) {
+                        if (building.get().getType().equals(data)) {
                             building.get().determineType();
                         } else {
-                            building.get().setType("blocked");
+                            building.get().setForcedType(data);
                         }
                     } else {
                         village.get().removeBuilding(building.get().getId());
@@ -57,10 +63,10 @@ public class ReportBuildingMessage implements Message {
     }
 
     public enum Action {
-        RESTRICT,
         AUTO_SCAN,
         ADD_ROOM,
         ADD,
-        REMOVE
+        REMOVE,
+        FORCE_TYPE
     }
 }

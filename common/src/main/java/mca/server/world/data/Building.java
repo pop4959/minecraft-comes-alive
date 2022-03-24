@@ -44,6 +44,7 @@ public class Building implements Serializable, Iterable<UUID> {
     private final Map<Identifier, List<BlockPos>> blocks = new HashMap<>();
 
     private String type = "building";
+    private String forcedType = null;
 
     private int size;
     private int pos0X, pos0Y, pos0Z;
@@ -97,7 +98,8 @@ public class Building implements Serializable, Iterable<UUID> {
             posY = center.getY();
             posZ = center.getZ();
         }
-        type = v.getString("type");
+        forcedType = v.contains("forced_type") ? v.getString("forced_type") : null;
+        type = forcedType != null ? forcedType : v.getString("type");
 
         strictScan = v.getBoolean("strictScan");
 
@@ -128,6 +130,9 @@ public class Building implements Serializable, Iterable<UUID> {
         v.putInt("posX", posX);
         v.putInt("posY", posY);
         v.putInt("posZ", posZ);
+        if (forcedType != null) {
+            v.putString("forced_type", forcedType);
+        }
         v.putString("type", type);
         v.putBoolean("strictScan", strictScan);
 
@@ -410,13 +415,17 @@ public class Building implements Serializable, Iterable<UUID> {
     public void determineType() {
         int bestPriority = -1;
         for (BuildingType bt : API.getVillagePool()) {
-            if (bt.priority() > bestPriority && size >= bt.size()) {
+            if (((forcedType != null && forcedType.equalsIgnoreCase(bt.name())) || bt.priority() > bestPriority) && size >= bt.size()) {
                 //get an overview of the satisfied blocks
                 Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
                 boolean valid = bt.getGroups().entrySet().stream().noneMatch(e -> !available.containsKey(e.getKey()) || available.get(e.getKey()).size() < e.getValue());
                 if (valid) {
                     bestPriority = bt.priority();
                     type = bt.name();
+
+                    if (forcedType != null && forcedType.equalsIgnoreCase(type)) {
+                        break;
+                    }
                 }
             }
         }
@@ -426,6 +435,10 @@ public class Building implements Serializable, Iterable<UUID> {
         return type;
     }
 
+    public String getForcedType() {
+        return forcedType;
+    }
+
     public BuildingType getBuildingType() {
         return API.getVillagePool().getBuildingType(type);
     }
@@ -433,6 +446,8 @@ public class Building implements Serializable, Iterable<UUID> {
     public void setType(String type) {
         this.type = type;
     }
+
+    public void setForcedType(String type) { this.forcedType = type; }
 
     public Map<UUID, String> getResidents() {
         return residents;
