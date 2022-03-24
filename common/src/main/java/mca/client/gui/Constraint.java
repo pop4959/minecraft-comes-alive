@@ -71,7 +71,16 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     NOT_FOLLOWING("!following", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.FOLLOW),
 
     STAYING("staying", (villager, player) -> villager.getVillagerBrain().getMoveState() == MoveState.STAY),
-    NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY);
+    NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY),
+
+    SMALL_BOUNTY("small_bounty", (villager, player) -> {
+        if (villager instanceof VillagerEntityMCA v) {
+            return v.getSmallBounty() > 0;
+        } else {
+            return false;
+        }
+    }),
+    NOT_SMALL_BOUNTY("not_small_bounty", (villager, player) -> !SMALL_BOUNTY.test(villager, player));
 
     private static boolean isRankAtLeast(VillagerLike<?> villager, Entity player, Rank rank) {
         return player instanceof PlayerEntity && villager instanceof VillagerEntityMCA && ((VillagerEntityMCA)villager).getResidency().getHomeVillage()

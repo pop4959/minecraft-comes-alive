@@ -498,19 +498,21 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (attacker instanceof LivingEntity && !isHostile() && !isFriend(attacker.getType())) {
             Vec3d pos = getPos();
             world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
-                if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64) && (v.isGuard())) {
+                if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
                     if (source.getAttacker() instanceof PlayerEntity) {
                         int bounty = v.getSmallBounty();
-                        int maxWarning = v.getMaxWarnings((PlayerEntity)attacker);
-                        if (bounty > maxWarning) {
-                            // ok, that was enough
-                            v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
-                        } else if (bounty == 0 || bounty == maxWarning) {
-                            // just a warning
-                            v.sendChatMessage((PlayerEntity)source.getAttacker(), "villager.warning");
+                        if (v.isGuard()) {
+                            int maxWarning = v.getMaxWarnings((PlayerEntity)attacker);
+                            if (bounty > maxWarning) {
+                                // ok, that was enough
+                                v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
+                            } else if (bounty == 0 || bounty == maxWarning) {
+                                // just a warning
+                                v.sendChatMessage((PlayerEntity)source.getAttacker(), "villager.warning");
+                            }
                         }
                         v.getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty + 1);
-                    } else {
+                    } else if (v.isGuard()) {
                         // non players get attacked straight away
                         v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
                     }
@@ -544,7 +546,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return getProfession() == ProfessionsMCA.GUARD.get() || getProfession() == ProfessionsMCA.ARCHER.get();
     }
 
-    private int getSmallBounty() {
+    public int getSmallBounty() {
         return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY.get()).orElse(0);
     }
 

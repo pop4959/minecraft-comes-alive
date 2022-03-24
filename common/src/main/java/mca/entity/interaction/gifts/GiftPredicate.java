@@ -105,14 +105,14 @@ public class GiftPredicate {
         register("trait", (json, name) -> Traits.Trait.valueOf(JsonHelper.asString(json, name).toUpperCase(Locale.ENGLISH)), trait -> {
             return (villager, stack, player) -> villager.getTraits().hasTrait(trait);
         });
-        register("heartsMin", JsonHelper::asInt, hearts -> {
+        register("hearts_min", JsonHelper::asInt, hearts -> {
             return (villager, stack, player) -> {
                 assert player != null;
                 int h = villager.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
                 return h >= hearts;
             };
         });
-        register("heartsMax", JsonHelper::asInt, hearts -> {
+        register("hearts_max", JsonHelper::asInt, hearts -> {
             return (villager, stack, player) -> {
                 assert player != null;
                 int h = villager.getVillagerBrain().getMemoriesForPlayer(player).getHearts();

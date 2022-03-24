@@ -382,6 +382,7 @@
   "childp.dialogue.main/3": "What are you doing?",
   "childp.dialogue.main/4": "Where are you going?",
 
+  "dialogue.main.apologize": "apologize",
   "dialogue.main.chat": "chat",
   "dialogue.main.joke": "tell joke",
   "dialogue.main.greet": "greet",
@@ -651,6 +652,17 @@
   "childp.shake_hand.fail/3": "Only losers shake hands.",
   "childp.shake_hand.fail/4": "I'll shake your hand if you give me cake.",
   "childp.shake_hand.fail/5": "No, you'll slip and hit me.",
+
+  "dialogue.apologize.success/1": "It's fine, mistakes happen.",
+  "dialogue.apologize.success/2": "todo apologize success",
+  "dialogue.apologize.success/3": "todo apologize success",
+  "dialogue.apologize.success/4": "todo apologize success",
+  "dialogue.apologize.success/5": "todo apologize success",
+  "dialogue.apologize.fail/1": "Go away!",
+  "dialogue.apologize.fail/2": "You hit me on purpose!",
+  "dialogue.apologize.fail/3": "todo apologize fail",
+  "dialogue.apologize.fail/4": "todo apologize fail",
+  "dialogue.apologize.fail/5": "todo apologize fail",
 
   "dialogue.divorce": "Do you really want a divorce? A cleric can provide divorce papers to decrease penalties.",
   "dialogue.divorce.confirm": "confirm",

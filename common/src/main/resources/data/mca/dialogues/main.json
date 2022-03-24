@@ -1,6 +1,17 @@
 {
   "answers": [
     {
+      "name": "apologize",
+      "constraints": "small_bounty",
+      "results": [
+        {
+          "actions": {
+            "next": "apologize"
+          }
+        }
+      ]
+    },
+    {
       "name": "greet",
       "constraints": "!baby",
       "results": [

@@ -1,19 +1,19 @@
 package mca.entity.interaction;
 
 import java.util.Optional;
+
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
-import mca.entity.ai.Chore;
-import mca.entity.ai.Memories;
-import mca.entity.ai.MoveState;
-import mca.entity.ai.ProfessionsMCA;
+import mca.entity.ai.*;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Saddleable;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +21,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntityPassengersSetS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerProfession;
 
@@ -197,6 +199,14 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 entity.setProfession(ProfessionsMCA.ARCHER.get());
                 entity.sendChatMessage(player, "profession.set.archer");
                 return true;
+            }
+            case "apologize" -> {
+                Vec3d pos = entity.getPos();
+                entity.world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
+                    if (entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
+                        v.getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
+                    }
+                });
             }
         }
 

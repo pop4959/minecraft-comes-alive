@@ -13,17 +13,17 @@
             },
             {
               "chance": 3,
-              "heartsMin": 50,
-              "heartsMax": 99
+              "hearts_min": 50,
+              "hearts_max": 99
             },
             {
               "chance": 6,
-              "heartsMin": 100,
-              "heartsMax": 149
+              "hearts_min": 100,
+              "hearts_max": 149
             },
             {
               "chance": 9,
-              "heartsMin": 150
+              "hearts_min": 150
             }
           ],
           "actions": {
@@ -41,7 +41,7 @@
             },
             {
               "chance": 5,
-              "heartsMax": 0
+              "hearts_max": 0
             }
           ],
           "actions": {
