@@ -128,7 +128,12 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default Identifier getProfessionId() { return null; }
 
-    default String getProfessionName() { return getProfessionId().toString().replace(":", "."); }
+    default String getProfessionName() {
+        return (
+                getProfessionId().getNamespace().equalsIgnoreCase("minecraft") ?
+                        getProfessionId().getPath() : getProfessionId().toString()
+        ).replace(":", ".");
+    }
 
     default String getClothes() {
         return getTrackedValue(CLOTHES);

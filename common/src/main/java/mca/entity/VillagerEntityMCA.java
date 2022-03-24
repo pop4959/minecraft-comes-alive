@@ -253,7 +253,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public String getProfessionName() {
-        return getProfessionId().toString().replace(":", ".");
+        return (
+                getProfessionId().getNamespace().equalsIgnoreCase("minecraft") ?
+                        getProfessionId().getPath() : getProfessionId().toString()
+        ).replace(":", ".");
     }
 
     public final void setProfession(VillagerProfession profession) {
