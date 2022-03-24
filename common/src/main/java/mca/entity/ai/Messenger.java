@@ -47,7 +47,10 @@ public interface Messenger extends EntityWrapper {
         } else {
             targetName = target.getName().getString();
         }
-        return new TranslatableText(getDialogueType(target).name() + "." + phraseId, targetName, params);
+        Object[] newParams = new Object[params.length + 1];
+        System.arraycopy(params, 0, newParams, 1, params.length);
+        newParams[0] = targetName;
+        return new TranslatableText(getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
     default void sendChatToAllAround(String phrase, Object... params) {
