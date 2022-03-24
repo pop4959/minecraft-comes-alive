@@ -22,6 +22,18 @@
           }
         },
         {
+          "baseChance": 1,
+          "conditions": [
+            {
+              "chance": 5,
+              "trait": "sirben"
+            }
+          ],
+          "actions": {
+            "next": "rumors.lore"
+          }
+        },
+        {
           "baseChance": 5,
           "conditions": [
             {

@@ -389,7 +389,6 @@
   "dialogue.main.rumors": "rumors",
   "dialogue.main.chat": "chat",
   "dialogue.main.joke": "tell joke",
-  "dialogue.main.greet": "greet",
   "dialogue.main.story": "tell story",
   "dialogue.main.hug": "hug",
   "dialogue.main.flirt": "flirt",
@@ -398,6 +397,13 @@
   "dialogue.main.adopt": "adopt",
   "dialogue.main.divorceInitiate": "divorce",
   "dialogue.main.divorcePapers": "divorce papers",
+
+  "dialogue.rumors.lore/1": "Even though Jax is still worshipped, the worship of Sirben is increasing and his prophets MerlinWoflGames and Crow are spreading his words.",
+  "dialogue.rumors.lore/2": "Cyberdemons once tried to invade us and entered the Overworld with Portals, but Sirben and Luke have stopped the Invasion.",
+  "dialogue.rumors.lore/3": "After being involved in the disappearance of the Ancient Builder, rumours are, 2DA50 travelled to the Far Lands and was never heard of again.",
+  "dialogue.rumors.lore/4": "MerlinWolfGames build an temple devoted to Sirben, his temple is one of the ancient wonders.",
+  "dialogue.rumors.lore/5": "There used to be an ancient race of builders but now they are gone.",
+  "dialogue.rumors.lore/6": "Did you hear about the legends of the ancient builders? The ones who left all those ruins and temples all over the Overworld.",
 
   "adult.dialogue.hug.success/1": "Long time no see!",
   "adult.dialogue.hug.success/2": "Thank you, I needed that.",
