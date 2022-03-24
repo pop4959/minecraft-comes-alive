@@ -17,7 +17,7 @@
             }
           ],
           "actions": {
-            "next": "greet.chitchat",
+            "next": "greet.success",
             "positive": 4
           }
         },
@@ -76,7 +76,7 @@
             }
           ],
           "actions": {
-            "next": "greet.chitchat",
+            "next": "greet.success",
             "positive": 6
           }
         },
@@ -97,11 +97,45 @@
       ]
     },
     {
-      "name": "sad",
+      "name": "shake_hand",
       "results": [
         {
+          "baseChance": 5,
+          "conditions": [
+            {
+              "chance": 5,
+              "personality": "confident"
+            },
+            {
+              "chance": 2,
+              "personality": "friendly"
+            },
+            {
+              "chance": 3,
+              "age_group": "adult"
+            }
+          ],
           "actions": {
-            "next": "greet.getBetter"
+            "next": "shake_hand.success",
+            "positive": 3
+          }
+        },
+        {
+          "baseChance": 3,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 5,
+              "personality": "odd"
+            },
+            {
+              "chance": 5,
+              "age_group": "child"
+            }
+          ],
+          "actions": {
+            "next": "shake_hand.fail",
+            "negative": 2
           }
         }
       ]
