@@ -118,10 +118,13 @@ public final class FamilyTreeNode implements Serializable {
     }
 
     public String getProfessionName() {
-        return (
+        String professionName = (
                 getProfessionId().getNamespace().equalsIgnoreCase("minecraft") ?
-                        getProfessionId().getPath() : getProfessionId().toString()
+                        (getProfessionId().getPath().equals("none") ? "mca.none" : getProfessionId().getPath()) :
+                        getProfessionId().toString()
         ).replace(":", ".");
+
+        return professionName.isEmpty() ? "mca.none" : professionName;
     }
 
     public boolean isPlayer() {
