@@ -5,7 +5,7 @@
     {
       "results": [
         {
-          "baseChance": 5,
+          "baseChance": 1,
           "actions": {
             "next": "main",
             "say": "main"
@@ -19,20 +19,26 @@
           }
         },
         {
+          "baseChance": 5,
+          "actions": {
+            "next": "first.question"
+          }
+        },
+        {
           "baseChance": 0,
           "conditions": [
             {
-              "chance": 10,
+              "chance": 15,
               "profession": "guard"
             },
             {
-              "chance": 10,
+              "chance": 15,
               "profession": "archer"
             }
           ],
           "actions": {
             "next": "main",
-            "say": "first.archer"
+            "say": "first.guard"
           }
         }
       ]

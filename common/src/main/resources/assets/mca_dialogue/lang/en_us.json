@@ -405,7 +405,15 @@
   "dialogue.rumors.lore/5": "There used to be an ancient race of builders but now they are gone.",
   "dialogue.rumors.lore/6": "Did you hear about the legends of the ancient builders? The ones who left all those ruins and temples all over the Overworld.",
 
-  "dialogue.first.generic/1": "Welcome traveller. What brings you to this village?",
+  "dialogue.first.generic/1": "Welcome traveler. I have never seen you before!",
+  "dialogue.first.question/1": "Welcome traveler. What brings you to this village?",
+  "dialogue.first.question.exploring": "Exploring",
+  "dialogue.first.question.settling": "Settling",
+  "dialogue.first.question.spent_night": "Spent the night",
+  "dialogue.first.exploring/1": "We don’t have much here, but you are welcome here, as long as you do not break any rules.",
+  "dialogue.first.settling/1": "It's great to see another face in the village!",
+  "dialogue.first.spent_night.success/1": "I can recommend you our inn, newly built!",
+  "dialogue.first.spent_night.failed/1": "We do not have an inn. To be honest, we lack the construction skills to build a proper one.",
   "dialogue.first.guard/1": "Welcome. While you stay here, you are expected to abide all our laws.",
 
   "adult.dialogue.hug.success/1": "Long time no see!",

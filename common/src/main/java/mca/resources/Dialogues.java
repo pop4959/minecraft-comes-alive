@@ -96,7 +96,7 @@ public class Dialogues extends JsonDataLoader {
         for (IntAnalysis a : analysis) {
             total -= Math.max(0, a.getTotal());
             chosen++;
-            if (total <= 0) {
+            if (total < 0) {
                 break;
             }
         }

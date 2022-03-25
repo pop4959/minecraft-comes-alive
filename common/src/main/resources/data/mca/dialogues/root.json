@@ -6,6 +6,7 @@
       "results": [
         {
           "baseChance": 0,
+          "constraints": "peasant",
           "conditions": [
             {
               "chance": 100,
@@ -26,8 +27,6 @@
         },
         {
           "baseChance": 5,
-          "conditions": [
-          ],
           "actions": {
             "say": "main",
             "next": "main"
@@ -35,8 +34,6 @@
         },
         {
           "baseChance": 5,
-          "conditions": [
-          ],
           "actions": {
             "next": "greet"
           }
@@ -44,8 +41,6 @@
         {
           "baseChance": -3,
           "applyFatigue": true,
-          "conditions": [
-          ],
           "actions": {
             "next": "busy"
           }
@@ -53,8 +48,6 @@
         {
           "baseChance": -5,
           "applyFatigue": true,
-          "conditions": [
-          ],
           "actions": {
             "next": "goaway"
           }

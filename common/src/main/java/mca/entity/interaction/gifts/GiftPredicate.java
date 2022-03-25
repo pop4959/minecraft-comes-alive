@@ -136,6 +136,11 @@ public class GiftPredicate {
                 }
             };
         });
+        register("village_has_building", JsonHelper::asString, name -> {
+            return (villager, stack, player) -> {
+                return villager.getResidency().getHomeVillage().filter(v -> v.hasBuilding(name)).isPresent();
+            };
+        });
     }
 
     public static <T> void register(String name, BiFunction<JsonElement, String, T> jsonParser, Factory<T> predicate) {
