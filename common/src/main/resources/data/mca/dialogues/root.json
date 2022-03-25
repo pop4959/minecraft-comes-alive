@@ -5,6 +5,26 @@
     {
       "results": [
         {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 100,
+              "memory": {
+                "id": "seen",
+                "var": "player",
+                "invert": true
+              }
+            }
+          ],
+          "actions": {
+            "next": "first",
+            "remember": {
+              "id": "seen",
+              "var": "player"
+            }
+          }
+        },
+        {
           "baseChance": 5,
           "conditions": [
           ],
@@ -25,7 +45,6 @@
           "baseChance": -3,
           "applyFatigue": true,
           "conditions": [
-
           ],
           "actions": {
             "next": "busy"
@@ -35,7 +54,6 @@
           "baseChance": -5,
           "applyFatigue": true,
           "conditions": [
-
           ],
           "actions": {
             "next": "goaway"

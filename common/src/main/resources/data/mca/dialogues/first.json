@@ -1,0 +1,41 @@
+{
+  "auto": true,
+  "silent": true,
+  "answers": [
+    {
+      "results": [
+        {
+          "baseChance": 5,
+          "actions": {
+            "next": "main",
+            "say": "main"
+          }
+        },
+        {
+          "baseChance": 5,
+          "actions": {
+            "next": "main",
+            "say": "first.generic"
+          }
+        },
+        {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 10,
+              "profession": "guard"
+            },
+            {
+              "chance": 10,
+              "profession": "archer"
+            }
+          ],
+          "actions": {
+            "next": "main",
+            "say": "first.archer"
+          }
+        }
+      ]
+    }
+  ]
+}

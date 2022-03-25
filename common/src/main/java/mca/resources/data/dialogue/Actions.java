@@ -8,6 +8,7 @@ import java.util.function.BiFunction;
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
+import mca.entity.ai.LongTermMemory;
 import mca.network.client.InteractionDialogueResponse;
 import mca.resources.Dialogues;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -48,6 +49,13 @@ public class Actions {
         register("say", JsonHelper::asString, id -> {
             return (villager, player) -> {
                 villager.sendChatMessage(player, "dialogue." + id);
+            };
+        });
+
+        register("remember", JsonHelper::asObject, json -> {
+            return (villager, player) -> {
+                String id = LongTermMemory.parseId(json, player);
+                villager.getLongTermMemory().addMemory(id);
             };
         });
 

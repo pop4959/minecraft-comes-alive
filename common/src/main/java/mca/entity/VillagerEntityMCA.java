@@ -16,17 +16,7 @@ import mca.ParticleTypesMCA;
 import mca.SoundsMCA;
 import mca.TagsMCA;
 import mca.advancement.criterion.CriterionMCA;
-import mca.entity.ai.BreedableRelationship;
-import mca.entity.ai.Genetics;
-import mca.entity.ai.Memories;
-import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.entity.ai.Messenger;
-import mca.entity.ai.Mood;
-import mca.entity.ai.MoveState;
-import mca.entity.ai.ProfessionsMCA;
-import mca.entity.ai.Residency;
-import mca.entity.ai.Traits;
-import mca.entity.ai.VillagerNavigation;
+import mca.entity.ai.*;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.brain.VillagerTasksMCA;
 import mca.entity.ai.relationship.AgeState;
@@ -125,6 +115,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
 
+    private final LongTermMemory longTermMemory = new LongTermMemory(this);
+
     final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
 
     private final Genetics genetics = new Genetics(this);
@@ -221,6 +213,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public VillagerBrain<?> getVillagerBrain() {
         return mcaBrain;
+    }
+
+    public LongTermMemory getLongTermMemory() {
+        return longTermMemory;
     }
 
     public Residency getResidency() {
@@ -1147,6 +1143,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.readCustomDataFromNbt(nbt);
         getTypeDataManager().load(this, nbt);
         relations.readFromNbt(nbt);
+        longTermMemory.readFromNbt(nbt);
 
         updateSpeed();
 
@@ -1159,6 +1156,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.writeCustomDataToNbt(nbt);
         getTypeDataManager().save(this, nbt);
         relations.writeToNbt(nbt);
+        longTermMemory.writeToNbt(nbt);
         InventoryUtils.saveToNBT(inventory, nbt);
     }
 

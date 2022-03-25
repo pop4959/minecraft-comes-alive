@@ -405,6 +405,9 @@
   "dialogue.rumors.lore/5": "There used to be an ancient race of builders but now they are gone.",
   "dialogue.rumors.lore/6": "Did you hear about the legends of the ancient builders? The ones who left all those ruins and temples all over the Overworld.",
 
+  "dialogue.first.generic/1": "Welcome traveller. What brings you to this village?",
+  "dialogue.first.guard/1": "Welcome. While you stay here, you are expected to abide all our laws.",
+
   "adult.dialogue.hug.success/1": "Long time no see!",
   "adult.dialogue.hug.success/2": "Thank you, I needed that.",
   "adult.dialogue.hug.success/3": "At least one thing made my day today.",

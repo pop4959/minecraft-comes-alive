@@ -3,6 +3,7 @@ package mca.entity.interaction.gifts;
 import java.util.*;
 import java.util.function.BiFunction;
 
+import mca.entity.ai.LongTermMemory;
 import mca.entity.ai.Traits;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
@@ -117,6 +118,22 @@ public class GiftPredicate {
                 assert player != null;
                 int h = villager.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
                 return h <= hearts;
+            };
+        });
+        register("memory", JsonHelper::asObject, json -> {
+            return (villager, stack, player) -> {
+                String id = LongTermMemory.parseId(json, player);
+                boolean has;
+                if (json.has("time")) {
+                    has = villager.getLongTermMemory().hasMemory(id, json.get("time").getAsLong());
+                } else {
+                    has = villager.getLongTermMemory().hasMemory(id);
+                }
+                if (json.has("invert") && json.get("invert").getAsBoolean()) {
+                    return !has;
+                } else {
+                    return has;
+                }
             };
         });
     }
