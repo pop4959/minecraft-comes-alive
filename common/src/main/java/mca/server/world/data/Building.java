@@ -513,12 +513,12 @@ public class Building implements Serializable, Iterable<UUID> {
     }
 
     public int getBedCount() {
-        return getBlocksOfGroup(new Identifier("minecraft:beds"), "house").size();
+        return getBlocksOfGroup(new Identifier("minecraft:beds")).size();
     }
 
     @Deprecated
-    public List<BlockPos> getBlocksOfGroup(Identifier i, String bt) {
-        Map<Identifier, List<BlockPos>> groups = API.getVillagePool().getBuildingType(bt).getGroups(blocks);
+    public List<BlockPos> getBlocksOfGroup(Identifier i) {
+        Map<Identifier, List<BlockPos>> groups = API.getVillagePool().getBuildingType("?").getGroups(blocks);
         return groups.getOrDefault(i, new ArrayList<>());
     }
 
