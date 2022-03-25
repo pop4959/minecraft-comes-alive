@@ -29,10 +29,10 @@ public enum Rank {
     }
 
     public static Rank fromName(String name) {
-        for (Rank r : VALUES) {
-            if (r.name().equals(name.toUpperCase(Locale.ENGLISH))) {
-                return r;
-            }
+        try {
+            return valueOf(name.toUpperCase(Locale.ENGLISH));
+        } catch (IllegalArgumentException ignored) {
+            
         }
         return PEASANT;
     }

@@ -5,6 +5,8 @@ import java.util.function.BiFunction;
 
 import mca.entity.ai.LongTermMemory;
 import mca.entity.ai.Traits;
+import mca.resources.Rank;
+import mca.resources.Tasks;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
 import org.jetbrains.annotations.Nullable;
@@ -139,6 +141,11 @@ public class GiftPredicate {
         register("village_has_building", JsonHelper::asString, name -> {
             return (villager, stack, player) -> {
                 return villager.getResidency().getHomeVillage().filter(v -> v.hasBuilding(name)).isPresent();
+            };
+        });
+        register("rank", JsonHelper::asString, name -> {
+            return (villager, stack, player) -> {
+                return villager.getResidency().getHomeVillage().filter(v -> Tasks.getRank(v, player) == Rank.fromName(name)).isPresent();
             };
         });
     }

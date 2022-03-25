@@ -26,6 +26,32 @@
           }
         },
         {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 10,
+              "rank": "monarch"
+            }
+          ],
+          "actions": {
+            "say": "greet.monarch",
+            "next": "main"
+          }
+        },
+        {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 5,
+              "rank": "mayor"
+            }
+          ],
+          "actions": {
+            "say": "greet.mayor",
+            "next": "main"
+          }
+        },
+        {
           "baseChance": 5,
           "actions": {
             "say": "main",

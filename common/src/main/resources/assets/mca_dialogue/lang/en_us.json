@@ -416,7 +416,8 @@
   "dialogue.first.spent_night.failed/1": "We do not have an inn. To be honest, we lack the construction skills to build a proper one.",
   "dialogue.first.guard/1": "Welcome. While you stay here, you are expected to abide all our laws.",
 
-  "dialogue.greet.monarch/1": "Welcome. While you stay here, you are expected to abide all our laws.",
+  "dialogue.greet.mayor/1": "Good day, mayor!",
+  "dialogue.greet.monarch/1": "Your Majesty.",
 
   "adult.dialogue.hug.success/1": "Long time no see!",
   "adult.dialogue.hug.success/2": "Thank you, I needed that.",
