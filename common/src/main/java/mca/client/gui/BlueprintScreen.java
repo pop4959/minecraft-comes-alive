@@ -349,7 +349,7 @@ public class BlueprintScreen extends ExtendedScreen {
         int y = height / 2 - 50;
 
         //rank
-        Text rankStr = new TranslatableText("gui.village.rank." + rank.ordinal());
+        Text rankStr = new TranslatableText(rank.getTranslationKey());
         int rankColor = rank.ordinal() == 0 ? 0xffff0000 : 0xffffff00;
 
         textRenderer.drawWithShadow(transform, new TranslatableText("gui.blueprint.currentRank", rankStr), x, y, rankColor);

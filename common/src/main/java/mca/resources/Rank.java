@@ -8,7 +8,7 @@ public enum Rank {
     MERCHANT,
     NOBLE,
     MAYOR,
-    KING;
+    MONARCH;
 
     private static final Rank[] VALUES = values();
 
@@ -16,7 +16,7 @@ public enum Rank {
         if (ordinal() + 1 < VALUES.length) {
             return VALUES[ordinal() + 1];
         } else {
-            return Rank.KING;
+            return Rank.MONARCH;
         }
     }
 
@@ -39,5 +39,9 @@ public enum Rank {
 
     public boolean isAtLeast(Rank r) {
         return ordinal() >= r.ordinal();
+    }
+
+    public String getTranslationKey() {
+        return "gui.village.rank." + name().toLowerCase(Locale.ENGLISH);
     }
 }
