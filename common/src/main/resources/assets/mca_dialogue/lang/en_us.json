@@ -370,7 +370,6 @@
   "adult.dialogue.main.morning/1": "Good morning!",
   "adult.dialogue.main.evening/1": "Good evening!",
   "adult.dialogue.main.night/1": "*yawn* Your are up at that time?",
-  "adult.dialogue.main.rain/1": "What a weather...",
 
   "adult.dialogue.main/1": "Why, hello there!",
   "adult.dialogue.main/2": "Hey! How are you today?",
@@ -580,21 +579,19 @@
   "spouse.dialogue.flirt.fail/5": "Yeah, yeah... What was it you were saying?",
 
   "dialogue.joke": "(what joke should I tell?)",
-  "dialogue.joke.skeleton": "skeleton one (very hard)",
-  "dialogue.joke.sheep": "sheep wool one (hard)",
-  "dialogue.joke.pig": "pig joke",
-  "dialogue.joke.creative": "be creative (easy)",
+  "dialogue.joke.creative": "Classic Joke",
+  "dialogue.joke.animal": "Joke about an animal",
+  "dialogue.joke.monster": "Joke about a monster",
 
-  "dialogue.joke.skeleton.success": "Haha! Serves that Skelly right!",
-  "dialogue.joke.skeleton.failed": "Skeletons are sentient beings! How dare you!",
+  "dialogue.joke.monster.success/1": "Haha! Serves that Skelly right!",
+  "dialogue.joke.monster.failed/2": "Skeletons are sentient beings! How dare you!",
 
-  "dialogue.joke.sheep.success/1": "Unfortunate for the sheep to lose its wool, but funny!",
-  "dialogue.joke.sheep.success/2": "Then the wolf fell in love with the sheep.",
-  "dialogue.joke.sheep.failed/1": "That poor sheep! That's not funny at all!",
-
-  "dialogue.joke.pig.success": "You shouldn't joke about that.",
-  "dialogue.joke.pig.failed/1": "Don't speak about my pig like that!",
-  "dialogue.joke.pig.failed/2": "That's low.",
+  "dialogue.joke.animal.success/1": "Unfortunate for the sheep to lose its wool, but funny!",
+  "dialogue.joke.animal.success/2": "Then the wolf fell in love with the sheep.",
+  "dialogue.joke.animal.failed/1": "You shouldn't joke about that.",
+  "dialogue.joke.animal.failed/2": "That poor sheep! That's not funny at all!",
+  "dialogue.joke.animal.failed/3": "Don't speak about my pig like that!",
+  "dialogue.joke.animal.failed/4": "That's low.",
 
   "dialogue.joke.creative.success/1": "*Laughs* That's hilarious!",
   "dialogue.joke.creative.success/2": "That's funny!",
