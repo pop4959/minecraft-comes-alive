@@ -1,14 +1,20 @@
-package mca;
+package mca.forge;
 
 import dev.architectury.platform.forge.EventBuses;
+import mca.ParticleTypesMCA;
+import mca.SoundsMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
-import mca.cobalt.network.NetworkHandlerImpl;
+import mca.forge.cobalt.network.NetworkHandlerImpl;
 import mca.entity.EntitiesMCA;
 import mca.entity.interaction.gifts.GiftLoader;
 import mca.item.ItemsMCA;
 import mca.network.MessagesMCA;
-import mca.resources.*;
+import mca.resources.ApiReloadListener;
+import mca.resources.ClothingList;
+import mca.resources.Dialogues;
+import mca.resources.HairList;
+import mca.resources.Tasks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,7 +25,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod.EventBusSubscriber(modid = mca.MCA.MOD_ID, bus = Bus.MOD)
 public final class MCAForge {
     public MCAForge() {
-        EventBuses.registerModEventBus(MCA.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
+        EventBuses.registerModEventBus(mca.MCA.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
         new NetworkHandlerImpl();
         MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListener);
 

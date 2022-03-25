@@ -16,10 +16,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "mca.MCAFabric"
+      "mca.fabric.MCAFabric"
     ],
     "client": [
-      "mca.MCAClient"
+      "mca.fabric.MCAClient"
     ]
   },
   "mixins": [

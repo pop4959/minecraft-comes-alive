@@ -1,5 +1,7 @@
-package mca;
+package mca.forge;
 
+import mca.Config;
+import mca.ParticleTypesMCA;
 import mca.block.BlockEntityTypesMCA;
 import mca.block.BlocksMCA;
 import mca.client.gui.MCAScreens;

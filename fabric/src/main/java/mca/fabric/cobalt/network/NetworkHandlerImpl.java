@@ -1,7 +1,9 @@
-package mca.cobalt.network;
+package mca.fabric.cobalt.network;
 
 import io.netty.buffer.Unpooled;
 import mca.MCA;
+import mca.cobalt.network.Message;
+import mca.cobalt.network.NetworkHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

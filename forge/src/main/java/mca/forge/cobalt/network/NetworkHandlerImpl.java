@@ -1,6 +1,8 @@
-package mca.cobalt.network;
+package mca.forge.cobalt.network;
 
 import mca.MCA;
+import mca.cobalt.network.Message;
+import mca.cobalt.network.NetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.network.NetworkRegistry;
