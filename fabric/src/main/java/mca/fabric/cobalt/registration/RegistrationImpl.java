@@ -1,4 +1,4 @@
-package mca.cobalt.registration;
+package mca.fabric.cobalt.registration;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 
+import mca.cobalt.registration.Registration;
 import mca.cobalt.registration.Registration.BlockEntityTypeFactory;
 import mca.cobalt.registration.Registration.PoiFactory;
 import mca.cobalt.registration.Registration.ProfessionFactory;

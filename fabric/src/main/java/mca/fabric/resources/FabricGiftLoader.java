@@ -1,9 +1,10 @@
-package mca.resources;
+package mca.fabric.resources;
 
+import mca.entity.interaction.gifts.GiftLoader;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.util.Identifier;
 
-public class FabricClothingList extends ClothingList implements IdentifiableResourceReloadListener {
+public class FabricGiftLoader extends GiftLoader implements IdentifiableResourceReloadListener {
     @Override
     public Identifier getFabricId() {
         return ID;

@@ -1,8 +1,11 @@
-package mca;
+package mca.fabric;
 
+import mca.ClientProxyAbstractImpl;
+import mca.Config;
+import mca.ParticleTypesMCA;
 import mca.block.BlockEntityTypesMCA;
 import mca.block.BlocksMCA;
-import mca.client.gui.FabricMCAScreens;
+import mca.fabric.client.gui.FabricMCAScreens;
 import mca.client.particle.InteractionParticle;
 import mca.client.render.GrimReaperRenderer;
 import mca.client.render.TombstoneBlockEntityRenderer;
@@ -11,8 +14,8 @@ import mca.client.render.ZombieVillagerEntityMCARenderer;
 import mca.entity.EntitiesMCA;
 import mca.item.BabyItem;
 import mca.item.ItemsMCA;
-import mca.resources.FabricColorPaletteLoader;
-import mca.resources.FabricSupportersLoader;
+import mca.fabric.resources.FabricColorPaletteLoader;
+import mca.fabric.resources.FabricSupportersLoader;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
