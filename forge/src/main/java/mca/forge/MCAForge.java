@@ -1,9 +1,11 @@
-package mca;
+package mca.forge;
 
+import mca.ParticleTypesMCA;
+import mca.SoundsMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
-import mca.cobalt.network.NetworkHandlerImpl;
-import mca.cobalt.registration.RegistrationImpl;
+import mca.forge.cobalt.network.NetworkHandlerImpl;
+import mca.forge.cobalt.registration.RegistrationImpl;
 import mca.entity.EntitiesMCA;
 import mca.entity.interaction.gifts.GiftLoader;
 import mca.item.ItemsMCA;

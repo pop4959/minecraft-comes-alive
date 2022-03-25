@@ -1,4 +1,4 @@
-package mca.cobalt.registration;
+package mca.forge.cobalt.registration;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 
+import mca.cobalt.registration.Registration;
 import mca.cobalt.registration.Registration.BlockEntityTypeFactory;
 import mca.cobalt.registration.Registration.PoiFactory;
 import mca.cobalt.registration.Registration.ProfessionFactory;

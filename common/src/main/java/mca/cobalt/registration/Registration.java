@@ -136,11 +136,11 @@ public class Registration {
         public abstract ProfessionFactory<VillagerProfession> profession();
     }
 
-    protected interface BlockEntityTypeFactory<T extends BlockEntity> {
+    public interface BlockEntityTypeFactory<T extends BlockEntity> {
         BlockEntityType<T> apply(Identifier id, BiFunction<BlockPos, BlockState, T> factory, Block...blocks);
     }
 
-    protected interface PoiFactory<T> {
+    public interface PoiFactory<T> {
         T apply(Identifier id, int ticketCount, int searchDistance, Block...blocks);
     }
 

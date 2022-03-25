@@ -1,5 +1,6 @@
-package mca;
+package mca.forge;
 
+import mca.MCA;
 import mca.server.ServerInteractionManager;
 import mca.server.command.AdminCommand;
 import mca.server.command.Command;

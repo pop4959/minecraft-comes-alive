@@ -1,4 +1,4 @@
-package mca.cobalt.registration;
+package mca.forge.cobalt.registration;
 
 import java.util.List;
 import java.util.function.Supplier;

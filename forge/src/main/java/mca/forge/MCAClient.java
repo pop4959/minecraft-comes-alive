@@ -1,5 +1,7 @@
-package mca;
+package mca.forge;
 
+import mca.Config;
+import mca.ParticleTypesMCA;
 import mca.block.BlockEntityTypesMCA;
 import mca.block.BlocksMCA;
 import mca.client.gui.MCAScreens;
@@ -9,7 +11,7 @@ import mca.client.render.TombstoneBlockEntityRenderer;
 import mca.client.render.VillagerEntityMCARenderer;
 import mca.client.render.ZombieVillagerEntityMCARenderer;
 import mca.client.resources.ColorPaletteLoader;
-import mca.cobalt.registration.RegistrationImpl;
+import mca.forge.cobalt.registration.RegistrationImpl;
 import mca.entity.EntitiesMCA;
 import mca.item.BabyItem;
 import mca.item.ItemsMCA;
