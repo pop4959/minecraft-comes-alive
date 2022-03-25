@@ -43,7 +43,7 @@ public final class BuildingType implements Serializable {
         this.priority = priority;
         this.visible = visible;
         this.noBeds = noBeds;
-        this.blocks = Collections.emptyMap();
+        this.blocks = Map.of("#minecraft:beds", 1000000000);
         this.blockToGroup = null;
         this.icon = false;
         this.iconU = 0;
