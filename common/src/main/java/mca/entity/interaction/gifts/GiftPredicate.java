@@ -148,6 +148,16 @@ public class GiftPredicate {
                 return villager.getResidency().getHomeVillage().filter(v -> Tasks.getRank(v, player) == Rank.fromName(name)).isPresent();
             };
         });
+        register("time_min", JsonHelper::asLong, time -> {
+            return (villager, stack, player) -> {
+                return villager.getWorld().getTimeOfDay() % 24000L >= time;
+            };
+        });
+        register("time_max", JsonHelper::asLong, time -> {
+            return (villager, stack, player) -> {
+                return villager.getWorld().getTimeOfDay() % 24000L <= time;
+            };
+        });
     }
 
     public static <T> void register(String name, BiFunction<JsonElement, String, T> jsonParser, Factory<T> predicate) {

@@ -42,7 +42,7 @@
             }
           ],
           "actions": {
-            "next": "rumors.fail"
+            "next": "rumors.failed"
           }
         }
       ]

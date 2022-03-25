@@ -367,6 +367,11 @@
   "dialogue.busy/1": "We already talked a lot today, I need to go back to work.",
   "dialogue.goaway/1": "No, go away.",
 
+  "adult.dialogue.main.morning/1": "Good morning!",
+  "adult.dialogue.main.evening/1": "Good evening!",
+  "adult.dialogue.main.night/1": "*yawn* Your are up at that time?",
+  "adult.dialogue.main.rain/1": "What a weather...",
+
   "adult.dialogue.main/1": "Why, hello there!",
   "adult.dialogue.main/2": "Hey! How are you today?",
   "adult.dialogue.main/3": "Hey, good to see you!",
@@ -398,6 +403,7 @@
   "dialogue.main.divorceInitiate": "divorce",
   "dialogue.main.divorcePapers": "divorce papers",
 
+  "dialogue.rumors.failed/1": "Hmm, no I heard nothing new.",
   "dialogue.rumors.lore/1": "Even though Jax is still worshipped, the worship of Sirben is increasing and his prophets MerlinWoflGames and Crow are spreading his words.",
   "dialogue.rumors.lore/2": "Cyberdemons once tried to invade us and entered the Overworld with Portals, but Sirben and Luke have stopped the Invasion.",
   "dialogue.rumors.lore/3": "After being involved in the disappearance of the Ancient Builder, rumours are, 2DA50 travelled to the Far Lands and was never heard of again.",
@@ -687,7 +693,6 @@
   "dialogue.apologize.fail/4": "todo apologize fail",
   "dialogue.apologize.fail/5": "todo apologize fail",
 
-  "dialogue.location.failed/1": "Hmm, no I heard nothing new.",
   "dialogue.location.forgot/1": "Oh, I had found a cool location, but I forgot to mark it on the map. Sorry.",
   "dialogue.location.igloo/1": "I found an igloo at %2$s. Who would want to live in a house made of snow? Brrr!",
   "dialogue.location.pyramid/1": "I found a pyramid at %2$s.",

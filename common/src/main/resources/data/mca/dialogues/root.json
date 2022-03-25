@@ -52,6 +52,48 @@
           }
         },
         {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 30,
+              "time_min": 0,
+              "time_max": 4000
+            }
+          ],
+          "actions": {
+            "say": "main.morning",
+            "next": "main"
+          }
+        },
+        {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 30,
+              "time_min": 9000,
+              "time_max": 13000
+            }
+          ],
+          "actions": {
+            "say": "main.evening",
+            "next": "main"
+          }
+        },
+        {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 30,
+              "time_min": 13000,
+              "time_max": 24000
+            }
+          ],
+          "actions": {
+            "say": "main.night",
+            "next": "main"
+          }
+        },
+        {
           "baseChance": 5,
           "actions": {
             "say": "main",
