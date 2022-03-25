@@ -9,6 +9,8 @@ import mca.resources.Rank;
 import mca.resources.Tasks;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.world.biome.Biome;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -156,6 +158,11 @@ public class GiftPredicate {
         register("time_max", JsonHelper::asLong, time -> {
             return (villager, stack, player) -> {
                 return villager.getWorld().getTimeOfDay() % 24000L <= time;
+            };
+        });
+        register("biome", (json, name) -> new Identifier(JsonHelper.asString(json, name)), biome -> {
+            return (villager, stack, player) -> {
+                return villager.getWorld().getBiome(villager.getBlockPos()).getKeyOrValue().left().filter(b -> b.getValue().equals(biome)).isPresent();
             };
         });
     }

@@ -57,6 +57,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             "monument",
             "shipwreck",
             "shipwreck_beached",
+            "village_desert",
             "village_taiga",
             "village_snowy",
             "village_plains",

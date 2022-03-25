@@ -475,6 +475,12 @@
   "dialogue.flirt.slap/1": "Not in that tone!",
   "dialogue.kiss.slap/1": "How dare you!",
 
+  "adult.dialogue.chat.plains/1": "Do you like the plains? I never really seen anything aside this biome. I should travel one day...",
+  "adult.dialogue.chat.savanna/1": "It's hot here in the desert, but at least we never have to worry about the winter.",
+  "adult.dialogue.chat.taiga/1": "I like the woods. They provide building material, firewood and a great hunting ground.",
+  "adult.dialogue.chat.snowy_plains/1": "It's cold here, but as long as there is enough firewood it's no problem.",
+  "adult.dialogue.chat.desert/1": "It's hot here in the desert, but at least we never have to worry about the winter.",
+
   "adult.dialogue.chat.success/1": "Man, cookies and milk does sound delicious right now.",
   "adult.dialogue.chat.success/2": "Yes, I suppose the weather is nice today.",
   "adult.dialogue.chat.success/3": "I'm doing just fine! Hit my toe when I woke up, though.",
@@ -704,6 +710,7 @@
   "dialogue.location.monument/1": "There is a sunken castle guarded by sea monsters at %2$s. Stay clear of it or the monsters get you.",
   "dialogue.location.shipwreck/1": "I found a sunken ship at %2$s. This sunken ships in the oceans belonged once to the Eastern Alliance Company.",
   "dialogue.location.shipwreck_beached/1": "I found a ship at %2$s, at the beach. You can't miss it.",
+  "dialogue.location.village_desert/1": "At %2$s is another lovely village, in the middle of a desert.",
   "dialogue.location.village_taiga/1": "At %2$s is another lovely village, in the middle of a taiga biome.",
   "dialogue.location.village_snowy/1": "At %2$s is another village. It's cold there.",
   "dialogue.location.village_plains/1": "At %2$s is another lovely village.",
