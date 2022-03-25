@@ -257,7 +257,8 @@ public class Building implements Serializable, Iterable<UUID> {
         NO_DOOR,
         TOO_SMALL,
         IDENTICAL,
-        SUCCESS
+        SUCCESS,
+        INVALID_TYPE
     }
 
     public validationResult validateBuilding(World world, Set<BlockPos> blocked) {
@@ -404,31 +405,39 @@ public class Building implements Serializable, Iterable<UUID> {
             size = interiorSize;
 
             //determine type
+            boolean assignedType = false;
             if (!type.equals("blocked")) {
-                determineType();
+                assignedType = determineType();
             }
 
-            return validationResult.SUCCESS;
+            return assignedType ? validationResult.SUCCESS : validationResult.INVALID_TYPE;
         }
     }
 
-    public void determineType() {
+    public boolean determineType() {
         int bestPriority = -1;
+        boolean assignedType = false;
+
         for (BuildingType bt : API.getVillagePool()) {
-            if (((forcedType != null && forcedType.equalsIgnoreCase(bt.name())) || bt.priority() > bestPriority) && size >= bt.size()) {
+            final boolean checkingForcedType = forcedType != null && forcedType.equalsIgnoreCase(bt.name());
+            if ((checkingForcedType || bt.priority() > bestPriority) && size >= bt.size()) {
                 //get an overview of the satisfied blocks
                 Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
                 boolean valid = bt.getGroups().entrySet().stream().noneMatch(e -> !available.containsKey(e.getKey()) || available.get(e.getKey()).size() < e.getValue());
                 if (valid) {
                     bestPriority = bt.priority();
                     type = bt.name();
+                    assignedType = true;
 
-                    if (forcedType != null && forcedType.equalsIgnoreCase(type)) {
+                    if (checkingForcedType) {
                         break;
                     }
+                } else if (checkingForcedType) {
+                    assignedType = false;
                 }
             }
         }
+        return assignedType;
     }
 
     public String getType() {

@@ -40,6 +40,13 @@ public class ReportBuildingMessage implements Message {
                 GraveyardManager.get((ServerWorld)e.world).reportToVillageManager(e);
             }
             case AUTO_SCAN -> villages.findNearestVillage(e).ifPresent(Village::toggleAutoScan);
+            case FULL_SCAN -> {
+                villages.findNearestVillage(e).ifPresent(buildings ->
+                        buildings.getBuildings().values().stream().toList().forEach(b ->
+                                villages.processBuilding(b.getCenter(), true, false)
+                        )
+                );
+            }
             case FORCE_TYPE, REMOVE -> {
                 Optional<Village> village = villages.findNearestVillage(e);
                 Optional<Building> building = village.flatMap(v -> v.getBuildings().values().stream().filter((b) ->
@@ -67,6 +74,7 @@ public class ReportBuildingMessage implements Message {
         ADD_ROOM,
         ADD,
         REMOVE,
-        FORCE_TYPE
+        FORCE_TYPE,
+        FULL_SCAN
     }
 }
