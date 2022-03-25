@@ -22,7 +22,6 @@ import mca.resources.data.tasks.Task;
 import mca.server.world.data.Building;
 import mca.server.world.data.Village;
 import mca.util.localization.FlowingText;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -149,6 +148,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
         switch (page) {
             case "refresh":
+                NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FULL_SCAN));
                 NetworkHandler.sendToServer(new GetVillageRequest());
                 client.player.sendMessage(new TranslatableText("blueprint.refreshed"), true);
                 setPage("map");

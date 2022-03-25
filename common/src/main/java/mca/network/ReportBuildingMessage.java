@@ -41,6 +41,13 @@ public class ReportBuildingMessage implements Message {
             case AUTO_SCAN:
                 villages.findNearestVillage(e).ifPresent(Village::toggleAutoScan);
                 break;
+            case FULL_SCAN:
+                villages.findNearestVillage(e).ifPresent(buildings ->
+                        buildings.getBuildings().values().stream().toList().forEach(b ->
+                                villages.processBuilding(b.getCenter(), true, false)
+                        )
+                );
+                break;
             case FORCE_TYPE:
             case REMOVE:
                 Optional<Village> village = villages.findNearestVillage(e);
@@ -69,6 +76,7 @@ public class ReportBuildingMessage implements Message {
         ADD_ROOM,
         ADD,
         REMOVE,
-        FORCE_TYPE
+        FORCE_TYPE,
+        FULL_SCAN
     }
 }

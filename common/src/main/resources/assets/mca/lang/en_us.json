@@ -467,6 +467,7 @@
   "blueprint.scan.block_limit": "Building has too large volume!",
   "blueprint.scan.size_limit": "Building is too large!",
   "blueprint.scan.no_door": "Building requires at least one door!",
+  "blueprint.scan.invalid_type": "Building cannot be set to the requested type!",
   "blueprint.scan.too_small": "Building too small!",
   "blueprint.scan.identical": "Existing building updated!",
   "blueprint.scan.success": "Building added!",
