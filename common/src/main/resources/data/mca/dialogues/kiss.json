@@ -51,12 +51,31 @@
             },
             {
               "chance": 5,
-              "hearts_max": 0
+              "hearts_max": 10
             }
           ],
           "actions": {
             "next": "kiss.fail",
             "negative": 8
+          }
+        },
+        {
+          "baseChance": 1,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 5,
+              "personality": "odd"
+            },
+            {
+              "chance": 5,
+              "hearts_max": 0
+            }
+          ],
+          "actions": {
+            "next": "kiss.slap",
+            "negative": 8,
+            "command": "slap"
           }
         }
       ]

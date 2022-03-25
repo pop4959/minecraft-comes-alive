@@ -472,6 +472,9 @@
   "spouse.dialogue.kiss.fail/4": "Go take a drink from the lake.",
   "spouse.dialogue.kiss.fail/5": "Now that we're married I can tell you how lousy you are at kissing.",
 
+  "dialogue.flirt.slap/1": "Not in that tone!",
+  "dialogue.kiss.slap/1": "How dare you!",
+
   "adult.dialogue.chat.success/1": "Man, cookies and milk does sound delicious right now.",
   "adult.dialogue.chat.success/2": "Yes, I suppose the weather is nice today.",
   "adult.dialogue.chat.success/3": "I'm doing just fine! Hit my toe when I woke up, though.",

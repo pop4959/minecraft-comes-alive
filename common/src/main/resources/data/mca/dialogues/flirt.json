@@ -39,6 +39,25 @@
             "next": "flirt.fail",
             "negative": 3
           }
+        },
+        {
+          "baseChance": 1,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 5,
+              "personality": "odd"
+            },
+            {
+              "chance": 5,
+              "hearts_max": 0
+            }
+          ],
+          "actions": {
+            "next": "flirt.slap",
+            "negative": 8,
+            "command": "slap"
+          }
         }
       ]
     }
