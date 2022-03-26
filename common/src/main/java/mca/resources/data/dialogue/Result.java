@@ -79,7 +79,7 @@ public class Result {
 
         // condition chance
         for (InteractionPredicate c : getConditions()) {
-            if (c.getChance() != 0 && c.test(villager, player)) {
+            if (c.getChance() != 0 && c.test(villager, player) > 0) {
                 analysis.add(c.getConditionKeys().get(0), c.getChance());
             }
         }

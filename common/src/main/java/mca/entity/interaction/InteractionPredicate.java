@@ -55,8 +55,8 @@ public class InteractionPredicate {
         this.conditionKeys = conditionKeys;
     }
 
-    public boolean test(VillagerEntityMCA villager, ServerPlayerEntity player) {
-        return condition != null && condition.test(villager, ItemStack.EMPTY, player);
+    public float test(VillagerEntityMCA villager, ServerPlayerEntity player) {
+        return condition != null ? condition.test(villager, ItemStack.EMPTY, player) : 0.0f;
     }
 
     public int getChance() {
