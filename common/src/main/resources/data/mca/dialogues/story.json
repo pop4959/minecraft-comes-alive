@@ -93,11 +93,13 @@
           "applyFatigue": true,
           "conditions": [
             {
-              "chance": 20,
+              "chance": 3,
               "memory": {
                 "id": "story.exploring",
                 "var": "player",
-                "maxTime": 240000
+                "add": 0,
+                "max": 100,
+                "dividend": 24000
               }
             }
           ],

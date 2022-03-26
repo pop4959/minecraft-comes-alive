@@ -10,6 +10,7 @@ import mca.resources.Tasks;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -31,6 +32,16 @@ import net.minecraft.util.registry.Registry;
 
 public class GiftPredicate {
     public static final Map<String, Factory<JsonElement>> CONDITION_TYPES = new HashMap<>();
+
+    public static float divideAndAdd(JsonObject json, long value) {
+        return MathHelper.clamp(
+                value
+                        / (json.has("dividend") ? json.get("dividend").getAsFloat() : 1.0f)
+                        + (json.has("add") ? json.get("add").getAsFloat() : 0.0f),
+                0.0f,
+                json.has("max") ? json.get("max").getAsInt() : 1.0f
+        );
+    }
 
     static {
         register("profession", (json, name) -> new Identifier(JsonHelper.asString(json, name)), profession -> {
@@ -123,15 +134,18 @@ public class GiftPredicate {
                 return h <= hearts ? 1.0f : 0.0f;
             };
         });
+        register("hearts", JsonHelper::asObject, json -> {
+            return (villager, stack, player) -> {
+                assert player != null;
+                int h = villager.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
+                return divideAndAdd(json, h);
+            };
+        });
         register("memory", JsonHelper::asObject, json -> {
             return (villager, stack, player) -> {
                 String id = LongTermMemory.parseId(json, player);
-                boolean has = villager.getLongTermMemory().hasMemory(id);
-                if (json.has("invert") && json.get("invert").getAsBoolean()) {
-                    return has ? 0.0f : 1.0f;
-                } else {
-                    return has ? 1.0f : 0.0f;
-                }
+                long ticks = villager.getLongTermMemory().getMemory(id);
+                return divideAndAdd(json, ticks);
             };
         });
         register("village_has_building", JsonHelper::asString, name -> {

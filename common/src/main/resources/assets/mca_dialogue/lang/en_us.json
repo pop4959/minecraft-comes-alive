@@ -523,11 +523,12 @@
   "childp.dialogue.chat.fail/4": "I want new parents.",
   "childp.dialogue.chat.fail/5": "I don't want a baby sister.",
 
+  "dialogue.story": "Tell a story",
   "dialogue.story.generic": "Generic story",
-  "dialogue.story.exploring": "Narrate about your explorations",
-  "dialogue.story.nether": "Your journeys in the Nether",
-  "dialogue.story.enderdragon": "Your fight with the Ender dragon",
-  "dialogue.story.wither": "Your fight with the Wither boss",
+  "dialogue.story.exploring": "Your explorations",
+  "dialogue.story.nether": "Adventures in the Nether",
+  "dialogue.story.enderdragon": "Ender dragon",
+  "dialogue.story.wither": "Wither boss",
 
   "adult.dialogue.story.success/1": "Really? I can't believe that all happened!",
   "adult.dialogue.story.success/2": "I wish I was brave enough to take on a creeper.",

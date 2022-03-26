@@ -50,15 +50,19 @@ public class LongTermMemory {
         memories.put(id, currentTime + time);
     }
 
-    public boolean hasMemory(String id) {
+    public long getMemory(String id) {
         if (memories.containsKey(id)) {
             if (entity.world.getTime() > memories.get(id)) {
                 memories.remove(id);
             } else {
-                return true;
+                return memories.get(id) - entity.world.getTime();
             }
         }
-        return false;
+        return -1;
+    }
+
+    public boolean hasMemory(String id) {
+        return getMemory(id) > 0;
     }
 
     public static String parseId(JsonObject json, ServerPlayerEntity player) {
