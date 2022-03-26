@@ -54,13 +54,21 @@
           "baseChance": 3,
           "conditions": [
             {
+              "chance": 5,
+              "advancement": "minecraft:nether/root"
+            },
+            {
+              "chance": 5,
+              "advancement": "minecraft:nether/nether/find_fortress"
+            },
+            {
               "chance": 10,
               "advancement": "minecraft:nether/explore_nether"
             }
           ],
           "actions": {
             "next": "story.nether.success",
-            "positive": 5,
+            "positive": 8,
             "remember": {
               "id": "story.nether",
               "var": "player"
@@ -82,7 +90,7 @@
           ],
           "actions": {
             "next": "story.nether.fail",
-            "negative": 3,
+            "negative": 4,
             "remember": {
               "id": "story.nether",
               "var": "player"
@@ -104,7 +112,7 @@
           ],
           "actions": {
             "next": "story.enderdragon.success",
-            "positive": 5,
+            "positive": 10,
             "remember": {
               "id": "story.enderdragon",
               "var": "player"
@@ -126,7 +134,7 @@
           ],
           "actions": {
             "next": "story.enderdragon.fail",
-            "negative": 3,
+            "negative": 5,
             "remember": {
               "id": "story.enderdragon",
               "var": "player"
@@ -148,7 +156,7 @@
           ],
           "actions": {
             "next": "story.wither.success",
-            "positive": 5,
+            "positive": 12,
             "remember": {
               "id": "story.wither",
               "var": "player"
@@ -170,7 +178,7 @@
           ],
           "actions": {
             "next": "story.wither.fail",
-            "negative": 3,
+            "negative": 6,
             "remember": {
               "id": "story.wither",
               "var": "player"
