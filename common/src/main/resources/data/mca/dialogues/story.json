@@ -1,29 +1,37 @@
 {
-  "group": "story",
-  "auto": true,
+  "silent": "story",
+  "baseConditions": [
+    [
+      {
+        "chance": 4,
+        "personality": "curious"
+      },
+      {
+        "chance": 1,
+        "personality": "friendly"
+      },
+      {
+        "chance": 3,
+        "mood": "interested"
+      },
+      {
+        "chance": 2,
+        "mood": "talkative"
+      }
+    ],
+    [
+      {
+        "chance": 2,
+        "personality": "stubborn"
+      }
+    ]
+  ],
   "answers": [
     {
+      "name": "generic",
       "results": [
         {
           "baseChance": 3,
-          "conditions": [
-            {
-              "chance": 4,
-              "personality": "curious"
-            },
-            {
-              "chance": 1,
-              "personality": "friendly"
-            },
-            {
-              "chance": 3,
-              "mood": "interested"
-            },
-            {
-              "chance": 2,
-              "mood": "talkative"
-            }
-          ],
           "actions": {
             "next": "story.success",
             "positive": 5
@@ -32,15 +40,53 @@
         {
           "baseChance": 3,
           "applyFatigue": true,
-          "conditions": [
-            {
-              "chance": 2,
-              "personality": "stubborn"
-            }
-          ],
           "actions": {
             "next": "story.fail",
             "negative": 3
+          }
+        }
+      ]
+    },
+    {
+      "name": "enderdragon",
+      "results": [
+        {
+          "baseChance": 3,
+          "conditions": [
+            {
+              "chance": 10,
+              "advancement": "minecraft:end/kill_dragon"
+            }
+          ],
+          "actions": {
+            "next": "story.enderdragon.success",
+            "positive": 5,
+            "remember": {
+              "id": "story.enderdragon",
+              "var": "player"
+            }
+          }
+        },
+        {
+          "baseChance": 3,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 10,
+              "memory": {
+                "id": "story.enderdragon",
+                "var": "player",
+                "time": 2400000
+              }
+            }
+          ],
+          "actions": {
+            "next": "story.enderdragon.fail",
+            "negative": 3,
+            "remember": {
+              "id": "story.enderdragon",
+              "var": "player"
+            }
           }
         }
       ]

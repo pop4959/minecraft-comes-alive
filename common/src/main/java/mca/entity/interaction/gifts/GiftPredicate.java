@@ -7,6 +7,8 @@ import mca.entity.ai.LongTermMemory;
 import mca.entity.ai.Traits;
 import mca.resources.Rank;
 import mca.resources.Tasks;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
 import net.minecraft.util.registry.RegistryEntry;
@@ -163,6 +165,13 @@ public class GiftPredicate {
         register("biome", (json, name) -> new Identifier(JsonHelper.asString(json, name)), biome -> {
             return (villager, stack, player) -> {
                 return villager.getWorld().getBiome(villager.getBlockPos()).getKeyOrValue().left().filter(b -> b.getValue().equals(biome)).isPresent();
+            };
+        });
+        register("advancement", (json, name) -> new Identifier(JsonHelper.asString(json, name)), id -> {
+            return (villager, stack, player) -> {
+                assert player != null;
+                Advancement advancement = Objects.requireNonNull(player.getServer()).getAdvancementLoader().get(id);
+                return player.getAdvancementTracker().getProgress(advancement).isDone();
             };
         });
     }

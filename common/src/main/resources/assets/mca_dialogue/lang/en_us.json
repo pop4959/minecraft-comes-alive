@@ -523,6 +523,9 @@
   "childp.dialogue.chat.fail/4": "I want new parents.",
   "childp.dialogue.chat.fail/5": "I don't want a baby sister.",
 
+  "adult.dialogue.story.generic": "Generic story",
+  "adult.dialogue.story.enderdragon": "Your fight with the Ender dragon",
+
   "adult.dialogue.story.success/1": "Really? I can't believe that all happened!",
   "adult.dialogue.story.success/2": "I wish I was brave enough to take on a creeper.",
   "adult.dialogue.story.success/3": "That was a really good story! Is it original?",
@@ -565,6 +568,9 @@
   "childp.dialogue.story.fail/3": "You're just fibbing. I don't belive that.",
   "childp.dialogue.story.fail/4": "You said you didn't eat the cake and cookies...",
   "childp.dialogue.story.fail/5": "Someone said you were a bad person, and I believe them!",
+
+  "dialogue.story.enderdragon.success/1": "Incredible! And did you bring the dragon egg with you?",
+  "dialogue.story.enderdragon.fail/1": "Ha, no I do not believe you. The ender dragon is a myth.",
 
   "adult.dialogue.flirt.success/1": "You're sooo brave!",
   "adult.dialogue.flirt.success/2": "Oh, you! Stop being so cute!",
