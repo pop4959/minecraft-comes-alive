@@ -558,19 +558,26 @@
   "spouse.dialogue.story.fail/2": "Don't do something that reckless!",
   "spouse.dialogue.story.fail/3": "You have a family to think about!",
   "spouse.dialogue.story.fail/4": "...If you liked them why didn't you marry them, instead?",
-  "spouse.dialogue.story.fail/5": "Why did you wear the pink fluffy underwear? Whose were they?",  "childp.dialogue.story.success/1": "What!? You really did that?! But...what happened to your friend?",
+  "spouse.dialogue.story.fail/5": "Why did you wear the pink fluffy underwear? Whose were they?",
+  "childp.dialogue.story.success/1": "What!? You really did that?! But...what happened to your friend?",
   "childp.dialogue.story.success/2": "I want to explore a cave, too! Let's go!",
   "childp.dialogue.story.success/3": "One day I'll kill more creepers than you!",
   "childp.dialogue.story.success/4": "Oh, oh, oh! Can we climb a tree, too?!",
   "childp.dialogue.story.success/5": "Did the lava hurt?",
   "childp.dialogue.story.fail/1": "I don't want to hear about grandma.",
   "childp.dialogue.story.fail/2": "You always say that. I just want a pet.",
-  "childp.dialogue.story.fail/3": "You're just fibbing. I don't belive that.",
+  "childp.dialogue.story.fail/3": "You're just fibbing. I don't believe that.",
   "childp.dialogue.story.fail/4": "You said you didn't eat the cake and cookies...",
   "childp.dialogue.story.fail/5": "Someone said you were a bad person, and I believe them!",
 
   "dialogue.story.enderdragon.success/1": "Incredible! And did you bring the dragon egg with you?",
   "dialogue.story.enderdragon.fail/1": "Ha, no I do not believe you. The ender dragon is a myth.",
+
+  "dialogue.story.wither.success/1": "Impossible! I heard the Wither boss causes immersive destruction!",
+  "dialogue.story.wither.fail/1": "I don't believe you.",
+
+  "dialogue.story.nether.success/1": "Is it that hot there?!",
+  "dialogue.story.nether.fail/1": "I don't think you ever set foot into the nether.",
 
   "adult.dialogue.flirt.success/1": "You're sooo brave!",
   "adult.dialogue.flirt.success/2": "Oh, you! Stop being so cute!",

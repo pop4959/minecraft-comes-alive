@@ -48,6 +48,50 @@
       ]
     },
     {
+      "name": "nether",
+      "results": [
+        {
+          "baseChance": 3,
+          "conditions": [
+            {
+              "chance": 10,
+              "advancement": "minecraft:nether/explore_nether"
+            }
+          ],
+          "actions": {
+            "next": "story.nether.success",
+            "positive": 5,
+            "remember": {
+              "id": "story.nether",
+              "var": "player"
+            }
+          }
+        },
+        {
+          "baseChance": 3,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 10,
+              "memory": {
+                "id": "story.nether",
+                "var": "player",
+                "time": 2400000
+              }
+            }
+          ],
+          "actions": {
+            "next": "story.nether.fail",
+            "negative": 3,
+            "remember": {
+              "id": "story.nether",
+              "var": "player"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "enderdragon",
       "results": [
         {
@@ -85,6 +129,50 @@
             "negative": 3,
             "remember": {
               "id": "story.enderdragon",
+              "var": "player"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "wither",
+      "results": [
+        {
+          "baseChance": 3,
+          "conditions": [
+            {
+              "chance": 10,
+              "advancement": "minecraft:nether/summon_wither"
+            }
+          ],
+          "actions": {
+            "next": "story.wither.success",
+            "positive": 5,
+            "remember": {
+              "id": "story.wither",
+              "var": "player"
+            }
+          }
+        },
+        {
+          "baseChance": 3,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 10,
+              "memory": {
+                "id": "story.wither",
+                "var": "player",
+                "time": 2400000
+              }
+            }
+          ],
+          "actions": {
+            "next": "story.wither.fail",
+            "negative": 3,
+            "remember": {
+              "id": "story.wither",
               "var": "player"
             }
           }
