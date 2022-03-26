@@ -524,7 +524,10 @@
   "childp.dialogue.chat.fail/5": "I don't want a baby sister.",
 
   "adult.dialogue.story.generic": "Generic story",
+  "adult.dialogue.story.exploring": "Narrate about your explorations",
+  "adult.dialogue.story.nether": "Your journeys in the Nether",
   "adult.dialogue.story.enderdragon": "Your fight with the Ender dragon",
+  "adult.dialogue.story.wither": "Your fight with the Wither boss",
 
   "adult.dialogue.story.success/1": "Really? I can't believe that all happened!",
   "adult.dialogue.story.success/2": "I wish I was brave enough to take on a creeper.",
@@ -570,14 +573,17 @@
   "childp.dialogue.story.fail/4": "You said you didn't eat the cake and cookies...",
   "childp.dialogue.story.fail/5": "Someone said you were a bad person, and I believe them!",
 
+  "dialogue.story.exploring.success/1": "Cool! One day I will also explore the world.",
+  "dialogue.story.exploring.fail/1": "Your stories are getting old",
+
+  "dialogue.story.nether.success/1": "Is it that hot there?!",
+  "dialogue.story.nether.fail/1": "I don't think you ever set foot into the nether.",
+
   "dialogue.story.enderdragon.success/1": "Incredible! And did you bring the dragon egg with you?",
   "dialogue.story.enderdragon.fail/1": "Ha, no I do not believe you. The ender dragon is a myth.",
 
   "dialogue.story.wither.success/1": "Impossible! I heard the Wither boss causes immersive destruction!",
   "dialogue.story.wither.fail/1": "I don't believe you.",
-
-  "dialogue.story.nether.success/1": "Is it that hot there?!",
-  "dialogue.story.nether.fail/1": "I don't think you ever set foot into the nether.",
 
   "adult.dialogue.flirt.success/1": "You're sooo brave!",
   "adult.dialogue.flirt.success/2": "Oh, you! Stop being so cute!",

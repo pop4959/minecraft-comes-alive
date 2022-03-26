@@ -37,16 +37,28 @@ public class LongTermMemory {
         }
     }
 
-    public void addMemory(String id) {
-        memories.put(id, entity.world.getTime());
+    //remember forever
+    public void remember(String id) {
+        remember(id, Integer.MAX_VALUE);
+    }
+
+    public void remember(String id, long time) {
+        long currentTime = entity.world.getTime();
+        if (memories.containsKey(id)) {
+            currentTime = Math.max(currentTime, memories.get(id));
+        }
+        memories.put(id, currentTime + time);
     }
 
     public boolean hasMemory(String id) {
-        return memories.containsKey(id);
-    }
-
-    public boolean hasMemory(String id, long time) {
-        return memories.containsKey(id) && entity.world.getTime() - memories.get(id) < time;
+        if (memories.containsKey(id)) {
+            if (entity.world.getTime() > memories.get(id)) {
+                memories.remove(id);
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String parseId(JsonObject json, ServerPlayerEntity player) {

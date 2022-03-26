@@ -129,12 +129,7 @@ public class GiftPredicate {
         register("memory", JsonHelper::asObject, json -> {
             return (villager, stack, player) -> {
                 String id = LongTermMemory.parseId(json, player);
-                boolean has;
-                if (json.has("time")) {
-                    has = villager.getLongTermMemory().hasMemory(id, json.get("time").getAsLong());
-                } else {
-                    has = villager.getLongTermMemory().hasMemory(id);
-                }
+                boolean has = villager.getLongTermMemory().hasMemory(id);
                 if (json.has("invert") && json.get("invert").getAsBoolean()) {
                     return !has;
                 } else {

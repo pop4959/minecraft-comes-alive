@@ -55,7 +55,11 @@ public class Actions {
         register("remember", JsonHelper::asObject, json -> {
             return (villager, player) -> {
                 String id = LongTermMemory.parseId(json, player);
-                villager.getLongTermMemory().addMemory(id);
+                if (json.has("time")) {
+                    villager.getLongTermMemory().remember(id, json.get("time").getAsLong());
+                } else {
+                    villager.getLongTermMemory().remember(id);
+                }
             };
         });
 

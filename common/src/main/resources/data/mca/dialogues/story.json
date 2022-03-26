@@ -48,6 +48,72 @@
       ]
     },
     {
+      "name": "exploring",
+      "results": [
+        {
+          "baseChance": 3,
+          "conditions": [
+            {
+              "chance": 5,
+              "advancement": "minecraft:adventure/shoot_arrow"
+            },
+            {
+              "chance": 5,
+              "advancement": "minecraft:adventure/kill_all_mobs"
+            },
+            {
+              "chance": 5,
+              "advancement": "adventure/fall_from_world_height"
+            },
+            {
+              "chance": 5,
+              "advancement": "adventure/spyglass_at_parrot"
+            },
+            {
+              "chance": 5,
+              "advancement": "adventure/voluntary_exile"
+            },
+            {
+              "chance": 5,
+              "advancement": "adventure/adventuring_time"
+            }
+          ],
+          "actions": {
+            "next": "story.exploring.success",
+            "positive": 8,
+            "remember": {
+              "id": "story.exploring",
+              "var": "player",
+              "time": 24000
+            }
+          }
+        },
+        {
+          "baseChance": 3,
+          "applyFatigue": true,
+          "conditions": [
+            {
+              "chance": 20,
+              "memory": {
+                "id": "story.exploring",
+                "var": "player",
+                "maxTime": 240000
+              }
+            }
+          ],
+          "actions": {
+            "next": "story.exploring.fail",
+            "negative": 4,
+            "remember": {
+              "id": "story.exploring",
+              "var": "player",
+              "time": 24000
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "nether",
       "results": [
         {
@@ -59,7 +125,7 @@
             },
             {
               "chance": 5,
-              "advancement": "minecraft:nether/nether/find_fortress"
+              "advancement": "minecraft:nether/find_fortress"
             },
             {
               "chance": 10,
@@ -71,7 +137,8 @@
             "positive": 8,
             "remember": {
               "id": "story.nether",
-              "var": "player"
+              "var": "player",
+              "time": 2400000
             }
           }
         },
@@ -83,8 +150,7 @@
               "chance": 10,
               "memory": {
                 "id": "story.nether",
-                "var": "player",
-                "time": 2400000
+                "var": "player"
               }
             }
           ],
@@ -93,7 +159,8 @@
             "negative": 4,
             "remember": {
               "id": "story.nether",
-              "var": "player"
+              "var": "player",
+              "time": 2400000
             }
           }
         }
@@ -115,7 +182,8 @@
             "positive": 10,
             "remember": {
               "id": "story.enderdragon",
-              "var": "player"
+              "var": "player",
+              "time": 2400000
             }
           }
         },
@@ -127,8 +195,7 @@
               "chance": 10,
               "memory": {
                 "id": "story.enderdragon",
-                "var": "player",
-                "time": 2400000
+                "var": "player"
               }
             }
           ],
@@ -137,7 +204,8 @@
             "negative": 5,
             "remember": {
               "id": "story.enderdragon",
-              "var": "player"
+              "var": "player",
+              "time": 2400000
             }
           }
         }
@@ -159,7 +227,8 @@
             "positive": 12,
             "remember": {
               "id": "story.wither",
-              "var": "player"
+              "var": "player",
+              "time": 2400000
             }
           }
         },
@@ -171,8 +240,7 @@
               "chance": 10,
               "memory": {
                 "id": "story.wither",
-                "var": "player",
-                "time": 2400000
+                "var": "player"
               }
             }
           ],
@@ -181,7 +249,8 @@
             "negative": 6,
             "remember": {
               "id": "story.wither",
-              "var": "player"
+              "var": "player",
+              "time": 2400000
             }
           }
         }
