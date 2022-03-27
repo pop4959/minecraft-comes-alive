@@ -224,3 +224,4 @@
 * Decrease revenge aggression based on the guards' relation to you
 * Added guard target list to config
 * Added aborting children by unconventional means
+* Shift prevents interaction with villagers to support mods
