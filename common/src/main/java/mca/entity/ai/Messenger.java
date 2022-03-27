@@ -2,6 +2,7 @@ package mca.entity.ai;
 
 import mca.Config;
 import mca.entity.EntityWrapper;
+import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.resources.API;
@@ -14,6 +15,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public interface Messenger extends EntityWrapper {
@@ -50,7 +52,14 @@ public interface Messenger extends EntityWrapper {
         Object[] newParams = new Object[params.length + 1];
         System.arraycopy(params, 0, newParams, 1, params.length);
         newParams[0] = targetName;
-        return new TranslatableText(getDialogueType(target).name() + "." + phraseId, newParams);
+
+        //also pass profession
+        String professionString = "";
+        if (!asEntity().isBaby() && asEntity() instanceof VillagerEntityMCA v) {
+            professionString = "#P" + Registry.VILLAGER_PROFESSION.getId(v.getProfession()).getPath() + ".";
+        }
+
+        return new TranslatableText(professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
     default void sendChatToAllAround(String phrase, Object... params) {

@@ -1,8 +1,6 @@
 package mca.entity.ai;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,6 +20,8 @@ public enum DialogueType {
     TEENP(TEEN);
 
     public final DialogueType fallback;
+
+    private static final Random random = new Random();
 
     DialogueType(DialogueType fallback) {
         this.fallback = fallback;
@@ -57,28 +57,55 @@ public enum DialogueType {
     }
 
     public static String applyFallback(String key) {
-        int split = key.indexOf(".");
-
-        if (split <= 0) {
+        if (!key.contains("#")) {
             return key;
         }
 
-        DialogueType type = DialogueType.MAP.get(key.substring(0, split));
+        //extract flags
+        Map<String, String> flags = new HashMap<>();
+        for (String s : key.split("\\.")) {
+            if (s.startsWith("#")) {
+                flags.put(s.substring(1, 2), s.substring(2));
+                key = key.replace(s + ".", "");
+            }
+        }
+
+        //check for type
+        DialogueType type = null;
+        if (flags.containsKey("T")) {
+            type = DialogueType.MAP.get(flags.get("T"));
+        }
         if (type == null) {
             return key;
         }
 
-        String phrase = key.substring(split + 1);
-
-        while (type != null) {
-            String s = type.name().toLowerCase(Locale.ENGLISH) + "." + phrase;
-
+        //first try professions
+        //children can't have profession, this is already checked in the Messenger
+        if (flags.containsKey("P") && random.nextBoolean()) {
+            DialogueType t = type;
+            while (t != null) {
+                String s = flags.get("P") + "." + t.name().toLowerCase(Locale.ENGLISH) + "." + key;
+                if (Language.getInstance().hasTranslation(s)) {
+                    return s;
+                }
+                t = t.fallback;
+            }
+            String s = flags.get("P") + "." + key;
             if (Language.getInstance().hasTranslation(s)) {
                 return s;
             }
-
-            type = type.fallback;
         }
-        return phrase;
+
+        //try all types
+        DialogueType t = type;
+        while (t != null) {
+            String s = t.name().toLowerCase(Locale.ENGLISH) + "." + key;
+            if (Language.getInstance().hasTranslation(s)) {
+                return s;
+            }
+            t = t.fallback;
+        }
+
+        return key;
     }
 }
