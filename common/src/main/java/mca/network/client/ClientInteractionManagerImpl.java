@@ -22,6 +22,8 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
 
     @Override
     public void handleGuiRequest(OpenGuiRequest message) {
+        Entity entity;
+        assert client.world != null;
         switch (message.gui) {
             case WHISTLE:
                 client.setScreen(new WhistleScreen());
@@ -43,8 +45,11 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 client.setScreen(new InteractScreen(villager));
                 break;
             case VILLAGER_EDITOR:
-                Entity entity = client.world.getEntityById(message.villager);
+                entity = client.world.getEntityById(message.villager);
                 client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
+                break;
+            case DESTINY:
+                client.setScreen(new DestinyScreen(MinecraftClient.getInstance().player.getUuid()));
                 break;
             case BABY_NAME:
                 if (client.player != null) {

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
 import mca.client.gui.widget.NamedTextFieldWidget;
@@ -45,13 +46,13 @@ public class VillagerEditorScreen extends Screen {
     private final UUID villagerUUID;
     private final UUID playerUUID;
     private int villagerBreedingAge;
-    private String page;
+    protected String page;
     private final VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
-    private static final int DATA_WIDTH = 175;
+    protected static final int DATA_WIDTH = 175;
     private int traitPage = 0;
     private static final int TRAITS_PER_PAGE = 8;
     private long initialTime;
-    private NbtCompound villagerData;
+    protected NbtCompound villagerData;
 
     public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
         super(new TranslatableText("gui.VillagerEditorScreen.title"));
@@ -107,19 +108,14 @@ public class VillagerEditorScreen extends Screen {
         return y + 22;
     }
 
-    private void setPage(String page) {
+    protected void setPage(String page) {
         assert villager != null;
         this.page = page;
 
         clearChildren();
 
         //page selection
-        String[] pages;
-        if (villagerUUID.equals(playerUUID)) {
-            pages = new String[] {"general", "body", "head", "traits"};
-        } else {
-            pages = new String[] {"general", "body", "head", "personality", "traits", "debug"};
-        }
+        String[] pages = getPages();
         int w = DATA_WIDTH * 2 / pages.length;
         int x = (int)(width / 2.0 - pages.length / 2.0 * w);
         for (String p : pages) {
@@ -141,25 +137,11 @@ public class VillagerEditorScreen extends Screen {
         switch (page) {
             case "general" -> {
                 //name
-                Text villagerName = villager.getName();
-                if (villagerName == null || villagerName.asString().isEmpty()) {
-                    // Failsafe-conditions for empty names
-                    // TODO: Possibly add randomizer support here...
-                    if (villagerUUID.equals(playerUUID)) {
-                        villagerName = client.player.getName();
-                    }
-                }
-                field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
-                field.setMaxLength(32);
-                field.setText(villagerName.asString());
-                field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
+                drawName(width / 2, y);
                 y += 20;
 
                 //gender
-                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
-                    villager.getGenetics().setGender(Gender.FEMALE);
-                }));
-                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> villager.getGenetics().setGender(Gender.MALE)));
+                drawGender(width / 2, y);
                 y += 22;
 
                 //age
@@ -361,6 +343,35 @@ public class VillagerEditorScreen extends Screen {
         }
     }
 
+    protected String[] getPages() {
+        if (villagerUUID.equals(playerUUID)) {
+            return new String[] {"general", "body", "head", "traits"};
+        } else {
+            return new String[] {"general", "body", "head", "personality", "traits", "debug"};
+        }
+    }
+
+    protected void drawName(int x, int y) {
+        Text villagerName = villager.getName();
+        if (villagerName == null || villagerName.asString().isEmpty()) {
+            // Failsafe-conditions for empty names
+            // TODO: Possibly add randomizer support here...
+            if (villagerUUID.equals(playerUUID)) {
+                villagerName = client.player.getName();
+            }
+        }
+
+        TextFieldWidget field = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
+        field.setMaxLength(32);
+        field.setText(villagerName.asString());
+        field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
+    }
+
+    void drawGender(int x, int y) {
+        addDrawableChild(new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> villager.getGenetics().setGender(Gender.FEMALE)));
+        addDrawableChild(new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> villager.getGenetics().setGender(Gender.MALE)));
+    }
+
     private void sendCommand(String command, NbtCompound nbt) {
         syncVillagerData();
         NetworkHandler.sendToServer(new VillagerEditorSyncRequest(command, villagerUUID, nbt));
@@ -393,9 +404,15 @@ public class VillagerEditorScreen extends Screen {
         villager.age += time - initialTime;
         initialTime = time;
 
-        InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+        if (shouldDrawEntity()) {
+            InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+        }
 
         super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    protected boolean shouldDrawEntity() {
+        return true;
     }
 
     public void setVillagerData(NbtCompound villagerData) {

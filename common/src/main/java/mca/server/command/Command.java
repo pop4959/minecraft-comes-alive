@@ -29,12 +29,18 @@ public class Command {
                 .then(register("separate", Command::separate))
                 .then(register("reject").then(CommandManager.argument("target", EntityArgumentType.player()).executes(Command::reject)))
                 .then(register("editor", Command::editor))
+                .then(register("destiny", Command::destiny))
                 .then(register("mail", Command::mail))
         );
     }
 
     private static int editor(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.VILLAGER_EDITOR, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
+        return 0;
+    }
+
+    private static int destiny(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.DESTINY, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
         return 0;
     }
 

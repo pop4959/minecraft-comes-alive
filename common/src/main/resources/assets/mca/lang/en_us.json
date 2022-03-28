@@ -275,6 +275,16 @@
 
   "gui.loading": "Loading",
 
+  "gui.destiny.whoareyou": "Who are you?",
+  "gui.destiny.journey": "Where will your journey start?",
+  "gui.destiny.somewhere": "Somewhere",
+  "gui.destiny.shipwreck_beached": "Shipwreck",
+  "gui.destiny.village_desert": "Desert Village",
+  "gui.destiny.village_taiga": "Taiga Village",
+  "gui.destiny.village_snowy": "Snowy Village",
+  "gui.destiny.village_plains": "Plains Village",
+  "gui.destiny.village_savanna": "Savanna Village",
+
   "gui.blueprint.taxes": "Taxes",
   "gui.blueprint.birth": "Birth limit",
   "gui.blueprint.marriage": "Marriage limit",
