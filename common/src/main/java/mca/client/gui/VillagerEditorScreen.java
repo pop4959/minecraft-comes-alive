@@ -47,7 +47,7 @@ public class VillagerEditorScreen extends Screen {
     private final UUID playerUUID;
     private int villagerBreedingAge;
     protected String page;
-    private final VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
+    final VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
     protected static final int DATA_WIDTH = 175;
     private int traitPage = 0;
     private static final int TRAITS_PER_PAGE = 8;
@@ -113,6 +113,10 @@ public class VillagerEditorScreen extends Screen {
         this.page = page;
 
         clearChildren();
+
+        if (page.equals("loading")) {
+            return;
+        }
 
         //page selection
         String[] pages = getPages();
@@ -367,9 +371,28 @@ public class VillagerEditorScreen extends Screen {
         field.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
     }
 
+    private ButtonWidget genderButtonFemale;
+    private ButtonWidget genderButtonMale;
+
     void drawGender(int x, int y) {
-        addDrawableChild(new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> villager.getGenetics().setGender(Gender.FEMALE)));
-        addDrawableChild(new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> villager.getGenetics().setGender(Gender.MALE)));
+        assert villager != null;
+        genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
+            villager.getGenetics().setGender(Gender.FEMALE);
+            genderButtonFemale.active = false;
+            genderButtonMale.active = true;
+        });
+        addDrawableChild(genderButtonFemale);
+
+        genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> {
+            villager.getGenetics().setGender(Gender.MALE);
+            genderButtonFemale.active = true;
+            genderButtonMale.active = false;
+        });
+
+        genderButtonFemale.active = villager.getGenetics().getGender() != Gender.FEMALE;
+        genderButtonMale.active = villager.getGenetics().getGender() != Gender.MALE;
+
+        addDrawableChild(genderButtonMale);
     }
 
     private void sendCommand(String command, NbtCompound nbt) {
@@ -412,7 +435,7 @@ public class VillagerEditorScreen extends Screen {
     }
 
     protected boolean shouldDrawEntity() {
-        return true;
+        return !page.equals("loading");
     }
 
     public void setVillagerData(NbtCompound villagerData) {

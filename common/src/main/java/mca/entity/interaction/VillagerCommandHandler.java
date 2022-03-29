@@ -198,6 +198,23 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 entity.sendChatMessage(player, "profession.set.archer");
                 return true;
             }
+            case "location" -> {
+                //choose a random arg from the default pool
+                if (arg.length() == 0) {
+                    arg = structures[entity.getRandom().nextInt(structures.length)];
+                }
+
+                //slightly randomly the search center
+                Identifier identifier = new Identifier(arg);
+                BlockPos pos = FuzzyPositions.localFuzz(entity.getRandom(), 1024, 0).add(entity.getBlockPos());
+                Optional<BlockPos> position = WorldUtils.getClosestStructurePosition((ServerWorld)entity.world, pos, identifier, 64);
+                if (position.isPresent()) {
+                    String posString = position.get().getX() + "," + position.get().getY() + "," + position.get().getZ();
+                    entity.sendChatMessage(player, "dialogue.location." + identifier.getPath(), posString);
+                } else {
+                    entity.sendChatMessage(player, "dialogue.location.forgot");
+                }
+            }
         }
 
         return super.handle(player, command);

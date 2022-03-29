@@ -1,6 +1,8 @@
 package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.cobalt.network.NetworkHandler;
+import mca.network.DestinyMessage;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -10,6 +12,8 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.UUID;
+
+import static mca.entity.VillagerLike.VILLAGER_NAME;
 
 public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
@@ -25,9 +29,7 @@ public class DestinyScreen extends VillagerEditorScreen {
 
     @Override
     public void close() {
-        if (page.equals("destiny")) {
-            super.close();
-        } else {
+        if (!page.equals("general")) {
             setPage("destiny");
         }
     }
@@ -71,7 +73,7 @@ public class DestinyScreen extends VillagerEditorScreen {
 
     @Override
     protected boolean shouldDrawEntity() {
-        return !page.equals("general") && !page.equals("destiny");
+        return !page.equals("general") && !page.equals("destiny") && super.shouldDrawEntity();
     }
 
     @Override
@@ -82,13 +84,19 @@ public class DestinyScreen extends VillagerEditorScreen {
             drawName(width / 2 - DATA_WIDTH / 2, height / 2 + 8);
             drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 32);
 
-            addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 64, 64, 20, new TranslatableText("gui.button.accept"), sender -> setPage("body")));
+            addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 64, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
+                setPage("body");
+                if (villager.getTrackedValue(VILLAGER_NAME).isEmpty()) {
+                    villager.setTrackedValue(VILLAGER_NAME, "Nameless Traveller");
+                }
+            }));
         } else if (page.equals("destiny")) {
             int x = 0;
             int y = 0;
             for (String location : new String[] {"somewhere", "shipwreck_beached", "village_desert", "village_taiga", "village_snowy", "village_plains", "village_savanna"}) {
                 addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
-                    close();
+                    NetworkHandler.sendToServer(new DestinyMessage(location));
+                    super.close();
                 }));
                 x++;
                 if (x >= 3) {

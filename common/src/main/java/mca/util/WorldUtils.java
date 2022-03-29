@@ -43,4 +43,18 @@ public interface WorldUtils {
         ((MobEntity) entity).initialize((ServerWorldAccess) world, world.getLocalDifficulty(entity.getBlockPos()), reason, null, null);
         world.spawnEntity(entity);
     }
+
+    //a wrapper for the unnecessary complex query provided by minecraft
+    static Optional<BlockPos> getClosestStructurePosition(ServerWorld world, BlockPos center, Identifier structure, int radius) {
+        Registry<ConfiguredStructureFeature<?, ?>> registry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
+        ConfiguredStructureFeature<?, ?> feature = registry.get(structure);
+        Optional<RegistryEntry<ConfiguredStructureFeature<?, ?>>> entry = registry.getEntry(registry.getRawId(feature));
+        if (entry.isPresent()) {
+            RegistryEntryList.Direct<ConfiguredStructureFeature<?, ?>> of = RegistryEntryList.of(entry.get());
+            Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?, ?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, of, center, radius, false);
+            return pair == null ? Optional.empty() : Optional.ofNullable(pair.getFirst());
+        } else {
+            return Optional.empty();
+        }
+    }
 }

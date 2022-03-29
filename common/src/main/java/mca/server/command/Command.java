@@ -40,7 +40,8 @@ public class Command {
     }
 
     private static int destiny(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.DESTINY, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+        ServerInteractionManager.launchDestiny(player);
         return 0;
     }
 

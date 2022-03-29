@@ -6,9 +6,12 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
+import mca.network.client.OpenGuiRequest;
 import mca.network.client.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -17,6 +20,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+
 import java.util.*;
 
 public class ServerInteractionManager {
@@ -41,6 +45,12 @@ public class ServerInteractionManager {
         return INSTANCE;
     }
 
+    public static void launchDestiny(ServerPlayerEntity player) {
+        NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.DESTINY, player), player);
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 10000000));
+        player.teleport(player.getX(), 10000000, player.getZ());
+    }
+
     public void tick() {
         List<UUID> removals = new ArrayList<>();
         procreateMap.keySet().stream()
@@ -52,10 +62,14 @@ public class ServerInteractionManager {
     public void onPlayerJoin(ServerPlayerEntity player) {
         PlayerSaveData playerData = PlayerSaveData.get((ServerWorld)player.world, player.getUuid());
         if (!playerData.isEntityDataSet()) {
-            NetworkHandler.sendToPlayer(new ShowToastRequest(
-                    "server.playerNotCustomized.title",
-                    "server.playerNotCustomized.description"
-            ), player);
+            if (Config.getInstance().destinyEnabled) {
+                launchDestiny(player);
+            } else {
+                NetworkHandler.sendToPlayer(new ShowToastRequest(
+                        "server.playerNotCustomized.title",
+                        "server.playerNotCustomized.description"
+                ), player);
+            }
         }
 
         if (playerData.hasMail()) {

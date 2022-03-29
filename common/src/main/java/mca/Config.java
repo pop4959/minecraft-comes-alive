@@ -76,6 +76,7 @@ public final class Config implements Serializable {
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;
+    public boolean destinyEnabled = true;
     public Map<String, Integer> guardsTargetEntities = ImmutableMap.<String, Integer>builder()
             .put("minecraft:creeper", -1)
             .put("minecraft:drowned", 2)

@@ -228,3 +228,9 @@
 * Sneaking prevents interaction with villagers to support mods
 * Updated the Blueprint Interface to appear more cohesive
 * Added `/mca-admin forceBuildingType <type>` to force a building's type
+
+# 7.3.0?
+
+* Added destiny
+  * You are asked to customize the player
+  * Then you can choose from a set of spawn location to start your journey
