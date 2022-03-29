@@ -277,6 +277,7 @@
 
   "gui.destiny.whoareyou": "Who are you?",
   "gui.destiny.journey": "Where will your journey start?",
+
   "gui.destiny.somewhere": "Somewhere",
   "gui.destiny.shipwreck_beached": "Shipwreck",
   "gui.destiny.village_desert": "Desert Village",
@@ -284,6 +285,17 @@
   "gui.destiny.village_snowy": "Snowy Village",
   "gui.destiny.village_plains": "Plains Village",
   "gui.destiny.village_savanna": "Savanna Village",
+
+  "destiny.story.reason/1": "One day you had enough and went on a journey to explore the world.",
+  "destiny.story.travelling/1": "You conquered snowy mountains and muggy swamps and had to avoid Husks in the endless deserts.",
+  "destiny.story.somewhere/1": "Now you are stranded without food and shelter in the middle of nowhere.",
+  "destiny.story.sailing/1": "You spent the few emeralds you have saved to get on board of a small ship. But a storm decided the fate of the vessel and it's crew and destroyed teared it apart.",
+  "destiny.story.shipwreck_beached/1": "You wake up between the debris of the stranded ship, far from anything known to you, the crew dead or missing.",
+  "destiny.story.village_desert/1": "Some day you came across a small village in the middle of a desert. The water is scarce and the sun is dazzling your eyes, but the villager seems satisfied with their life",
+  "destiny.story.village_taiga/1": "While trying to get out of a large taiga, you stumbled across a hidden village. The people seem nice, maybe you can find a new home here.",
+  "destiny.story.village_snowy/1": "You fight your way through a heavy snowstorm when you saw dim lights close to you. It is a village, maybe they have an inn to warm up?",
+  "destiny.story.village_plains/1": "In the middle of a plain biome a few villagers build themselves a settlement. The climate is moderate, the people friendly, maybe they have place for another settler?",
+  "destiny.story.village_savanna/1": "Finally you find a village between dry trees and grass. Let's see if they are friendly!",
 
   "gui.blueprint.taxes": "Taxes",
   "gui.blueprint.birth": "Birth limit",

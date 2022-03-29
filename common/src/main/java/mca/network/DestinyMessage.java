@@ -5,6 +5,7 @@ import mca.util.WorldUtils;
 import mca.util.compat.FuzzyPositionsCompat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
@@ -33,5 +34,10 @@ public class DestinyMessage implements Message {
             BlockPos pos = ((ServerWorld)e.world).getSpawnPos();
             e.teleport(pos.getX(), pos.getY(), pos.getZ());
         });
+
+        //story
+        e.sendMessage(new TranslatableText("destiny.story.reason"), false);
+        e.sendMessage(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"), false);
+        e.sendMessage(new TranslatableText("destiny.story." + location), false);
     }
 }
