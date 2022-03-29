@@ -1,19 +1,20 @@
 package mca.entity.interaction;
 
 import java.util.Optional;
+
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
-import mca.entity.ai.Chore;
-import mca.entity.ai.Memories;
-import mca.entity.ai.MoveState;
-import mca.entity.ai.ProfessionsMCA;
+import mca.entity.ai.*;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
+import mca.util.WorldUtils;
 import net.minecraft.entity.Saddleable;
+import net.minecraft.entity.ai.FuzzyPositions;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,13 +22,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.EntityPassengersSetS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerProfession;
 
 import java.util.Comparator;
 
 public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityMCA> {
+    private static final String[] structures = new String[]{
+            "igloo",
+            "pyramid",
+            "ruined_portal_desert",
+            "ruined_portal_swamp",
+            "ruined_portal",
+            "ruined_portal_mountain",
+            "mansion",
+            "monument",
+            "shipwreck",
+            "shipwreck_beached",
+            "village_desert",
+            "village_taiga",
+            "village_snowy",
+            "village_plains",
+            "village_savanna",
+            "swamp_hut",
+            "mineshaft",
+            "jungle_pyramid",
+            "pillager_outpost"
+    };
 
     public VillagerCommandHandler(VillagerEntityMCA entity) {
         super(entity);
@@ -53,6 +79,14 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             return true;
         }).isPresent()) {
             return true;
+        }
+
+        //an optional argument is stored separated using a dot
+        String arg = "";
+        String[] split = command.split("\\.");
+        if (split.length > 1) {
+            command = split[0];
+            arg = split[1];
         }
 
         switch (command) {
@@ -183,20 +217,31 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 }
                 return true;
             }
-            case "profession.none" -> {
-                entity.setProfession(VillagerProfession.NONE);
-                entity.sendChatMessage(player, "profession.set.none");
+            case "profession" -> {
+                switch (arg) {
+                    case "none" -> {
+                        entity.setProfession(VillagerProfession.NONE);
+                        entity.sendChatMessage(player, "profession.set.none");
+                    }
+                    case "guard" -> {
+
+                        entity.setProfession(ProfessionsMCA.GUARD.get());
+                        entity.sendChatMessage(player, "profession.set.guard");
+                    }
+                    case "archer" -> {
+                        entity.setProfession(ProfessionsMCA.ARCHER.get());
+                        entity.sendChatMessage(player, "profession.set.archer");
+                    }
+                }
                 return true;
             }
-            case "profession.guard" -> {
-                entity.setProfession(ProfessionsMCA.GUARD.get());
-                entity.sendChatMessage(player, "profession.set.guard");
-                return true;
-            }
-            case "profession.archer" -> {
-                entity.setProfession(ProfessionsMCA.ARCHER.get());
-                entity.sendChatMessage(player, "profession.set.archer");
-                return true;
+            case "apologize" -> {
+                Vec3d pos = entity.getPos();
+                entity.world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
+                    if (entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
+                        v.getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
+                    }
+                });
             }
             case "location" -> {
                 //choose a random arg from the default pool
@@ -215,6 +260,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     entity.sendChatMessage(player, "dialogue.location.forgot");
                 }
             }
+            case "slap" -> player.damage(DamageSource.CRAMMING, 1.0f);
         }
 
         return super.handle(player, command);

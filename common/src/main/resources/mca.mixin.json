@@ -7,8 +7,9 @@
     "MixinAbstractFurnaceBlockEntity",
     "MixinActivity",
     "MixinCriteria",
-    "MixinEntityType",
     "MixinDefaultParticleType",
+    "MixinEntityType",
+    "MixingEntityRenderers",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinPlayerEntity",
@@ -22,6 +23,7 @@
     "MixinZombieVillagerEntity"
   ],
   "client": [
+    "MixingEntityRenderDispatcher",
     "client.MixinClientPlayerEntity",
     "client.MixinTranslationStorage"
   ],

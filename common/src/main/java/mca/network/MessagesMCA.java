@@ -1,19 +1,7 @@
 package mca.network;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.client.AnalysisResults;
-import mca.network.client.BabyNameResponse;
-import mca.network.client.FamilyTreeUUIDResponse;
-import mca.network.client.GetChildDataResponse;
-import mca.network.client.GetFamilyTreeResponse;
-import mca.network.client.GetInteractDataResponse;
-import mca.network.client.GetVillageFailedResponse;
-import mca.network.client.GetVillageResponse;
-import mca.network.client.GetVillagerResponse;
-import mca.network.client.InteractionDialogueResponse;
-import mca.network.client.OpenGuiRequest;
-import mca.network.client.GetFamilyResponse;
-import mca.network.client.ShowToastRequest;
+import mca.network.client.*;
 
 public interface MessagesMCA {
     static void bootstrap() {
@@ -50,5 +38,7 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(FamilyTreeUUIDLookup.class);
         NetworkHandler.registerMessage(FamilyTreeUUIDResponse.class);
         NetworkHandler.registerMessage(DestinyMessage.class);
+        NetworkHandler.registerMessage(PlayerDataMessage.class);
+        NetworkHandler.registerMessage(PlayerDataRequest.class);
     }
 }

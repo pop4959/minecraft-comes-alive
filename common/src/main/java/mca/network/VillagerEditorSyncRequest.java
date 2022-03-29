@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
+import mca.network.client.PlayerDataMessage;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
 import mca.resources.data.Hair;
@@ -18,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -91,6 +95,9 @@ public class VillagerEditorSyncRequest extends S2CNbtDataMessage {
             data.setEntityData(villagerData);
             data.setEntityDataSet(true);
             syncFamilyTree(e, entity, villagerData);
+
+            //also update players
+            e.world.getPlayers().forEach(p -> NetworkHandler.sendToPlayer(new PlayerDataMessage(e.getUuid(), villagerData), (ServerPlayerEntity)p));
         } else if (entity instanceof VillagerLike) {
             ((LivingEntity)entity).readCustomDataFromNbt(villagerData);
             entity.calculateDimensions();

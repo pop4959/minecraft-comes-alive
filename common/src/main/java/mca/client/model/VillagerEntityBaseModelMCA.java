@@ -1,10 +1,16 @@
 package mca.client.model;
 
 import com.google.common.collect.ImmutableList;
+import mca.client.render.MCAPlayerEntityRenderer;
+import mca.cobalt.network.NetworkHandler;
+import mca.entity.EntitiesMCA;
+import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.VillagerDimensions;
+import mca.network.PlayerDataRequest;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.Dilation;
 import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
@@ -13,25 +19,27 @@ import net.minecraft.client.model.ModelPartData;
 import net.minecraft.client.model.ModelTransform;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 
-public class VillagerEntityBaseModelMCA<T extends MobEntity & VillagerLike<T>> extends BipedEntityModel<T> {
+public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEntityModel<T> {
 
     protected static final String BREASTS = "breasts";
 
-    protected final ModelPart breasts;
+    public final ModelPart breasts;
 
-    private float breastSize;
-    private VillagerDimensions dimensions;
+    public float breastSize;
+    public VillagerDimensions dimensions = AgeState.ADULT;
 
     public VillagerEntityBaseModelMCA(ModelPart root) {
-        super(root);
+        super(root, false);
         this.breasts = root.getChild(BREASTS);
     }
 
     public static ModelData getModelData(Dilation dilation) {
-        ModelData modelData = BipedEntityModel.getModelData(dilation, 0);
+        ModelData modelData = PlayerEntityModel.getTexturedModelData(dilation, false);
         ModelPartData data = modelData.getRoot();
 
         data.addChild(BREASTS, newBreasts(dilation, 0), ModelTransform.NONE);
@@ -62,12 +70,12 @@ public class VillagerEntityBaseModelMCA<T extends MobEntity & VillagerLike<T>> e
     @Override
     public void animateModel(T entity, float limbAngle, float limbDistance, float tickDelta) {
         super.animateModel(entity, limbDistance, limbAngle, tickDelta);
-        riding |= entity.getAgeState() == AgeState.BABY;
+        riding |= getVillager(entity).getAgeState() == AgeState.BABY;
     }
 
     @Override
     public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        if (entity.getAgeState() == AgeState.BABY && !entity.hasVehicle()) {
+        if (getVillager(entity).getAgeState() == AgeState.BABY && !entity.hasVehicle()) {
             limbDistance = (float)Math.sin(entity.age / 12F);
             limbAngle = (float)Math.cos(entity.age / 9F) * 3;
             headYaw += (float)Math.sin(entity.age / 2F);
@@ -79,11 +87,11 @@ public class VillagerEntityBaseModelMCA<T extends MobEntity & VillagerLike<T>> e
         }
 
         //and add our own
-        limbAngle /= (0.2f + entity.getRawScaleFactor());
+        limbAngle /= (0.2f + getVillager(entity).getRawScaleFactor());
 
         super.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
 
-        if (entity.getVillagerBrain().isPanicking()) {
+        if (getVillager(entity).getVillagerBrain().isPanicking()) {
             float toRadiums = (float)Math.PI / 180;
 
             float armRaise = (((float)Math.sin(animationProgress / 5) * 30 - 180)
@@ -97,11 +105,7 @@ public class VillagerEntityBaseModelMCA<T extends MobEntity & VillagerLike<T>> e
             this.rightArm.roll = waveSideways;
         }
 
-        dimensions = entity.getVillagerDimensions();
-        breastSize = entity.getGenetics().getBreastSize();
-
-        breasts.visible = entity.getGenetics().getGender() == Gender.FEMALE;
-        breasts.copyTransform(body);
+        applyVillagerDimensions(getVillager(entity));
     }
 
     @Override
@@ -144,5 +148,26 @@ public class VillagerEntityBaseModelMCA<T extends MobEntity & VillagerLike<T>> e
                 matrices.pop();
             }
         }
+    }
+
+    public static VillagerLike<?> getVillager(Entity villager) {
+        if (villager instanceof VillagerLike<?> v) {
+            return v;
+        } else {
+            return MCAPlayerEntityRenderer.playerData.computeIfAbsent(villager.getUuid(), uuid -> {
+                VillagerEntityMCA mca = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
+                assert mca != null;
+                NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
+                return mca;
+            });
+        }
+    }
+
+    public void applyVillagerDimensions(VillagerLike<?> entity) {
+        dimensions = entity.getVillagerDimensions();
+        breastSize = entity.getGenetics().getBreastSize();
+
+        breasts.visible = entity.getGenetics().getGender() == Gender.FEMALE;
+        breasts.copyTransform(body);
     }
 }
