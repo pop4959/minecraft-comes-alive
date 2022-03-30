@@ -24,7 +24,7 @@ import mca.entity.ai.brain.tasks.LoseUnimportantJobTask;
 import mca.entity.ai.brain.tasks.PatrolVillageTask;
 import mca.entity.ai.brain.tasks.ShoutTask;
 import mca.entity.ai.brain.tasks.StayTask;
-//import mca.entity.ai.brain.tasks.WanderOrTeleportToTargetTask;
+import mca.entity.ai.brain.tasks.WanderOrTeleportToTargetTask;
 import mca.entity.ai.brain.tasks.chore.ChoppingTask;
 import mca.entity.ai.brain.tasks.chore.FishingTask;
 import mca.entity.ai.brain.tasks.chore.HarvestingTask;
