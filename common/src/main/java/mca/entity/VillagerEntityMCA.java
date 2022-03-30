@@ -113,8 +113,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
 
-    private final LongTermMemory longTermMemory = new LongTermMemory(this);
-
     final static UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
 
     private final Genetics genetics = new Genetics(this);
@@ -211,10 +209,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public VillagerBrain<?> getVillagerBrain() {
         return mcaBrain;
-    }
-
-    public LongTermMemory getLongTermMemory() {
-        return longTermMemory;
     }
 
     public Residency getResidency() {
@@ -1137,7 +1131,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.readCustomDataFromNbt(nbt);
         getTypeDataManager().load(this, nbt);
         relations.readFromNbt(nbt);
-        longTermMemory.readFromNbt(nbt);
 
         updateSpeed();
 
@@ -1150,7 +1143,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.writeCustomDataToNbt(nbt);
         getTypeDataManager().save(this, nbt);
         relations.writeToNbt(nbt);
-        longTermMemory.writeToNbt(nbt);
         InventoryUtils.saveToNBT(inventory, nbt);
     }
 
