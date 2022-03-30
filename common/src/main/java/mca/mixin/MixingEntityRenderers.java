@@ -1,7 +1,7 @@
 package mca.mixin;
 
 import com.google.common.collect.ImmutableMap;
-import mca.client.render.MCAPlayerEntityRenderer;
+import mca.client.render.PlayerEntityMCARenderer;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -29,7 +29,7 @@ public class MixingEntityRenderers {
         PLAYER_RENDERER_FACTORIES.forEach((type, factory) -> {
             try {
                 builder.put(type, factory.create(ctx));
-                MCAPlayerEntityRenderer.entityRenderer = new MCAPlayerEntityRenderer(ctx);
+                PlayerEntityMCARenderer.entityRenderer = new PlayerEntityMCARenderer(ctx);
             } catch (Exception exception) {
                 throw new IllegalArgumentException("Failed to create player model for " + type, exception);
             }

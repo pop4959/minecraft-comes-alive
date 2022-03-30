@@ -30,20 +30,19 @@ import net.minecraft.util.UseAction;
 import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static mca.client.model.VillagerEntityBaseModelMCA.getVillager;
 
-public class MCAPlayerEntityRenderer extends PlayerEntityRenderer {
+public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
     public static EntityRenderer<?> entityRenderer;
     public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
+    public static Set<UUID> playerDataRequests = new HashSet<>();
 
     PlayerSkinLayer<AbstractClientPlayerEntity> skinLayer;
     PlayerClothingLayer<AbstractClientPlayerEntity> clothingLayer;
 
-    public MCAPlayerEntityRenderer(EntityRendererFactory.Context context) {
+    public PlayerEntityMCARenderer(EntityRendererFactory.Context context) {
         super(context, false);
 
         skinLayer = new PlayerSkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));

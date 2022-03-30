@@ -20,7 +20,10 @@ public class PlayerDataRequest implements Message {
 
     @Override
     public void receive(PlayerEntity e) {
-        NbtCompound nbt = PlayerSaveData.get((ServerWorld)e.world, uuid).getEntityData();
-        NetworkHandler.sendToPlayer(new PlayerDataMessage(uuid, nbt), (ServerPlayerEntity)e);
+        PlayerSaveData data = PlayerSaveData.get((ServerWorld)e.world, uuid);
+        if (data.isEntityDataSet()) {
+            NbtCompound nbt = data.getEntityData();
+            NetworkHandler.sendToPlayer(new PlayerDataMessage(uuid, nbt), (ServerPlayerEntity)e);
+        }
     }
 }

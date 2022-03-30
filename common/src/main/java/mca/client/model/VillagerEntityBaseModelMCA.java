@@ -1,7 +1,7 @@
 package mca.client.model;
 
 import com.google.common.collect.ImmutableList;
-import mca.client.render.MCAPlayerEntityRenderer;
+import mca.client.render.PlayerEntityMCARenderer;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
@@ -154,12 +154,7 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
         if (villager instanceof VillagerLike<?> v) {
             return v;
         } else {
-            return MCAPlayerEntityRenderer.playerData.computeIfAbsent(villager.getUuid(), uuid -> {
-                VillagerEntityMCA mca = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
-                assert mca != null;
-                NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
-                return mca;
-            });
+            return PlayerEntityMCARenderer.playerData.get(villager.getUuid());
         }
     }
 

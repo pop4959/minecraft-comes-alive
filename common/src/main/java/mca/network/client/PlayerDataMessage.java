@@ -1,6 +1,6 @@
 package mca.network.client;
 
-import mca.client.render.MCAPlayerEntityRenderer;
+import mca.client.render.PlayerEntityMCARenderer;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.network.S2CNbtDataMessage;
@@ -23,6 +23,6 @@ public class PlayerDataMessage extends S2CNbtDataMessage {
         VillagerEntityMCA mca = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
         assert mca != null;
         mca.readCustomDataFromNbt(getData());
-        MCAPlayerEntityRenderer.playerData.put(uuid, mca);
+        PlayerEntityMCARenderer.playerData.put(uuid, mca);
     }
 }
