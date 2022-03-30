@@ -59,7 +59,10 @@ public abstract class PlayerLayer<T extends LivingEntity, M extends PlayerEntity
         model.leftSleeve.copyTransform(model.leftArm);
         model.rightSleeve.copyTransform(model.rightArm);
         model.jacket.copyTransform(model.body);
+        renderFinal(transform, provider, light, entity);
+    }
 
+    public void renderFinal(MatrixStack transform, VertexConsumerProvider provider, int light, T entity) {
         int tint = LivingEntityRenderer.getOverlay(entity, 0);
 
         Identifier skin = getSkin(entity);

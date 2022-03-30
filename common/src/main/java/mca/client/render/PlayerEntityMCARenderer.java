@@ -117,20 +117,21 @@ public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
         VillagerEntityBaseModelMCA<AbstractClientPlayerEntity> model = (VillagerEntityBaseModelMCA<AbstractClientPlayerEntity>)layer.model;
         setModelPose(model, player);
 
-        model.handSwingProgress = 0.0f;
-        model.sneaking = false;
-        model.leaningPitch = 0.0f;
-        model.setAngles(player, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-
         model.setVisible(false);
-        arm.pitch = 0.0f;
+
         arm.visible = true;
-        sleeve.pitch = 0.0f;
+        arm.pitch = 0.0f;
+        arm.yaw = 0.0f;
+        arm.roll = 0.0f;
+
         sleeve.visible = true;
+        sleeve.pitch = 0.0f;
+        sleeve.yaw = 0.0f;
+        sleeve.roll = 0.0f;
 
         model.applyVillagerDimensions(getVillager(player));
 
-        layer.render(matrices, vertexConsumers, light, player, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        layer.renderFinal(matrices, vertexConsumers, light, player);
 
         model.setVisible(true);
     }
