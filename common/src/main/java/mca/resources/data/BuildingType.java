@@ -87,7 +87,7 @@ public final class BuildingType implements Serializable {
                 Identifier identifier;
                 if (requirement.getKey().startsWith("#")) {
                     identifier = new Identifier(requirement.getKey().substring(1));
-                    TagKey<Block> tag = TagKey.of(Registry.BLOCK.getKey(), identifier);
+                    TagKey<Block> tag = TagKey.of(Registry.BLOCK_KEY, identifier);
                     if (tag == null || RegistryHelper.isTagEmpty(tag)) {
                         MCA.LOGGER.error("Unknown building type tag " + identifier);
                     } else {

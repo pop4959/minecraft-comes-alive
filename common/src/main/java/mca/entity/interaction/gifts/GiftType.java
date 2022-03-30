@@ -44,7 +44,7 @@ public class GiftType {
             Integer satisfaction = element.getValue().getAsInt();
             if (string.charAt(0) == '#') {
                 Identifier identifier = new Identifier(string.substring(1));
-                TagKey<Item> tag = TagKey.of(Registry.ITEM.getKey(), identifier);
+                TagKey<Item> tag = TagKey.of(Registry.ITEM_KEY, identifier);
                 if (tag != null) {
                     tags.put(tag, satisfaction);
                 } else {
