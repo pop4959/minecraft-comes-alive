@@ -1,20 +1,24 @@
 package mca.entity.ai.brain.tasks;
 
+import mca.Config;
 import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.util.compat.FuzzyPositionsCompat;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.ai.brain.task.WanderAroundTask;
+import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.registry.Registry;
 
 public class WanderOrTeleportToTargetTask extends WanderAroundTask {
 
-    private static final double TELEPORT_LIMIT_SQ = Math.pow(100, 2);
+    private static final double TELEPORT_LIMIT_SQ = Config.getInstance().villagerTeleportLimit;
 
     public WanderOrTeleportToTargetTask() {
     }
@@ -31,27 +35,60 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
 
     @Override
     protected void keepRunning(ServerWorld world, MobEntity entity, long l) {
-        Brain<?> brain = entity.getBrain();
-        WalkTarget walkTarget = brain.getOptionalMemory(MemoryModuleType.WALK_TARGET).get();
+        if (Config.getInstance().allowVillagerTeleporting) {
+            Brain<?> brain = entity.getBrain();
+            WalkTarget walkTarget = brain.getOptionalMemory(MemoryModuleType.WALK_TARGET).get();
 
-        BlockPos targetPos = walkTarget.getLookTarget().getBlockPos();
+            BlockPos targetPos = walkTarget.getLookTarget().getBlockPos();
 
-        // If the target is more than x blocks away, teleport to it immediately.
-        // teleporting disabled for now, only causes problems and is not really important anyways
-        if (targetPos.getSquaredDistance(entity.getBlockPos()) > TELEPORT_LIMIT_SQ && isAreaSafe(world, targetPos)) {
-            // The target location is fuzzed and then adjusted to ensure the entity doesn't land in any walls.
-            targetPos = targetPos.add(FuzzyPositionsCompat.localFuzz(world.random, 5, 0));
-            targetPos = FuzzyPositionsCompat.downWhile(targetPos, 1, p -> !world.getBlockState(p.down()).isFullCube(world, p));
-            targetPos = FuzzyPositionsCompat.upWhile(targetPos, world.getHeight(), p -> world.getBlockState(p).shouldSuffocate(world, p));
-
-            Vec3d pos = Vec3d.ofBottomCenter(targetPos);
-
-            if (isAreaSafe(world, pos)) {
-                entity.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+            // If the target is more than x blocks away, teleport to it immediately.
+            if (targetPos.getSquaredDistance(entity.getBlockPos()) >= TELEPORT_LIMIT_SQ) {
+                tryTeleport(world, entity, targetPos);
             }
         }
 
         super.keepRunning(world, entity, l);
+    }
+
+    private void tryTeleport(ServerWorld world, MobEntity entity, BlockPos targetPos) {
+        for(int i = 0; i < 10; ++i) {
+            int j = this.getRandomInt(entity, -3, 3);
+            int k = this.getRandomInt(entity, -1, 1);
+            int l = this.getRandomInt(entity, -3, 3);
+            boolean bl = this.tryTeleportTo(world, entity, targetPos, targetPos.getX() + j, targetPos.getY() + k, targetPos.getZ() + l);
+            if (bl) {
+                return;
+            }
+        }
+    }
+
+    private boolean tryTeleportTo(ServerWorld world, MobEntity entity, BlockPos targetPos, int x, int y, int z) {
+        if (Math.abs((double)x - targetPos.getX()) < 2.0D && Math.abs((double)z - targetPos.getZ()) < 2.0D) {
+            return false;
+        } else if (!this.canTeleportTo(world, entity, new BlockPos(x, y, z))) {
+            return false;
+        } else {
+            entity.requestTeleport((double)x + 0.5D, (double)y, (double)z + 0.5D);
+            return true;
+        }
+    }
+
+    private boolean canTeleportTo(ServerWorld world, MobEntity entity, BlockPos pos) {
+        PathNodeType pathNodeType = LandPathNodeMaker.getLandNodeType(world, pos.mutableCopy());
+        if (pathNodeType != PathNodeType.WALKABLE) {
+            return false;
+        } else {
+            if (!isAreaSafe(world, pos.down())) {
+                return false;
+            } else {
+                BlockPos blockPos = pos.subtract(entity.getBlockPos());
+                return world.isSpaceEmpty(entity, entity.getBoundingBox().offset(blockPos));
+            }
+        }
+    }
+
+    private int getRandomInt(MobEntity entity, int min, int max) {
+        return entity.getRandom().nextInt(max - min + 1) + min;
     }
 
     private boolean isAreaSafe(ServerWorld world, Vec3d pos) {
@@ -61,6 +98,7 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
     private boolean isAreaSafe(ServerWorld world, BlockPos pos) {
         // The following conditions define whether it is logically
         // safe for the entity to teleport to the specified pos within world
-        return world.getLightLevel(pos, 0) > 8;
+        Identifier aboveId = Registry.BLOCK.getId(world.getBlockState(pos).getBlock());
+        return !Config.getInstance().villagerPathfindingBlacklist.contains(aboveId.toString());
     }
 }

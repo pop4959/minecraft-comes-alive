@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public final class Config implements Serializable {
@@ -39,6 +40,8 @@ public final class Config implements Serializable {
     public int villagerMaxHealth = 20;
     public String villagerChatPrefix = "";
     public boolean allowPlayerMarriage = true;
+    public boolean allowVillagerTeleporting = false;
+    public double villagerTeleportLimit = 144.0D;
     public int roseGoldSpawnWeight = 6;
     public boolean allowRoseGoldGeneration = true;
     public int marriageChance = 5;
@@ -92,6 +95,16 @@ public final class Config implements Serializable {
             .put("mca:female_zombie_villager", 3)
             .put("mca:male_zombie_villager", 3)
             .build();
+    public List<String> villagerPathfindingBlacklist = List.of(
+            "minecraft:oak_leaves",
+            "minecraft:spruce_leaves",
+            "minecraft:birch_leaves",
+            "minecraft:jungle_leaves",
+            "minecraft:acacia_leaves",
+            "minecraft:dark_oak_leaves",
+            "minecraft:azalea_leaves",
+            "minecraft:flowering_azalea_leaves"
+    );
 
     public static File getConfigFile() {
         return new File("./config/mca.json");

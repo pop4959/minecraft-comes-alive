@@ -204,11 +204,12 @@
 # 7.2.0
 
 * Ported to 1.18.2
+* Modded Villager professions now display properly in all mca interfaces
 * Fixed incompatibility with eldritch mobs
 * Villager get 5 extra hearts per level
 * Added config flag to use squidward models
 * Fixed sleeping
-* Villager can no longer teleport into unsafe locations
+* Adjusted villager teleportation to be more configurable
 * Different ages will now move at different speed
 * Genes now affect speed
 * Converted villagers will now retain custom nbt data and age
@@ -224,3 +225,6 @@
 * Decrease revenge aggression based on the guards' relation to you
 * Added guard target list to config
 * Added aborting children by unconventional means
+* Shift prevents interaction with villagers to support mods
+* Updated the Blueprint Interface to appear more cohesive
+* Added `/mca-admin forceBuildingType <type>` to force a building's type
