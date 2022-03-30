@@ -40,7 +40,7 @@ public final class Config implements Serializable {
     public int villagerMaxHealth = 20;
     public String villagerChatPrefix = "";
     public boolean allowPlayerMarriage = true;
-    public boolean allowVillagerTeleporting = false;
+    public boolean allowVillagerTeleporting = true;
     public double villagerTeleportLimit = 144.0D;
     public int roseGoldSpawnWeight = 6;
     public boolean allowRoseGoldGeneration = true;
@@ -96,14 +96,7 @@ public final class Config implements Serializable {
             .put("mca:male_zombie_villager", 3)
             .build();
     public List<String> villagerPathfindingBlacklist = List.of(
-            "minecraft:oak_leaves",
-            "minecraft:spruce_leaves",
-            "minecraft:birch_leaves",
-            "minecraft:jungle_leaves",
-            "minecraft:acacia_leaves",
-            "minecraft:dark_oak_leaves",
-            "minecraft:azalea_leaves",
-            "minecraft:flowering_azalea_leaves"
+            "#minecraft:leaves"
     );
 
     public static File getConfigFile() {
