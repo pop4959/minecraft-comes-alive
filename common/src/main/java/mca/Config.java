@@ -39,7 +39,7 @@ public final class Config implements Serializable {
     public int villagerMaxHealth = 20;
     public String villagerChatPrefix = "";
     public boolean allowPlayerMarriage = true;
-    public boolean allowVillagerTeleporting = false;
+    public boolean allowVillagerTeleporting = true;
     public double villagerTeleportLimit = 144.0D;
     public int roseGoldSpawnWeight = 6;
     public boolean allowRoseGoldGeneration = true;
