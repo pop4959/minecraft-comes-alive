@@ -85,7 +85,7 @@ public class BlueprintScreen extends ExtendedScreen {
         saveVillage();
     }
 
-    private ButtonWidget[] createValueChanger(int x, int y, int w, int h, Consumer<Boolean> onPress) {
+    private ButtonWidget[] createValueChanger(int x, int y, int w, int h, Consumer<Boolean> onPress, String tooltip) {
         ButtonWidget[] buttons = new ButtonWidget[3];
 
         buttons[1] = addDrawableChild(new ButtonWidget(x - w / 2, y, w / 4, h,
@@ -96,7 +96,10 @@ public class BlueprintScreen extends ExtendedScreen {
 
         buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
                 new LiteralText(""), (b) -> {
-        }));
+        },
+                (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) -> {
+                    renderTooltip(matrixStack, new TranslatableText(tooltip), mx, my);
+                }));
 
         return buttons;
     }
@@ -258,15 +261,15 @@ public class BlueprintScreen extends ExtendedScreen {
                 break;
             case "rules":
                 //taxes
-                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 10 : -10));
+                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 10 : -10), "taxes");
                 toggleButtons(buttonTaxes, false);
 
                 //birth threshold
-                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 10 : -10));
+                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 10 : -10), "births");
                 toggleButtons(buttonBirths, false);
 
                 //marriage threshold
-                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 10 : -10));
+                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 10 : -10), "marriage");
                 toggleButtons(buttonMarriage, false);
                 break;
             case "rename":
