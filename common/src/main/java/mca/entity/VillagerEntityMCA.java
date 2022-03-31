@@ -42,7 +42,6 @@ import mca.util.network.datasync.CDataManager;
 import mca.util.network.datasync.CDataParameter;
 import mca.util.network.datasync.CParameter;
 import net.minecraft.block.entity.SkullBlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.brain.BlockPosLookTarget;
@@ -398,7 +397,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR) {
-            if (!getVillagerBrain().isPanicking() && !MinecraftClient.getInstance().options.keySneak.isPressed()) {
+            if (!getVillagerBrain().isPanicking() && !player.isSneaking()) {
                 playWelcomeSound();
 
                 //make sure dialogueType is synced in case the client needs it

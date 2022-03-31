@@ -225,6 +225,6 @@
 * Decrease revenge aggression based on the guards' relation to you
 * Added guard target list to config
 * Added aborting children by unconventional means
-* Shift prevents interaction with villagers to support mods
+* Sneaking prevents interaction with villagers to support mods
 * Updated the Blueprint Interface to appear more cohesive
 * Added `/mca-admin forceBuildingType <type>` to force a building's type
