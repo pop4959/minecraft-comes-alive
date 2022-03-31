@@ -55,12 +55,12 @@
 
   "item.mca.male_villager_spawn_egg": "Male Villager Spawn Egg",
   "item.mca.female_villager_spawn_egg": "Female Villager Spawn Egg",
-  
+
   "item.mca.male_zombie_villager_spawn_egg": "Male Zombie Villager Spawn Egg",
   "item.mca.female_zombie_villager_spawn_egg": "Female Zombie Villager Spawn Egg",
 
   "item.mca.grim_reaper_spawn_egg": "Grim Reaper Spawn Egg",
-  
+
   "item.mca.divorce_papers": "Divorce Papers",
   "item.mca.divorce_papers.tooltip": "Give this to your spouse to end any (un)happy marriage",
   "item.mca.rose_gold_ingot": "Rose Gold Ingot",
@@ -307,6 +307,9 @@
   "gui.blueprint.cancel": "cancel",
   "gui.blueprint.catalogFull": "Building Catalog",
   "gui.blueprint.catalogHint": "Build special buildings by fulfilling those conditions!",
+  "gui.blueprint.tooltip.taxes": "Tax your villagers! The higher percentage, the more they will deliver into the storage at the cost of reputation.",
+  "gui.blueprint.tooltip.births": "Control the percentage of occupied beds, 0% prevents births completely.",
+  "gui.blueprint.tooltip.marriage": "Control the percentage of married people, 0% prevents marriages completely.",
 
   "gui.nameBaby.title": "Name Baby",
 
