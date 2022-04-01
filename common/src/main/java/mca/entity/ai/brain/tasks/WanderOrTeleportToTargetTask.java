@@ -23,8 +23,6 @@ import net.minecraft.util.registry.Registry;
 
 public class WanderOrTeleportToTargetTask extends WanderAroundTask {
 
-    private static final double TELEPORT_LIMIT_SQ = Config.getInstance().villagerTeleportLimit;
-
     public WanderOrTeleportToTargetTask() {
     }
 
@@ -41,13 +39,11 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
     @Override
     protected void keepRunning(ServerWorld world, MobEntity entity, long l) {
         if (Config.getInstance().allowVillagerTeleporting) {
-            Brain<?> brain = entity.getBrain();
-            WalkTarget walkTarget = brain.getOptionalMemory(MemoryModuleType.WALK_TARGET).get();
-
+            WalkTarget walkTarget = entity.getBrain().getOptionalMemory(MemoryModuleType.WALK_TARGET).get();
             BlockPos targetPos = walkTarget.getLookTarget().getBlockPos();
 
             // If the target is more than x blocks away, teleport to it immediately.
-            if (targetPos.getSquaredDistance(entity.getBlockPos()) >= TELEPORT_LIMIT_SQ) {
+            if (!targetPos.isWithinDistance(entity.getPos(), Config.getInstance().villagerTeleportLimit)) {
                 tryTeleport(world, entity, targetPos);
             }
         }

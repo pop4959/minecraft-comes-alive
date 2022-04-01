@@ -95,7 +95,15 @@ public final class Config implements Serializable {
             .put("mca:male_zombie_villager", 3)
             .build();
     public List<String> villagerPathfindingBlacklist = List.of(
-            "#minecraft:leaves"
+            "#minecraft:climbable",
+            "#minecraft:fence_gates",
+            "#minecraft:fences",
+            "#minecraft:fire",
+            "#minecraft:portals",
+            "#minecraft:slabs",
+            "#minecraft:stairs",
+            "#minecraft:trapdoors",
+            "#minecraft:walls"
     );
 
     public static File getConfigFile() {
