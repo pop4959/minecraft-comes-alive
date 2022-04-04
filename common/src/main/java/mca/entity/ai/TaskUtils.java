@@ -30,6 +30,7 @@ public interface TaskUtils {
     static List<BlockPos> getNearbyBlocks(BlockPos origin, World world, @Nullable Predicate<BlockState> filter, int xzDist, int yDist) {
         return BlockPos.streamOutwards(origin, xzDist, yDist, xzDist)
                 .filter(pos -> !origin.equals(pos) && (filter == null || filter.test(world.getBlockState(pos))))
+                .map(BlockPos::toImmutable)
                 .toList();
     }
 
