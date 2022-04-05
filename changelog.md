@@ -228,3 +228,6 @@
 * Sneaking prevents interaction with villagers to support mods
 * Updated the Blueprint Interface to appear more cohesive
 * Added `/mca-admin forceBuildingType <type>` to force a building's type
+* Fixed issues with Chores not working in 1.18.x
+* Added modded support to `ChoppingTask` as well as several optimizations
+* Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)

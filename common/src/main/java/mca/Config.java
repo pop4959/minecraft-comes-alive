@@ -73,6 +73,14 @@ public final class Config implements Serializable {
     public boolean useSquidwardModels = false;
     public int maxBuildingSize = 8192;
     public int maxBuildingRadius = 320;
+    public int maxTreeHeight = 8;
+    public Map<String, Integer> maxTreeTicks = ImmutableMap.<String, Integer>builder()
+            .put("#minecraft:logs", 60)
+            .build();
+    public List<String> validTreeSources = List.of(
+            "minecraft:grass_block",
+            "minecraft:dirt"
+    );
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;
