@@ -1077,7 +1077,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public void moveTowards(BlockPos pos) {
-        moveTowards(pos, 1);
+        moveTowards(pos, 0.5F);
     }
 
     public void lookAt(BlockPos pos) {
