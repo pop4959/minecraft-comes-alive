@@ -231,3 +231,4 @@
 * Fixed issues with Chores not working in 1.18.x
 * Added modded support to `ChoppingTask` as well as several optimizations
 * Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)
+* Fixed potential crashes when villagers perform Harvesting chores (Planting seeds throwing a NPE)
