@@ -73,7 +73,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     entity.stopRiding();
                 } else {
                     entity.world.getOtherEntities(player, player.getBoundingBox()
-                                    .expand(10), e -> e instanceof Saddleable && ((Saddleable)e).isSaddled())
+                                    .expand(10), e -> e instanceof Saddleable && ((Saddleable) e).isSaddled())
                             .stream()
                             .filter(horse -> !horse.hasPassengers())
                             .min(Comparator.comparingDouble(a -> a.squaredDistanceTo(entity))).ifPresentOrElse(horse -> {
@@ -114,13 +114,13 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "adopt" -> {
                 entity.sendChatMessage(player, "interaction.adopt.success");
-                FamilyTreeNode parentNode = FamilyTree.get((ServerWorld)player.world).getOrCreate(player);
+                FamilyTreeNode parentNode = FamilyTree.get((ServerWorld) player.world).getOrCreate(player);
                 entity.getRelationships().getFamilyEntry().assignParent(parentNode);
-                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get((ServerWorld)player.world).getOrEmpty(parentNode.spouse());
+                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get((ServerWorld) player.world).getOrEmpty(parentNode.spouse());
                 parentSpouse.ifPresent(p -> entity.getRelationships().getFamilyEntry().assignParent(p));
             }
             case "procreate" -> {
-                BabyTracker tracker = BabyTracker.get((ServerWorld)entity.world);
+                BabyTracker tracker = BabyTracker.get((ServerWorld) entity.world);
                 if (tracker.hasActiveBaby(player.getUuid(), entity.getUuid())) {
                     BabyTracker.Pairing pairing = tracker.getPairing(player.getUuid(), entity.getUuid());
 
@@ -154,7 +154,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 }
                 entity.getVillagerBrain().modifyMoodValue(-5);
                 entity.getRelationships().endMarriage(MarriageState.SINGLE);
-                PlayerSaveData playerData = PlayerSaveData.get((ServerWorld)player.world, player.getUuid());
+                PlayerSaveData playerData = PlayerSaveData.get((ServerWorld) player.world, player.getUuid());
                 playerData.endMarriage(MarriageState.SINGLE);
                 return true;
             }
