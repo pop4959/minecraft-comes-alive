@@ -1,6 +1,5 @@
 package mca.entity.ai.relationship.family;
 
-import java.util.stream.Stream;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.Gender;
 import mca.util.NbtHelper;
@@ -11,14 +10,14 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Util;
 import net.minecraft.world.PersistentState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.stream.Stream;
 
 public class FamilyTree extends PersistentState {
     private static final String DATA_ID = "MCA-FamilyTree";

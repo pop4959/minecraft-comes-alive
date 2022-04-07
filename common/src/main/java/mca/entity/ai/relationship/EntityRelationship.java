@@ -1,12 +1,5 @@
 package mca.entity.ai.relationship;
 
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.server.world.data.PlayerSaveData;
@@ -17,6 +10,12 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 public interface EntityRelationship {
 

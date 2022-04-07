@@ -1,6 +1,5 @@
 package mca.entity.ai;
 
-import java.util.Random;
 import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
@@ -16,9 +15,10 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 
 import java.util.Optional;
-import net.minecraft.server.world.ServerWorld;
+import java.util.Random;
 
 /**
  * The progenator. Preg-genator? Preg-genator.
@@ -110,9 +110,10 @@ public class Pregnancy {
         child.getRelationships().getFamilyEntry().assignParents(mother.getRelationships(), partner.getRelationships());
 
         // advancement
-        child.getRelationships().getFamily(2, 0).filter(e -> e instanceof ServerPlayerEntity).forEach(player -> {
-            CriterionMCA.FAMILY.trigger((ServerPlayerEntity) player);
-        });
+        child.getRelationships().getFamily(2, 0)
+                .filter(e -> e instanceof ServerPlayerEntity)
+                .map(ServerPlayerEntity.class::cast)
+                .forEach(CriterionMCA.FAMILY::trigger);
 
         return child;
     }
@@ -142,11 +143,12 @@ public class Pregnancy {
         long seed = random.nextLong();
         for (int i = 0; i < count; i++) {
             BabyTracker.get((ServerWorld)mother.world).getPairing(mother.getUuid(), spouse.getUuid()).addChild(state -> {
-                state.setGender(Gender.getRandom());
-                state.setOwner(mother);
-                state.setSeed(seed);
-                ItemStack stack = state.createItem();
-                if (!(spouse instanceof PlayerEntity && ((PlayerEntity)spouse).giveItemStack(stack))) {
+                ItemStack stack = state
+                        .setGender(Gender.getRandom())
+                        .setOwner(mother)
+                        .setSeed(seed)
+                .createItem();
+                if (!(spouse instanceof PlayerEntity player && player.giveItemStack(stack))) {
                     mother.getInventory().addStack(stack);
                 }
             });

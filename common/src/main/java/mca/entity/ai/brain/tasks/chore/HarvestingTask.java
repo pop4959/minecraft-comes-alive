@@ -97,7 +97,7 @@ public class HarvestingTask extends AbstractChoreTask {
         if (harvestableOnly) {
             harvestable.addAll(nearbyCrops.stream().filter(pos -> {
                 BlockState state = villager.world.getBlockState(pos);
-                return (state.getBlock() instanceof CropBlock && ((CropBlock)state.getBlock()).isMature(state))
+                return (state.getBlock() instanceof CropBlock crop && crop.isMature(state))
                     || state.getBlock() instanceof GourdBlock;
             }).toList());
         }
@@ -172,8 +172,8 @@ public class HarvestingTask extends AbstractChoreTask {
 
             BlockState state = world.getBlockState(crops);
 
-            if (state.getBlock() instanceof CropBlock) {
-                if (((CropBlock) state.getBlock()).isMature(state)) {
+            if (state.getBlock() instanceof CropBlock crop) {
+                if (crop.isMature(state)) {
                     harvestCrops(world, crops);
                     plantSeeds(world, villager, crops);
                 } else {
@@ -236,7 +236,7 @@ public class HarvestingTask extends AbstractChoreTask {
             if (result.shouldSwingHand()) {
                 villager.swingHand(Hand.MAIN_HAND);
             }
-        } else {
+        } else if (getAssigningPlayer().isPresent()) {
             villager.sendChatMessage(getAssigningPlayer().get(), "chore.harvesting.noseed");
         }
     }

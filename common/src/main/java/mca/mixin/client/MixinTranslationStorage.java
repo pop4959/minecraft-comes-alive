@@ -1,7 +1,9 @@
 package mca.mixin.client;
 
-import java.util.Map;
-
+import mca.entity.ai.DialogueType;
+import mca.util.localization.PooledTranslationStorage;
+import net.minecraft.client.resource.language.TranslationStorage;
+import net.minecraft.util.Language;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -9,10 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import mca.entity.ai.DialogueType;
-import mca.util.localization.PooledTranslationStorage;
-import net.minecraft.client.resource.language.TranslationStorage;
-import net.minecraft.util.Language;
+import java.util.Map;
 
 @Mixin(TranslationStorage.class)
 abstract class MixinTranslationStorage extends Language {

@@ -1,6 +1,5 @@
 package mca.client.book.pages;
 
-import java.util.List;
 import mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -8,6 +7,8 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+
+import java.util.List;
 
 public class TitlePage extends Page {
     final Text title;

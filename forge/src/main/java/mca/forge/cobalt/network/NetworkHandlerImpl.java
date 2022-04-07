@@ -26,10 +26,7 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
                 Message::encode,
                 b -> (T) Message.decode(b),
                 (m, ctx) -> {
-                    ctx.get().enqueueWork(() -> {
-                        ServerPlayerEntity sender = ctx.get().getSender();
-                        m.receive(sender);
-                    });
+                    ctx.get().enqueueWork(() -> m.receive(ctx.get().getSender()));
                     ctx.get().setPacketHandled(true);
                 });
     }

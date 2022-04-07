@@ -2,39 +2,12 @@ package mca.entity;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
-
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
-
-import mca.Config;
-import mca.MCA;
-import mca.ParticleTypesMCA;
-import mca.SoundsMCA;
-import mca.TagsMCA;
+import mca.*;
 import mca.advancement.criterion.CriterionMCA;
-import mca.entity.ai.Chore;
-import mca.entity.ai.BreedableRelationship;
-import mca.entity.ai.Genetics;
-import mca.entity.ai.Memories;
-import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.entity.ai.Messenger;
-import mca.entity.ai.Mood;
-import mca.entity.ai.MoveState;
-import mca.entity.ai.ProfessionsMCA;
-import mca.entity.ai.Residency;
-import mca.entity.ai.Traits;
-import mca.entity.ai.VillagerNavigation;
+import mca.entity.ai.*;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.brain.VillagerTasksMCA;
-import mca.entity.ai.relationship.AgeState;
-import mca.entity.ai.relationship.CompassionateEntity;
-import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.Personality;
-import mca.entity.ai.relationship.VillagerDimensions;
+import mca.entity.ai.relationship.*;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
 import mca.server.world.data.Village;
@@ -110,6 +83,13 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<VillagerEntityMCA>, NamedScreenHandlerFactory, CompassionateEntity<BreedableRelationship>, CrossbowUser {
     private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", MIN_INFECTION);
@@ -465,18 +445,18 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         if (!world.isClient) {
             //scream and loose hearts
-            if (source.getAttacker() instanceof PlayerEntity) {
+            if (source.getAttacker() instanceof PlayerEntity player) {
                 if (!isGuard() || getSmallBounty() == 0) {
                     if (getHealth() < getMaxHealth() / 2) {
-                        sendChatMessage((PlayerEntity)source.getAttacker(), "villager.badly_hurt");
+                        sendChatMessage(player, "villager.badly_hurt");
                     } else {
-                        sendChatMessage((PlayerEntity)source.getAttacker(), "villager.hurt");
+                        sendChatMessage(player, "villager.hurt");
                     }
                 }
 
                 //loose hearts, the weaker the villager, the more it is scared. The first hit might be an accident.
                 int trustIssues = (int)((1.0 - getHealth() / getMaxHealth() * 0.75) * (3.0 + 2.0 * damageAmount));
-                getVillagerBrain().getMemoriesForPlayer((PlayerEntity)source.getAttacker()).modHearts(-trustIssues);
+                getVillagerBrain().getMemoriesForPlayer(player).modHearts(-trustIssues);
             }
 
             //infect the villager
@@ -496,32 +476,32 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         Entity attacker = source != null ? source.getAttacker() : null;
 
         // Notify the surrounding guards when a villager is attacked. Yoinks!
-        if (attacker instanceof LivingEntity && !isHostile() && !isFriend(attacker.getType())) {
+        if (attacker instanceof LivingEntity livingEntity && !isHostile() && !isFriend(attacker.getType())) {
             Vec3d pos = getPos();
             world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
                 if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64) && (v.isGuard())) {
-                    if (source.getAttacker() instanceof PlayerEntity) {
+                    if (attacker instanceof PlayerEntity player) {
                         int bounty = v.getSmallBounty();
-                        int maxWarning = v.getMaxWarnings((PlayerEntity)attacker);
+                        int maxWarning = v.getMaxWarnings(player);
                         if (bounty > maxWarning) {
                             // ok, that was enough
-                            v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
+                            v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, livingEntity);
                         } else if (bounty == 0 || bounty == maxWarning) {
                             // just a warning
-                            v.sendChatMessage((PlayerEntity)source.getAttacker(), "villager.warning");
+                            v.sendChatMessage(player, "villager.warning");
                         }
                         v.getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty + 1);
                     } else {
                         // non players get attacked straight away
-                        v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, (LivingEntity)attacker);
+                        v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, livingEntity);
                     }
                 }
             });
         }
 
         // Iron Golem got his revenge, now chill
-        if (attacker instanceof IronGolemEntity) {
-            ((IronGolemEntity)attacker).stopAnger();
+        if (attacker instanceof IronGolemEntity golem) {
+            golem.stopAnger();
 
             //kill the damn tracker goals
             try {
@@ -1023,15 +1003,19 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (VillagerLike.super.setAgeState(state)) {
             if (!world.isClient) {
                 // trigger grow up advancements
-                relations.getParents().filter(e -> e instanceof ServerPlayerEntity).forEach(e -> {
-                    CriterionMCA.CHILD_AGE_STATE_CHANGE.trigger((ServerPlayerEntity)e, state.name());
-                });
+                relations.getParents()
+                        .filter(e -> e instanceof ServerPlayerEntity)
+                        .map(ServerPlayerEntity.class::cast).forEach(
+                                e -> CriterionMCA.CHILD_AGE_STATE_CHANGE.trigger(e, state.name())
+                        );
 
                 if (state == AgeState.ADULT) {
                     // Notify player parents of the age up and set correct dialogue type.
-                    relations.getParents().filter(e -> e instanceof PlayerEntity).map(e -> (PlayerEntity)e).forEach(p -> {
-                        sendEventMessage(new TranslatableText("notify.child.grownup", getName()), p);
-                    });
+                    relations.getParents()
+                            .filter(e -> e instanceof PlayerEntity)
+                            .map(PlayerEntity.class::cast).forEach(
+                                    p -> sendEventMessage(new TranslatableText("notify.child.grownup", getName()), p)
+                            );
                 }
 
                 reinitializeBrain((ServerWorld)world);

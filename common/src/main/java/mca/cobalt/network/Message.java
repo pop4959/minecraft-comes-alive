@@ -2,6 +2,7 @@ package mca.cobalt.network;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.*;
 
@@ -30,5 +31,11 @@ public interface Message extends Serializable {
         b.writeBytes(baos.toByteArray());
     }
 
-    void receive(PlayerEntity e);
+    default void receive(PlayerEntity e) {
+        // N/A
+    }
+
+    default void receive(ServerPlayerEntity e) {
+        // N/A
+    }
 }

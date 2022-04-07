@@ -1,10 +1,5 @@
 package mca.client.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
 import mca.client.gui.widget.NamedTextFieldWidget;
@@ -19,9 +14,9 @@ import mca.entity.ai.Traits;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.Personality;
-import mca.network.GetVillagerRequest;
-import mca.network.VillagerEditorSyncRequest;
-import mca.network.VillagerNameRequest;
+import mca.network.s2c.GetVillagerRequest;
+import mca.network.s2c.VillagerEditorSyncRequest;
+import mca.network.s2c.VillagerNameRequest;
 import mca.resources.data.Hair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -39,6 +34,12 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static mca.entity.VillagerLike.VILLAGER_NAME;
 

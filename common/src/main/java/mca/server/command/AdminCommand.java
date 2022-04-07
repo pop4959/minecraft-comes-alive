@@ -7,11 +7,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 import mca.Config;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
@@ -35,6 +30,12 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import static net.minecraft.util.Formatting.*;
 
@@ -119,9 +120,7 @@ public class AdminCommand {
         //remove spouse too
         FamilyTree tree = FamilyTree.get(ctx.getSource().getWorld());
         Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
-        node.filter(n -> n.spouse() != null).ifPresent(n -> {
-            n.updateMarriage(null, MarriageState.WIDOW);
-        });
+        node.filter(n -> n.spouse() != null).ifPresent(n -> n.updateMarriage(null, MarriageState.WIDOW));
 
         //remove from player spouse
         ctx.getSource().getWorld().getPlayers().forEach(player -> {
@@ -244,11 +243,11 @@ public class AdminCommand {
     }
 
     private static int restoreClearedVillagers(CommandContext<ServerCommandSource> ctx) {
-        storedVillagers.forEach(tag -> {
-            EntityType.getEntityFromNbt(tag, ctx.getSource().getWorld()).ifPresent(v -> {
-                ctx.getSource().getWorld().spawnEntity(v);
-            });
-        });
+        storedVillagers.forEach(tag ->
+                EntityType.getEntityFromNbt(tag, ctx.getSource().getWorld()).ifPresent(v ->
+                        ctx.getSource().getWorld().spawnEntity(v)
+                )
+        );
         storedVillagers.clear();
         success("Restored cleared villagers.", ctx);
         return 0;

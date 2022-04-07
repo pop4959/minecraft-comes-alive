@@ -1,17 +1,17 @@
 package mca.entity.ai.relationship;
 
+import mca.entity.EntitiesMCA;
+import mca.entity.VillagerEntityMCA;
+import mca.entity.ZombieVillagerEntityMCA;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.Formatting;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import mca.entity.EntitiesMCA;
-import mca.entity.VillagerEntityMCA;
-import mca.entity.ZombieVillagerEntityMCA;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.Formatting;
 
 public enum Gender {
     UNASSIGNED(Formatting.WHITE),

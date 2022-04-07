@@ -1,10 +1,5 @@
 package mca.entity.ai;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 import mca.Config;
 import mca.entity.VillagerLike;
 import mca.util.network.datasync.CDataManager;
@@ -14,6 +9,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Traits {
     private static final CDataParameter<NbtCompound> TRAITS = CParameter.create("traits", new NbtCompound());

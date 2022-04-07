@@ -1,8 +1,5 @@
 package mca.entity;
 
-import java.util.Optional;
-import java.util.OptionalInt;
-
 import mca.MCA;
 import mca.entity.ai.relationship.Gender;
 import mca.resources.API;
@@ -15,6 +12,9 @@ import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.World;
+
+import java.util.Optional;
+import java.util.OptionalInt;
 
 public class ZombieVillagerFactory {
     private final World world;

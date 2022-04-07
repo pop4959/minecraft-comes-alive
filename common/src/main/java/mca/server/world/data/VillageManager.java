@@ -1,19 +1,5 @@
 package mca.server.world.data;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import mca.Config;
 import mca.MCA;
 import mca.advancement.criterion.CriterionMCA;
@@ -43,6 +29,12 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.SpawnHelper;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class VillageManager extends PersistentState implements Iterable<Village> {
     private final Map<Integer, Village> villages = new HashMap<>();
@@ -157,9 +149,9 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     public void tick() {
         //keep track of where player are currently
         if (world.getTimeOfDay() % 100 == 0) {
-            world.getPlayers().forEach(player -> {
-                PlayerSaveData.get(world, player.getUuid()).updateLastSeenVillage(this, player);
-            });
+            world.getPlayers().forEach(player ->
+                    PlayerSaveData.get(world, player.getUuid()).updateLastSeenVillage(this, player)
+            );
         }
 
         //send bounty hunters

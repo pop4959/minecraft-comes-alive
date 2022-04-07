@@ -1,10 +1,11 @@
 package mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.function.Predicate;
 import mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
+
+import java.util.function.Predicate;
 
 public class ShoutTask extends Task<VillagerEntityMCA> {
     private final String phrase;

@@ -5,17 +5,17 @@ import mca.Config;
 import mca.ParticleTypesMCA;
 import mca.block.BlockEntityTypesMCA;
 import mca.block.BlocksMCA;
-import mca.fabric.client.gui.FabricMCAScreens;
 import mca.client.particle.InteractionParticle;
 import mca.client.render.GrimReaperRenderer;
 import mca.client.render.TombstoneBlockEntityRenderer;
 import mca.client.render.VillagerEntityMCARenderer;
 import mca.client.render.ZombieVillagerEntityMCARenderer;
 import mca.entity.EntitiesMCA;
-import mca.item.BabyItem;
-import mca.item.ItemsMCA;
+import mca.fabric.client.gui.FabricMCAScreens;
 import mca.fabric.resources.FabricColorPaletteLoader;
 import mca.fabric.resources.FabricSupportersLoader;
+import mca.item.BabyItem;
+import mca.item.ItemsMCA;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -59,12 +59,12 @@ public final class MCAClient extends ClientProxyAbstractImpl implements ClientMo
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricColorPaletteLoader());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricSupportersLoader());
 
-        FabricModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) -> {
-            return BabyItem.hasBeenInvalidated(stack) ? 1 : 0;
-        });
-        FabricModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) -> {
-            return BabyItem.hasBeenInvalidated(stack) ? 1 : 0;
-        });
+        FabricModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        FabricModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
 
         BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
     }

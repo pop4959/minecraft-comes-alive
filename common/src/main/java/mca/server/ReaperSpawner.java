@@ -1,13 +1,5 @@
 package mca.server;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import mca.Config;
 import mca.MCA;
 import mca.SoundsMCA;
@@ -32,6 +24,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ReaperSpawner {
     private static final Direction[] HORIZONTALS = new Direction[] {
             Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
@@ -49,9 +45,9 @@ public class ReaperSpawner {
 
     public ReaperSpawner(VillageManager manager, NbtCompound nbt) {
         this.manager = manager;
-        mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon -> {
-            activeSummons.put(summon.position.spawnPosition.asLong(), summon);
-        });
+        mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon ->
+                activeSummons.put(summon.position.spawnPosition.asLong(), summon)
+        );
     }
 
     private void warn(World world, BlockPos pos, String phrase) {
@@ -105,9 +101,9 @@ public class ReaperSpawner {
 
         world.setBlockState(pos.down(), Blocks.SOUL_SOIL.getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
         world.setBlockState(pos, BlocksMCA.INFERNAL_FLAME.get().getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
-        totems.forEach(totem -> {
-            world.setBlockState(totem, BlocksMCA.INFERNAL_FLAME.get().getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
-        });
+        totems.forEach(totem ->
+                world.setBlockState(totem, BlocksMCA.INFERNAL_FLAME.get().getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE)
+        );
     }
 
     private void start(SummonPosition pos) {
@@ -141,11 +137,10 @@ public class ReaperSpawner {
     }
 
     private Set<BlockPos> getTotems(World world, BlockPos pos) {
-        return Stream.of(HORIZONTALS).map(d -> pos.offset(d, 3)).filter(pillarCenter -> {
-            return world.getBlockState(pillarCenter).isOf(Blocks.OBSIDIAN)
-                    && world.getBlockState(pillarCenter.down()).isOf(Blocks.OBSIDIAN)
-                    && world.getBlockState(pillarCenter.up()).isIn(BlockTags.FIRE);
-        }).map(BlockPos::up).collect(Collectors.toSet());
+        return Stream.of(HORIZONTALS).map(d -> pos.offset(d, 3)).filter(pillarCenter ->
+                world.getBlockState(pillarCenter).isOf(Blocks.OBSIDIAN)
+                && world.getBlockState(pillarCenter.down()).isOf(Blocks.OBSIDIAN)
+                && world.getBlockState(pillarCenter.up()).isIn(BlockTags.FIRE)).map(BlockPos::up).collect(Collectors.toSet());
     }
 
     public NbtCompound writeNbt() {

@@ -2,12 +2,13 @@ package mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import mca.client.gui.Constraint;
 import mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class Question {
     private final String id;

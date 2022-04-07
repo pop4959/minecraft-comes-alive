@@ -3,7 +3,7 @@ package mca.item;
 import mca.client.book.Book;
 import mca.client.book.pages.TextPage;
 import mca.cobalt.network.NetworkHandler;
-import mca.network.client.OpenGuiRequest;
+import mca.network.c2s.OpenGuiRequest;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
