@@ -1,23 +1,18 @@
 package mca.entity.ai.brain.tasks.chore;
 
 import com.google.common.collect.ImmutableMap;
-
 import mca.TagsMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Chore;
 import mca.entity.ai.TaskUtils;
+import mca.item.NonPlayerItemUsageContext;
 import mca.util.InventoryUtils;
 import net.minecraft.block.*;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BoneMealItem;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
@@ -102,7 +97,7 @@ public class HarvestingTask extends AbstractChoreTask {
         if (harvestableOnly) {
             harvestable.addAll(nearbyCrops.stream().filter(pos -> {
                 BlockState state = villager.world.getBlockState(pos);
-                return (state.getBlock() instanceof CropBlock && ((CropBlock)state.getBlock()).isMature(state))
+                return (state.getBlock() instanceof CropBlock crop && crop.isMature(state))
                     || state.getBlock() instanceof GourdBlock;
             }).toList());
         }
@@ -177,8 +172,8 @@ public class HarvestingTask extends AbstractChoreTask {
 
             BlockState state = world.getBlockState(crops);
 
-            if (state.getBlock() instanceof CropBlock) {
-                if (((CropBlock) state.getBlock()).isMature(state)) {
+            if (state.getBlock() instanceof CropBlock crop) {
+                if (crop.isMature(state)) {
                     harvestCrops(world, crops);
                     plantSeeds(world, villager, crops);
                 } else {
@@ -223,16 +218,16 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private void plantSeeds(ServerWorld world, VillagerEntityMCA villager, BlockPos target) {
-        ItemUsageContext context = new ItemUsageContext(null, Hand.MAIN_HAND, new BlockHitResult(
+        BlockHitResult hitResult = new BlockHitResult(
                 Vec3d.ofBottomCenter(target),
                 Direction.DOWN,
                 target,
                 true
-        ));
+        );
 
         ActionResult result = InventoryUtils.stream(villager.getInventory())
             .filter(stack -> !stack.isEmpty() && stack.getItem() instanceof BlockItem && stack.isIn(TagsMCA.Items.VILLAGER_PLANTABLE))
-            .map(stack -> stack.useOnBlock(context))
+            .map(stack -> stack.useOnBlock(new NonPlayerItemUsageContext(world, Hand.MAIN_HAND, stack, hitResult)))
             .filter(ActionResult::isAccepted)
             .findFirst()
             .orElse(ActionResult.FAIL);
@@ -241,7 +236,7 @@ public class HarvestingTask extends AbstractChoreTask {
             if (result.shouldSwingHand()) {
                 villager.swingHand(Hand.MAIN_HAND);
             }
-        } else {
+        } else if (getAssigningPlayer().isPresent()) {
             villager.sendChatMessage(getAssigningPlayer().get(), "chore.harvesting.noseed");
         }
     }

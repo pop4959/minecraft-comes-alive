@@ -1,11 +1,12 @@
 package mca.entity.ai;
 
-import java.util.Locale;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+
+import java.util.Locale;
 
 public class Mood {
     private final String name;

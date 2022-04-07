@@ -1,14 +1,14 @@
 package mca.entity.ai;
 
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 public enum MoveState {
     MOVE("moving"),

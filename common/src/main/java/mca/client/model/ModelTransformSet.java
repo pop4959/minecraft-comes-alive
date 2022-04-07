@@ -1,13 +1,12 @@
 package mca.client.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
-
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.ModelTransform;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public interface ModelTransformSet {
     interface Op {

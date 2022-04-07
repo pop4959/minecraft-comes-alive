@@ -1,10 +1,11 @@
 package mca.client.gui;
 
 import com.google.common.collect.Lists;
-import java.util.List;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+
+import java.util.List;
 
 public class ExtendedScreen extends Screen {
     protected ExtendedScreen(Text title) {

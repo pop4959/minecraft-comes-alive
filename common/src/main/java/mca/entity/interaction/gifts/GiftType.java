@@ -1,23 +1,8 @@
 package mca.entity.interaction.gifts;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonSyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.gson.JsonObject;
-
+import com.google.gson.JsonSyntaxException;
 import mca.entity.VillagerEntityMCA;
 import mca.resources.data.analysis.IntAnalysis;
 import net.minecraft.item.Item;
@@ -27,6 +12,11 @@ import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GiftType {
     static final List<GiftType> REGISTRY = new ArrayList<>();
@@ -190,7 +180,7 @@ public class GiftType {
         // condition chance
         for (GiftPredicate c : conditions) {
             int val = c.getSatisfactionFor(recipient, stack, player);
-            if (c.test(recipient, stack, player)) {
+            if (c.test(recipient, stack, player) > 0.0f) {
                 analysis.add(c.getConditionKeys().get(0), val);
             }
         }

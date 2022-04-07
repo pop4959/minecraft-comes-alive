@@ -1,20 +1,12 @@
 package mca.client.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import mca.client.gui.widget.RectangleWidget;
 import mca.cobalt.network.NetworkHandler;
-import mca.network.GetVillageRequest;
-import mca.network.RenameVillageMessage;
-import mca.network.ReportBuildingMessage;
-import mca.network.SaveVillageMessage;
+import mca.network.s2c.GetVillageRequest;
+import mca.network.s2c.RenameVillageMessage;
+import mca.network.s2c.ReportBuildingMessage;
+import mca.network.s2c.SaveVillageMessage;
 import mca.resources.Rank;
 import mca.resources.data.BuildingType;
 import mca.resources.data.tasks.Task;
@@ -34,6 +26,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
+
+import java.util.*;
+import java.util.function.Consumer;
 
 public class BlueprintScreen extends ExtendedScreen {
     //gui element Y positions
@@ -349,7 +344,7 @@ public class BlueprintScreen extends ExtendedScreen {
         int y = height / 2 - 50;
 
         //rank
-        Text rankStr = new TranslatableText("gui.village.rank." + rank.ordinal());
+        Text rankStr = new TranslatableText(rank.getTranslationKey());
         int rankColor = rank.ordinal() == 0 ? 0xffff0000 : 0xffffff00;
 
         textRenderer.drawWithShadow(transform, new TranslatableText("gui.blueprint.currentRank", rankStr), x, y, rankColor);

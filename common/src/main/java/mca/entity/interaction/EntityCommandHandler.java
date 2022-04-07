@@ -2,7 +2,7 @@ package mca.entity.interaction;
 
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
-import mca.network.client.OpenGuiRequest;
+import mca.network.c2s.OpenGuiRequest;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
 import net.minecraft.entity.Entity;
@@ -32,16 +32,16 @@ public abstract class EntityCommandHandler<T extends Entity & VillagerLike<?>> {
 
     public void stopInteracting() {
         if (!entity.world.isClient) {
-            if (interactingPlayer instanceof ServerPlayerEntity) {
-                interactingPlayer.closeHandledScreen();
+            if (interactingPlayer instanceof ServerPlayerEntity serverPlayer) {
+                serverPlayer.closeHandledScreen();
             }
         }
         interactingPlayer = null;
     }
 
     public ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
-        if (player instanceof ServerPlayerEntity) {
-            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.INTERACT, entity), (ServerPlayerEntity)player);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.INTERACT, entity), serverPlayer);
         }
         interactingPlayer = player;
         return ActionResult.SUCCESS;
@@ -52,24 +52,18 @@ public abstract class EntityCommandHandler<T extends Entity & VillagerLike<?>> {
      */
     public boolean handle(ServerPlayerEntity player, String command) {
         switch (command) {
-            case "clothing.randClothing" -> {
-                entity.setClothes(ClothingList.getInstance().getPool(entity).pickOne());
-            }
-            case "clothing.prevClothing" -> {
-                entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), -1));
-            }
-            case "clothing.nextClothing" -> {
-                entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), 1));
-            }
-            case "clothing.randHair" -> {
-                entity.setHair(HairList.getInstance().pickOne(entity));
-            }
-            case "clothing.prevHair" -> {
-                entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), -1));
-            }
-            case "clothing.nextHair" -> {
-                entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), 1));
-            }
+            case "clothing.randClothing" ->
+                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickOne());
+            case "clothing.prevClothing" ->
+                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), -1));
+            case "clothing.nextClothing" ->
+                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), 1));
+            case "clothing.randHair" ->
+                    entity.setHair(HairList.getInstance().pickOne(entity));
+            case "clothing.prevHair" ->
+                    entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), -1));
+            case "clothing.nextHair" ->
+                    entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), 1));
         }
         return false;
     }

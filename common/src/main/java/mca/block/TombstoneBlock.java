@@ -9,14 +9,7 @@ import mca.server.world.data.GraveyardManager.TombstoneState;
 import mca.util.NbtHelper;
 import mca.util.VoxelShapeUtil;
 import mca.util.localization.FlowingText;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.SideShapeType;
-import net.minecraft.block.Waterloggable;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -56,20 +49,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldEvents;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.*;
 import net.minecraft.world.event.GameEvent;
-
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -377,20 +361,20 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                         }
 
                         boolean alreadySpawned = false;
-                        if (cure && (entity instanceof ZombieVillagerEntity)) {
+                        if (cure && (entity instanceof ZombieVillagerEntity zombie)) {
                             // spawnEntity is called here, so don't call it twice
-                            entity = ((ZombieVillagerEntity) entity).convertTo(EntityType.VILLAGER, true);
+                            entity = zombie.convertTo(EntityType.VILLAGER, true);
                             alreadySpawned = true;
                         }
 
-                        if (entity instanceof CompassionateEntity) {
-                            ((CompassionateEntity<?>)entity).getRelationships().getFamilyEntry().setDeceased(false);
+                        if (entity instanceof CompassionateEntity compassionateEntity) {
+                            compassionateEntity.getRelationships().getFamilyEntry().setDeceased(false);
                         }
 
-                        if (entity instanceof Infectable) {
-                            ((Infectable) entity).setInfectionProgress(cure
+                        if (entity instanceof Infectable infectable) {
+                            infectable.setInfectionProgress(cure
                                     ? Infectable.MIN_INFECTION
-                                    : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), ((Infectable) entity).getInfectionProgress())
+                                    : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), infectable.getInfectionProgress())
                             );
                         }
 

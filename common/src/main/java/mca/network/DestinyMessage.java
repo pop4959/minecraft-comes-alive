@@ -4,6 +4,7 @@ import mca.cobalt.network.Message;
 import mca.util.WorldUtils;
 import mca.util.compat.FuzzyPositionsCompat;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -20,24 +21,24 @@ public class DestinyMessage implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity e) {
-        Optional<BlockPos> position = WorldUtils.getClosestStructurePosition((ServerWorld)e.world, e.getBlockPos(), new Identifier(location), 256);
+    public void receive(ServerPlayerEntity player) {
+        Optional<BlockPos> position = WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 256);
         position.ifPresentOrElse(pos -> {
-            e.world.getWorldChunk(pos);
-            pos = e.world.getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
-            pos = FuzzyPositionsCompat.downWhile(pos, 1, p -> !e.world.getBlockState(p.down()).isFullCube(e.world, p));
-            pos = FuzzyPositionsCompat.upWhile(pos, e.world.getHeight(), p -> e.world.getBlockState(p).shouldSuffocate(e.world, p));
+            player.getWorld().getWorldChunk(pos);
+            pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
+            pos = FuzzyPositionsCompat.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
+            pos = FuzzyPositionsCompat.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
 
-            e.clearStatusEffects();
-            e.teleport(pos.getX(), pos.getY(), pos.getZ());
+            player.clearStatusEffects();
+            player.teleport(pos.getX(), pos.getY(), pos.getZ());
         }, () -> {
-            BlockPos pos = ((ServerWorld)e.world).getSpawnPos();
-            e.teleport(pos.getX(), pos.getY(), pos.getZ());
+            BlockPos pos = player.getWorld().getSpawnPos();
+            player.teleport(pos.getX(), pos.getY(), pos.getZ());
         });
 
         //story
-        e.sendMessage(new TranslatableText("destiny.story.reason"), false);
-        e.sendMessage(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"), false);
-        e.sendMessage(new TranslatableText("destiny.story." + location), false);
+        player.sendMessage(new TranslatableText("destiny.story.reason"), false);
+        player.sendMessage(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"), false);
+        player.sendMessage(new TranslatableText("destiny.story." + location), false);
     }
 }

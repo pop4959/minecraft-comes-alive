@@ -1,5 +1,9 @@
 package mca.entity.ai.relationship.family;
 
+import mca.entity.ai.relationship.EntityRelationship;
+import mca.entity.ai.relationship.Gender;
+import mca.entity.ai.relationship.MarriageState;
+import mca.util.NbtHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -7,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -16,13 +21,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import org.jetbrains.annotations.Nullable;
-
-import mca.entity.ai.relationship.EntityRelationship;
-import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.MarriageState;
-import mca.util.NbtHelper;
 
 public final class FamilyTreeNode implements Serializable {
     @Serial

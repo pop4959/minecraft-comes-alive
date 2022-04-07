@@ -1,15 +1,15 @@
 package mca.client.resources;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import mca.MCA;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ColorPaletteLoader extends SinglePreparationResourceReloader<Map<Identifier, ColorPalette.Data>> {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "color_palettes");

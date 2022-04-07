@@ -2,7 +2,7 @@ package mca.item;
 
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
-import mca.network.client.OpenGuiRequest;
+import mca.network.c2s.OpenGuiRequest;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

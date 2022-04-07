@@ -2,10 +2,6 @@ package mca.entity.interaction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import mca.MCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.interaction.gifts.GiftPredicate;
@@ -13,6 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.JsonHelper;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static mca.entity.interaction.gifts.GiftPredicate.CONDITION_TYPES;
 
@@ -55,8 +55,8 @@ public class InteractionPredicate {
         this.conditionKeys = conditionKeys;
     }
 
-    public boolean test(VillagerEntityMCA villager, ServerPlayerEntity player) {
-        return condition != null && condition.test(villager, ItemStack.EMPTY, player);
+    public float test(VillagerEntityMCA villager, ServerPlayerEntity player) {
+        return condition != null ? condition.test(villager, ItemStack.EMPTY, player) : 0.0f;
     }
 
     public int getChance() {

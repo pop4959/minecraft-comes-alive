@@ -1,11 +1,10 @@
 package mca.resources.data;
 
+import com.google.common.base.Strings;
+import mca.resources.PoolUtil;
+
 import java.util.Locale;
 import java.util.Random;
-
-import com.google.common.base.Strings;
-
-import mca.resources.PoolUtil;
 
 public final class NameSet {
 
@@ -37,11 +36,11 @@ public final class NameSet {
         String first = PoolUtil.pickOne(first(), null, rng);
         String second = PoolUtil.pickOne(second(), null, rng);
 
-        if (Strings.isNullOrEmpty(separator)) {
+        if (Strings.isNullOrEmpty(separator())) {
             return toTitleCase(first + second);
         }
 
-        return toTitleCase(first) + separator + toTitleCase(second);
+        return toTitleCase(first) + separator() + toTitleCase(second);
     }
 
     static String toTitleCase(String s) {

@@ -24,7 +24,7 @@
             }
           ],
           "actions": {
-            "next": "chat.success",
+            "next": "chat.topic",
             "positive": 5
           }
         },

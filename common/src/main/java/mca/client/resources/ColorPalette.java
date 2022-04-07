@@ -1,12 +1,12 @@
 package mca.client.resources;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import mca.MCA;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ColorPalette {
     static final Map<Identifier, ColorPalette> REGISTRY = new HashMap<>();

@@ -1,5 +1,8 @@
 package mca.item;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import mca.ClientProxy;
 import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
@@ -12,8 +15,8 @@ import mca.entity.ai.Memories;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
-import mca.network.GetChildDataRequest;
-import mca.network.client.OpenGuiRequest;
+import mca.network.c2s.OpenGuiRequest;
+import mca.network.s2c.GetChildDataRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.BabyTracker.ChildSaveState;
 import mca.server.world.data.BabyTracker.MutableChildSaveState;
@@ -33,24 +36,11 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.StringHelper;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -243,13 +233,14 @@ public class BabyItem extends Item {
         // notify parents
         Stream.concat(Stream.of(mother, father).filter(Optional::isPresent).map(Optional::get), Stream.of(player))
                 .filter(e -> e instanceof ServerPlayerEntity)
+                .map(ServerPlayerEntity.class::cast)
                 .distinct()
                 .forEach(ply -> {
                     // advancement
-                    CriterionMCA.FAMILY.trigger((ServerPlayerEntity)ply);
+                    CriterionMCA.FAMILY.trigger(ply);
 
                     // set proper dialogue type
-                    Memories memories = child.getVillagerBrain().getMemoriesForPlayer((PlayerEntity) ply);
+                    Memories memories = child.getVillagerBrain().getMemoriesForPlayer(ply);
                     memories.setHearts(Config.getInstance().childInitialHearts);
                 });
 

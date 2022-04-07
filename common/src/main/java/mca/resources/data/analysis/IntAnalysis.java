@@ -1,7 +1,8 @@
 package mca.resources.data.analysis;
 
-import java.io.Serial;
 import mca.resources.data.SerializablePair;
+
+import java.io.Serial;
 
 public class IntAnalysis extends Analysis<Integer> {
     @Serial

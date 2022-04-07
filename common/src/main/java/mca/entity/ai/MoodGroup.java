@@ -1,12 +1,12 @@
 package mca.entity.ai;
 
-import java.util.Arrays;
-import java.util.List;
-
 import mca.SoundsMCA;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.Arrays;
+import java.util.List;
 
 public enum MoodGroup {
     UNASSIGNED(

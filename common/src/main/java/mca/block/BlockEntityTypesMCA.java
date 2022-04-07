@@ -1,8 +1,5 @@
 package mca.block;
 
-import java.util.List;
-import java.util.function.BiFunction;
-
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import mca.MCA;
@@ -15,6 +12,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+
+import java.util.List;
+import java.util.function.BiFunction;
 
 public interface BlockEntityTypesMCA {
 

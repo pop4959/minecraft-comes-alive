@@ -1,12 +1,12 @@
 package mca.network;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.client.*;
+import mca.network.c2s.*;
+import mca.network.s2c.*;
 
 public interface MessagesMCA {
     static void bootstrap() {
         NetworkHandler.registerMessage(InteractionVillagerMessage.class);
-        NetworkHandler.registerMessage(InteractionServerMessage.class);
         NetworkHandler.registerMessage(BabyNamingVillagerMessage.class);
         NetworkHandler.registerMessage(GetFamilyRequest.class);
         NetworkHandler.registerMessage(GetFamilyResponse.class);
@@ -34,6 +34,8 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(ShowToastRequest.class);
         NetworkHandler.registerMessage(BabyNameRequest.class);
         NetworkHandler.registerMessage(BabyNameResponse.class);
+        NetworkHandler.registerMessage(VillagerNameRequest.class);
+        NetworkHandler.registerMessage(VillagerNameResponse.class);
         NetworkHandler.registerMessage(RenameVillageMessage.class);
         NetworkHandler.registerMessage(FamilyTreeUUIDLookup.class);
         NetworkHandler.registerMessage(FamilyTreeUUIDResponse.class);

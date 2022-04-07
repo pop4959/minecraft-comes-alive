@@ -3,8 +3,8 @@ package mca.client.gui;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
-import mca.network.CallToPlayerMessage;
-import mca.network.GetFamilyRequest;
+import mca.network.s2c.CallToPlayerMessage;
+import mca.network.s2c.GetFamilyRequest;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -13,10 +13,12 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
-
-import java.util.*;
-
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class WhistleScreen extends Screen {
     private List<String> keys = new ArrayList<>();

@@ -1,19 +1,17 @@
 package mca.entity.ai;
 
+import com.mojang.serialization.Codec;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import mca.MCA;
 import mca.mixin.MixinMemoryModuleType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.util.Optional;
-
-import com.mojang.serialization.Codec;
-
-import mca.MCA;
-import net.minecraft.util.registry.Registry;
 
 public interface MemoryModuleTypeMCA {
 

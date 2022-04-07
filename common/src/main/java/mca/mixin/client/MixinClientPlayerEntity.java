@@ -1,15 +1,14 @@
 package mca.mixin.client;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import mca.item.BabyItem;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ClientPlayerEntity.class)
 abstract class MixinClientPlayerEntity extends LivingEntity {
@@ -20,7 +19,7 @@ abstract class MixinClientPlayerEntity extends LivingEntity {
             cancellable = true)
     private void onDropSelectedItem(boolean dropEntireStack, CallbackInfoReturnable<Boolean> info) {
         ItemStack stack = this.getMainHandStack();
-        if (stack.getItem() instanceof BabyItem && !((BabyItem)stack.getItem()).onDropped(stack, (PlayerEntity)(Object)this)) {
+        if (stack.getItem() instanceof BabyItem baby && !baby.onDropped(stack, (PlayerEntity)(Object)this)) {
             info.setReturnValue(false);
         }
     }

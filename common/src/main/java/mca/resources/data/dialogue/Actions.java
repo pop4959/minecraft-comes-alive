@@ -2,74 +2,76 @@ package mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.util.*;
-import java.util.function.BiFunction;
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
-import mca.network.client.InteractionDialogueResponse;
+import mca.entity.ai.LongTermMemory;
+import mca.network.c2s.InteractionDialogueResponse;
 import mca.resources.Dialogues;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.JsonHelper;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 public class Actions {
     public static final Map<String, Factory<JsonElement>> TYPES = new HashMap<>();
 
     static {
-        register("next", JsonHelper::asString, id -> {
-            return (villager, player) -> {
-                if (id != null) {
-                    Question newQuestion = Dialogues.getInstance().getRandomQuestion(id);
-                    if (newQuestion != null) {
-                        if (newQuestion.isAuto()) {
-                            // this is basically a placeholder and fires an answer automatically
-                            // use cases are n to 1 links or to split file size
-                            Dialogues.getInstance().selectAnswer(villager, player, newQuestion.getId(), newQuestion.getAnswers().get(0).getName());
-                            return;
-                        } else {
-                            NetworkHandler.sendToPlayer(new InteractionDialogueResponse(newQuestion, player, villager), player);
-                        }
+        register("next", JsonHelper::asString, id -> (villager, player) -> {
+            if (id != null) {
+                Question newQuestion = Dialogues.getInstance().getRandomQuestion(id);
+                if (newQuestion != null) {
+                    if (newQuestion.isAuto()) {
+                        // this is basically a placeholder and fires an answer automatically
+                        // use cases are n to 1 links or to split file size
+                        Dialogues.getInstance().selectAnswer(villager, player, newQuestion.getId(), newQuestion.getAnswers().get(0).getName());
+                        return;
                     } else {
-                        // we send nevertheless and assume it's a final question
-                        villager.sendChatMessage(player, "dialogue." + id);
-                    }
-
-                    // close screen
-                    if (newQuestion == null || newQuestion.isCloseScreen()) {
-                        villager.getInteractions().stopInteracting();
+                        NetworkHandler.sendToPlayer(new InteractionDialogueResponse(newQuestion, player, villager), player);
                     }
                 } else {
+                    // we send nevertheless and assume it's a final question
+                    villager.sendChatMessage(player, "dialogue." + id);
+                }
+
+                // close screen
+                if (newQuestion == null || newQuestion.isCloseScreen()) {
                     villager.getInteractions().stopInteracting();
                 }
-            };
-        });
-
-        register("quit", (a, b) -> a, id -> {
-            return (villager, player) -> {
+            } else {
                 villager.getInteractions().stopInteracting();
-            };
+            }
         });
 
-        register("negative", JsonHelper::asInt, hearts -> {
-            return (villager, player) -> {
-                villager.getVillagerBrain().modifyMoodValue(-hearts);
-                villager.getVillagerBrain().rewardHearts(player, -hearts);
-            };
+        register("say", JsonHelper::asString, id -> (villager, player) -> villager.sendChatMessage(player, "dialogue." + id));
+
+        register("remember", JsonHelper::asObject, json -> (villager, player) -> {
+            String id = LongTermMemory.parseId(json, player);
+            if (json.has("time")) {
+                villager.getLongTermMemory().remember(id, json.get("time").getAsLong());
+            } else {
+                villager.getLongTermMemory().remember(id);
+            }
         });
 
-        register("positive", JsonHelper::asInt, hearts -> {
-            return (villager, player) -> {
-                villager.getVillagerBrain().modifyMoodValue(hearts);
-                villager.getVillagerBrain().rewardHearts(player, hearts);
-            };
+        register("quit", (a, b) -> a, id -> (villager, player) -> villager.getInteractions().stopInteracting());
+
+        register("negative", JsonHelper::asInt, hearts -> (villager, player) -> {
+            villager.getVillagerBrain().modifyMoodValue(-hearts);
+            villager.getVillagerBrain().rewardHearts(player, -hearts);
         });
 
-        register("command", JsonHelper::asString, command -> {
-            return (villager, player) -> {
-                villager.getInteractions().handle(player, command);
-            };
+        register("positive", JsonHelper::asInt, hearts -> (villager, player) -> {
+            villager.getVillagerBrain().modifyMoodValue(hearts);
+            villager.getVillagerBrain().rewardHearts(player, hearts);
         });
+
+        register("command", JsonHelper::asString, command -> (villager, player) ->
+                villager.getInteractions().handle(player, command));
     }
 
     public static <T> void register(String name, BiFunction<JsonElement, String, T> jsonParser, Factory<T> predicate) {

@@ -1,7 +1,6 @@
 package mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Optional;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
 import mca.util.BlockBoxExtended;
@@ -13,6 +12,8 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Optional;
 
 public class PatrolVillageTask extends Task<VillagerEntityMCA> {
     private final int completionRange;

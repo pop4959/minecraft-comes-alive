@@ -1,10 +1,5 @@
 package mca.server.world.data;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Stream;
-
 import mca.Config;
 import mca.resources.API;
 import mca.resources.data.BuildingType;
@@ -29,6 +24,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestType;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static net.minecraft.tag.BlockTags.LEAVES;
 
@@ -383,7 +383,7 @@ public class Building implements Serializable, Iterable<UUID> {
                 Block block = blockState.getBlock();
                 if (blockTypes.contains(Registry.BLOCK.getId(block))) {
                     if (block instanceof BedBlock) {
-                        // TODO look for better solution
+                        // TODO: look for better solution for 7.3.0
                         if (blockState.get(BedBlock.PART) == BedPart.HEAD) {
                             addBlock(block, p);
                         }

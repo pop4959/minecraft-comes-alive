@@ -17,10 +17,10 @@ import mca.item.ItemsMCA;
 import mca.resources.Supporters;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.client.render.entity.EntityRenderers;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.entity.EntityRenderers;
 import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
@@ -63,12 +63,12 @@ public final class MCAClient {
 
         BlockEntityRendererFactories.register(BlockEntityTypesMCA.TOMBSTONE.get(), TombstoneBlockEntityRenderer::new);
 
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) -> {
-            return BabyItem.hasBeenInvalidated(stack) ? 1 : 0;
-        });
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) -> {
-            return BabyItem.hasBeenInvalidated(stack) ? 1 : 0;
-        });
+        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
 
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
     }

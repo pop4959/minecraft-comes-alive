@@ -1,17 +1,10 @@
 package mca.resources;
 
 import com.google.gson.JsonElement;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
-import mca.network.client.AnalysisResults;
+import mca.network.c2s.AnalysisResults;
 import mca.resources.data.SerializablePair;
 import mca.resources.data.analysis.ChanceAnalysis;
 import mca.resources.data.analysis.IntAnalysis;
@@ -24,6 +17,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
+import java.util.*;
+
 public class Dialogues extends JsonDataLoader {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "dialogues");
 
@@ -31,7 +26,7 @@ public class Dialogues extends JsonDataLoader {
 
     private static Dialogues INSTANCE;
 
-    public static final Dialogues getInstance() {
+    public static Dialogues getInstance() {
         return INSTANCE;
     }
 
@@ -87,16 +82,16 @@ public class Dialogues extends JsonDataLoader {
         for (Result r : answer.getResults()) {
             IntAnalysis a = r.getChances(villager, player);
             analysis.add(a);
-            total += a.getTotal();
+            total += Math.max(0, a.getTotal());
         }
 
         //choose weighted random
         int chosen = -1;
         total = total == 0 ? 0 : villager.getRandom().nextInt(total);
         for (IntAnalysis a : analysis) {
-            total -= a.getTotal();
+            total -= Math.max(0, a.getTotal());
             chosen++;
-            if (total <= 0) {
+            if (total < 0) {
                 break;
             }
         }

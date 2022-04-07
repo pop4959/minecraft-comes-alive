@@ -1,8 +1,7 @@
 package mca.advancement.criterion;
 
-import net.minecraft.advancement.criterion.Criterion;
-
 import mca.mixin.MixinCriteria;
+import net.minecraft.advancement.criterion.Criterion;
 
 public interface CriterionMCA {
     BabyCriterion BABY_CRITERION = register(new BabyCriterion());

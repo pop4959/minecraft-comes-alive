@@ -1,7 +1,5 @@
 package mca.client.book;
 
-import java.util.LinkedList;
-import java.util.List;
 import mca.client.book.pages.EmptyPage;
 import mca.client.book.pages.Page;
 import mca.client.book.pages.TextPage;
@@ -10,6 +8,9 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class Book {
     private final String bookName;

@@ -32,7 +32,7 @@ public class MatchmakersRingItem extends Item implements SpecialCaseGift {
         // look for partner
         Optional<VillagerEntityMCA> target = WorldUtils.getCloseEntities(villager.world, villager, 3.0).stream()
                 .filter(v -> v != villager && v instanceof VillagerEntityMCA)
-                .map(v -> (VillagerEntityMCA) v)
+                .map(VillagerEntityMCA.class::cast)
                 .filter(v -> !v.isBaby() && !v.getRelationships().isMarried())
                 .min(Comparator.comparingDouble(villager::distanceTo));
 

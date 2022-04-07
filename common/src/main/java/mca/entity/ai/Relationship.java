@@ -29,11 +29,12 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
@@ -151,8 +152,8 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
             entity.getVillagerBrain().modifyMoodValue(-moodAffect);
 
             // seen murder
-            if (cause.getAttacker() instanceof PlayerEntity) {
-                entity.getVillagerBrain().getMemoriesForPlayer((PlayerEntity)cause.getAttacker()).modHearts(-20);
+            if (cause.getAttacker() instanceof PlayerEntity player) {
+                entity.getVillagerBrain().getMemoriesForPlayer(player).modHearts(-20);
             }
         }
 

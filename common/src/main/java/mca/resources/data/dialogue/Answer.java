@@ -2,10 +2,11 @@ package mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import mca.client.gui.Constraint;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import mca.client.gui.Constraint;
 
 public class Answer {
     private final String name;

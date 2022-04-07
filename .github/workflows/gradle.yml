@@ -52,8 +52,8 @@ jobs:
           project_id: "535291"
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"
-          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.18.2/changelog.md)"
-          release_type: "beta"
+          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/${{steps.tag.outputs.tag}}/changelog.md)"
+          release_type: "release"
       - name: "Upload Forge to CurseForge"
         uses: itsmeow/curseforge-upload@v3
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
@@ -66,5 +66,5 @@ jobs:
           project_id: "535291"
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"
-          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.18.2/changelog.md)"
-          release_type: "beta"
+          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/${{steps.tag.outputs.tag}}/changelog.md)"
+          release_type: "release"

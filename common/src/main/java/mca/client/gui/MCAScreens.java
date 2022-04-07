@@ -1,14 +1,7 @@
 package mca.client.gui;
 
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-
 import mca.MCA;
 import mca.client.resources.Icon;
 import mca.resources.Resources;
@@ -16,6 +9,12 @@ import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
+
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class MCAScreens extends JsonDataLoader {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "screens");

@@ -1,11 +1,13 @@
 package mca.entity.ai.relationship;
 
+import mca.entity.ai.MoodGroup;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
-import java.util.*;
-
-import mca.entity.ai.MoodGroup;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 public enum Personality {
     //Fallback on error.

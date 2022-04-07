@@ -113,8 +113,11 @@
   "analysis.current_chore": "current chore",
   "analysis.item": "specific item",
   "analysis.tag": "specific item tag",
-  "analysis.heartsMin": "hearts",
-  "analysis.heartsMax": "hearts",
+  "analysis.hearts_min": "hearts",
+  "analysis.hearts_max": "hearts",
+  "analysis.hearts": "hearts",
+  "analysis.advancement": "Advancement",
+  "analysis.memory": "Memory",
 
   "item.mca.blueprint": "Blueprint",
   "item.mca.blueprint.tooltip": "Right-click to manage the village you are currently in",
@@ -348,12 +351,12 @@
   "gui.village.taxes.angry": "%s got angry due to the high taxes.",
   "gui.village.taxes.riot": "%s refused to pay those high taxes this time.",
 
-  "gui.village.rank.0": "Outlaw",
-  "gui.village.rank.1": "Peasant",
-  "gui.village.rank.2": "Merchant",
-  "gui.village.rank.3": "Noble",
-  "gui.village.rank.4": "Mayor",
-  "gui.village.rank.5": "King",
+  "gui.village.rank.outlaw": "Outlaw",
+  "gui.village.rank.peasant": "Peasant",
+  "gui.village.rank.merchant": "Merchant",
+  "gui.village.rank.noble": "Noble",
+  "gui.village.rank.mayor": "Mayor",
+  "gui.village.rank.monarch": "Monarch",
 
   "gui.button.yes": "Yes",
   "gui.button.no": "No",
@@ -606,8 +609,8 @@
   "advancement.mca.mayor": "Mayor",
   "advancement.mca.mayor.description": "Get promoted to the Mayor.",
 
-  "advancement.mca.king": "King",
-  "advancement.mca.king.description": "Become a King.",
+  "advancement.mca.monarch": "Monarch",
+  "advancement.mca.monarch.description": "Become a Monarch.",
 
   "advancement.mca.bounty_hunter": "Hunted",
   "advancement.mca.bounty_hunter.description": "Get attacked by bounty hunters.",
