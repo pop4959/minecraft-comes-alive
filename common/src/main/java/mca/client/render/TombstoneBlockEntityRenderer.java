@@ -1,7 +1,5 @@
 package mca.client.render;
 
-import java.util.List;
-
 import mca.block.TombstoneBlock;
 import mca.block.TombstoneBlock.Data;
 import mca.util.localization.FlowingText;
@@ -17,6 +15,8 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
+
+import java.util.List;
 
 public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<TombstoneBlock.Data> {
 

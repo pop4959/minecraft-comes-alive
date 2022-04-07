@@ -1,34 +1,32 @@
 package mca.entity.interaction.gifts;
 
-import java.util.*;
-import java.util.function.BiFunction;
-
-import mca.entity.ai.LongTermMemory;
-import mca.entity.ai.Traits;
-import mca.resources.Rank;
-import mca.resources.Tasks;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.TagKey;
-import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.Nullable;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Chore;
+import mca.entity.ai.LongTermMemory;
 import mca.entity.ai.MoodGroup;
+import mca.entity.ai.Traits;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.Personality;
+import mca.resources.Rank;
+import mca.resources.Tasks;
+import net.minecraft.advancement.Advancement;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.BiFunction;
 
 public class GiftPredicate {
     public static final Map<String, Factory<JsonElement>> CONDITION_TYPES = new HashMap<>();

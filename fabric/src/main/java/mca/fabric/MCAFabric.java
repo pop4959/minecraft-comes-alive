@@ -4,16 +4,11 @@ import mca.ParticleTypesMCA;
 import mca.SoundsMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
-import mca.fabric.cobalt.network.NetworkHandlerImpl;
 import mca.entity.EntitiesMCA;
+import mca.fabric.cobalt.network.NetworkHandlerImpl;
+import mca.fabric.resources.*;
 import mca.item.ItemsMCA;
 import mca.network.MessagesMCA;
-import mca.fabric.resources.ApiIdentifiableReloadListener;
-import mca.fabric.resources.FabricClothingList;
-import mca.fabric.resources.FabricDialogues;
-import mca.fabric.resources.FabricGiftLoader;
-import mca.fabric.resources.FabricHairList;
-import mca.fabric.resources.FabricTasks;
 import mca.server.ServerInteractionManager;
 import mca.server.command.AdminCommand;
 import mca.server.command.Command;
@@ -47,12 +42,8 @@ public final class MCAFabric implements ModInitializer {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new FabricDialogues());
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new FabricTasks());
 
-        ServerTickEvents.END_WORLD_TICK.register(w -> {
-            VillageManager.get(w).tick();
-        });
-        ServerTickEvents.END_SERVER_TICK.register(s -> {
-            ServerInteractionManager.getInstance().tick();
-        });
+        ServerTickEvents.END_WORLD_TICK.register(w -> VillageManager.get(w).tick());
+        ServerTickEvents.END_SERVER_TICK.register(s -> ServerInteractionManager.getInstance().tick());
 
         ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
             if (!alive) {
@@ -60,9 +51,9 @@ public final class MCAFabric implements ModInitializer {
             }
         });
 
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ServerInteractionManager.getInstance().onPlayerJoin(handler.player);
-        });
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+                ServerInteractionManager.getInstance().onPlayerJoin(handler.player)
+        );
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             AdminCommand.register(dispatcher);

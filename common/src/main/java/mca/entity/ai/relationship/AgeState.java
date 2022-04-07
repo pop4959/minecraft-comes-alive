@@ -1,11 +1,12 @@
 package mca.entity.ai.relationship;
 
-import java.util.Locale;
 import mca.Config;
 import mca.resources.API;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.Locale;
 
 public enum AgeState implements VillagerDimensions {
     UNASSIGNED(1, 0.9F, 1, 1, 1.0f),

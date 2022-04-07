@@ -1,10 +1,7 @@
 package mca.entity.interaction.gifts;
 
-import java.util.Map;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-
 import mca.MCA;
 import mca.resources.Resources;
 import net.minecraft.resource.JsonDataLoader;
@@ -12,6 +9,8 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
+
+import java.util.Map;
 
 public class GiftLoader extends JsonDataLoader {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "gifts");

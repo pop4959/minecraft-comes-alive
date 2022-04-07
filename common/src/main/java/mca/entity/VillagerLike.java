@@ -3,8 +3,6 @@ package mca.entity;
 import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import java.util.Map;
-import java.util.UUID;
 import mca.Config;
 import mca.entity.ai.DialogueType;
 import mca.entity.ai.Genetics;
@@ -37,7 +35,9 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerDataContainer;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrackedEntity<E>, VillagerDataContainer, Infectable, Messenger {
     CDataParameter<String> VILLAGER_NAME = CParameter.create("villagerName", "");

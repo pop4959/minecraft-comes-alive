@@ -1,15 +1,12 @@
 package mca.resources;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
 import mca.entity.ai.relationship.Gender;
 import mca.resources.Resources.BrokenResourceException;
 import mca.resources.data.BuildingType;
 import mca.resources.data.NameSet;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 public class VillageComponents implements Iterable<BuildingType> {
     private final Map<String, BuildingType> buildingTypes = new HashMap<>();

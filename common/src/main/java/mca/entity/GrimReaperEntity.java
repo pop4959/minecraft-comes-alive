@@ -189,10 +189,8 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         }
 
         // Teleport behind the player who fired an arrow and ignore its damage.
-        if (source.getSource() instanceof ArrowEntity) {
-            ArrowEntity arrow = (ArrowEntity)attacker;
-
-            if (arrow != null && getAttackState() != ReaperAttackState.REST) {
+        if (attacker instanceof ArrowEntity arrow) {
+            if (getAttackState() != ReaperAttackState.REST) {
                 Entity owner = arrow.getOwner();
 
                 if (owner != null) {

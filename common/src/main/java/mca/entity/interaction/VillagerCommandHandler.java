@@ -1,8 +1,5 @@
 package mca.entity.interaction;
 
-import java.util.Optional;
-
-import com.mojang.datafixers.util.Pair;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.*;
@@ -44,6 +41,7 @@ import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityMCA> {
     private static final String[] structures = new String[]{

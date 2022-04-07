@@ -17,25 +17,25 @@ public interface SoundsMCA {
     RegistrySupplier<SoundEvent> reaper_block = register("reaper.block");
     RegistrySupplier<SoundEvent> reaper_summon = register("reaper.summon");
 
-    RegistrySupplier<SoundEvent> VILLAGER_BABY_LAUGH = register("villager_baby_laugh");//TODO:
+    RegistrySupplier<SoundEvent> VILLAGER_BABY_LAUGH = register("villager_baby_laugh"); //TODO: 7.3.0
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_SCREAM = register("villager_male_scream");
     RegistrySupplier<SoundEvent> VILLAGER_FEMALE_SCREAM = register("villager_female_scream");
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_LAUGH = register("villager_male_laugh");
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_LAUGH = register("villager_female_laugh");//TODO:
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_LAUGH = register("villager_female_laugh"); //TODO: 7.3.0
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_CRY = register("villager_male_cry");
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_CRY = register("villager_female_cry");//TODO:
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_CRY = register("villager_female_cry"); //TODO: 7.3.0
 
-    RegistrySupplier<SoundEvent> VILLAGER_MALE_ANGRY = register("villager_male_angry");//TODO:
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_ANGRY = register("villager_female_angry");//TODO:
+    RegistrySupplier<SoundEvent> VILLAGER_MALE_ANGRY = register("villager_male_angry"); //TODO: 7.3.0
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_ANGRY = register("villager_female_angry"); //TODO: 7.3.0
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_GREET = register("villager_male_greet");
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_GREET = register("villager_female_greet");//TODO:
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_GREET = register("villager_female_greet"); //TODO: 7.3.0
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_SURPRISE = register("villager_male_surprise");
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_SURPRISE = register("villager_female_surprise");//TODO:
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_SURPRISE = register("villager_female_surprise"); //TODO: 7.3.0
 
     static void bootstrap() {
         SOUNDS.register();

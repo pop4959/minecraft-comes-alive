@@ -1,18 +1,12 @@
 package mca.util.localization;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
+import mca.resources.PoolUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import mca.resources.PoolUtil;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class PooledTranslationStorage {
     private static final Pattern TRAILING_NUMBERS_PATTERN = Pattern.compile("/[0-9]+$");

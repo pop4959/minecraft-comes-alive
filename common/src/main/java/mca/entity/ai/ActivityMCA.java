@@ -1,7 +1,5 @@
 package mca.entity.ai;
 
-import java.util.function.Supplier;
-
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import mca.MCA;
@@ -15,6 +13,8 @@ import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import java.util.function.Supplier;
 
 public interface ActivityMCA {
 

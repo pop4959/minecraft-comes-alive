@@ -4,12 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +68,14 @@ public final class Config implements Serializable {
     public boolean useSquidwardModels = false;
     public int maxBuildingSize = 8192;
     public int maxBuildingRadius = 320;
+    public int maxTreeHeight = 8;
+    public Map<String, Integer> maxTreeTicks = ImmutableMap.<String, Integer>builder()
+            .put("#minecraft:logs", 60)
+            .build();
+    public List<String> validTreeSources = List.of(
+            "minecraft:grass_block",
+            "minecraft:dirt"
+    );
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;

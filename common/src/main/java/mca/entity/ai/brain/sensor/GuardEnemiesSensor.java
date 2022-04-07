@@ -1,10 +1,6 @@
 package mca.entity.ai.brain.sensor;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Optional;
-import java.util.Set;
-
 import mca.Config;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
@@ -18,6 +14,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+
+import java.util.Optional;
+import java.util.Set;
 
 public class GuardEnemiesSensor extends Sensor<LivingEntity> {
     @Override

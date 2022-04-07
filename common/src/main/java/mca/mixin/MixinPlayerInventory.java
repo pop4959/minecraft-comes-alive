@@ -1,18 +1,17 @@
 package mca.mixin;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import mca.item.BabyItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Nameable;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
 abstract class MixinPlayerInventory implements Inventory, Nameable {
@@ -23,7 +22,7 @@ abstract class MixinPlayerInventory implements Inventory, Nameable {
             cancellable = true)
     public void onDropSelectedItem(boolean dropEntireStack, CallbackInfoReturnable<ItemStack> info) {
         ItemStack stack = ((PlayerInventory)(Object)this).getMainHandStack();
-        if (stack.getItem() instanceof BabyItem && !((BabyItem)stack.getItem()).onDropped(stack, this.player)) {
+        if (stack.getItem() instanceof BabyItem baby && !baby.onDropped(stack, this.player)) {
             info.setReturnValue(ItemStack.EMPTY);
         }
     }

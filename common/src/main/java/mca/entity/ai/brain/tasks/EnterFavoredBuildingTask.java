@@ -1,10 +1,11 @@
 package mca.entity.ai.brain.tasks;
 
-import java.util.Optional;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.ProfessionsMCA;
 import mca.server.world.data.Building;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Optional;
 
 public class EnterFavoredBuildingTask extends EnterBuildingTask {
     private int lastMoodIncrease = 0;

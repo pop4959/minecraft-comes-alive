@@ -1,17 +1,16 @@
 package mca.entity.ai;
 
-import java.util.Locale;
 import net.minecraft.item.*;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jetbrains.annotations.Nullable;
 
 public enum Chore {
     NONE    ("none", null),

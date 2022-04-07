@@ -1,13 +1,5 @@
 package mca.entity.ai;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-
 import mca.Config;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
@@ -17,6 +9,8 @@ import mca.util.network.datasync.CEnumParameter;
 import mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.*;
 
 /**
  * Villagerized Genetic Diversity.

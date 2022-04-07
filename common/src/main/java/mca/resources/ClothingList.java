@@ -1,12 +1,6 @@
 package mca.resources;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import com.google.gson.JsonElement;
-
 import mca.MCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
@@ -18,10 +12,12 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
+import java.util.*;
+
 public class ClothingList extends JsonDataLoader {
     protected static final Identifier ID = new Identifier("mca", "skins/clothing");
 
-    private final Map<Gender, ProfessionedPool> clothing = new EnumMap<>(Gender.class);
+    private final Map<Gender, ProfessionPool> clothing = new EnumMap<>(Gender.class);
 
     private static ClothingList INSTANCE;
 
@@ -46,25 +42,24 @@ public class ClothingList extends JsonDataLoader {
             }
 
             // adds the skins to all respective pools.
-            gender.getTransients().map(this::byGender).forEach(pool -> {
-                JsonHelper.asObject(file, "root").getAsJsonObject().entrySet().forEach(entry -> {
-                    pool.addToPool(
-                        id.getNamespace(),
-                        gender,
-                        new Identifier(entry.getKey()),
-                        JsonHelper.getInt(entry.getValue().getAsJsonObject(), "count"),
-                        JsonHelper.getFloat(entry.getValue().getAsJsonObject(), "chance", 1)
-                    );
-                });
-            });
+            gender.getTransients().map(this::byGender).forEach(pool ->
+                    JsonHelper.asObject(file, "root").getAsJsonObject().entrySet().forEach(entry ->
+                            pool.addToPool(
+                                    id.getNamespace(),
+                                    gender,
+                                    new Identifier(entry.getKey()),
+                                    JsonHelper.getInt(entry.getValue().getAsJsonObject(), "count"),
+                                    JsonHelper.getFloat(entry.getValue().getAsJsonObject(), "chance", 1)
+                            )
+            ));
         });
     }
 
     /**
      * Gets a pool of clothing options based on a specific gender.
      */
-    public ProfessionedPool byGender(Gender gender) {
-        return clothing.computeIfAbsent(gender, ProfessionedPool::new);
+    public ProfessionPool byGender(Gender gender) {
+        return clothing.computeIfAbsent(gender, ProfessionPool::new);
     }
 
     /**
@@ -86,12 +81,12 @@ public class ClothingList extends JsonDataLoader {
         return byGender(gender).byProfession(profession);
     }
 
-    public static class ProfessionedPool {
+    public static class ProfessionPool {
         private static final WeightedPool<String> EMPTY = new WeightedPool<>("");
 
         private final Map<Identifier, WeightedPool.Mutable<String>> entries = new HashMap<>();
 
-        ProfessionedPool(Gender gender) { }
+        ProfessionPool(Gender gender) { }
 
         public void addToPool(String namespace, Gender gender, Identifier profession, int count, float chance) {
             if (count <= 0) {

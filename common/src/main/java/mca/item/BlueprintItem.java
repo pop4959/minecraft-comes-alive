@@ -1,7 +1,7 @@
 package mca.item;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.client.OpenGuiRequest;
+import mca.network.c2s.OpenGuiRequest;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,8 +19,8 @@ public class BlueprintItem extends TooltippedItem {
     public final TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
 
-        if (player instanceof ServerPlayerEntity) {
-            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BLUEPRINT), (ServerPlayerEntity) player);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BLUEPRINT), serverPlayer);
         }
 
         return TypedActionResult.success(stack);
