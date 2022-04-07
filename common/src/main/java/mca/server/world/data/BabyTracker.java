@@ -53,7 +53,7 @@ public class BabyTracker extends PersistentState {
     }
 
     public boolean hasActiveBaby(UUID mother, UUID father) {
-        //todo temporary disabled
+        // TODO: temporary disabled until 7.3.0
         return false;
         //Key key = new Key(mother, father);
         //return pairings.containsKey(key) && getPairing(key).getChildCount() > 0;
@@ -162,17 +162,17 @@ public class BabyTracker extends PersistentState {
          */
         public Pair<ItemStack, Placement> locateBaby(PlayerEntity player) {
 
-            int slot = InventoryUtils.getFirstSlotContainingItem(player.getInventory(), stack -> {
-                return getState(stack).filter(state -> state.key.equals(key)).isPresent();
-            });
+            int slot = InventoryUtils.getFirstSlotContainingItem(player.getInventory(), stack ->
+                    getState(stack).filter(state -> state.key.equals(key)).isPresent()
+            );
 
             if (slot >= 0) {
                 return Pair.of(player.getInventory().getStack(slot), Placement.INVENTORY);
             }
 
-            slot = InventoryUtils.getFirstSlotContainingItem(player.getEnderChestInventory(), stack -> {
-                return getState(stack).filter(state -> state.key.equals(key)).isPresent();
-            });
+            slot = InventoryUtils.getFirstSlotContainingItem(player.getEnderChestInventory(), stack ->
+                    getState(stack).filter(state -> state.key.equals(key)).isPresent()
+            );
 
             if (slot >= 0) {
                 return Pair.of(player.getEnderChestInventory().getStack(slot), Placement.ENDER_CHEST);
@@ -285,31 +285,31 @@ public class BabyTracker extends PersistentState {
             super(tag);
         }
 
-        public ChildSaveState setGender(Gender gender) {
+        public MutableChildSaveState setGender(Gender gender) {
             this.gender = gender;
             markDirty();
             return this;
         }
 
-        public ChildSaveState setInfected(boolean infected) {
+        public MutableChildSaveState setInfected(boolean infected) {
             this.infected = infected;
             markDirty();
             return this;
         }
 
-        public ChildSaveState setName(String name) {
+        public MutableChildSaveState setName(String name) {
             this.name = Optional.ofNullable(name);
             markDirty();
             return this;
         }
 
-        public ChildSaveState setOwner(Entity entity) {
+        public MutableChildSaveState setOwner(Entity entity) {
             owner = Optional.of(Pair.of(entity.getUuid(), entity.getName().getString()));
             markDirty();
             return this;
         }
 
-        public ChildSaveState setSeed(long seed) {
+        public MutableChildSaveState setSeed(long seed) {
             this.seed = seed;
             markDirty();
             return this;

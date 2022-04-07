@@ -1,5 +1,6 @@
 package mca.resources.data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -13,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
 public final class BuildingType implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2215455350801127280L;
 
     private final String name;
@@ -117,9 +119,9 @@ public final class BuildingType implements Serializable {
     public Map<Identifier, List<BlockPos>> getGroups(Map<Identifier, List<BlockPos>> blocks) {
         HashMap<Identifier, List<BlockPos>> available = new HashMap<>();
         for (Map.Entry<Identifier, List<BlockPos>> entry : blocks.entrySet()) {
-            Optional.ofNullable(getBlockToGroup().get(entry.getKey())).ifPresent(v -> {
-                available.computeIfAbsent(v, k -> new LinkedList<>()).addAll(entry.getValue());
-            });
+            Optional.ofNullable(getBlockToGroup().get(entry.getKey())).ifPresent(v ->
+                    available.computeIfAbsent(v, k -> new LinkedList<>()).addAll(entry.getValue())
+            );
         }
         return available;
     }

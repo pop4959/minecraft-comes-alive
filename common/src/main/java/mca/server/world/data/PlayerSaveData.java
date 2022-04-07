@@ -17,7 +17,7 @@ import mca.entity.ai.relationship.RelationshipType;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
-import mca.network.client.ShowToastRequest;
+import mca.network.c2s.ShowToastRequest;
 import mca.resources.API;
 import mca.resources.Rank;
 import mca.resources.Tasks;
@@ -131,8 +131,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         EntityRelationship.super.onTragedy(cause, burialSite, type, victim);
 
         // send letter of condolence
-        if (victim instanceof VillagerEntityMCA) {
-            VillagerEntityMCA victimVillager = (VillagerEntityMCA)victim;
+        if (victim instanceof VillagerEntityMCA victimVillager) {
             sendLetterOfCondolence((ServerPlayerEntity)world.getEntity(playerId),
                     victimVillager.getName().getString(),
                     victimVillager.getResidency().getHomeVillage().map(Village::getName).orElse(API.getVillagePool().pickVillageName("village")));

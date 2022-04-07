@@ -65,9 +65,7 @@ public interface NbtHelper {
     }
 
     static <K, V> NbtCompound fromMap(NbtCompound output, Map<K, V> map, Function<K, String> keyMapper, Function<V, NbtElement> valueMapper) {
-        map.forEach((key, value) -> {
-            output.put(keyMapper.apply(key), valueMapper.apply(value));
-        });
+        map.forEach((key, value) -> output.put(keyMapper.apply(key), valueMapper.apply(value)));
         return output;
     }
 }

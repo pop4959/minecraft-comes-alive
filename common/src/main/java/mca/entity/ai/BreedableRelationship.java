@@ -7,7 +7,7 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.interaction.gifts.GiftType;
 import mca.entity.interaction.gifts.Response;
 import mca.item.SpecialCaseGift;
-import mca.network.client.AnalysisResults;
+import mca.network.c2s.AnalysisResults;
 import mca.resources.data.analysis.IntAnalysis;
 import mca.util.network.datasync.CDataManager;
 import mca.util.network.datasync.CDataParameter;
@@ -87,8 +87,8 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
                 entity.setInfected(false);
                 entity.eatFood(entity.world, stack);
                 stack.decrement(1);
-            } else if (stack.getItem() instanceof DyeItem) {
-                entity.setHairDye(((DyeItem)stack.getItem()).getColor());
+            } else if (stack.getItem() instanceof DyeItem dye) {
+                entity.setHairDye(dye.getColor());
                 stack.decrement(1);
             } else if (stack.getItem() == Items.WET_SPONGE) {
                 entity.clearHairDye();
@@ -120,17 +120,18 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
     //returns estimated values for common item types, which the villager could use
     private Optional<GiftType> handleDynamicGift(ItemStack stack) {
-        if (stack.getItem() instanceof SwordItem) {
+        if (stack.getItem() instanceof SwordItem sword) {
             //swords
-            float satisfaction = ((SwordItem)stack.getItem()).getAttackDamage();
+            float satisfaction = sword.getAttackDamage();
             satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
             return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, new Identifier("mca:swords")));
         } else if (stack.getItem() instanceof RangedWeaponItem) {
             //ranged weapons
+            // TODO: Make satisfaction ratio for ranged items
             return Optional.of(new GiftType(stack.getItem(), 15, new Identifier("mca:archery")));
-        } else if (stack.getItem() instanceof ToolItem) {
+        } else if (stack.getItem() instanceof ToolItem tool) {
             //tools
-            float satisfaction = ((ToolItem)stack.getItem()).getMaterial().getMiningSpeedMultiplier();
+            float satisfaction = tool.getMaterial().getMiningSpeedMultiplier();
             satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
             return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, new Identifier(
                     stack.getItem() instanceof AxeItem ? "mca:swords" :

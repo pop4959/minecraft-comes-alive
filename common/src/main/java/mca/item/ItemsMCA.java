@@ -1,31 +1,26 @@
 package mca.item;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import mca.MCA;
 import mca.TagsMCA;
 import mca.block.BlocksMCA;
 import mca.client.book.Book;
 import mca.client.book.pages.DynamicListPage;
-import mca.client.book.pages.ListPage;
 import mca.client.book.pages.ScribbleTextPage;
-import mca.client.book.pages.TextPage;
 import mca.client.book.pages.TitlePage;
 import mca.cobalt.registration.Registration;
 import mca.crafting.recipe.RecipesMCA;
 import mca.entity.EntitiesMCA;
 import mca.entity.ai.relationship.Gender;
-import mca.resources.API;
 import mca.resources.Supporters;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import java.util.stream.Collectors;
 
 public interface ItemsMCA {
     Item MALE_VILLAGER_SPAWN_EGG = register("male_villager_spawn_egg", new SpawnEggItem(EntitiesMCA.MALE_VILLAGER, 0x5e9aff, 0x3366bc, baseProps()));

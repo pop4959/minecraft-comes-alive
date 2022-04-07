@@ -3,7 +3,7 @@ package mca.client.gui;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
-import mca.network.GetFamilyTreeRequest;
+import mca.network.s2c.GetFamilyTreeRequest;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;

@@ -2,7 +2,7 @@ package mca;
 
 import org.jetbrains.annotations.Nullable;
 
-import mca.network.client.ClientInteractionManager;
+import mca.network.c2s.ClientInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 
 /**

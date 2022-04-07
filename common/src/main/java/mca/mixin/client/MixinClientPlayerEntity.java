@@ -20,7 +20,7 @@ abstract class MixinClientPlayerEntity extends LivingEntity {
             cancellable = true)
     private void onDropSelectedItem(boolean dropEntireStack, CallbackInfoReturnable<Boolean> info) {
         ItemStack stack = this.getMainHandStack();
-        if (stack.getItem() instanceof BabyItem && !((BabyItem)stack.getItem()).onDropped(stack, (PlayerEntity)(Object)this)) {
+        if (stack.getItem() instanceof BabyItem baby && !baby.onDropped(stack, (PlayerEntity)(Object)this)) {
             info.setReturnValue(false);
         }
     }

@@ -61,7 +61,7 @@ public class SpawnQueue {
     }
 
     public boolean addVillager(Entity entity) {
-        //todo this does not work on least on zombie villagers spawned by right clicking another zombie villager with an spawn egg, since initialize() is not called yet
+        // TODO: this does not work on least on zombie villagers spawned by right clicking another zombie villager with an spawn egg, since initialize() is not called yet
         if (entity instanceof IVillagerEntity && !handlesSpawnReason(((IVillagerEntity)entity).getSpawnReason())) {
             return false;
         }

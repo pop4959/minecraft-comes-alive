@@ -84,7 +84,7 @@ public class AdminCommand {
     private static int assumeNameDead(CommandContext<ServerCommandSource> ctx) {
         String name = StringArgumentType.getString(ctx, "name");
         FamilyTree tree = FamilyTree.get(ctx.getSource().getWorld());
-        List<FamilyTreeNode> collect = tree.getAllWithName(name).filter(n -> !n.isDeceased()).collect(Collectors.toList());
+        List<FamilyTreeNode> collect = tree.getAllWithName(name).filter(n -> !n.isDeceased()).toList();
         if (collect.isEmpty()) {
             fail("Villager does not exist.", ctx);
         } else if (collect.size() == 1) {
@@ -120,9 +120,7 @@ public class AdminCommand {
         //remove spouse too
         FamilyTree tree = FamilyTree.get(ctx.getSource().getWorld());
         Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
-        node.filter(n -> n.spouse() != null).ifPresent(n -> {
-            n.updateMarriage(null, MarriageState.WIDOW);
-        });
+        node.filter(n -> n.spouse() != null).ifPresent(n -> n.updateMarriage(null, MarriageState.WIDOW));
 
         //remove from player spouse
         ctx.getSource().getWorld().getPlayers().forEach(player -> {
@@ -172,7 +170,7 @@ public class AdminCommand {
 
     private static int removeVillage(CommandContext<ServerCommandSource> ctx) {
         String name = StringArgumentType.getString(ctx, "name");
-        List<Village> collect = VillageManager.get(ctx.getSource().getWorld()).findVillages(v -> v.getName().equals(name)).collect(Collectors.toList());
+        List<Village> collect = VillageManager.get(ctx.getSource().getWorld()).findVillages(v -> v.getName().equals(name)).toList();
         if (collect.isEmpty()) {
             fail("No village with this name exists.", ctx);
         } else if (collect.size() > 1) {
@@ -245,11 +243,11 @@ public class AdminCommand {
     }
 
     private static int restoreClearedVillagers(CommandContext<ServerCommandSource> ctx) {
-        storedVillagers.forEach(tag -> {
-            EntityType.getEntityFromNbt(tag, ctx.getSource().getWorld()).ifPresent(v -> {
-                ctx.getSource().getWorld().spawnEntity(v);
-            });
-        });
+        storedVillagers.forEach(tag ->
+                EntityType.getEntityFromNbt(tag, ctx.getSource().getWorld()).ifPresent(v ->
+                        ctx.getSource().getWorld().spawnEntity(v)
+                )
+        );
         storedVillagers.clear();
         success("Restored cleared villagers.", ctx);
         return 0;

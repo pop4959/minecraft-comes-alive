@@ -12,10 +12,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import mca.client.gui.widget.RectangleWidget;
 import mca.cobalt.network.NetworkHandler;
-import mca.network.GetVillageRequest;
-import mca.network.RenameVillageMessage;
-import mca.network.ReportBuildingMessage;
-import mca.network.SaveVillageMessage;
+import mca.network.s2c.GetVillageRequest;
+import mca.network.s2c.RenameVillageMessage;
+import mca.network.s2c.ReportBuildingMessage;
+import mca.network.s2c.SaveVillageMessage;
 import mca.resources.Rank;
 import mca.resources.data.BuildingType;
 import mca.resources.data.tasks.Task;

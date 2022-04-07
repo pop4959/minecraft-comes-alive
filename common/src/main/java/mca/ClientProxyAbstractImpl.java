@@ -1,7 +1,7 @@
 package mca;
 
-import mca.network.client.ClientInteractionManager;
-import mca.network.client.ClientInteractionManagerImpl;
+import mca.network.c2s.ClientInteractionManager;
+import mca.network.c2s.ClientInteractionManagerImpl;
 
 /**
  * Workaround for Forge's BS

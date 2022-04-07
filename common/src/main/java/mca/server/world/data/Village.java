@@ -334,11 +334,10 @@ public class Village implements Iterable<Building> {
         BlockState state = world.getBlockState(p);
         if (state.hasBlockEntity()) {
             BlockEntity blockEntity = world.getBlockEntity(p);
-            if (blockEntity instanceof Inventory) {
-                Inventory inventory = (Inventory)blockEntity;
+            if (blockEntity instanceof Inventory inventory) {
                 Block block = state.getBlock();
-                if (inventory instanceof ChestBlockEntity && block instanceof ChestBlock) {
-                    inventory = ChestBlock.getInventory((ChestBlock)block, state, world, p, true);
+                if (inventory instanceof ChestBlockEntity && block instanceof ChestBlock chest) {
+                    inventory = ChestBlock.getInventory(chest, state, world, p, true);
                     if (inventory != null) {
                         putIntoInventory(inventory);
                     }
@@ -425,9 +424,11 @@ public class Village implements Iterable<Building> {
                 .filter(villager -> villager.getGenetics().getGender() == Gender.FEMALE)
                 .filter(villager -> world.random.nextFloat () < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
-                .ifPresent(villager -> {
-                    villager.getRelationships().getSpouse().ifPresent(spouse -> villager.sendEventMessage(new TranslatableText("events.baby", villager.getName(), spouse.getName())));
-                });
+                .ifPresent(villager ->
+                        villager.getRelationships().getSpouse().ifPresent(spouse ->
+                                villager.sendEventMessage(new TranslatableText("events.baby", villager.getName(), spouse.getName()))
+                        )
+                );
     }
 
     // if the amount of couples is low, let them marry
@@ -597,9 +598,9 @@ public class Village implements Iterable<Building> {
         v.putString("name", name);
         v.putInt("taxes", taxes);
         v.put("unspentHearts", NbtHelper.fromMap(new NbtCompound(), unspentHearts, UUID::toString, NbtInt::of));
-        v.put("reputation", NbtHelper.fromMap(new NbtCompound(), reputation, UUID::toString, i -> {
-            return NbtHelper.fromMap(new NbtCompound(), i, UUID::toString, NbtInt::of);
-        }));
+        v.put("reputation", NbtHelper.fromMap(new NbtCompound(), reputation, UUID::toString, i ->
+                NbtHelper.fromMap(new NbtCompound(), i, UUID::toString, NbtInt::of)
+        ));
         v.putInt("unspentMood", unspentMood);
         v.putInt("populationThreshold", populationThreshold);
         v.putInt("marriageThreshold", marriageThreshold);
@@ -613,9 +614,9 @@ public class Village implements Iterable<Building> {
         name = v.getString("name");
         taxes = v.getInt("taxes");
         unspentHearts = NbtHelper.toMap(v.getCompound("unspentHearts"), UUID::fromString, i -> ((NbtInt)i).intValue());
-        reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i -> {
-            return NbtHelper.toMap((NbtCompound)i, UUID::fromString, i2 -> ((NbtInt)i2).intValue());
-        });
+        reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i ->
+                NbtHelper.toMap((NbtCompound)i, UUID::fromString, i2 -> ((NbtInt)i2).intValue())
+        );
         unspentMood = v.getInt("unspentMood");
         populationThreshold = v.getInt("populationThreshold");
         marriageThreshold = v.getInt("marriageThreshold");

@@ -366,8 +366,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                         entity.extinguish();
                         entity.resetNetherPortalCooldown();
                         entity.setPosition(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
-                        if (entity instanceof LivingEntity) {
-                            LivingEntity l = (LivingEntity) entity;
+                        if (entity instanceof LivingEntity l) {
                             l.setHealth(l.getMaxHealth());
                             l.clearStatusEffects();
                             l.fallDistance = 0.0f;
@@ -375,26 +374,25 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                         }
 
                         //enforcing a dimension update
-                        if (entity instanceof PassiveEntity) {
-                            PassiveEntity mob = (PassiveEntity) entity;
+                        if (entity instanceof PassiveEntity mob) {
                             mob.setBreedingAge(mob.getBreedingAge());
                         }
 
                         boolean alreadySpawned = false;
-                        if (cure && (entity instanceof ZombieVillagerEntity)) {
+                        if (cure && (entity instanceof ZombieVillagerEntity zombie)) {
                             // spawnEntity is called here, so don't call it twice
-                            entity = ((ZombieVillagerEntity) entity).convertTo(EntityType.VILLAGER, true);
+                            entity = zombie.convertTo(EntityType.VILLAGER, true);
                             alreadySpawned = true;
                         }
 
-                        if (entity instanceof CompassionateEntity) {
-                            ((CompassionateEntity<?>)entity).getRelationships().getFamilyEntry().setDeceased(false);
+                        if (entity instanceof CompassionateEntity compassionateEntity) {
+                            compassionateEntity.getRelationships().getFamilyEntry().setDeceased(false);
                         }
 
-                        if (entity instanceof Infectable) {
-                            ((Infectable) entity).setInfectionProgress(cure
+                        if (entity instanceof Infectable infectable) {
+                            infectable.setInfectionProgress(cure
                                     ? Infectable.MIN_INFECTION
-                                    : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), ((Infectable) entity).getInfectionProgress())
+                                    : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), infectable.getInfectionProgress())
                             );
                         }
 

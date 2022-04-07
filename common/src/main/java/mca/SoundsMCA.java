@@ -13,16 +13,16 @@ public interface SoundsMCA {
     SoundEvent reaper_block = register("reaper.block");
     SoundEvent reaper_summon = register("reaper.summon");
 
-    SoundEvent VILLAGER_BABY_LAUGH = register("villager_baby_laugh");//TODO:
+    SoundEvent VILLAGER_BABY_LAUGH = register("villager_baby_laugh"); //TODO: 7.3.0
 
     SoundEvent VILLAGER_MALE_SCREAM = register("villager_male_scream");
     SoundEvent VILLAGER_FEMALE_SCREAM = register("villager_female_scream");
 
     SoundEvent VILLAGER_MALE_LAUGH = register("villager_male_laugh");
-    SoundEvent VILLAGER_FEMALE_LAUGH = register("villager_female_laugh");//TODO:
+    SoundEvent VILLAGER_FEMALE_LAUGH = register("villager_female_laugh"); //TODO: 7.3.0
 
     SoundEvent VILLAGER_MALE_CRY = register("villager_male_cry");
-    SoundEvent VILLAGER_FEMALE_CRY = register("villager_female_cry");//TODO:
+    SoundEvent VILLAGER_FEMALE_CRY = register("villager_female_cry"); //TODO: 7.3.0
 
     SoundEvent VILLAGER_MALE_ANGRY = register("villager_male_angry");//TODO:
     SoundEvent VILLAGER_FEMALE_ANGRY = register("villager_female_angry");//TODO:

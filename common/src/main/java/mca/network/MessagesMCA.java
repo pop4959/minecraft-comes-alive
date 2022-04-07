@@ -1,20 +1,21 @@
 package mca.network;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.client.AnalysisResults;
-import mca.network.client.BabyNameResponse;
-import mca.network.client.VillagerNameResponse;
-import mca.network.client.FamilyTreeUUIDResponse;
-import mca.network.client.GetChildDataResponse;
-import mca.network.client.GetFamilyTreeResponse;
-import mca.network.client.GetInteractDataResponse;
-import mca.network.client.GetVillageFailedResponse;
-import mca.network.client.GetVillageResponse;
-import mca.network.client.GetVillagerResponse;
-import mca.network.client.InteractionDialogueResponse;
-import mca.network.client.OpenGuiRequest;
-import mca.network.client.GetFamilyResponse;
-import mca.network.client.ShowToastRequest;
+import mca.network.c2s.AnalysisResults;
+import mca.network.c2s.BabyNameResponse;
+import mca.network.c2s.VillagerNameResponse;
+import mca.network.c2s.FamilyTreeUUIDResponse;
+import mca.network.c2s.GetChildDataResponse;
+import mca.network.c2s.GetFamilyTreeResponse;
+import mca.network.c2s.GetInteractDataResponse;
+import mca.network.c2s.GetVillageFailedResponse;
+import mca.network.c2s.GetVillageResponse;
+import mca.network.c2s.GetVillagerResponse;
+import mca.network.c2s.InteractionDialogueResponse;
+import mca.network.c2s.OpenGuiRequest;
+import mca.network.c2s.GetFamilyResponse;
+import mca.network.c2s.ShowToastRequest;
+import mca.network.s2c.*;
 
 public interface MessagesMCA {
     static void bootstrap() {

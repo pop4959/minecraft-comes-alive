@@ -151,8 +151,8 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
             entity.getVillagerBrain().modifyMoodValue(-moodAffect);
 
             // seen murder
-            if (cause.getAttacker() instanceof PlayerEntity) {
-                entity.getVillagerBrain().getMemoriesForPlayer((PlayerEntity)cause.getAttacker()).modHearts(-20);
+            if (cause.getAttacker() instanceof PlayerEntity player) {
+                entity.getVillagerBrain().getMemoriesForPlayer(player).modHearts(-20);
             }
         }
 

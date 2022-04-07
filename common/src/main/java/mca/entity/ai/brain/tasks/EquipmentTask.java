@@ -49,12 +49,12 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
     }
 
     private void equipBestArmor(VillagerEntityMCA villager, EquipmentSlot slot, Item fallback) {
-        ItemStack stack = new ItemStack(InventoryUtils.getBestArmor(villager.getInventory(), slot).map(s -> (Item)s).orElse(fallback));
+        ItemStack stack = new ItemStack(InventoryUtils.getBestArmor(villager.getInventory(), slot).map(Item.class::cast).orElse(fallback));
         villager.equipStack(slot, stack);
     }
 
     private void equipBestWeapon(VillagerEntityMCA villager, Item fallback) {
-        ItemStack stack = new ItemStack(InventoryUtils.getBestSword(villager.getInventory()).map(s -> (Item)s).orElse(fallback));
+        ItemStack stack = new ItemStack(InventoryUtils.getBestSword(villager.getInventory()).map(Item.class::cast).orElse(fallback));
         villager.equipStack(EquipmentSlot.MAINHAND, stack);
     }
 

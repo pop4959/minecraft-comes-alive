@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mca.resources.API;
 import mca.resources.Supporters;
 
 class TemplateSet {
@@ -28,7 +27,7 @@ class TemplateSet {
     }
 
     private String replaceAll(String name, String input) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         Matcher matcher = Pattern.compile("\\%" + name + "(\\:[0-9]+)?\\%", Pattern.CASE_INSENSITIVE).matcher(input);
 
         Map<String, String> computed = new HashMap<>();

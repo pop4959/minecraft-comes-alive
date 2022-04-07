@@ -37,11 +37,11 @@ public final class NameSet {
         String first = PoolUtil.pickOne(first(), null, rng);
         String second = PoolUtil.pickOne(second(), null, rng);
 
-        if (Strings.isNullOrEmpty(separator)) {
+        if (Strings.isNullOrEmpty(separator())) {
             return toTitleCase(first + second);
         }
 
-        return toTitleCase(first) + separator + toTitleCase(second);
+        return toTitleCase(first) + separator() + toTitleCase(second);
     }
 
     static String toTitleCase(String s) {

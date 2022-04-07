@@ -21,7 +21,7 @@ import net.minecraft.village.VillagerProfession;
 public class ClothingList extends JsonDataLoader {
     protected static final Identifier ID = new Identifier("mca", "skins/clothing");
 
-    private final Map<Gender, ProfessionedPool> clothing = new EnumMap<>(Gender.class);
+    private final Map<Gender, ProfessionPool> clothing = new EnumMap<>(Gender.class);
 
     private static ClothingList INSTANCE;
 
@@ -46,57 +46,51 @@ public class ClothingList extends JsonDataLoader {
             }
 
             // adds the skins to all respective pools.
-            gender.getTransients().map(this::byGender).forEach(pool -> {
-                JsonHelper.asObject(file, "root").getAsJsonObject().entrySet().forEach(entry -> {
-                    pool.addToPool(
-                        id.getNamespace(),
-                        gender,
-                        new Identifier(entry.getKey()),
-                        JsonHelper.getInt(entry.getValue().getAsJsonObject(), "count"),
-                        JsonHelper.getFloat(entry.getValue().getAsJsonObject(), "chance", 1)
-                    );
-                });
-            });
+            gender.getTransients().map(this::byGender).forEach(pool ->
+                    JsonHelper.asObject(file, "root").getAsJsonObject().entrySet().forEach(entry ->
+                            pool.addToPool(
+                                    id.getNamespace(),
+                                    gender,
+                                    new Identifier(entry.getKey()),
+                                    JsonHelper.getInt(entry.getValue().getAsJsonObject(), "count"),
+                                    JsonHelper.getFloat(entry.getValue().getAsJsonObject(), "chance", 1)
+                            )
+            ));
         });
     }
 
     /**
      * Gets a pool of clothing options based on a specific gender.
      */
-    public ProfessionedPool byGender(Gender gender) {
-        return clothing.computeIfAbsent(gender, ProfessionedPool::new);
+    public ProfessionPool byGender(Gender gender) {
+        return clothing.computeIfAbsent(gender, ProfessionPool::new);
     }
 
     /**
      * Gets a pool of clothing options valid for this entity's gender and profession.
      */
     public WeightedPool<String> getPool(VillagerLike<?> villager) {
-        switch (villager.getAgeState()) {
-            case BABY:
-            case TODDLER:
-                return ClothingList.getInstance()
-                        .byGender(villager.getGenetics().getGender())
-                        .byIdentifier(new Identifier("mca:baby"));
-            case CHILD:
-            case TEEN:
-                return ClothingList.getInstance()
-                        .byGender(villager.getGenetics().getGender())
-                        .byIdentifier(new Identifier("mca:child"));
-            default:
-                return getPool(villager.getGenetics().getGender(), villager.getVillagerData().getProfession());
-        }
+        return switch (villager.getAgeState()) {
+            case BABY, TODDLER -> ClothingList.getInstance()
+                    .byGender(villager.getGenetics().getGender())
+                    .byIdentifier(new Identifier("mca:baby"));
+            case CHILD, TEEN -> ClothingList.getInstance()
+                    .byGender(villager.getGenetics().getGender())
+                    .byIdentifier(new Identifier("mca:child"));
+            default -> getPool(villager.getGenetics().getGender(), villager.getVillagerData().getProfession());
+        };
     }
 
     public WeightedPool<String> getPool(Gender gender, VillagerProfession profession) {
         return byGender(gender).byProfession(profession);
     }
 
-    public static class ProfessionedPool {
+    public static class ProfessionPool {
         private static final WeightedPool<String> EMPTY = new WeightedPool<>("");
 
         private final Map<Identifier, WeightedPool.Mutable<String>> entries = new HashMap<>();
 
-        ProfessionedPool(Gender gender) { }
+        ProfessionPool(Gender gender) { }
 
         public void addToPool(String namespace, Gender gender, Identifier profession, int count, float chance) {
             if (count <= 0) {

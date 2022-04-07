@@ -12,8 +12,8 @@ import mca.entity.ai.Memories;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
-import mca.network.GetChildDataRequest;
-import mca.network.client.OpenGuiRequest;
+import mca.network.s2c.GetChildDataRequest;
+import mca.network.c2s.OpenGuiRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.BabyTracker.ChildSaveState;
 import mca.server.world.data.BabyTracker.MutableChildSaveState;
@@ -244,13 +244,14 @@ public class BabyItem extends Item {
         // notify parents
         Stream.concat(Stream.of(mother, father).filter(Optional::isPresent).map(Optional::get), Stream.of(player))
                 .filter(e -> e instanceof ServerPlayerEntity)
+                .map(ServerPlayerEntity.class::cast)
                 .distinct()
                 .forEach(ply -> {
                     // advancement
-                    CriterionMCA.FAMILY.trigger((ServerPlayerEntity)ply);
+                    CriterionMCA.FAMILY.trigger(ply);
 
                     // set proper dialogue type
-                    Memories memories = child.getVillagerBrain().getMemoriesForPlayer((PlayerEntity) ply);
+                    Memories memories = child.getVillagerBrain().getMemoriesForPlayer(ply);
                     memories.setHearts(Config.getInstance().childInitialHearts);
                 });
 

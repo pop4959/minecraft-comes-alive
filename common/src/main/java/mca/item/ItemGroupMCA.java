@@ -8,6 +8,6 @@ import net.minecraft.util.Identifier;
 public interface ItemGroupMCA {
     ItemGroup MCA_GROUP = Registration.ObjectBuilders.ItemGroups.create(
             new Identifier(MCA.MOD_ID, "mca_tab"),
-            () -> ItemsMCA.ENGAGEMENT_RING.getDefaultStack()
+            ItemsMCA.ENGAGEMENT_RING::getDefaultStack
     );
 }

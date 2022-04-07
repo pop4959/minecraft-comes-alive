@@ -11,7 +11,7 @@ import java.util.Random;
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
-import mca.network.client.AnalysisResults;
+import mca.network.c2s.AnalysisResults;
 import mca.resources.data.SerializablePair;
 import mca.resources.data.analysis.ChanceAnalysis;
 import mca.resources.data.analysis.IntAnalysis;
@@ -31,7 +31,7 @@ public class Dialogues extends JsonDataLoader {
 
     private static Dialogues INSTANCE;
 
-    public static final Dialogues getInstance() {
+    public static Dialogues getInstance() {
         return INSTANCE;
     }
 

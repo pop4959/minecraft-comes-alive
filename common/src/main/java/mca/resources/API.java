@@ -1,16 +1,10 @@
 package mca.resources;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import mca.MCA;
 import mca.resources.Resources.BrokenResourceException;
 import net.minecraft.resource.ResourceManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Class API handles interaction with MCAs configurable options via JSON in the resources folder

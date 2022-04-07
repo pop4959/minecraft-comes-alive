@@ -106,8 +106,8 @@ public class JewelerWorkbench extends Block/* implements BlockEntityProvider*/ {
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity tileEntity = world.getBlockEntity(pos);
-            if (tileEntity instanceof Inventory) {
-                ItemScatterer.spawn(world, pos, (Inventory) tileEntity);
+            if (tileEntity instanceof Inventory invEntity) {
+                ItemScatterer.spawn(world, pos, invEntity);
                 world.updateComparators(pos, this);
             }
             super.onStateReplaced(state, world, pos, newState, isMoving);

@@ -2,15 +2,14 @@ package mca.client.gui;
 
 import mca.cobalt.network.NetworkHandler;
 import mca.item.BabyItem;
-import mca.network.BabyNameRequest;
-import mca.network.BabyNamingVillagerMessage;
+import mca.network.s2c.BabyNameRequest;
+import mca.network.s2c.BabyNamingVillagerMessage;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import java.util.Objects;
 

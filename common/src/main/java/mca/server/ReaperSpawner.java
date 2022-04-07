@@ -49,9 +49,9 @@ public class ReaperSpawner {
 
     public ReaperSpawner(VillageManager manager, NbtCompound nbt) {
         this.manager = manager;
-        mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon -> {
-            activeSummons.put(summon.position.spawnPosition.asLong(), summon);
-        });
+        mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon ->
+                activeSummons.put(summon.position.spawnPosition.asLong(), summon)
+        );
     }
 
     private void warn(World world, BlockPos pos, String phrase) {
@@ -105,9 +105,9 @@ public class ReaperSpawner {
 
         world.setBlockState(pos.down(), Blocks.SOUL_SOIL.getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
         world.setBlockState(pos, BlocksMCA.INFERNAL_FLAME.getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
-        totems.forEach(totem -> {
-            world.setBlockState(totem, BlocksMCA.INFERNAL_FLAME.getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
-        });
+        totems.forEach(totem ->
+                world.setBlockState(totem, BlocksMCA.INFERNAL_FLAME.getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE)
+        );
     }
 
     private void start(SummonPosition pos) {
@@ -141,11 +141,10 @@ public class ReaperSpawner {
     }
 
     private Set<BlockPos> getTotems(World world, BlockPos pos) {
-        return Stream.of(HORIZONTALS).map(d -> pos.offset(d, 3)).filter(pillarCenter -> {
-            return world.getBlockState(pillarCenter).isOf(Blocks.OBSIDIAN)
-                    && world.getBlockState(pillarCenter.down()).isOf(Blocks.OBSIDIAN)
-                    && world.getBlockState(pillarCenter.up()).isIn(BlockTags.FIRE);
-        }).map(BlockPos::up).collect(Collectors.toSet());
+        return Stream.of(HORIZONTALS).map(d -> pos.offset(d, 3)).filter(pillarCenter ->
+                world.getBlockState(pillarCenter).isOf(Blocks.OBSIDIAN)
+                && world.getBlockState(pillarCenter.down()).isOf(Blocks.OBSIDIAN)
+                && world.getBlockState(pillarCenter.up()).isIn(BlockTags.FIRE)).map(BlockPos::up).collect(Collectors.toSet());
     }
 
     public NbtCompound writeNbt() {
