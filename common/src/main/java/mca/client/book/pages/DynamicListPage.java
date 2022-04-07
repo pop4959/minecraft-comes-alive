@@ -1,9 +1,10 @@
 package mca.client.book.pages;
 
+import net.minecraft.text.Text;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
-import net.minecraft.text.Text;
 
 public class DynamicListPage extends ListPage {
     private final Function<Page, List<Text>> generator;

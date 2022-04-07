@@ -1,13 +1,5 @@
 package mca.server;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import mca.Config;
 import mca.MCA;
 import mca.SoundsMCA;
@@ -31,6 +23,10 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ReaperSpawner {
     private static final Direction[] HORIZONTALS = new Direction[] {

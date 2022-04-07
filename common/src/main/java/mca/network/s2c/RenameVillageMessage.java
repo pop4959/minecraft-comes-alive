@@ -2,9 +2,7 @@ package mca.network.s2c;
 
 import mca.cobalt.network.Message;
 import mca.server.world.data.VillageManager;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 
 import java.io.Serial;
 

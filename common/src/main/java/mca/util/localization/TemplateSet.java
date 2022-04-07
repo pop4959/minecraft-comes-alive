@@ -1,13 +1,13 @@
 package mca.util.localization;
 
+import mca.resources.Supporters;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import mca.resources.Supporters;
 
 class TemplateSet {
     static final TemplateSet INSTANCE = new TemplateSet().with("supporter", Supporters::getRandomSupporter);

@@ -1,10 +1,11 @@
 package mca.network.c2s;
 
-import java.io.Serial;
 import mca.ClientProxy;
 import mca.cobalt.network.Message;
 import mca.resources.data.analysis.Analysis;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.io.Serial;
 
 public class AnalysisResults implements Message {
     @Serial

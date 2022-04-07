@@ -1,7 +1,5 @@
 package mca.block;
 
-import java.util.function.BiFunction;
-
 import mca.MCA;
 import mca.cobalt.registration.Registration;
 import net.minecraft.block.Block;
@@ -11,6 +9,8 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+
+import java.util.function.BiFunction;
 
 public interface BlockEntityTypesMCA {
 

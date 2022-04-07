@@ -17,6 +17,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+
 import java.util.*;
 
 public class ServerInteractionManager {

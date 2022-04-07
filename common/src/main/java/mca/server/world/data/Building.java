@@ -1,10 +1,5 @@
 package mca.server.world.data;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Stream;
-
 import mca.Config;
 import mca.resources.API;
 import mca.resources.data.BuildingType;
@@ -29,6 +24,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestType;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static net.minecraft.tag.BlockTags.LEAVES;
 

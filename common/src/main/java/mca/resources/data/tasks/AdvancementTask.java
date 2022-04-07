@@ -1,12 +1,13 @@
 package mca.resources.data.tasks;
 
 import com.google.gson.JsonObject;
-import java.util.Objects;
 import mca.server.world.data.Village;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
+
+import java.util.Objects;
 
 public class AdvancementTask extends Task {
     private final String identifier;

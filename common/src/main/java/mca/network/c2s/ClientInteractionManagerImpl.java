@@ -1,7 +1,5 @@
 package mca.network.c2s;
 
-import java.util.Optional;
-
 import mca.client.book.Book;
 import mca.client.gui.*;
 import mca.entity.VillagerLike;
@@ -15,6 +13,8 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+
+import java.util.Optional;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {
 

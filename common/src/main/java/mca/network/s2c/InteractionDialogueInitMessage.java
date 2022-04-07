@@ -1,7 +1,5 @@
 package mca.network.s2c;
 
-import java.io.Serial;
-import java.util.UUID;
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
@@ -10,6 +8,9 @@ import mca.resources.Dialogues;
 import mca.resources.data.dialogue.Question;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.io.Serial;
+import java.util.UUID;
 
 public class InteractionDialogueInitMessage implements Message {
     @Serial

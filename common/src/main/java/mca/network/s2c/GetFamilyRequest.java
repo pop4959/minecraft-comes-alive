@@ -1,7 +1,5 @@
 package mca.network.s2c;
 
-import java.io.Serial;
-import java.util.stream.Stream;
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
@@ -10,6 +8,9 @@ import mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.io.Serial;
+import java.util.stream.Stream;
 
 public class GetFamilyRequest implements Message {
     @Serial

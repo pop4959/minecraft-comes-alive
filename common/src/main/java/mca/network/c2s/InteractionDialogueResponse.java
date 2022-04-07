@@ -1,12 +1,13 @@
 package mca.network.c2s;
 
-import java.io.Serial;
-import java.util.List;
 import mca.ClientProxy;
 import mca.cobalt.network.Message;
 import mca.entity.VillagerEntityMCA;
 import mca.resources.data.dialogue.Question;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.io.Serial;
+import java.util.List;
 
 public class InteractionDialogueResponse implements Message {
     @Serial

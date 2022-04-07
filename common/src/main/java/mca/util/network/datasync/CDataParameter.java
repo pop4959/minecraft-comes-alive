@@ -5,6 +5,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.nbt.NbtCompound;
+
 import java.util.function.BiFunction;
 
 public class CDataParameter<T> implements CParameter<T, T> {

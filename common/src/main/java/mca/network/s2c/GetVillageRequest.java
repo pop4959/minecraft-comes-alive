@@ -1,8 +1,5 @@
 package mca.network.s2c;
 
-import java.io.Serial;
-import java.util.Optional;
-import java.util.Set;
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.c2s.GetVillageFailedResponse;
@@ -11,6 +8,10 @@ import mca.resources.Rank;
 import mca.resources.Tasks;
 import mca.server.world.data.Village;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.io.Serial;
+import java.util.Optional;
+import java.util.Set;
 
 public class GetVillageRequest implements Message {
     @Serial

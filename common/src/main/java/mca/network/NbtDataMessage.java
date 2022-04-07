@@ -1,10 +1,10 @@
 package mca.network;
 
-import java.io.*;
-
 import mca.cobalt.network.Message;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+
+import java.io.*;
 
 public abstract class NbtDataMessage implements Message {
     @Serial

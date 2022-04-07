@@ -1,8 +1,6 @@
 package mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import mca.entity.EquipmentSet;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
@@ -15,6 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class EquipmentTask extends Task<VillagerEntityMCA> {
     private static final int COOLDOWN = 100;

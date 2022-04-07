@@ -1,13 +1,13 @@
 package mca.entity.ai;
 
+import mca.entity.ai.relationship.AgeState;
+import net.minecraft.util.Language;
+
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import mca.entity.ai.relationship.AgeState;
-import net.minecraft.util.Language;
 
 public enum DialogueType {
     ADULT(null),

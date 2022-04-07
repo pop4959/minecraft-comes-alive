@@ -2,39 +2,12 @@ package mca.entity;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
-
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Predicate;
-
-import mca.Config;
-import mca.MCA;
-import mca.ParticleTypesMCA;
-import mca.SoundsMCA;
-import mca.TagsMCA;
+import mca.*;
 import mca.advancement.criterion.CriterionMCA;
-import mca.entity.ai.Chore;
-import mca.entity.ai.BreedableRelationship;
-import mca.entity.ai.Genetics;
-import mca.entity.ai.Memories;
-import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.entity.ai.Messenger;
-import mca.entity.ai.Mood;
-import mca.entity.ai.MoveState;
-import mca.entity.ai.ProfessionsMCA;
-import mca.entity.ai.Residency;
-import mca.entity.ai.Traits;
-import mca.entity.ai.VillagerNavigation;
+import mca.entity.ai.*;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.brain.VillagerTasksMCA;
-import mca.entity.ai.relationship.AgeState;
-import mca.entity.ai.relationship.CompassionateEntity;
-import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.Personality;
-import mca.entity.ai.relationship.VillagerDimensions;
+import mca.entity.ai.relationship.*;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
 import mca.server.world.data.Village;
@@ -110,6 +83,13 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<VillagerEntityMCA>, NamedScreenHandlerFactory, CompassionateEntity<BreedableRelationship>, CrossbowUser {
     private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", MIN_INFECTION);

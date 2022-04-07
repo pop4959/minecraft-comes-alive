@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
+
 import java.util.Comparator;
 
 public class HuntingTask extends AbstractChoreTask {

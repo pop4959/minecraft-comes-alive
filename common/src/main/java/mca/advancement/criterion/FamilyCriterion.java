@@ -1,7 +1,6 @@
 package mca.advancement.criterion;
 
 import com.google.gson.JsonObject;
-
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.minecraft.advancement.criterion.AbstractCriterion;
@@ -11,7 +10,6 @@ import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate.Extended;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 
 public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Conditions> {

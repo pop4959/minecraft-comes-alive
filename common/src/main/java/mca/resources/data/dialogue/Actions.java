@@ -2,9 +2,6 @@ package mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
-import java.util.*;
-import java.util.function.BiFunction;
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
@@ -12,6 +9,12 @@ import mca.network.c2s.InteractionDialogueResponse;
 import mca.resources.Dialogues;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.JsonHelper;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 public class Actions {
     public static final Map<String, Factory<JsonElement>> TYPES = new HashMap<>();

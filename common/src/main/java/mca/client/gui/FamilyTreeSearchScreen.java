@@ -1,8 +1,5 @@
 package mca.client.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.s2c.FamilyTreeUUIDLookup;
 import mca.resources.data.SerializablePair;
@@ -13,6 +10,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 public class FamilyTreeSearchScreen extends Screen {
     static int DATA_WIDTH = 120;

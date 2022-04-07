@@ -1,9 +1,6 @@
 package mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.Random;
 import mca.entity.VillagerEntityMCA;
 import mca.server.world.data.Building;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -13,6 +10,10 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.Random;
 
 public class EnterBuildingTask extends Task<VillagerEntityMCA> {
     private final String building;

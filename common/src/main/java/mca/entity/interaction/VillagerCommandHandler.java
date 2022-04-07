@@ -1,6 +1,5 @@
 package mca.entity.interaction;
 
-import java.util.Optional;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Chore;
@@ -26,6 +25,7 @@ import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerProfession;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityMCA> {
 

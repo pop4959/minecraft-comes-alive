@@ -1,22 +1,25 @@
 package mca.entity.ai.brain;
 
-import java.util.HashMap;
-import java.util.Map;
 import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.Status;
 import mca.entity.VillagerLike;
 import mca.entity.ai.*;
 import mca.entity.ai.relationship.Personality;
-import mca.util.network.datasync.*;
+import mca.util.network.datasync.CDataManager;
+import mca.util.network.datasync.CDataParameter;
+import mca.util.network.datasync.CEnumParameter;
+import mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.brain.*;
+import net.minecraft.entity.ai.brain.Activity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 

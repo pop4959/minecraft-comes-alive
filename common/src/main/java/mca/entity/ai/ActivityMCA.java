@@ -1,7 +1,5 @@
 package mca.entity.ai;
 
-import java.util.function.Supplier;
-
 import mca.MCA;
 import mca.cobalt.registration.Registration;
 import mca.entity.ai.brain.sensor.ExplodingCreeperSensor;
@@ -11,6 +9,8 @@ import net.minecraft.entity.ai.brain.Activity;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.util.Identifier;
+
+import java.util.function.Supplier;
 
 public interface ActivityMCA {
     Activity CHORE = activity("chore");

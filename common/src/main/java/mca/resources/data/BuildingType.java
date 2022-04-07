@@ -1,9 +1,5 @@
 package mca.resources.data;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.*;
-
 import mca.MCA;
 import net.minecraft.block.Block;
 import net.minecraft.tag.ServerTagManagerHolder;
@@ -12,6 +8,10 @@ import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.*;
 
 public final class BuildingType implements Serializable {
     @Serial

@@ -1,16 +1,14 @@
 package mca.entity.ai;
 
+import com.mojang.serialization.Codec;
+import mca.MCA;
+import mca.cobalt.registration.Registration;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.Optional;
-
-import com.mojang.serialization.Codec;
-
-import mca.MCA;
-import mca.cobalt.registration.Registration;
 
 public interface MemoryModuleTypeMCA {
     //if you do not provide a codec, it does not save! however, for things like players, you will likely need to save their UUID beforehand.

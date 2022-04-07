@@ -1,7 +1,6 @@
 package mca.client.render;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import java.util.Map;
 import mca.Config;
 import mca.client.model.VillagerEntityBaseModelMCA;
 import mca.client.model.VillagerEntityModelMCA;
@@ -18,9 +17,10 @@ import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
-
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>> extends BipedEntityRenderer<T, VillagerEntityModelMCA<T>> {
     public VillagerLikeEntityMCARenderer(EntityRendererFactory.Context ctx, VillagerEntityModelMCA<T> model) {

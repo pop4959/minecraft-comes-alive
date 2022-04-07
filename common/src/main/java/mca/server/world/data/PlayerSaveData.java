@@ -1,11 +1,5 @@
 package mca.server.world.data;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
 import mca.cobalt.network.NetworkHandler;
@@ -41,6 +35,9 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
     private final UUID playerId;

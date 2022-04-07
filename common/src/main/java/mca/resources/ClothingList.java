@@ -1,12 +1,6 @@
 package mca.resources;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import com.google.gson.JsonElement;
-
 import mca.MCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
@@ -17,6 +11,8 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
+
+import java.util.*;
 
 public class ClothingList extends JsonDataLoader {
     protected static final Identifier ID = new Identifier("mca", "skins/clothing");

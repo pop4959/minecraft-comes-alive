@@ -1,14 +1,15 @@
 package mca.entity.ai.brain.sensor;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.List;
-import java.util.Set;
 import mca.entity.EntitiesMCA;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.LivingTargetCache;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.server.world.ServerWorld;
+
+import java.util.List;
+import java.util.Set;
 
 public class VillagerMCABabiesSensor extends Sensor<LivingEntity> {
     @Override

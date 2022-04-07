@@ -1,11 +1,12 @@
 package mca.client.book.pages;
 
-import java.util.List;
 import mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
+
+import java.util.List;
 
 public class TextPage extends Page {
     protected String content;

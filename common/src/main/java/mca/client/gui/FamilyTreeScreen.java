@@ -1,5 +1,6 @@
 package mca.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
@@ -19,19 +20,10 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Matrix4f;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.*;
 
 public class FamilyTreeScreen extends Screen {
     private static final int HORIZONTAL_SPACING = 20;

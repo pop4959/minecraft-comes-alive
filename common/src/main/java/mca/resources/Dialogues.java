@@ -1,13 +1,6 @@
 package mca.resources;
 
 import com.google.gson.JsonElement;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
@@ -23,6 +16,8 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
+
+import java.util.*;
 
 public class Dialogues extends JsonDataLoader {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "dialogues");

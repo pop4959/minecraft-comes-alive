@@ -1,17 +1,16 @@
 package mca.network.s2c;
 
-import java.io.Serial;
-import java.util.Locale;
-import java.util.Optional;
 import mca.cobalt.network.Message;
 import mca.server.world.data.Building;
 import mca.server.world.data.GraveyardManager;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
+
+import java.io.Serial;
+import java.util.Locale;
+import java.util.Optional;
 
 public class ReportBuildingMessage implements Message {
     @Serial

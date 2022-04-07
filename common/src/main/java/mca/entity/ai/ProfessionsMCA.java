@@ -1,8 +1,5 @@
 package mca.entity.ai;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import mca.MCA;
 import mca.cobalt.registration.Registration;
 import net.minecraft.sound.SoundEvent;
@@ -11,6 +8,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public interface ProfessionsMCA {
     VillagerProfession OUTLAW = register("outlaw", PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);

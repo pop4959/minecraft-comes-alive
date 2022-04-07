@@ -1,12 +1,6 @@
 package mca.client.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.mojang.blaze3d.systems.RenderSystem;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
@@ -15,27 +9,19 @@ import mca.entity.ai.Traits;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.relationship.CompassionateEntity;
 import mca.entity.ai.relationship.MarriageState;
-import mca.network.s2c.GetInteractDataRequest;
-import mca.network.s2c.InteractionCloseRequest;
-import mca.network.s2c.InteractionDialogueInitMessage;
-import mca.network.s2c.InteractionDialogueMessage;
-import mca.network.s2c.InteractionServerMessage;
-import mca.network.s2c.InteractionVillagerMessage;
+import mca.network.s2c.*;
 import mca.resources.data.analysis.Analysis;
 import mca.resources.data.dialogue.Question;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InteractScreen extends AbstractDynamicScreen {
     public static final Identifier ICON_TEXTURES = new Identifier("mca:textures/gui.png");

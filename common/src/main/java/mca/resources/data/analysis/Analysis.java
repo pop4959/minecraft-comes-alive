@@ -1,12 +1,13 @@
 package mca.resources.data.analysis;
 
+import mca.resources.data.SerializablePair;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import mca.resources.data.SerializablePair;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class Analysis<T extends Serializable> implements Serializable, Iterable<Analysis.AnalysisElement> {
     @Serial

@@ -14,10 +14,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.function.Function;
-
-import org.jetbrains.annotations.Nullable;
 
 public abstract class VillagerLayer<T extends MobEntity & VillagerLike<T>, M extends VillagerEntityModelMCA<T>> extends FeatureRenderer<T, M> {
 

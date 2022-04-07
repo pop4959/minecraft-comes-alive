@@ -1,8 +1,5 @@
 package mca.network.s2c;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.family.FamilyTree;
@@ -10,6 +7,10 @@ import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.c2s.FamilyTreeUUIDResponse;
 import mca.resources.data.SerializablePair;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class FamilyTreeUUIDLookup implements Message {
     private final String search;

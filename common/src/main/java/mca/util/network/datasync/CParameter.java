@@ -1,14 +1,14 @@
 package mca.util.network.datasync;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public interface CParameter<T, TrackedType> {
     static CDataParameter<Integer> create(String id, int def) {

@@ -1,11 +1,10 @@
 package mca.resources.data;
 
+import com.google.common.base.Strings;
+import mca.resources.PoolUtil;
+
 import java.util.Locale;
 import java.util.Random;
-
-import com.google.common.base.Strings;
-
-import mca.resources.PoolUtil;
 
 public final class NameSet {
 

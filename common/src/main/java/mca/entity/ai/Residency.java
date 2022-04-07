@@ -1,10 +1,5 @@
 package mca.entity.ai;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import mca.entity.VillagerEntityMCA;
 import mca.server.world.data.Building;
 import mca.server.world.data.GraveyardManager;
@@ -22,6 +17,11 @@ import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestType;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Villagers need a place to live too.

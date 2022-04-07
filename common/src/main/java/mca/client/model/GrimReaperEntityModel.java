@@ -1,21 +1,16 @@
 package mca.client.model;
 
-import java.util.Map;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import mca.entity.GrimReaperEntity;
 import mca.entity.ReaperAttackState;
-import net.minecraft.client.model.Dilation;
-import net.minecraft.client.model.ModelData;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPartBuilder;
-import net.minecraft.client.model.ModelPartData;
-import net.minecraft.client.model.ModelTransform;
+import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 
-import static mca.client.model.ModelTransformSet.Op.*;
+import java.util.Map;
+
+import static mca.client.model.ModelTransformSet.Op.ADD;
+import static mca.client.model.ModelTransformSet.Op.KEEP;
 import static net.minecraft.client.render.entity.model.EntityModelPartNames.*;
 
 public class GrimReaperEntityModel<T extends GrimReaperEntity> extends BipedEntityModel<T> {

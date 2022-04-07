@@ -1,9 +1,5 @@
 package mca.network.c2s;
 
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import mca.ClientProxy;
 import mca.network.NbtDataMessage;
 import mca.resources.API;
@@ -13,6 +9,11 @@ import mca.resources.data.BuildingType;
 import mca.resources.data.tasks.Task;
 import mca.server.world.data.Village;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.io.Serial;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class GetVillageResponse extends NbtDataMessage {
     @Serial

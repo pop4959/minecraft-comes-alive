@@ -4,9 +4,9 @@ import mca.entity.GrimReaperEntity;
 import net.minecraft.entity.ai.NoWaterTargeting;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.Vec3d;
-import java.util.EnumSet;
-
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
 
 public class GrimReaperIdleGoal extends Goal {
     protected final GrimReaperEntity reaper;

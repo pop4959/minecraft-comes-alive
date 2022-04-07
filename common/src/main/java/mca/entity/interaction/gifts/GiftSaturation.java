@@ -1,7 +1,5 @@
 package mca.entity.interaction.gifts;
 
-import java.util.LinkedList;
-import java.util.List;
 import mca.Config;
 import mca.util.NbtHelper;
 import net.minecraft.item.ItemStack;
@@ -9,6 +7,9 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class GiftSaturation {
     private List<Identifier> values = new LinkedList<>();

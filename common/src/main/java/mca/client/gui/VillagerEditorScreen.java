@@ -1,10 +1,5 @@
 package mca.client.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
 import mca.client.gui.widget.NamedTextFieldWidget;
@@ -39,6 +34,12 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static mca.entity.VillagerLike.VILLAGER_NAME;
 

@@ -1,15 +1,6 @@
 package mca.client.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import mca.client.gui.widget.RectangleWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.s2c.GetVillageRequest;
@@ -35,6 +26,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class BlueprintScreen extends ExtendedScreen {
     //gui element Y positions

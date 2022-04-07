@@ -1,7 +1,5 @@
 package mca.server;
 
-import java.util.LinkedList;
-import java.util.List;
 import mca.Config;
 import mca.ducks.IVillagerEntity;
 import mca.entity.VillagerFactory;
@@ -11,6 +9,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class SpawnQueue {
     private static final SpawnQueue INSTANCE = new SpawnQueue();

@@ -1,7 +1,6 @@
 package mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Optional;
 import mca.Config;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
@@ -14,6 +13,8 @@ import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+
+import java.util.Optional;
 
 public class GreetPlayerTask extends Task<VillagerEntityMCA> {
     private static final int MAX_COOLDOWN = 2000;

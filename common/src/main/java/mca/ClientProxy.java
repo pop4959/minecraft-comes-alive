@@ -1,9 +1,8 @@
 package mca;
 
-import org.jetbrains.annotations.Nullable;
-
 import mca.network.c2s.ClientInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Workaround for Forge's BS

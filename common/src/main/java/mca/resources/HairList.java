@@ -1,8 +1,6 @@
 package mca.resources;
 
 import com.google.gson.JsonElement;
-import java.util.EnumMap;
-import java.util.Map;
 import mca.MCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
@@ -12,6 +10,9 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class HairList extends JsonDataLoader {
     protected static final Identifier ID = new Identifier("mca", "skins/hair");

@@ -2,17 +2,17 @@ package mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 import mca.Config;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.entity.interaction.InteractionPredicate;
 import mca.resources.data.analysis.IntAnalysis;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 public class Result {
     private final Actions actions;

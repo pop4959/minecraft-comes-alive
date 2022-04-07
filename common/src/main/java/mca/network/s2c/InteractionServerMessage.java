@@ -1,7 +1,6 @@
 package mca.network.s2c;
 
 import mca.cobalt.network.Message;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;

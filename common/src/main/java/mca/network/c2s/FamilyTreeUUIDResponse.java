@@ -1,11 +1,12 @@
 package mca.network.c2s;
 
-import java.util.List;
-import java.util.UUID;
 import mca.ClientProxy;
 import mca.cobalt.network.Message;
 import mca.resources.data.SerializablePair;
 import net.minecraft.entity.player.PlayerEntity;
+
+import java.util.List;
+import java.util.UUID;
 
 public class FamilyTreeUUIDResponse implements Message {
     private final List<SerializablePair<UUID, SerializablePair<String, String>>> list;

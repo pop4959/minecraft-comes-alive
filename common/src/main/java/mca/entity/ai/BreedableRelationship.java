@@ -19,7 +19,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.*;
+import java.util.Optional;
 
 /**
  * I know you, you know me, we're all a big happy family.
