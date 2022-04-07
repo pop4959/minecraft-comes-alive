@@ -32,7 +32,7 @@ public class FamilyTreeSearchScreen extends Screen {
     }
 
     @Override
-    public boolean isPauseScreen() {
+    public boolean shouldPause() {
         return false;
     }
 
