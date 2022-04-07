@@ -28,7 +28,7 @@ class TemplateSet {
 
     private String replaceAll(String name, String input) {
         StringBuilder buffer = new StringBuilder();
-        Matcher matcher = Pattern.compile("\\%" + name + "(\\:[0-9]+)?\\%", Pattern.CASE_INSENSITIVE).matcher(input);
+        Matcher matcher = Pattern.compile("%" + name + "(:[0-9]+)?%", Pattern.CASE_INSENSITIVE).matcher(input);
 
         Map<String, String> computed = new HashMap<>();
 

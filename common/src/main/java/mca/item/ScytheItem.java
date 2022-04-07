@@ -53,7 +53,6 @@ public class ScytheItem extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-
         if (!(entity instanceof LivingEntity living)) {
             return;
         }

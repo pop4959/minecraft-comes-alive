@@ -24,14 +24,14 @@ public interface SoundsMCA {
     SoundEvent VILLAGER_MALE_CRY = register("villager_male_cry");
     SoundEvent VILLAGER_FEMALE_CRY = register("villager_female_cry"); //TODO: 7.3.0
 
-    SoundEvent VILLAGER_MALE_ANGRY = register("villager_male_angry");//TODO:
-    SoundEvent VILLAGER_FEMALE_ANGRY = register("villager_female_angry");//TODO:
+    SoundEvent VILLAGER_MALE_ANGRY = register("villager_male_angry"); //TODO: 7.3.0
+    SoundEvent VILLAGER_FEMALE_ANGRY = register("villager_female_angry"); //TODO: 7.3.0
 
     SoundEvent VILLAGER_MALE_GREET = register("villager_male_greet");
-    SoundEvent VILLAGER_FEMALE_GREET = register("villager_female_greet");//TODO:
+    SoundEvent VILLAGER_FEMALE_GREET = register("villager_female_greet"); //TODO: 7.3.0
 
     SoundEvent VILLAGER_MALE_SURPRISE = register("villager_male_surprise");
-    SoundEvent VILLAGER_FEMALE_SURPRISE = register("villager_female_surprise");//TODO:
+    SoundEvent VILLAGER_FEMALE_SURPRISE = register("villager_female_surprise"); //TODO: 7.3.0
 
     static void bootstrap() { }
 

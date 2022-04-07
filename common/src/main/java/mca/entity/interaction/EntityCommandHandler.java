@@ -52,30 +52,18 @@ public abstract class EntityCommandHandler<T extends Entity & VillagerLike<?>> {
      */
     public boolean handle(ServerPlayerEntity player, String command) {
         switch (command) {
-            case "clothing.randClothing" -> {
-                entity.setClothes(ClothingList.getInstance().getPool(entity).pickOne());
-                return false;
-            }
-            case "clothing.prevClothing" -> {
-                entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), -1));
-                return false;
-            }
-            case "clothing.nextClothing" -> {
-                entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), 1));
-                return false;
-            }
-            case "clothing.randHair" -> {
-                entity.setHair(HairList.getInstance().pickOne(entity));
-                return false;
-            }
-            case "clothing.prevHair" -> {
-                entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), -1));
-                return false;
-            }
-            case "clothing.nextHair" -> {
-                entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), 1));
-                return false;
-            }
+            case "clothing.randClothing" ->
+                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickOne());
+            case "clothing.prevClothing" ->
+                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), -1));
+            case "clothing.nextClothing" ->
+                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), 1));
+            case "clothing.randHair" ->
+                    entity.setHair(HairList.getInstance().pickOne(entity));
+            case "clothing.prevHair" ->
+                    entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), -1));
+            case "clothing.nextHair" ->
+                    entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), 1));
         }
         return false;
     }

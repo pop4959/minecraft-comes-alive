@@ -7,7 +7,6 @@ import mca.network.s2c.*;
 public interface MessagesMCA {
     static void bootstrap() {
         NetworkHandler.registerMessage(InteractionVillagerMessage.class);
-        NetworkHandler.registerMessage(InteractionServerMessage.class);
         NetworkHandler.registerMessage(BabyNamingVillagerMessage.class);
         NetworkHandler.registerMessage(GetFamilyRequest.class);
         NetworkHandler.registerMessage(GetFamilyResponse.class);

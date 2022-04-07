@@ -367,9 +367,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         } else if (button.notifyServer()) {
             /* Anything that should notify the server is handled here */
 
-            if (button.targetServer()) {
-                NetworkHandler.sendToServer(new InteractionServerMessage(id));
-            } else {
+            if (!button.targetServer()) {
                 NetworkHandler.sendToServer(new InteractionVillagerMessage(id, villager.asEntity().getUuid()));
             }
         } else if (id.equals("gui.button.gift")) {
