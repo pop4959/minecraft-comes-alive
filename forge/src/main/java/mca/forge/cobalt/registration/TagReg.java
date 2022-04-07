@@ -1,12 +1,12 @@
 package mca.forge.cobalt.registration;
 
-import java.util.List;
-import java.util.function.Supplier;
-
 import net.minecraft.tag.Tag;
 import net.minecraft.tag.Tag.Identified;
 import net.minecraft.tag.TagGroup;
 import net.minecraft.util.Identifier;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 final class TagReg<T> implements Identified<T> {
 

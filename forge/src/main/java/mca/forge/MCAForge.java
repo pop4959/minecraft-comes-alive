@@ -4,17 +4,13 @@ import mca.ParticleTypesMCA;
 import mca.SoundsMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
-import mca.forge.cobalt.network.NetworkHandlerImpl;
-import mca.forge.cobalt.registration.RegistrationImpl;
 import mca.entity.EntitiesMCA;
 import mca.entity.interaction.gifts.GiftLoader;
+import mca.forge.cobalt.network.NetworkHandlerImpl;
+import mca.forge.cobalt.registration.RegistrationImpl;
 import mca.item.ItemsMCA;
 import mca.network.MessagesMCA;
-import mca.resources.ApiReloadListener;
-import mca.resources.ClothingList;
-import mca.resources.Dialogues;
-import mca.resources.HairList;
-import mca.resources.Tasks;
+import mca.resources.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -51,8 +47,6 @@ public final class MCAForge {
     @SubscribeEvent
     public static void onCreateEntityAttributes(EntityAttributeCreationEvent event) {
         EntitiesMCA.bootstrapAttributes();
-        RegistrationImpl.ENTITY_ATTRIBUTES.forEach((type, attributes) -> {
-            event.put(type, attributes.get().build());
-        });
+        RegistrationImpl.ENTITY_ATTRIBUTES.forEach((type, attributes) -> event.put(type, attributes.get().build()));
     }
 }

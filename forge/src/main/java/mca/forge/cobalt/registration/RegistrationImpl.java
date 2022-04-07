@@ -1,20 +1,7 @@
 package mca.forge.cobalt.registration;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
-
 import mca.cobalt.registration.Registration;
 import mca.cobalt.registration.Registration.BlockEntityTypeFactory;
 import mca.cobalt.registration.Registration.PoiFactory;
@@ -51,6 +38,13 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
+
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Contains all the crob required to interface with forge's code
@@ -95,9 +89,8 @@ public class RegistrationImpl extends Registration.Impl {
 
     @Override
     public <T extends BlockEntity> BlockEntityTypeFactory<T> blockEntity() {
-        return (id, factory, blocks) -> {
-            return BlockEntityType.Builder.create(factory::apply, blocks).build(Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id.toString()));
-        };
+        return (id, factory, blocks) ->
+                BlockEntityType.Builder.create(factory::apply, blocks).build(Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id.toString()));
     }
 
     @Override

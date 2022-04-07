@@ -1,20 +1,14 @@
 package mca.fabric.cobalt.registration;
 
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
-
 import mca.cobalt.registration.Registration;
 import mca.cobalt.registration.Registration.BlockEntityTypeFactory;
 import mca.cobalt.registration.Registration.PoiFactory;
 import mca.cobalt.registration.Registration.ProfessionFactory;
-import mca.mixin.MixinSensorType;
 import mca.mixin.MixinActivity;
 import mca.mixin.MixinMemoryModuleType;
+import mca.mixin.MixinSensorType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -43,6 +37,11 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 public class RegistrationImpl extends Registration.Impl {
     @Override
     public <T> T register(Registry<? super T> registry, Identifier id, T obj) {
@@ -57,9 +56,8 @@ public class RegistrationImpl extends Registration.Impl {
 
     @Override
     public <T extends BlockEntity> BlockEntityTypeFactory<T> blockEntity() {
-        return (id, factory, blocks) -> {
-            return FabricBlockEntityTypeBuilder.create(factory::apply, blocks).build(Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id.toString()));
-        };
+        return (id, factory, blocks) ->
+                FabricBlockEntityTypeBuilder.create(factory::apply, blocks).build(Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id.toString()));
     }
 
     @Override

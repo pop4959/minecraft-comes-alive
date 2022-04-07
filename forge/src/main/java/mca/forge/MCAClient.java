@@ -11,17 +11,17 @@ import mca.client.render.TombstoneBlockEntityRenderer;
 import mca.client.render.VillagerEntityMCARenderer;
 import mca.client.render.ZombieVillagerEntityMCARenderer;
 import mca.client.resources.ColorPaletteLoader;
-import mca.forge.cobalt.registration.RegistrationImpl;
 import mca.entity.EntitiesMCA;
+import mca.forge.cobalt.registration.RegistrationImpl;
 import mca.item.BabyItem;
 import mca.item.ItemsMCA;
 import mca.resources.Supporters;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.client.render.entity.EntityRenderers;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.entity.EntityRenderers;
 import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.resource.ReloadableResourceManager;
@@ -66,12 +66,12 @@ public final class MCAClient {
 
         BlockEntityRendererFactories.register(BlockEntityTypesMCA.TOMBSTONE, TombstoneBlockEntityRenderer::new);
 
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY, new Identifier("invalidated"), (stack, world, entity, i) -> {
-            return BabyItem.hasBeenInvalidated(stack) ? 1 : 0;
-        });
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL, new Identifier("invalidated"), (stack, world, entity, i) -> {
-            return BabyItem.hasBeenInvalidated(stack) ? 1 : 0;
-        });
+        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY, new Identifier("invalidated"), (stack, world, entity, i) ->
+                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL, new Identifier("invalidated"), (stack, world, entity, i) ->
+                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
 
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME, RenderLayer.getCutout());
     }
