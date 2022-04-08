@@ -12,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.Serial;
 import java.util.stream.Stream;
 
-public class GetFamilyRequest implements Message {
+public class GetFamilyRequest implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -4415670234855916259L;
 

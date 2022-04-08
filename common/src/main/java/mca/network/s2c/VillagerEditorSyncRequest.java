@@ -1,11 +1,6 @@
 package mca.network.s2c;
 
-import java.io.Serial;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
@@ -30,7 +25,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
-public class VillagerEditorSyncRequest extends NbtDataMessage {
+import java.io.Serial;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+public class VillagerEditorSyncRequest extends NbtDataMessage implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -5581564927127176555L;
 

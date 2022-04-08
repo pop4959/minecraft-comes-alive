@@ -8,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.Serial;
 import java.util.UUID;
 
-public class CallToPlayerMessage implements Message {
+public class CallToPlayerMessage implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = 2556280539773400447L;
 

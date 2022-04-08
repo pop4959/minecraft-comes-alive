@@ -7,7 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 
-public class BabyNamingVillagerMessage implements Message {
+public class BabyNamingVillagerMessage implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -7160822837267592011L;
 

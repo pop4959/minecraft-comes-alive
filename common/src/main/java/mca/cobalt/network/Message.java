@@ -1,5 +1,6 @@
 package mca.cobalt.network;
 
+import mca.MCA;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -37,5 +38,17 @@ public interface Message extends Serializable {
 
     default void receive(ServerPlayerEntity e) {
         // N/A
+    }
+
+    // More Forge-specific bs
+    interface ServerMessage extends Message {
+        @Override
+        default void receive(PlayerEntity e) {
+            if (e instanceof ServerPlayerEntity player) {
+                receive(player);
+            } else {
+                MCA.LOGGER.error("Executing " + getClass().getSimpleName() + " from incorrect side!");
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 
-public class BabyNameRequest implements Message {
+public class BabyNameRequest implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = 4965378949498898298L;
 
