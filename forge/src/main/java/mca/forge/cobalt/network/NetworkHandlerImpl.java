@@ -3,6 +3,7 @@ package mca.forge.cobalt.network;
 import mca.MCA;
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.network.NetworkRegistry;
@@ -26,7 +27,10 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
                 Message::encode,
                 b -> (T) Message.decode(b),
                 (m, ctx) -> {
-                    ctx.get().enqueueWork(() -> m.receive(ctx.get().getSender()));
+                    ctx.get().enqueueWork(() -> {
+                        PlayerEntity sender = ctx.get().getSender();
+                        m.receive(sender);
+                    });
                     ctx.get().setPacketHandled(true);
                 });
     }

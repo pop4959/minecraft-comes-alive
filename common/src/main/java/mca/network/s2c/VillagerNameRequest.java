@@ -9,7 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 
-public class VillagerNameRequest implements Message {
+public class VillagerNameRequest implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -7850240766540487322L;
 

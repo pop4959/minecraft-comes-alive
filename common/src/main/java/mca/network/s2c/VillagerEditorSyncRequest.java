@@ -1,5 +1,6 @@
 package mca.network.s2c;
 
+import mca.cobalt.network.Message;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
@@ -28,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class VillagerEditorSyncRequest extends NbtDataMessage {
+public class VillagerEditorSyncRequest extends NbtDataMessage implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -5581564927127176555L;
 
