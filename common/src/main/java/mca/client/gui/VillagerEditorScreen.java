@@ -359,6 +359,7 @@ public class VillagerEditorScreen extends Screen {
             // Failsafe-conditions for empty names
             if (villagerUUID.equals(playerUUID)) {
                 villagerName = client.player.getName();
+                villager.setTrackedValue(VILLAGER_NAME, villagerName.asString());
             }
         }
         villagerNameField = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH / 3 * 2, 18, new TranslatableText("structure_block.structure_name")));
