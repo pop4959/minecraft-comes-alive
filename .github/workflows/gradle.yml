@@ -53,7 +53,7 @@ jobs:
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"
           changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/${{steps.tag.outputs.tag}}/changelog.md)"
-          release_type: "release"
+          release_type: "alpha"
       - name: "Upload Forge to CurseForge"
         uses: itsmeow/curseforge-upload@v3
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
@@ -67,4 +67,4 @@ jobs:
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"
           changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/${{steps.tag.outputs.tag}}/changelog.md)"
-          release_type: "release"
+          release_type: "alpha"
