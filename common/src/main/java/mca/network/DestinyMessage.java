@@ -33,6 +33,8 @@ public class DestinyMessage implements Message {
             player.teleport(pos.getX(), pos.getY(), pos.getZ());
         }, () -> {
             BlockPos pos = player.getWorld().getSpawnPos();
+
+            player.clearStatusEffects();
             player.teleport(pos.getX(), pos.getY(), pos.getZ());
         });
 
