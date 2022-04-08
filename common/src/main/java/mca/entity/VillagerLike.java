@@ -126,7 +126,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         }
     }
 
-    default Identifier getProfessionId() { return null; }
+    default Identifier getProfessionId() { return new Identifier("mca:none"); }
 
     default String getProfessionName() {
         String professionName = (

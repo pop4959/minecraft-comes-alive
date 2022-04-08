@@ -15,6 +15,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -66,7 +67,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage {
                     String clothes = "";
                     if (entity instanceof PlayerEntity) {
                         clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickNext(villagerData.getString("clothes"), getData().getInt("offset"));
-                    } else if (entity instanceof VillagerLike villager) {
+                    } else if (entity instanceof VillagerLike<?> villager) {
                         clothes = ClothingList.getInstance().getPool(villager).pickNext(villager.getClothes(), getData().getInt("offset"));
                     }
                     villagerData.putString("clothes", clothes);
@@ -136,7 +137,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage {
     }
 
     private void syncFamilyTree(ServerPlayerEntity player, Entity entity, NbtCompound villagerData) {
-        FamilyTree tree = FamilyTree.get(player.getWorld());
+        FamilyTree tree = FamilyTree.get((ServerWorld)entity.world);
         FamilyTreeNode entry = tree.getOrCreate(entity);
         entry.setGender(getGender(getData()));
         entry.setName(getData().getString("villagerName"));

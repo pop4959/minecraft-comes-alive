@@ -48,7 +48,7 @@ public class VillagerEditorScreen extends Screen {
     private final UUID playerUUID;
     private int villagerBreedingAge;
     protected String page;
-    protected final VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.create(MinecraftClient.getInstance().world);
+    protected final VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
     protected static final int DATA_WIDTH = 175;
     private int traitPage = 0;
     private static final int TRAITS_PER_PAGE = 8;
