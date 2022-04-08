@@ -9,7 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.Serial;
 import java.util.UUID;
 
-public class InteractionDialogueMessage implements Message {
+public class InteractionDialogueMessage implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = 1462101145658166706L;
 

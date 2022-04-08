@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class FamilyTreeUUIDLookup implements Message {
+public class FamilyTreeUUIDLookup implements Message.ServerMessage {
     private final String search;
 
     public FamilyTreeUUIDLookup(String search) {

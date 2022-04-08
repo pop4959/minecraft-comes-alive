@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class GetFamilyTreeRequest implements Message {
+public class GetFamilyTreeRequest implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -6232925305386763715L;
 

@@ -18,7 +18,7 @@ import java.io.Serial;
 import java.util.Optional;
 import java.util.UUID;
 
-public class GetVillagerRequest implements Message {
+public class GetVillagerRequest implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = -4415670234855916259L;
 

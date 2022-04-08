@@ -7,7 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.UUID;
 
-public class InteractionVillagerMessage implements Message {
+public class InteractionVillagerMessage implements Message.ServerMessage {
     private static final long serialVersionUID = 2563941495766992462L;
 
     private final String command;

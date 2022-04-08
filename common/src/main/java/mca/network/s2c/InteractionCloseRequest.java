@@ -8,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.Serial;
 import java.util.UUID;
 
-public class InteractionCloseRequest implements Message {
+public class InteractionCloseRequest implements Message.ServerMessage {
     @Serial
     private static final long serialVersionUID = 5410526074172819931L;
 
