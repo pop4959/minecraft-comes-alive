@@ -241,11 +241,13 @@ public class ServerInteractionManager {
             }
 
             // Notify the sender of the success and end both marriages.
-            successMessage(sender, new TranslatableText("server.endMarriage", senderData.getSpouseName()));
+            senderData.getSpouseName().ifPresent(name ->
+                    successMessage(sender, new TranslatableText("server.endMarriage", name.getString()))
+            );
             senderData.getSpouse().ifPresent(spouse -> {
-                if (spouse instanceof PlayerEntity) {
+                if (spouse instanceof PlayerEntity player) {
                     // Notify the ex if they are online.
-                    failMessage((PlayerEntity)spouse, new TranslatableText("server.marriageEnded", sender.getEntityName()));
+                    failMessage(player, new TranslatableText("server.marriageEnded", sender.getEntityName()));
                 }
             });
             senderData.endMarriage(MarriageState.SINGLE);
