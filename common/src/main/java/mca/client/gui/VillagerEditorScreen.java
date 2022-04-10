@@ -1,5 +1,6 @@
 package mca.client.gui;
 
+import mca.MCA;
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
 import mca.client.gui.widget.NamedTextFieldWidget;
@@ -31,7 +32,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
@@ -203,7 +203,7 @@ public class VillagerEditorScreen extends Screen {
                 addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
                         genetics.getGene(Genetics.HEMOGLOBIN),
                         genetics.getGene(Genetics.MELANIN),
-                        new Identifier("mca:textures/colormap/villager_skin.png"),
+                        MCA.locate("textures/colormap/villager_skin.png"),
                         (vx, vy) -> {
                             genetics.setGene(Genetics.HEMOGLOBIN, vx.floatValue());
                             genetics.setGene(Genetics.MELANIN, vy.floatValue());
@@ -243,7 +243,7 @@ public class VillagerEditorScreen extends Screen {
                 addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
                         genetics.getGene(Genetics.PHEOMELANIN),
                         genetics.getGene(Genetics.EUMELANIN),
-                        new Identifier("mca:textures/colormap/villager_hair.png"),
+                        MCA.locate("textures/colormap/villager_hair.png"),
                         (vx, vy) -> {
                             genetics.setGene(Genetics.PHEOMELANIN, vx.floatValue());
                             genetics.setGene(Genetics.EUMELANIN, vy.floatValue());

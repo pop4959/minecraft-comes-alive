@@ -4,12 +4,14 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Dynamic;
 import mca.*;
 import mca.advancement.criterion.CriterionMCA;
+import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.*;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.brain.VillagerTasksMCA;
 import mca.entity.ai.relationship.*;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
+import mca.network.c2s.InteractionVillagerMessage;
 import mca.server.world.data.Village;
 import mca.util.InventoryUtils;
 import mca.util.network.datasync.CDataManager;
@@ -384,13 +386,19 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get()) {
-            if (!getVillagerBrain().isPanicking() && !player.isSneaking()) {
+            if (!getVillagerBrain().isPanicking()) {
                 playWelcomeSound();
 
                 //make sure dialogueType is synced in case the client needs it
                 getDialogueType(player);
 
-                return interactions.interactAt(player, pos, hand);
+                if (player.isSneaking()) {
+                    if (player instanceof ServerPlayerEntity e) {
+                        NetworkHandler.sendToPlayer(new InteractionVillagerMessage("trade", uuid), e);
+                    }
+                } else {
+                    return interactions.interactAt(player, pos, hand);
+                }
             }
         }
         return super.interactAt(player, pos, hand);

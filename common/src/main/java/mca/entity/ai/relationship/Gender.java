@@ -4,7 +4,6 @@ import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ZombieVillagerEntityMCA;
 import net.minecraft.entity.EntityType;
-import net.minecraft.util.Formatting;
 
 import java.util.Locale;
 import java.util.Map;
@@ -14,18 +13,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Gender {
-    UNASSIGNED(Formatting.WHITE),
-    MALE(Formatting.AQUA),
-    FEMALE(Formatting.LIGHT_PURPLE), // TODO: Girls should be pink
-    NEUTRAL(Formatting.WHITE);
+    UNASSIGNED(0xFFFFFF),
+    MALE(0x01A6EA),
+    FEMALE(0xA649A4),
+    NEUTRAL(0xFFFFFF);
 
     private static final Random RNG = new Random();
     private static final Gender[] VALUES = values();
     private static final Map<String, Gender> REGISTRY = Stream.of(VALUES).collect(Collectors.toMap(Gender::name, Function.identity()));
 
-    private final Formatting color;
+    private final int color;
 
-    Gender(Formatting color) {
+    Gender(int color) {
         this.color = color;
     }
 
@@ -37,7 +36,7 @@ public enum Gender {
         return this == FEMALE ? EntitiesMCA.FEMALE_ZOMBIE_VILLAGER.get() : EntitiesMCA.MALE_ZOMBIE_VILLAGER.get();
     }
 
-    public Formatting getColor() {
+    public int getColor() {
         return color;
     }
 

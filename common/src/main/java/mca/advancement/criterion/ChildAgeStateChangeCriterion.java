@@ -2,6 +2,7 @@ package mca.advancement.criterion;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import mca.MCA;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
@@ -11,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class ChildAgeStateChangeCriterion extends AbstractCriterion<ChildAgeStateChangeCriterion.Conditions> {
-    private static final Identifier ID = new Identifier("mca:child_age_state_change");
+    private static final Identifier ID = MCA.locate("child_age_state_change");
 
     @Override
     public Identifier getId() {

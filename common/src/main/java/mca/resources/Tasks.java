@@ -2,6 +2,7 @@ package mca.resources;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import mca.MCA;
 import mca.resources.data.tasks.*;
 import mca.server.world.data.Village;
 import net.minecraft.resource.JsonDataLoader;
@@ -16,7 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Tasks extends JsonDataLoader {
-    protected static final Identifier ID = new Identifier("mca", "tasks");
+    protected static final Identifier ID = MCA.locate("tasks");
 
     private static Tasks INSTANCE;
 

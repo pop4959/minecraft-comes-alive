@@ -129,7 +129,6 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         return EntityDimensions.changing(width, height);
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public float getScaleFactor() {
         return Math.min(0.999f, getRawScaleFactor());

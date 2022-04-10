@@ -1,6 +1,7 @@
 package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.MCA;
 import mca.client.gui.widget.RectangleWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.s2c.GetVillageRequest;
@@ -47,7 +48,7 @@ public class BlueprintScreen extends ExtendedScreen {
     private int pageNumber = 0;
     private final List<ButtonWidget> catalogButtons = new LinkedList<>();
 
-    private static final Identifier ICON_TEXTURES = new Identifier("mca:textures/buildings.png");
+    private static final Identifier ICON_TEXTURES = MCA.locate("textures/buildings.png");
     private BuildingType selectedBuilding;
     private UUID selectedVillager;
 
@@ -90,11 +91,10 @@ public class BlueprintScreen extends ExtendedScreen {
                 new LiteralText(">>"), (b) -> onPress.accept(true)));
 
         buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
-                new LiteralText(""), (b) -> {
-        },
-                (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) -> {
-                    renderTooltip(matrixStack, new TranslatableText(tooltip), mx, my);
-                }));
+                new LiteralText(""), (b) -> {},
+                (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
+                        renderTooltip(matrixStack, new TranslatableText(tooltip), mx, my)
+        ));
 
         return buttons;
     }
@@ -525,8 +525,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
         List<Map.Entry<UUID, String>> villager = village.getBuildings().values().stream()
                 .flatMap(b -> b.getResidents().entrySet().stream())
-                .sorted(Map.Entry.comparingByValue())
-                .toList();
+                .sorted(Map.Entry.comparingByValue()).toList();
 
         selectedVillager = null;
         for (int i = 0; i < 9; i++) {

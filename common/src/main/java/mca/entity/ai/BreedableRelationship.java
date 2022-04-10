@@ -1,6 +1,7 @@
 package mca.entity.ai;
 
 import mca.Config;
+import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.Status;
 import mca.entity.VillagerEntityMCA;
@@ -16,7 +17,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Optional;
@@ -124,31 +124,31 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
             //swords
             float satisfaction = sword.getAttackDamage();
             satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
-            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, new Identifier("mca:swords")));
+            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate("swords")));
         } else if (stack.getItem() instanceof RangedWeaponItem) {
             //ranged weapons
             // TODO: Make satisfaction ratio for ranged items
-            return Optional.of(new GiftType(stack.getItem(), 15, new Identifier("mca:archery")));
+            return Optional.of(new GiftType(stack.getItem(), 15, MCA.locate("archery")));
         } else if (stack.getItem() instanceof ToolItem tool) {
             //tools
             float satisfaction = tool.getMaterial().getMiningSpeedMultiplier();
             satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
-            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, new Identifier(
-                    stack.getItem() instanceof AxeItem ? "mca:swords" :
-                            stack.getItem() instanceof HoeItem ? "mca:hoes" :
-                                    stack.getItem() instanceof ShovelItem ? "mca:shovels" :
-                                            "mca:pickaxes"
+            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate(
+                    stack.getItem() instanceof AxeItem ? "swords" :
+                            stack.getItem() instanceof HoeItem ? "hoes" :
+                                    stack.getItem() instanceof ShovelItem ? "shovels" :
+                                            "pickaxes"
             )));
         } else if (stack.getItem() instanceof ArmorItem armor) {
             //armor
             int satisfaction = (int)(Math.pow(armor.getProtection(), 1.25) * 1.5 + armor.getMaterial().getToughness() * 5);
-            return Optional.of(new GiftType(stack.getItem(), satisfaction, new Identifier("mca:armor")));
+            return Optional.of(new GiftType(stack.getItem(), satisfaction, MCA.locate("armor")));
         } else if (stack.getItem().isFood()) {
             //food
             FoodComponent component = stack.getItem().getFoodComponent();
             if (component != null) {
                 int satisfaction = (int)(component.getHunger() + component.getSaturationModifier() * 3);
-                return Optional.of(new GiftType(stack.getItem(), satisfaction, new Identifier("mca:food")));
+                return Optional.of(new GiftType(stack.getItem(), satisfaction, MCA.locate("food")));
             }
         }
         return Optional.empty();

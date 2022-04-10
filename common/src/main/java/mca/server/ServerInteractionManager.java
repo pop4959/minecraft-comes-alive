@@ -205,15 +205,15 @@ public class ServerInteractionManager {
             failMessage(sender, new TranslatableText("server.noProposal", receiver.getDisplayName()));
         } else {
             // Notify of acceptance.
-            successMessage(receiver, new TranslatableText("server.proposalAccepted", receiver.getDisplayName()));
+            successMessage(receiver, new TranslatableText("server.proposalAccepted", sender.getDisplayName()));
 
             // Set both player datas as married.
             PlayerSaveData.get((ServerWorld)sender.world, sender.getUuid()).marry(receiver);
             PlayerSaveData.get((ServerWorld)receiver.world, receiver.getUuid()).marry(sender);
 
             // Send success messages.
-            successMessage(sender, new TranslatableText("server.married", receiver.getEntityName()));
-            successMessage(receiver, new TranslatableText("server.married", sender.getEntityName()));
+            successMessage(sender, new TranslatableText("server.married", receiver.getDisplayName()));
+            successMessage(receiver, new TranslatableText("server.married", sender.getDisplayName()));
 
             // Remove the proposal.
             removeProposalFor(sender, receiver);

@@ -15,7 +15,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class HairList extends JsonDataLoader {
-    protected static final Identifier ID = new Identifier("mca", "skins/hair");
+    protected static final Identifier ID = MCA.locate("skins/hair");
 
     private final Map<Gender, WeightedPool.Mutable<Hair>> hair = new EnumMap<>(Gender.class);
 
@@ -61,8 +61,8 @@ public class HairList extends JsonDataLoader {
 
     private Hair getHair(Gender g, int i) {
         return new Hair(
-                String.format("mca:skins/hair/%s/%d.png", g.getStrName(), i),
-                String.format("mca:skins/hair/%s/%d_overlay.png", g.getStrName(), i)
+                String.format("%s:skins/hair/%s/%d.png", MCA.MOD_ID, g.getStrName(), i),
+                String.format("%s:skins/hair/%s/%d_overlay.png", MCA.MOD_ID, g.getStrName(), i)
         );
     }
 

@@ -22,7 +22,7 @@ public class MCAScreens extends JsonDataLoader {
 
     private static MCAScreens INSTANCE;
 
-    public static final MCAScreens getInstance() {
+    public static MCAScreens getInstance() {
         return INSTANCE;
     }
 

@@ -9,13 +9,13 @@ import java.util.function.Function;
 public class DynamicListPage extends ListPage {
     private final Function<Page, List<Text>> generator;
 
-    public DynamicListPage(String title, Function<Page, List<Text>> generator) {
+    public DynamicListPage(Text title, Function<Page, List<Text>> generator) {
         super(title, new LinkedList<>());
 
         this.generator = generator;
     }
 
-    public DynamicListPage(Text title, Function<Page, List<Text>> generator) {
+    public DynamicListPage(String title, Function<Page, List<Text>> generator) {
         super(title, new LinkedList<>());
 
         this.generator = generator;
