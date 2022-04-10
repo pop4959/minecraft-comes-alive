@@ -376,14 +376,14 @@ public class VillagerEditorScreen extends Screen {
 
     void drawGender(int x, int y) {
         assert villager != null;
-        genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
+        genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.feminine"), sender -> {
             villager.getGenetics().setGender(Gender.FEMALE);
             genderButtonFemale.active = false;
             genderButtonMale.active = true;
         });
         addDrawableChild(genderButtonFemale);
 
-        genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> {
+        genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.masculine"), sender -> {
             villager.getGenetics().setGender(Gender.MALE);
             genderButtonFemale.active = true;
             genderButtonMale.active = false;
