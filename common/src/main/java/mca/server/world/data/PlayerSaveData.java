@@ -72,9 +72,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         this.world = world;
         playerId = nbt.getUuid("playerId");
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
-        spouseUUID = nbt.contains("spouseUUID", NbtElement.INT_TYPE) ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
+        spouseUUID = nbt.contains("spouseUUID") ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
         spouseName = nbt.contains("spouseName") ? Optional.of(new LiteralText(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
+        marriageState = MarriageState.byId(nbt.getInt("marriageState"));
 
         if (nbt.contains("entityData")) {
             entityData = nbt.getCompound("entityData");
@@ -235,7 +236,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     @Override
     public FamilyTreeNode getFamilyEntry() {
-        return getFamilyTree().getOrCreate(world.getEntity(playerId));
+        return getFamilyTree().getOrCreate(Objects.requireNonNull(world.getEntity(playerId)));
     }
 
     @Override
@@ -272,6 +273,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         nbt.put("entityData", entityData);
         nbt.putBoolean("entityDataSet", entityDataSet);
         nbt.put("inbox", NbtHelper.fromList(inbox, v -> v));
+        nbt.putInt("marriageState", marriageState.ordinal());
         return nbt;
     }
 
@@ -301,7 +303,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
                 getFamilyEntry().getName(), name, village)));
         NbtCompound nbt = new NbtCompound();
         nbt.put("pages", l);
-        inbox.add(nbt);
+        sendMail(nbt);
         showMailNotification(player);
     }
 
