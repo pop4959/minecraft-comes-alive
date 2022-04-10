@@ -259,7 +259,7 @@ public class VillagerEditorScreen extends Screen {
                     if (p != Personality.UNASSIGNED) {
                         if (row == BUTTONS_PER_ROW) {
                             row = 0;
-                            y += 20;
+                            y += 19;
                         }
                         ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / BUTTONS_PER_ROW * row, y, DATA_WIDTH / BUTTONS_PER_ROW, 20, p.getName(), b -> {
                             villager.getVillagerBrain().setPersonality(p);

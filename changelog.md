@@ -233,8 +233,12 @@
 * Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)
 * Fixed potential crashes when villagers perform Harvesting chores (Planting seeds throwing a NPE)
 
-# 7.3.0?
+# 7.3.0
 
 * Added destiny
-  * You are asked to customize the player
-  * Then you can choose from a set of spawn location to start your journey
+    * You are asked to customize the player
+    * Then you can choose from a set of spawn location to start your journey
+* Massive dialogue overhaul with over 300 new phrases
+    * Added Rumor dialogue
+    * Added Time specific dialogues
+* Grumpy, Gloomy and Shy personalities

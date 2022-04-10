@@ -168,6 +168,9 @@
   "personality.sleepy": "Sleepy",
   "personality.fragile": "Fragile",
   "personality.weak": "Weak",
+  "personality.grumpy": "Grumpy",
+  "personality.shy": "Shy",
+  "personality.gloomy": "Gloomy",
 
   "personalityDescription.athletic": "Runs faster",
   "personalityDescription.confident": "Deals more damage",
@@ -185,6 +188,9 @@
   "personalityDescription.sleepy": "Slow. Always.",
   "personalityDescription.fragile": "Less defence",
   "personalityDescription.weak": "Deals less damage",
+  "personalityDescription.grumpy": "Hard to talk to",
+  "personalityDescription.shy": "Shy",
+  "personalityDescription.gloomy": "Always assuming the worst",
 
   "traits.title": "Traits: ",
   "trait.lactose_intolerance": "Lactose Intolerance",
