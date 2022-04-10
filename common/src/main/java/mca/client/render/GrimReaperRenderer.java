@@ -1,5 +1,6 @@
 package mca.client.render;
 
+import mca.MCA;
 import mca.client.model.GrimReaperEntityModel;
 import mca.entity.GrimReaperEntity;
 import net.minecraft.client.model.Dilation;
@@ -10,7 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 public class GrimReaperRenderer extends BipedEntityRenderer<GrimReaperEntity, GrimReaperEntityModel<GrimReaperEntity>> {
-    private static final Identifier TEXTURE = new Identifier("mca:textures/entity/grimreaper.png");
+    private static final Identifier TEXTURE = MCA.locate("textures/entity/grimreaper.png");
 
     public GrimReaperRenderer(EntityRendererFactory.Context ctx) {
         super(ctx, new GrimReaperEntityModel<>(

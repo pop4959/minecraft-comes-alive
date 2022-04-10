@@ -15,7 +15,7 @@ import net.minecraft.village.VillagerProfession;
 import java.util.*;
 
 public class ClothingList extends JsonDataLoader {
-    protected static final Identifier ID = new Identifier("mca", "skins/clothing");
+    protected static final Identifier ID = MCA.locate("skins/clothing");
 
     private final Map<Gender, ProfessionPool> clothing = new EnumMap<>(Gender.class);
 
@@ -69,10 +69,10 @@ public class ClothingList extends JsonDataLoader {
         return switch (villager.getAgeState()) {
             case BABY, TODDLER -> ClothingList.getInstance()
                     .byGender(villager.getGenetics().getGender())
-                    .byIdentifier(new Identifier("mca:baby"));
+                    .byIdentifier(MCA.locate("baby"));
             case CHILD, TEEN -> ClothingList.getInstance()
                     .byGender(villager.getGenetics().getGender())
-                    .byIdentifier(new Identifier("mca:child"));
+                    .byIdentifier(MCA.locate("child"));
             default -> getPool(villager.getGenetics().getGender(), villager.getVillagerData().getProfession());
         };
     }

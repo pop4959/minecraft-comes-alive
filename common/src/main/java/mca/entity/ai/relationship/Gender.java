@@ -4,7 +4,6 @@ import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ZombieVillagerEntityMCA;
 import net.minecraft.entity.EntityType;
-import net.minecraft.util.Formatting;
 
 import java.util.Locale;
 import java.util.Map;

@@ -1,6 +1,7 @@
 package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.MCA;
 import mca.client.gui.widget.RectangleWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.s2c.GetVillageRequest;
@@ -47,7 +48,7 @@ public class BlueprintScreen extends ExtendedScreen {
     private int pageNumber = 0;
     private final List<ButtonWidget> catalogButtons = new LinkedList<>();
 
-    private static final Identifier ICON_TEXTURES = new Identifier("mca:textures/buildings.png");
+    private static final Identifier ICON_TEXTURES = MCA.locate("textures/buildings.png");
     private BuildingType selectedBuilding;
     private UUID selectedVillager;
 

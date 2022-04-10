@@ -1,11 +1,11 @@
 package mca.client.render.layer;
 
+import mca.MCA;
 import mca.client.model.VillagerEntityModelMCA;
 import mca.client.resources.ColorPalette;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Traits;
-import mca.entity.ai.relationship.Gender;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
@@ -17,9 +17,9 @@ public class SkinLayer<T extends MobEntity & VillagerLike<T>> extends VillagerLa
 
     @Override
     protected Identifier getSkin(T villager) {
-        Gender gender = villager.getGenetics().getGender();
-        int skin = (int) Math.min(4, Math.max(0, villager.getGenetics().getGene(Genetics.SKIN) * 5));
-        return cached(String.format("mca:skins/skin/%s/%d.png", gender == Gender.FEMALE ? "female" : "male", skin), Identifier::new);
+        Genetics genetics = villager.getGenetics();
+        int skin = (int) Math.min(4, Math.max(0, genetics.getGene(Genetics.SKIN) * 5));
+        return cached(String.format("%s:skins/skin/%s/%d.png", MCA.MOD_ID, genetics.getGender().getStrName(), skin), Identifier::new);
     }
 
     @Override

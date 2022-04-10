@@ -65,7 +65,7 @@ public class MCAScreens extends JsonDataLoader {
      * @param guiKey String key for the GUI's buttons
      */
     public Optional<Button[]> getScreen(String guiKey) {
-        return Optional.ofNullable(buttons.get(new Identifier("mca", guiKey)));
+        return Optional.ofNullable(buttons.get(MCA.locate(guiKey)));
     }
 
     /**
@@ -75,6 +75,6 @@ public class MCAScreens extends JsonDataLoader {
      * @return Instance of APIButton matching the ID provided
      */
     public Optional<Button> getButton(String key, String id) {
-        return Arrays.stream(buttons.get(new Identifier("mca", key))).filter(b -> b.identifier().equals(id)).findFirst();
+        return Arrays.stream(buttons.get(MCA.locate(key))).filter(b -> b.identifier().equals(id)).findFirst();
     }
 }

@@ -1,6 +1,7 @@
 package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
@@ -28,7 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InteractScreen extends AbstractDynamicScreen {
-    public static final Identifier ICON_TEXTURES = new Identifier("mca:textures/gui.png");
+    public static final Identifier ICON_TEXTURES = MCA.locate("textures/gui.png");
 
     private final VillagerLike<?> villager;
     private final PlayerEntity player = MinecraftClient.getInstance().player;
