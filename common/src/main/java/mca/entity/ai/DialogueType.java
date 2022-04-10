@@ -1,6 +1,7 @@
 package mca.entity.ai;
 
 import mca.entity.ai.relationship.AgeState;
+import mca.entity.ai.relationship.Personality;
 import net.minecraft.util.Language;
 
 import java.util.*;
@@ -56,6 +57,22 @@ public enum DialogueType {
         return VALUES[id];
     }
 
+    private static Optional<String> getPrefixedPhrase(DialogueType type, String prefix, String key) {
+        DialogueType t = type;
+        while (t != null) {
+            String s = prefix + "." + t.name().toLowerCase(Locale.ENGLISH) + "." + key;
+            if (Language.getInstance().hasTranslation(s)) {
+                return Optional.of(s);
+            }
+            t = t.fallback;
+        }
+        String s = prefix + "." + key;
+        if (Language.getInstance().hasTranslation(s)) {
+            return Optional.of(s);
+        }
+        return Optional.empty();
+    }
+
     public static String applyFallback(String key) {
         if (!key.contains("#")) {
             return key;
@@ -82,17 +99,18 @@ public enum DialogueType {
         //first try professions
         //children can't have profession, this is already checked in the Messenger
         if (flags.containsKey("P") && random.nextBoolean()) {
-            DialogueType t = type;
-            while (t != null) {
-                String s = flags.get("P") + "." + t.name().toLowerCase(Locale.ENGLISH) + "." + key;
-                if (Language.getInstance().hasTranslation(s)) {
-                    return s;
-                }
-                t = t.fallback;
+            Optional<String> p = getPrefixedPhrase(type, flags.get("P"), key);
+            if (p.isPresent()) {
+                return p.get();
             }
-            String s = flags.get("P") + "." + key;
-            if (Language.getInstance().hasTranslation(s)) {
-                return s;
+        }
+
+        //then try personality
+        if (flags.containsKey("E")) {
+            String personality = Personality.valueOf(flags.get("E")).name().toLowerCase(Locale.ROOT);
+            Optional<String> p = getPrefixedPhrase(type, personality, key);
+            if (p.isPresent()) {
+                return p.get();
             }
         }
 

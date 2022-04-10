@@ -59,7 +59,13 @@ public interface Messenger extends EntityWrapper {
             professionString = "#P" + Registry.VILLAGER_PROFESSION.getId(v.getProfession()).getPath() + ".";
         }
 
-        return new TranslatableText(professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
+        //and personality
+        String personalityString = "";
+        if (!asEntity().isBaby() && asEntity() instanceof VillagerEntityMCA v) {
+            personalityString = "#E" + v.getVillagerBrain().getPersonality().name() + ".";
+        }
+
+        return new TranslatableText(personalityString + professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
     default void sendChatToAllAround(String phrase, Object... params) {
