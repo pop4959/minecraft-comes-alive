@@ -37,10 +37,5 @@ public class DestinyMessage implements Message {
             player.clearStatusEffects();
             player.teleport(pos.getX(), pos.getY(), pos.getZ());
         });
-
-        //story
-        player.sendMessage(new TranslatableText("destiny.story.reason"), false);
-        player.sendMessage(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"), false);
-        player.sendMessage(new TranslatableText("destiny.story." + location), false);
     }
 }

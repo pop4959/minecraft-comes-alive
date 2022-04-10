@@ -37,6 +37,7 @@ import net.minecraft.village.VillagerProfession;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -70,7 +71,7 @@ public class VillagerEditorScreen extends Screen {
     @Override
     public void init() {
         requestVillagerData();
-        setPage("loading");
+        setPage(Objects.requireNonNullElse(page, "loading"));
     }
 
     private int doubleGeneSliders(int y, Genetics.GeneType... genes) {

@@ -3,6 +3,7 @@ package mca.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.DestinyMessage;
+import mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -11,12 +12,16 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import static mca.entity.VillagerLike.VILLAGER_NAME;
 
 public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
+    private LinkedList<Text> story;
+    private String location;
 
     public DestinyScreen(UUID playerUUID) {
         super(playerUUID, playerUUID);
@@ -29,7 +34,7 @@ public class DestinyScreen extends VillagerEditorScreen {
 
     @Override
     public void close() {
-        if (!page.equals("general")) {
+        if (!page.equals("general") && !page.equals("story")) {
             setPage("destiny");
         }
     }
@@ -55,25 +60,33 @@ public class DestinyScreen extends VillagerEditorScreen {
     public void render(MatrixStack transform, int mouseX, int mouseY, float delta) {
         super.render(transform, mouseX, mouseY, delta);
 
-        if (page.equals("general")) {
-            drawScaledText(transform, new TranslatableText("gui.destiny.whoareyou"), width / 2, height / 2 - 16, 1.5f);
-
-            transform.push();
-            transform.scale(0.25f, 0.25f, 0.25f);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-            RenderSystem.setShaderTexture(0, LOGO_TEXTURE);
-            DrawableHelper.drawTexture(transform, width * 2 - 512, -40, 0, 0, 1024, 512, 1024, 512);
-            transform.pop();
-        } else if (page.equals("destiny")) {
-            drawScaledText(transform, new TranslatableText("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
+        switch (page) {
+            case "general" -> {
+                drawScaledText(transform, new TranslatableText("gui.destiny.whoareyou"), width / 2, height / 2 - 16, 1.5f);
+                transform.push();
+                transform.scale(0.25f, 0.25f, 0.25f);
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+                RenderSystem.setShaderTexture(0, LOGO_TEXTURE);
+                DrawableHelper.drawTexture(transform, width * 2 - 512, -40, 0, 0, 1024, 512, 1024, 512);
+                transform.pop();
+            }
+            case "destiny" -> drawScaledText(transform, new TranslatableText("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
+            case "story" -> {
+                List<Text> text = FlowingText.wrap(story.getFirst(), 256);
+                int y = (int)(height / 2 - 20 - 7.5f * text.size());
+                for (Text t : text) {
+                    drawScaledText(transform, t, width / 2, y, 1.25f);
+                    y += 15;
+                }
+            }
         }
     }
 
     @Override
     protected boolean shouldDrawEntity() {
-        return !page.equals("general") && !page.equals("destiny") && super.shouldDrawEntity();
+        return !page.equals("general") && !page.equals("destiny") && !page.equals("story") && super.shouldDrawEntity();
     }
 
     @Override
@@ -95,8 +108,13 @@ public class DestinyScreen extends VillagerEditorScreen {
             int y = 0;
             for (String location : new String[] {"somewhere", "shipwreck_beached", "village_desert", "village_taiga", "village_snowy", "village_plains", "village_savanna"}) {
                 addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
-                    NetworkHandler.sendToServer(new DestinyMessage(location));
-                    super.close();
+                    //story
+                    story = new LinkedList<>();
+                    story.add(new TranslatableText("destiny.story.reason"));
+                    story.add(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"));
+                    story.add(new TranslatableText("destiny.story." + location));
+                    this.location = location;
+                    setPage("story");
                 }));
                 x++;
                 if (x >= 3) {
@@ -104,6 +122,15 @@ public class DestinyScreen extends VillagerEditorScreen {
                     y++;
                 }
             }
+        } else if (page.equals("story")) {
+            addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, new TranslatableText("gui.destiny.next"), sender -> {                NetworkHandler.sendToServer(new DestinyMessage(location));
+                if (story.size() > 1) {
+                    story.remove(0);
+                }else {
+                    NetworkHandler.sendToServer(new DestinyMessage(location));
+                    super.close();
+                }
+            }));
         } else {
             super.setPage(page);
         }
