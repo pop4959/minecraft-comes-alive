@@ -112,6 +112,7 @@ public class VillagerTasksMCA {
             // todo how do villager behave when they are on death row?
         } else {
             brain.setSchedule(SchedulesMCA.DEFAULT);
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getWorkingCorePackage(profession, 0.5F));
             brain.setTaskList(Activity.WORK, VillagerTasksMCA.getWorkPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryModuleState.VALUE_PRESENT)));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
             brain.setTaskList(Activity.RAID, VillagerTasksMCA.getRaidPackage(profession, 0.5F));
@@ -146,17 +147,22 @@ public class VillagerTasksMCA {
                 Pair.of(0, new WakeUpTask()),
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
+                Pair.of(1, new WanderOrTeleportToTargetTask()),
+                Pair.of(3, new InteractTask(speedModifier)),
+                Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
+                Pair.of(10, new FindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
+        );
+    }
+
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getWorkingCorePackage(VillagerProfession profession, float speedModifier) {
+        return ImmutableList.of(
                 Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.getWorkStation(), MemoryModuleType.JOB_SITE)),
                 Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.getWorkStation(), MemoryModuleType.POTENTIAL_JOB_SITE)),
-                Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(2, new WorkStationCompetitionTask(profession)),
-                Pair.of(3, new InteractTask(speedModifier)),
                 Pair.of(3, new FollowCustomerTask(speedModifier)),
-                Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
                 Pair.of(6, new FindPointOfInterestTask(profession.getWorkStation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
                 Pair.of(7, new WalkTowardJobSiteTask(speedModifier)),
                 Pair.of(8, new TakeJobSiteTask(speedModifier)),
-                Pair.of(10, new FindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14))),
                 Pair.of(10, new GoToWorkTask()),
                 Pair.of(10, new LoseUnimportantJobTask())
         );
@@ -269,17 +275,17 @@ public class VillagerTasksMCA {
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getWorkPackage(VillagerProfession profession, float speedModifier) {
-        VillagerWorkTask spawngolemtask;
+        VillagerWorkTask villagerWorkTask;
         if (profession == VillagerProfession.FARMER) {
-            spawngolemtask = new FarmerWorkTask();
+            villagerWorkTask = new FarmerWorkTask();
         } else {
-            spawngolemtask = new VillagerWorkTask();
+            villagerWorkTask = new VillagerWorkTask();
         }
 
         return ImmutableList.of(
                 getMinimalLookBehavior(),
                 Pair.of(5, new RandomTask<>(
-                        ImmutableList.of(Pair.of(spawngolemtask, 7),
+                        ImmutableList.of(Pair.of(villagerWorkTask, 7),
                                 Pair.of(new GoToIfNearbyTask(MemoryModuleType.JOB_SITE, 0.4F, 4), 2),
                                 Pair.of(new GoToNearbyPositionTask(MemoryModuleType.JOB_SITE, 0.4F, 1, 10), 5),
                                 Pair.of(new GoToSecondaryPositionTask(MemoryModuleType.SECONDARY_JOB_SITE, speedModifier, 1, 6, MemoryModuleType.JOB_SITE), 5),
