@@ -5,9 +5,11 @@ import mca.entity.VillagerLike;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.io.Serial;
 import java.util.UUID;
 
 public class InteractionVillagerMessage implements Message.ServerMessage {
+    @Serial
     private static final long serialVersionUID = 2563941495766992462L;
 
     private final String command;

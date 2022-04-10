@@ -13,6 +13,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class FamilyTreeNode implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7307057982785253721L;
 
     private final boolean isPlayer;

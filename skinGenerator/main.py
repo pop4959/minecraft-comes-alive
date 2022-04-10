@@ -1,8 +1,7 @@
 import glob
 import hashlib
-import os
-
 import numpy as np
+import os
 from cv2 import cv2
 from tqdm import tqdm
 
