@@ -203,18 +203,18 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
         return super.handle(player, command);
     }
 
-    private void prepareOffersFor(PlayerEntity player) {
+    public void prepareOffersFor(PlayerEntity player) {
         int i = entity.getReputation(player);
         if (i != 0) {
-            for (TradeOffer merchantoffer : entity.getOffers()) {
-                merchantoffer.increaseSpecialPrice(-MathHelper.floor(i * merchantoffer.getPriceMultiplier()));
+            for (TradeOffer tradeOffer : entity.getOffers()) {
+                tradeOffer.increaseSpecialPrice(-MathHelper.floor(i * tradeOffer.getPriceMultiplier()));
             }
         }
 
         if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            StatusEffectInstance effectinstance = player.getStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE);
-            if (effectinstance != null) {
-                int k = effectinstance.getAmplifier();
+            StatusEffectInstance effectInstance = player.getStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE);
+            if (effectInstance != null) {
+                int k = effectInstance.getAmplifier();
 
                 for (TradeOffer merchantOffer : entity.getOffers()) {
                     double d0 = 0.3D + 0.0625D * k;
