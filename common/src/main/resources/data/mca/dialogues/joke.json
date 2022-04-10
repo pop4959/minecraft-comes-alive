@@ -114,11 +114,11 @@
             },
             {
               "chance": 4,
-              "profession": "guard"
+              "profession": "mca:guard"
             },
             {
               "chance": 3,
-              "profession": "archer"
+              "profession": "mca:archer"
             },
             {
               "chance": 2,

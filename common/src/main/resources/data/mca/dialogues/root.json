@@ -13,7 +13,8 @@
               "memory": {
                 "id": "seen",
                 "var": "player",
-                "invert": true
+                "dividend": -1.0,
+                "add": 1.0
               }
             }
           ],

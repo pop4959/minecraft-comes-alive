@@ -58,7 +58,7 @@ public class LongTermMemory {
                 return memories.get(id) - entity.world.getTime();
             }
         }
-        return -1;
+        return 0;
     }
 
     public boolean hasMemory(String id) {

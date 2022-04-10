@@ -23,11 +23,11 @@
           "conditions": [
             {
               "chance": -5,
-              "profession": "guard"
+              "profession": "mca:guard"
             },
             {
               "chance": -5,
-              "profession": "archer"
+              "profession": "mca:archer"
             }
           ],
           "actions": {
