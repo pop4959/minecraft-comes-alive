@@ -65,6 +65,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         assert playerId != null;
         this.world = world;
         this.playerId = playerId;
+        this.marriageState = MarriageState.SINGLE;
         resetEntityData();
     }
 
