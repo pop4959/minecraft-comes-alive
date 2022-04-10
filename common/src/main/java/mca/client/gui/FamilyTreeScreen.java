@@ -206,10 +206,12 @@ public class FamilyTreeScreen extends Screen {
         @Nullable
         private TreeNode previous;
 
+        private final String defaultNodeName = "???";
+
         private TreeNode() {
             this.id = null;
             this.deceased = false;
-            this.label.add(new LiteralText("???"));
+            this.label.add(new LiteralText(defaultNodeName));
         }
 
         public TreeNode(FamilyTreeNode node, boolean recurse) {
@@ -220,7 +222,8 @@ public class FamilyTreeScreen extends Screen {
             nodes.put(node.id(), this);
             this.id = node.id();
             this.deceased = node.isDeceased();
-            this.label.add(new LiteralText(node.getName().isEmpty() ? "???" : node.getName()).formatted(node.gender().getColor()));
+            final LiteralText text = new LiteralText(node.getName().isEmpty() ? defaultNodeName : node.getName());
+            this.label.add(text.setStyle(text.getStyle().withColor(node.gender().getColor())));
             this.label.add(new TranslatableText("entity.minecraft.villager." + node.getProfessionName()).formatted(Formatting.GRAY));
 
             FamilyTreeNode father = family.get(node.father());

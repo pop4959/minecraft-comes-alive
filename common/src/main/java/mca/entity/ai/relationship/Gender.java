@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Gender {
-    UNASSIGNED(Formatting.WHITE),
-    MALE(Formatting.AQUA),
-    FEMALE(Formatting.LIGHT_PURPLE), // TODO: Girls should be pink
-    NEUTRAL(Formatting.WHITE);
+    UNASSIGNED(0xFFFFFF),
+    MALE(0x55FFFF),
+    FEMALE(0xFFC0CB),
+    NEUTRAL(0xFFFFFF);
 
     private static final Random RNG = new Random();
     private static final Gender[] VALUES = values();
     private static final Map<String, Gender> REGISTRY = Stream.of(VALUES).collect(Collectors.toMap(Gender::name, Function.identity()));
 
-    private final Formatting color;
+    private final int color;
 
-    Gender(Formatting color) {
+    Gender(int color) {
         this.color = color;
     }
 
@@ -37,7 +37,7 @@ public enum Gender {
         return this == FEMALE ? EntitiesMCA.FEMALE_ZOMBIE_VILLAGER : EntitiesMCA.MALE_ZOMBIE_VILLAGER;
     }
 
-    public Formatting getColor() {
+    public int getColor() {
         return color;
     }
 

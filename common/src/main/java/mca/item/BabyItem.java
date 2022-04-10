@@ -260,7 +260,8 @@ public class BabyItem extends Item {
             if (!state.getName().isPresent()) {
                 tooltip.add(new TranslatableText("item.mca.baby.give_name").formatted(Formatting.YELLOW));
             } else {
-                tooltip.add(new TranslatableText("item.mca.baby.name", new LiteralText(state.getName().get()).formatted(gender.getColor())).formatted(Formatting.GRAY));
+                final LiteralText text = new LiteralText(state.getName().get());
+                tooltip.add(new TranslatableText("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
 
                 if (age > 0) {
                     tooltip.add(new TranslatableText("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
