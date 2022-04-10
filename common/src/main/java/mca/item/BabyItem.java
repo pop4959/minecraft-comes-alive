@@ -43,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BabyItem extends Item {
@@ -138,9 +137,9 @@ public class BabyItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        return getClientCheckedState(stack).flatMap(ChildSaveState::getName).map(s -> {
-            return (Text)new TranslatableText(getTranslationKey(stack) + ".named", s);
-        }).orElseGet(() -> super.getName(stack));
+        return getClientCheckedState(stack).flatMap(ChildSaveState::getName).map(s ->
+                (Text)new TranslatableText(getTranslationKey(stack) + ".named", s)
+        ).orElseGet(() -> super.getName(stack));
     }
 
     @Override
@@ -162,7 +161,7 @@ public class BabyItem extends Item {
 
         return BabyTracker.getState(stack, (ServerWorld)world).map(state -> {
             // Right-clicking an unnamed baby allows you to name it
-            if (!state.getName().isPresent()) {
+            if (state.getName().isEmpty()) {
                 if (player instanceof ServerPlayerEntity) {
                     NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), (ServerPlayerEntity)player);
                 }
@@ -201,7 +200,7 @@ public class BabyItem extends Item {
                 .withAge(-AgeState.getMaxAge())
                 .build();
 
-        List<Entity> parents = state.getParents().map(world::getEntity).filter(Objects::nonNull).collect(Collectors.toList());
+        List<Entity> parents = state.getParents().map(world::getEntity).filter(Objects::nonNull).toList();
 
         Optional<Entity> mother = parents.stream().findFirst();
         Optional<Entity> father = parents.stream().skip(1).findFirst();
@@ -220,11 +219,11 @@ public class BabyItem extends Item {
         // assign parents
         FamilyTreeNode family = PlayerSaveData.get(world, player.getUuid()).getFamilyEntry();
 
-        state.getParents().forEach(p -> {
-            family.getRoot().getOrEmpty(p).ifPresent(parent -> {
-                child.getRelationships().getFamilyEntry().assignParent(parent);
-            });
-        });
+        state.getParents().forEach(p ->
+                family.getRoot().getOrEmpty(p).ifPresent(parent ->
+                        child.getRelationships().getFamilyEntry().assignParent(parent)
+                )
+        );
 
         // in case one of the above was not found
         child.getRelationships().getFamilyEntry().assignParent(family);
@@ -257,7 +256,7 @@ public class BabyItem extends Item {
 
             int age = nbt.getInt("age") * 1200 + (int)(world == null ? 0 : world.getTime() % 1200);
 
-            if (!state.getName().isPresent()) {
+            if (state.getName().isEmpty()) {
                 tooltip.add(new TranslatableText("item.mca.baby.give_name").formatted(Formatting.YELLOW));
             } else {
                 final LiteralText text = new LiteralText(state.getName().get());
@@ -270,12 +269,12 @@ public class BabyItem extends Item {
 
             tooltip.add(LiteralText.EMPTY);
 
-            state.getOwner().ifPresent(owner -> {
-                tooltip.add(new TranslatableText("item.mca.baby.owner", player != null && owner.getLeft().equals(player.getUuid())
-                        ? new TranslatableText("item.mca.baby.owner.you")
-                        : owner.getRight()
-                ).formatted(Formatting.GRAY));
-            });
+            state.getOwner().ifPresent(owner ->
+                    tooltip.add(new TranslatableText("item.mca.baby.owner",
+                            player != null && owner.getLeft().equals(player.getUuid())
+                    ? new TranslatableText("item.mca.baby.owner.you")
+                    : owner.getRight()
+            ).formatted(Formatting.GRAY)));
 
             if (state.getName().isPresent() && canGrow(age)) {
                 tooltip.add(new TranslatableText("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
@@ -302,7 +301,7 @@ public class BabyItem extends Item {
             if (loaded.isPresent()) {
                 ChildSaveState l = loaded.get();
                 if (
-                        (state.getName().isPresent() && !l.getName().isPresent())
+                        (state.getName().isPresent() && l.getName().isEmpty())
                                 || (state.getName().isPresent() && l.getName().isPresent() && !state.getName().get().contentEquals(l.getName().get()))
                 ) {
                     CLIENT_STATE_CACHE.refresh(state.getId());
@@ -331,6 +330,8 @@ public class BabyItem extends Item {
         return (stack.hasNbt() && stack.getNbt().getBoolean("invalidated")) || BabyTracker.getStateId(stack).map(id -> {
             Optional<ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(id);
 
+            // Whoever wrote this needs to immediately ALT-F4
+            // I'm not touching this ####
             return loaded != null && !loaded.isPresent();
         }).orElse(false);
     }
