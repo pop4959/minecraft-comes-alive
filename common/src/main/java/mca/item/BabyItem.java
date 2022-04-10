@@ -137,9 +137,9 @@ public class BabyItem extends Item {
 
     @Override
     public Text getName(ItemStack stack) {
-        return getClientCheckedState(stack).flatMap(ChildSaveState::getName).map(s -> {
-            return (Text)new TranslatableText(getTranslationKey(stack) + ".named", s);
-        }).orElseGet(() -> super.getName(stack));
+        return getClientCheckedState(stack).flatMap(ChildSaveState::getName).map(s ->
+                (Text)new TranslatableText(getTranslationKey(stack) + ".named", s)
+        ).orElseGet(() -> super.getName(stack));
     }
 
     @Override
@@ -219,11 +219,11 @@ public class BabyItem extends Item {
         // assign parents
         FamilyTreeNode family = PlayerSaveData.get(world, player.getUuid()).getFamilyEntry();
 
-        state.getParents().forEach(p -> {
-            family.getRoot().getOrEmpty(p).ifPresent(parent -> {
-                child.getRelationships().getFamilyEntry().assignParent(parent);
-            });
-        });
+        state.getParents().forEach(p ->
+                family.getRoot().getOrEmpty(p).ifPresent(parent ->
+                        child.getRelationships().getFamilyEntry().assignParent(parent)
+                )
+        );
 
         // in case one of the above was not found
         child.getRelationships().getFamilyEntry().assignParent(family);
@@ -259,7 +259,8 @@ public class BabyItem extends Item {
             if (state.getName().isEmpty()) {
                 tooltip.add(new TranslatableText("item.mca.baby.give_name").formatted(Formatting.YELLOW));
             } else {
-                tooltip.add(new TranslatableText("item.mca.baby.name", new LiteralText(state.getName().get()).formatted(gender.getColor())).formatted(Formatting.GRAY));
+                final LiteralText text = new LiteralText(state.getName().get());
+                tooltip.add(new TranslatableText("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
 
                 if (age > 0) {
                     tooltip.add(new TranslatableText("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
@@ -268,12 +269,12 @@ public class BabyItem extends Item {
 
             tooltip.add(LiteralText.EMPTY);
 
-            state.getOwner().ifPresent(owner -> {
-                tooltip.add(new TranslatableText("item.mca.baby.owner", player != null && owner.getLeft().equals(player.getUuid())
-                        ? new TranslatableText("item.mca.baby.owner.you")
-                        : owner.getRight()
-                ).formatted(Formatting.GRAY));
-            });
+            state.getOwner().ifPresent(owner ->
+                    tooltip.add(new TranslatableText("item.mca.baby.owner",
+                            player != null && owner.getLeft().equals(player.getUuid())
+                    ? new TranslatableText("item.mca.baby.owner.you")
+                    : owner.getRight()
+            ).formatted(Formatting.GRAY)));
 
             if (state.getName().isPresent() && canGrow(age)) {
                 tooltip.add(new TranslatableText("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
@@ -329,8 +330,9 @@ public class BabyItem extends Item {
         return (stack.hasNbt() && stack.getNbt().getBoolean("invalidated")) || BabyTracker.getStateId(stack).map(id -> {
             Optional<ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(id);
 
-            //noinspection OptionalAssignedToNull
-            return loaded != null && loaded.isEmpty();
+            // Whoever wrote this needs to immediately ALT-F4
+            // I'm not touching this ####
+            return loaded != null && !loaded.isPresent();
         }).orElse(false);
     }
 

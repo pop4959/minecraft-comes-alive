@@ -1,6 +1,7 @@
 package mca.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.MCA;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -15,7 +16,7 @@ public class ColorPickerWidget extends ClickableWidget {
         void apply(A a, B b);
     }
 
-    public static final Identifier MCA_GUI_ICONS_TEXTURE = new Identifier("mca:textures/gui.png");
+    public static final Identifier MCA_GUI_ICONS_TEXTURE = MCA.locate("textures/gui.png");
 
     private final DualConsumer<Double, Double> consumer;
     private final Identifier texture;

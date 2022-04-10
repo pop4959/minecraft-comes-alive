@@ -1,4 +1,4 @@
-package mca.network.s2c;
+package mca.network.c2s;
 
 import mca.cobalt.network.Message;
 import mca.entity.VillagerLike;
@@ -8,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.Serial;
 import java.util.UUID;
 
-public class InteractionVillagerMessage implements Message.ServerMessage {
+public class InteractionVillagerMessage implements Message {
     @Serial
     private static final long serialVersionUID = 2563941495766992462L;
 

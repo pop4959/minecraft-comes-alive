@@ -1,6 +1,7 @@
 package mca.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import mca.MCA;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.minecraft.advancement.criterion.AbstractCriterion;
@@ -13,7 +14,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Conditions> {
-    private static final Identifier ID = new Identifier("mca:family");
+    private static final Identifier ID = MCA.locate("family");
 
     @Override
     public Identifier getId() {

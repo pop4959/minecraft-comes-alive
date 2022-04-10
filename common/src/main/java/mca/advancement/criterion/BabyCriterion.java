@@ -1,6 +1,7 @@
 package mca.advancement.criterion;
 
 import com.google.gson.JsonObject;
+import mca.MCA;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;
@@ -11,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class BabyCriterion extends AbstractCriterion<BabyCriterion.Conditions> {
-    private static final Identifier ID = new Identifier("mca:baby");
+    private static final Identifier ID = MCA.locate("baby");
 
     @Override
     public Identifier getId() {

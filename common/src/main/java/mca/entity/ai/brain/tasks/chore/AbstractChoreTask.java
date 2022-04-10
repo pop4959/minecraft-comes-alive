@@ -36,9 +36,7 @@ public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
     }
 
     void abandonJobWithMessage(String message) {
-        getAssigningPlayer().ifPresent(player -> {
-            villager.sendChatMessage(player, message);
-        });
+        getAssigningPlayer().ifPresent(player -> villager.sendChatMessage(player, message));
         villager.getVillagerBrain().abandonJob();
     }
 }

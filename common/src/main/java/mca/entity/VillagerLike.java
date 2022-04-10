@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import mca.Config;
+import mca.MCA;
 import mca.entity.ai.DialogueType;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Messenger;
@@ -126,7 +127,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         }
     }
 
-    default Identifier getProfessionId() { return new Identifier("mca:none"); }
+    default Identifier getProfessionId() { return MCA.locate("none"); }
 
     default String getProfessionName() {
         String professionName = (
