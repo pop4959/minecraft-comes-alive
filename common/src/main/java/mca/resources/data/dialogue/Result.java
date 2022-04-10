@@ -56,10 +56,6 @@ public class Result {
         return applyFatigue;
     }
 
-    public boolean isPositive() {
-        return getActions().isPositive();
-    }
-
     public List<InteractionPredicate> getConditions() {
         return Objects.requireNonNullElse(conditions, Collections.emptyList());
     }
