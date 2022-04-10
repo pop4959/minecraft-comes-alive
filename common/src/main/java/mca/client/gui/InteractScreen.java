@@ -9,6 +9,7 @@ import mca.entity.ai.Traits;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.relationship.CompassionateEntity;
 import mca.entity.ai.relationship.MarriageState;
+import mca.network.c2s.InteractionVillagerMessage;
 import mca.network.s2c.*;
 import mca.resources.data.analysis.Analysis;
 import mca.resources.data.dialogue.Question;

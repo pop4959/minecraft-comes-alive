@@ -233,3 +233,4 @@
 * Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)
 * Fixed potential crashes when villagers perform Harvesting chores (Planting seeds throwing a NPE)
 * Fixed player marriage not saving
+* Shift click will start trading
