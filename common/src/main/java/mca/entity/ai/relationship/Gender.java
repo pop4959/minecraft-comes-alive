@@ -15,8 +15,8 @@ import java.util.stream.Stream;
 
 public enum Gender {
     UNASSIGNED(0xFFFFFF),
-    MALE(0x55FFFF),
-    FEMALE(0xFFC0CB),
+    MALE(0x01A6EA),
+    FEMALE(0xA649A4),
     NEUTRAL(0xFFFFFF);
 
     private static final Random RNG = new Random();
