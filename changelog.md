@@ -225,7 +225,6 @@
 * Decrease revenge aggression based on the guards' relation to you
 * Added guard target list to config
 * Added aborting children by unconventional means
-* Sneaking prevents interaction with villagers to support mods
 * Updated the Blueprint Interface to appear more cohesive
 * Added `/mca-admin forceBuildingType <type>` to force a building's type
 * Fixed issues with Chores not working in 1.18.x
@@ -233,4 +232,4 @@
 * Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)
 * Fixed potential crashes when villagers perform Harvesting chores (Planting seeds throwing a NPE)
 * Fixed player marriage not saving
-* Shift click will start trading
+* Sneaking before interacting with a villager will now open trading

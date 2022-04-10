@@ -100,7 +100,7 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
         if (constraints == null || constraints.isEmpty()) {
             return new ArrayList<>();
         }
-        return Stream.of(constraints.split("\\,"))
+        return Stream.of(constraints.split(","))
                 .map(REGISTRY::get)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

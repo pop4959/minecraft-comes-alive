@@ -43,15 +43,19 @@ public interface EntityRelationship {
 
         // notify family
         if (type == RelationshipType.SELF) {
-            getParents().forEach(parent -> {
-                EntityRelationship.of(parent).ifPresent(r -> r.onTragedy(cause, burialSite, RelationshipType.CHILD, victim));
-            });
-            getSiblings().forEach(sibling -> {
-                EntityRelationship.of(sibling).ifPresent(r -> r.onTragedy(cause, burialSite, RelationshipType.SIBLING, victim));
-            });
-            getSpouse().ifPresent(spouse -> {
-                EntityRelationship.of(spouse).ifPresent(r -> r.onTragedy(cause, burialSite, RelationshipType.SPOUSE, victim));
-            });
+            getParents().forEach(parent ->
+                    EntityRelationship.of(parent).ifPresent(r ->
+                            r.onTragedy(cause, burialSite, RelationshipType.CHILD, victim)
+                    )
+            );
+            getSiblings().forEach(sibling ->
+                    EntityRelationship.of(sibling).ifPresent(r ->
+                            r.onTragedy(cause, burialSite, RelationshipType.SIBLING, victim)
+                    )
+            );
+            getSpouse().flatMap(EntityRelationship::of).ifPresent(r ->
+                    r.onTragedy(cause, burialSite, RelationshipType.SPOUSE, victim)
+            );
         }
 
         // end the marriage for both the deceased one and the spouse

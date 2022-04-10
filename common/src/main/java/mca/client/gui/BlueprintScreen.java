@@ -29,7 +29,6 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class BlueprintScreen extends ExtendedScreen {
     //gui element Y positions
@@ -91,11 +90,10 @@ public class BlueprintScreen extends ExtendedScreen {
                 new LiteralText(">>"), (b) -> onPress.accept(true)));
 
         buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
-                new LiteralText(""), (b) -> {
-        },
-                (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) -> {
-                    renderTooltip(matrixStack, new TranslatableText(tooltip), mx, my);
-                }));
+                new LiteralText(""), (b) -> {},
+                (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
+                        renderTooltip(matrixStack, new TranslatableText(tooltip), mx, my)
+        ));
 
         return buttons;
     }
@@ -526,8 +524,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
         List<Map.Entry<UUID, String>> villager = village.getBuildings().values().stream()
                 .flatMap(b -> b.getResidents().entrySet().stream())
-                .sorted(Map.Entry.comparingByValue())
-                .collect(Collectors.toList());
+                .sorted(Map.Entry.comparingByValue()).toList();
 
         selectedVillager = null;
         for (int i = 0; i < 9; i++) {

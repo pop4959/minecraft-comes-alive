@@ -203,7 +203,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
      * Read the move state from the active memory.
      */
     public void updateMoveState() {
-        if (getMoveState() == MoveState.FOLLOW && !entity.getBrain().getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING).isPresent()) {
+        if (getMoveState() == MoveState.FOLLOW && entity.getBrain().getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING).isEmpty()) {
             if (entity.getBrain().getOptionalMemory(MemoryModuleTypeMCA.STAYING).isPresent()) {
                 entity.setTrackedValue(MOVE_STATE, MoveState.STAY);
             } else if (entity.getBrain().getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING).isPresent()) {

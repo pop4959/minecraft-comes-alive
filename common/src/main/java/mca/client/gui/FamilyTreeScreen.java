@@ -263,9 +263,7 @@ public class FamilyTreeScreen extends Screen {
 
             int childrenStartX = -getWidth() / 2;
 
-            for (int i = 0; i < children.size(); i++) {
-                TreeNode node = children.get(i);
-
+            for (TreeNode node : children) {
                 childrenStartX += (node.getWidth() + HORIZONTAL_SPACING) / 2;
 
                 int x = childrenStartX + HORIZONTAL_SPACING / 2;
@@ -275,7 +273,7 @@ public class FamilyTreeScreen extends Screen {
 
                 matrices.push();
                 matrices.translate(x, y, 0);
-                node.render(matrices, mouseX - x,  mouseY - y);
+                node.render(matrices, mouseX - x, mouseY - y);
                 matrices.pop();
 
                 childrenStartX += (node.getWidth() + HORIZONTAL_SPACING) / 2;

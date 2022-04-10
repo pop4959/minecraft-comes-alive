@@ -34,6 +34,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -236,7 +237,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     @Override
-    public FamilyTreeNode getFamilyEntry() {
+    public @NotNull FamilyTreeNode getFamilyEntry() {
         return getFamilyTree().getOrCreate(Objects.requireNonNull(world.getEntity(playerId)));
     }
 

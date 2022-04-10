@@ -57,7 +57,7 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
         }
 
         //setting the type to null prevents it from rendering
-        //we need a skin layer anyways because of the color
+        //we need a skin layer anyway because of the color
         return null;
     }
 

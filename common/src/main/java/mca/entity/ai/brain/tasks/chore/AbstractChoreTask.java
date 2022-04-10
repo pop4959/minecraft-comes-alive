@@ -20,7 +20,7 @@ public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected void keepRunning(ServerWorld world, VillagerEntityMCA entity, long time) {
-        if (!getAssigningPlayer().isPresent()) {
+        if (getAssigningPlayer().isEmpty()) {
             MCA.LOGGER.info("Force-stopped chore because assigning player was not present.");
             villager.getVillagerBrain().abandonJob();
         }
@@ -36,9 +36,7 @@ public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
     }
 
     void abandonJobWithMessage(String message) {
-        getAssigningPlayer().ifPresent(player -> {
-            villager.sendChatMessage(player, message);
-        });
+        getAssigningPlayer().ifPresent(player -> villager.sendChatMessage(player, message));
         villager.getVillagerBrain().abandonJob();
     }
 }
