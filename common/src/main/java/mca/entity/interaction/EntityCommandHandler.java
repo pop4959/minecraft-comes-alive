@@ -2,7 +2,7 @@ package mca.entity.interaction;
 
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
-import mca.network.c2s.OpenGuiRequest;
+import mca.network.s2c.OpenGuiRequest;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
 import net.minecraft.entity.Entity;

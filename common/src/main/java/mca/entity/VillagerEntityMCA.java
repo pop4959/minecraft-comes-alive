@@ -11,7 +11,7 @@ import mca.entity.ai.brain.VillagerTasksMCA;
 import mca.entity.ai.relationship.*;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
-import mca.network.s2c.InteractionVillagerMessage;
+import mca.network.c2s.InteractionVillagerMessage;
 import mca.server.world.data.Village;
 import mca.util.InventoryUtils;
 import mca.util.network.datasync.CDataManager;

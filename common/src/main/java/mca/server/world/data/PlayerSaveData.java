@@ -11,7 +11,7 @@ import mca.entity.ai.relationship.RelationshipType;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
-import mca.network.c2s.ShowToastRequest;
+import mca.network.s2c.ShowToastRequest;
 import mca.resources.API;
 import mca.resources.Rank;
 import mca.resources.Tasks;

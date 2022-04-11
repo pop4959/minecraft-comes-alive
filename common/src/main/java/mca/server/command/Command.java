@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mca.cobalt.network.NetworkHandler;
-import mca.network.c2s.OpenGuiRequest;
+import mca.network.s2c.OpenGuiRequest;
 import mca.server.ServerInteractionManager;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.command.argument.EntityArgumentType;
