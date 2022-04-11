@@ -5,7 +5,6 @@ import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.network.NbtDataMessage;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 
 import java.util.UUID;
@@ -19,7 +18,7 @@ public class PlayerDataMessage extends NbtDataMessage {
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive() {
         VillagerEntityMCA mca = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
         assert mca != null;
         mca.readCustomDataFromNbt(getData());

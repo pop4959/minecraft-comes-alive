@@ -1,12 +1,9 @@
-package mca.network;
+package mca.network.c2s;
 
 import mca.cobalt.network.Message;
 import mca.util.WorldUtils;
 import mca.util.compat.FuzzyPositionsCompat;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;

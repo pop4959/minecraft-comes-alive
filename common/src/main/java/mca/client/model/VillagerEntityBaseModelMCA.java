@@ -2,14 +2,10 @@ package mca.client.model;
 
 import com.google.common.collect.ImmutableList;
 import mca.client.render.PlayerEntityMCARenderer;
-import mca.cobalt.network.NetworkHandler;
-import mca.entity.EntitiesMCA;
-import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.VillagerDimensions;
-import mca.network.PlayerDataRequest;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;

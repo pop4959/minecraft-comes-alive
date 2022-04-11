@@ -2,7 +2,7 @@ package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import mca.cobalt.network.NetworkHandler;
-import mca.network.DestinyMessage;
+import mca.network.c2s.DestinyMessage;
 import mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;

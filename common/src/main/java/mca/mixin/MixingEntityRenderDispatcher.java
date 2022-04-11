@@ -3,7 +3,7 @@ package mca.mixin;
 import mca.Config;
 import mca.client.render.PlayerEntityMCARenderer;
 import mca.cobalt.network.NetworkHandler;
-import mca.network.PlayerDataRequest;
+import mca.network.c2s.PlayerDataRequest;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
