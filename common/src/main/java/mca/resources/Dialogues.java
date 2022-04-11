@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
-import mca.network.c2s.AnalysisResults;
+import mca.network.s2c.AnalysisResults;
 import mca.resources.data.SerializablePair;
 import mca.resources.data.analysis.ChanceAnalysis;
 import mca.resources.data.analysis.IntAnalysis;

@@ -6,7 +6,7 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
-import mca.network.c2s.ShowToastRequest;
+import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.player.PlayerEntity;

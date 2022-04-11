@@ -5,7 +5,7 @@ import mca.client.gui.*;
 import mca.entity.VillagerLike;
 import mca.item.BabyItem;
 import mca.item.ExtendedWrittenBookItem;
-import mca.network.c2s.*;
+import mca.network.s2c.*;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.Village;
 import net.minecraft.client.MinecraftClient;
