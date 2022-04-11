@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
-import mca.network.s2c.GetFamilyTreeRequest;
+import mca.network.c2s.GetFamilyTreeRequest;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;

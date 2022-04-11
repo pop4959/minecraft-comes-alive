@@ -6,7 +6,7 @@ import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.LongTermMemory;
-import mca.network.c2s.InteractionDialogueResponse;
+import mca.network.s2c.InteractionDialogueResponse;
 import mca.resources.Dialogues;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.JsonHelper;
