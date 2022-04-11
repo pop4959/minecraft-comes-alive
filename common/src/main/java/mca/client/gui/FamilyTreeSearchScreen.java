@@ -1,7 +1,7 @@
 package mca.client.gui;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.s2c.FamilyTreeUUIDLookup;
+import mca.network.c2s.FamilyTreeUUIDLookup;
 import mca.resources.data.SerializablePair;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;

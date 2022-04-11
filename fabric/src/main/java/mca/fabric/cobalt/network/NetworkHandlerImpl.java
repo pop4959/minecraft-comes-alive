@@ -50,7 +50,7 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
         public static <T extends Message> void register(Identifier id, Class<T> msg) {
             ClientPlayNetworking.registerGlobalReceiver(id, (client, ignore1, buffer, ignore2) -> {
                 Message m = Message.decode(buffer);
-                client.execute(() -> m.receive(client.player));
+                client.execute(m::receive);
             });
         }
     }

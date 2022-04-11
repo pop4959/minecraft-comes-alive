@@ -1,7 +1,7 @@
 package mca.item;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.c2s.OpenGuiRequest;
+import mca.network.s2c.OpenGuiRequest;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;

@@ -1,6 +1,6 @@
 package mca;
 
-import mca.network.c2s.ClientInteractionManager;
+import mca.network.ClientInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.Nullable;
 
