@@ -17,7 +17,7 @@ public class VillagerNameResponse implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity e) { ClientProxy.getNetworkHandler().handleVillagerNameResponse(this); }
+    public void receive() { ClientProxy.getNetworkHandler().handleVillagerNameResponse(this); }
 
     public String getName() {
         return name;

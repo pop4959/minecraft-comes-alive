@@ -16,7 +16,7 @@ public class GetVillagerResponse extends NbtDataMessage {
     }
 
     @Override
-    public void receive(PlayerEntity player) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleVillagerDataResponse(this);
     }
 }

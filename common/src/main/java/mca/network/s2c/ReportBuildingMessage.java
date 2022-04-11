@@ -12,7 +12,7 @@ import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;
 
-public class ReportBuildingMessage implements Message.ServerMessage {
+public class ReportBuildingMessage implements Message {
     @Serial
     private static final long serialVersionUID = 3510050513221709603L;
 

@@ -16,7 +16,7 @@ import java.io.Serial;
 import java.util.Set;
 import java.util.UUID;
 
-public class GetInteractDataRequest implements Message.ServerMessage {
+public class GetInteractDataRequest implements Message {
     @Serial
     private static final long serialVersionUID = -4363277735373237564L;
 

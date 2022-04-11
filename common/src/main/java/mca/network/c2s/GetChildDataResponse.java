@@ -21,7 +21,7 @@ public class GetChildDataResponse extends NbtDataMessage {
     }
 
     @Override
-    public void receive(PlayerEntity player) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleChildData(this);
     }
 }

@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class VillagerEditorSyncRequest extends NbtDataMessage implements Message.ServerMessage {
+public class VillagerEditorSyncRequest extends NbtDataMessage implements Message {
     @Serial
     private static final long serialVersionUID = -5581564927127176555L;
 

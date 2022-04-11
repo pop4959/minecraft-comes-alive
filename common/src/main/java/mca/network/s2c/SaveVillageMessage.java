@@ -7,7 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 
-public class SaveVillageMessage implements Message.ServerMessage {
+public class SaveVillageMessage implements Message {
     @Serial
     private static final long serialVersionUID = -4830365225086158551L;
 

@@ -17,7 +17,7 @@ public class BabyNameResponse implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleBabyNameResponse(this);
     }
 

@@ -1,10 +1,11 @@
-package mca.network.c2s;
+package mca.network;
 
 import mca.client.book.Book;
 import mca.client.gui.*;
 import mca.entity.VillagerLike;
 import mca.item.BabyItem;
 import mca.item.ExtendedWrittenBookItem;
+import mca.network.c2s.*;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.Village;
 import net.minecraft.client.MinecraftClient;
