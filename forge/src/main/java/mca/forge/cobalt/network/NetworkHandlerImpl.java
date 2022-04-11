@@ -3,7 +3,7 @@ package mca.forge.cobalt.network;
 import mca.MCA;
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.network.NetworkRegistry;
@@ -20,7 +20,6 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
     );
     private int id = 0;
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends Message> void registerMessage(Class<T> msg) {
         channel.registerMessage(id++, msg,
@@ -28,8 +27,12 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
                 b -> (T) Message.decode(b),
                 (m, ctx) -> {
                     ctx.get().enqueueWork(() -> {
-                        PlayerEntity sender = ctx.get().getSender();
-                        m.receive(sender);
+                        ServerPlayerEntity sender = ctx.get().getSender();
+                        if (sender == null) {
+                            m.receive(MinecraftClient.getInstance().player);
+                        } else {
+                            m.receive(sender);
+                        }
                     });
                     ctx.get().setPacketHandled(true);
                 });
