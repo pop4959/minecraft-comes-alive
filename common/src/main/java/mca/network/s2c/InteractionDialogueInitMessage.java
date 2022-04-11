@@ -12,7 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.Serial;
 import java.util.UUID;
 
-public class InteractionDialogueInitMessage implements Message.ServerMessage {
+public class InteractionDialogueInitMessage implements Message {
     @Serial
     private static final long serialVersionUID = -8007274573058750406L;
 

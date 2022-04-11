@@ -22,7 +22,7 @@ public class GetFamilyTreeResponse implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity player) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleFamilyTreeResponse(this);
     }
 }

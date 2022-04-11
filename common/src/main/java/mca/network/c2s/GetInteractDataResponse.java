@@ -28,7 +28,7 @@ public class GetInteractDataResponse implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity player) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleInteractDataResponse(this);
     }
 }

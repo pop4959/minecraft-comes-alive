@@ -6,7 +6,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 
-public class RenameVillageMessage implements Message.ServerMessage {
+public class RenameVillageMessage implements Message {
     @Serial
     private static final long serialVersionUID = -7194992618247743620L;
 

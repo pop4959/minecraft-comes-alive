@@ -1,4 +1,6 @@
-package mca.network.c2s;
+package mca.network;
+
+import mca.network.c2s.*;
 
 public interface ClientInteractionManager {
     void handleGuiRequest(OpenGuiRequest message);

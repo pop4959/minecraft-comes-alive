@@ -16,7 +16,7 @@ public class FamilyTreeUUIDResponse implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleFamilyTreeUUIDResponse(this);
     }
 

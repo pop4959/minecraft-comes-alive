@@ -24,7 +24,7 @@ public class InteractionDialogueResponse implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity player) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleDialogueResponse(this);
     }
 }

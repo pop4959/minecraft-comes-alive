@@ -1,4 +1,4 @@
-package mca.network.c2s;
+package mca.network.s2c;
 
 import mca.cobalt.network.Message;
 import mca.entity.VillagerLike;

@@ -29,7 +29,7 @@ public class ShowToastRequest implements Message {
     }
 
     @Override
-    public void receive(PlayerEntity e) {
+    public void receive() {
         ClientProxy.getNetworkHandler().handleToastMessage(this);
     }
 }
