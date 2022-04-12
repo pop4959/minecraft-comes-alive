@@ -1,8 +1,8 @@
 package mca.network;
 
 import mca.cobalt.network.NetworkHandler;
-import mca.network.s2c.*;
 import mca.network.c2s.*;
+import mca.network.s2c.*;
 
 public interface MessagesMCA {
     static void bootstrap() {

@@ -34,7 +34,7 @@ public interface Message extends Serializable {
         // N/A
     }
 
-    default void receive(ServerPlayerEntity e) {
+    default void receive(ServerPlayerEntity player) {
         // N/A
     }
 }

@@ -159,9 +159,9 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "adopt" -> {
                 entity.sendChatMessage(player, "interaction.adopt.success");
-                FamilyTreeNode parentNode = FamilyTree.get((ServerWorld) player.world).getOrCreate(player);
+                FamilyTreeNode parentNode = FamilyTree.get(player.getWorld()).getOrCreate(player);
                 entity.getRelationships().getFamilyEntry().assignParent(parentNode);
-                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get((ServerWorld) player.world).getOrEmpty(parentNode.spouse());
+                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get(player.getWorld()).getOrEmpty(parentNode.spouse());
                 parentSpouse.ifPresent(p -> entity.getRelationships().getFamilyEntry().assignParent(p));
             }
             case "procreate" -> {
@@ -199,7 +199,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 }
                 entity.getVillagerBrain().modifyMoodValue(-5);
                 entity.getRelationships().endMarriage(MarriageState.SINGLE);
-                PlayerSaveData playerData = PlayerSaveData.get((ServerWorld) player.world, player.getUuid());
+                PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
                 playerData.endMarriage(MarriageState.SINGLE);
                 return true;
             }

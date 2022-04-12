@@ -15,8 +15,8 @@ import mca.entity.ai.Memories;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
-import mca.network.s2c.OpenGuiRequest;
 import mca.network.c2s.GetChildDataRequest;
+import mca.network.s2c.OpenGuiRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.BabyTracker.ChildSaveState;
 import mca.server.world.data.BabyTracker.MutableChildSaveState;
@@ -85,10 +85,9 @@ public class BabyItem extends Item {
         }
 
         // remove duplicates
-        if (entity instanceof ServerPlayerEntity) {
+        if (entity instanceof ServerPlayerEntity player) {
             if (world.getTime() % 20 == 0) {
                 Set<UUID> found = new HashSet<>();
-                ServerPlayerEntity player = (ServerPlayerEntity)entity;
                 for (int i = player.getInventory().size() - 1; i >= 0; i--) {
                     ItemStack s = player.getInventory().getStack(i);
                     final int sl = i;
@@ -114,8 +113,8 @@ public class BabyItem extends Item {
                     state.get().writeToItem(stack);
                     stack.removeCustomName();
 
-                    if (entity instanceof ServerPlayerEntity) {
-                        CriterionMCA.GENERIC_EVENT_CRITERION.trigger((ServerPlayerEntity)entity, "rename_baby");
+                    if (entity instanceof ServerPlayerEntity player) {
+                        CriterionMCA.GENERIC_EVENT_CRITERION.trigger(player, "rename_baby");
                     }
                 }
 
@@ -162,8 +161,8 @@ public class BabyItem extends Item {
         return BabyTracker.getState(stack, (ServerWorld)world).map(state -> {
             // Right-clicking an unnamed baby allows you to name it
             if (state.getName().isEmpty()) {
-                if (player instanceof ServerPlayerEntity) {
-                    NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), (ServerPlayerEntity)player);
+                if (player instanceof ServerPlayerEntity serverPlayer) {
+                    NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), serverPlayer);
                 }
 
                 return TypedActionResult.pass(stack);
@@ -173,9 +172,9 @@ public class BabyItem extends Item {
                 return TypedActionResult.pass(stack);
             }
 
-            if (player instanceof ServerPlayerEntity) {
+            if (player instanceof ServerPlayerEntity serverPlayer) {
                 // Name is good and we're ready to grow
-                birthChild(state, (ServerWorld)world, (ServerPlayerEntity)player);
+                birthChild(state, (ServerWorld)world, serverPlayer);
             }
             stack.decrement(1);
 
@@ -332,7 +331,7 @@ public class BabyItem extends Item {
 
             // Whoever wrote this needs to immediately ALT-F4
             // I'm not touching this ####
-            return loaded != null && !loaded.isPresent();
+            return loaded != null && loaded.isEmpty();
         }).orElse(false);
     }
 
