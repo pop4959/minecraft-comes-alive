@@ -21,7 +21,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.server.world.ServerWorld;
 
 public final class MCAFabric implements ModInitializer {
     @Override
@@ -49,7 +48,7 @@ public final class MCAFabric implements ModInitializer {
 
         ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
             if (!alive) {
-                VillageManager.get((ServerWorld)old.world).getBabies().pop(neu);
+                VillageManager.get(old.getWorld()).getBabies().pop(neu);
             }
         });
 

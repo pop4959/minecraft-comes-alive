@@ -5,8 +5,7 @@ import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
@@ -85,13 +84,12 @@ public interface EntityRelationship {
     }
 
     static Optional<EntityRelationship> of(Entity entity) {
-
-        if (entity instanceof PlayerEntity && !entity.world.isClient) {
-            return Optional.ofNullable(PlayerSaveData.get((ServerWorld)entity.world, entity.getUuid()));
+        if (entity instanceof ServerPlayerEntity player) {
+            return Optional.ofNullable(PlayerSaveData.get(player.getWorld(), entity.getUuid()));
         }
 
-        if (entity instanceof CompassionateEntity) {
-            return Optional.of(((CompassionateEntity<?>)entity).getRelationships());
+        if (entity instanceof CompassionateEntity<?> compassionateEntity) {
+            return Optional.of(compassionateEntity.getRelationships());
         }
 
         return Optional.empty();
