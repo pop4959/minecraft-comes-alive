@@ -69,6 +69,7 @@ public final class Config implements Serializable {
     public int maxBuildingSize = 8192;
     public int maxBuildingRadius = 320;
     public int maxTreeHeight = 8;
+    public int summonGrimReaperAltarMaxPillarHeight = 8; // Less than 2 will be overridden.
     public Map<String, Integer> maxTreeTicks = ImmutableMap.<String, Integer>builder()
             .put("#minecraft:logs", 60)
             .build();
