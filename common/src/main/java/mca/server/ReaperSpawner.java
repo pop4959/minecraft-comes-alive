@@ -137,7 +137,7 @@ public class ReaperSpawner {
     }
 
     private Set<BlockPos> getTotemsFires(World world, BlockPos pos) {
-        int maxPillarHeight = Math.max(2, Config.getInstance().summonGrimReaperAltarMaxPillarHeight); // overridden to 2 if it less than 2.
+        int maxPillarHeight = Math.min(Config.getInstance().minPillarHeight, world.getTopY() - pos.getY());
         // use mutableCopy for reduce memories, and starts with the grounds
         BlockPos.Mutable target = new BlockPos.Mutable();
         return Stream.of(HORIZONTALS).map(d -> target.set(pos).setY(pos.getY() - 2).move(d, 3)).filter(ground -> {
