@@ -30,4 +30,6 @@ public interface ClientInteractionManager {
     void handleToastMessage(ShowToastRequest message);
 
     void handleFamilyTreeUUIDResponse(FamilyTreeUUIDResponse response);
+
+    void handlePlayerDataMessage(PlayerDataMessage response);
 }

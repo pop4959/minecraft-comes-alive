@@ -102,7 +102,7 @@ public class ServerInteractionManager {
     /**
      * Removes the provided proposer from the target's list of proposals.
      *
-     * @param target   Target player who's proposal list will be modified.
+     * @param target   Target player whose proposal list will be modified.
      * @param proposer The proposer to the target player.
      */
     private void removeProposalFor(ServerPlayerEntity target, ServerPlayerEntity proposer) {
@@ -206,7 +206,7 @@ public class ServerInteractionManager {
             // Notify of acceptance.
             successMessage(receiver, new TranslatableText("server.proposalAccepted", sender.getDisplayName()));
 
-            // Set both player datas as married.
+            // Set both player data as married.
             PlayerSaveData.get(sender.getWorld(), sender.getUuid()).marry(receiver);
             PlayerSaveData.get(receiver.getWorld(), receiver.getUuid()).marry(sender);
 
@@ -289,7 +289,7 @@ public class ServerInteractionManager {
         // Ensure the spouse is online.
         senderData.getSpouse().filter(e -> e instanceof PlayerEntity).map(PlayerEntity.class::cast).ifPresentOrElse(spouse -> {
             // If the spouse is online and has previously sent a procreation request that hasn't expired, we can continue.
-            // Otherwise we notify the spouse that they must also enter the command.
+            // Otherwise, we notify the spouse that they must also enter the command.
             if (!procreateMap.containsKey(spouse.getUuid())) {
                 procreateMap.put(sender.getUuid(), System.currentTimeMillis() + 10000);
                 infoMessage(spouse, new TranslatableText("server.procreationRequest", sender.getEntityName()));

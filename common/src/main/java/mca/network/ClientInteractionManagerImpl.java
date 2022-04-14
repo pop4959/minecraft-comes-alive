@@ -2,6 +2,9 @@ package mca.network;
 
 import mca.client.book.Book;
 import mca.client.gui.*;
+import mca.client.render.PlayerEntityMCARenderer;
+import mca.entity.EntitiesMCA;
+import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.item.BabyItem;
 import mca.item.ExtendedWrittenBookItem;
@@ -18,7 +21,6 @@ import net.minecraft.util.Hand;
 import java.util.Optional;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {
-
     private final MinecraftClient client = MinecraftClient.getInstance();
 
     @Override
@@ -47,9 +49,12 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 break;
             case VILLAGER_EDITOR:
                 entity = client.world.getEntityById(message.villager);
+                assert entity != null;
+                assert MinecraftClient.getInstance().player != null;
                 client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 break;
             case DESTINY:
+                assert MinecraftClient.getInstance().player != null;
                 client.setScreen(new DestinyScreen(MinecraftClient.getInstance().player.getUuid()));
                 break;
             case BABY_NAME:
@@ -166,5 +171,13 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         if (screen instanceof FamilyTreeSearchScreen gui) {
             gui.setList(response.getList());
         }
+    }
+
+    @Override
+    public void handlePlayerDataMessage(PlayerDataMessage response) {
+        VillagerEntityMCA mca = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
+        assert mca != null;
+        mca.readCustomDataFromNbt(response.getData());
+        PlayerEntityMCARenderer.playerData.put(response.uuid, mca);
     }
 }

@@ -2,6 +2,7 @@ package mca.network.c2s;
 
 import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
+import mca.network.s2c.PlayerDataMessage;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;

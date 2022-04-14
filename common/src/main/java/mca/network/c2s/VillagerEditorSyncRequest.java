@@ -8,7 +8,7 @@ import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.NbtDataMessage;
-import mca.network.c2s.PlayerDataMessage;
+import mca.network.s2c.PlayerDataMessage;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
 import mca.resources.data.Hair;
