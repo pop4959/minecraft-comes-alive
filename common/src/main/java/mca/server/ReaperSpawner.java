@@ -137,16 +137,17 @@ public class ReaperSpawner {
     }
 
     private Set<BlockPos> getTotemsFires(World world, BlockPos pos) {
-        int maxPillarHeight = Math.min(Config.getInstance().minPillarHeight, world.getTopY() - pos.getY());
-        // use mutableCopy for reduce memories, and starts with the grounds
+        int groundY = pos.getY() - 2;
+        int leftSkyHeight = world.getTopY() - groundY;
+        int minPillarHeight = Math.min(Config.getInstance().minPillarHeight, leftSkyHeight);
         BlockPos.Mutable target = new BlockPos.Mutable();
-        return Stream.of(HORIZONTALS).map(d -> target.set(pos).setY(pos.getY() - 2).move(d, 3)).filter(ground -> {
-            for (int curHeight = 1; curHeight <= maxPillarHeight + 1; curHeight++) {
-                ground.setY(ground.getY() + 1);
-                if (world.getBlockState(ground).isOf(Blocks.OBSIDIAN)) {
+        return Stream.of(HORIZONTALS).map(d -> target.set(pos).setY(groundY).move(d, 3)).filter(pillarPos -> {
+            for (int height = 1; height <= leftSkyHeight; height++) {
+                pillarPos.setY(groundY + height);
+                if (world.getBlockState(pillarPos).isOf(Blocks.OBSIDIAN)) {
                     continue;
-                } else if (world.getBlockState(ground).isIn(BlockTags.FIRE)) {
-                    return curHeight - 1 >= 2; // except fire tags
+                } else if (world.getBlockState(pillarPos).isIn(BlockTags.FIRE)) {
+                    return height - 1 >= minPillarHeight; // except fire one height
                 } else {
                     return false;
                 }
