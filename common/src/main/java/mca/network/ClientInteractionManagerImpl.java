@@ -47,7 +47,10 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 break;
             case VILLAGER_EDITOR:
                 entity = client.world.getEntityById(message.villager);
-                client.setScreen(new VillagerEditorScreen(entity.getUuid(), client.player.getUuid()));
+                client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
+                break;
+            case DESTINY:
+                client.setScreen(new DestinyScreen(MinecraftClient.getInstance().player.getUuid()));
                 break;
             case BABY_NAME:
                 if (client.player != null) {

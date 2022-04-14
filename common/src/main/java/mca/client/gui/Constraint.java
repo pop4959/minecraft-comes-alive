@@ -56,8 +56,8 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     MAYOR("mayor", (villager, player) -> isRankAtLeast(villager, player, Rank.MAYOR)),
     NOT_MAYOR("!mayor", (villager, player) -> !isRankAtLeast(villager, player, Rank.MAYOR)),
 
-    KING("king", (villager, player) -> isRankAtLeast(villager, player, Rank.KING)),
-    NOT_KING("!king", (villager, player) -> !isRankAtLeast(villager, player, Rank.KING)),
+    MONARCH("monarch", (villager, player) -> isRankAtLeast(villager, player, Rank.MONARCH)),
+    NOT_MONARCH("!monarch", (villager, player) -> !isRankAtLeast(villager, player, Rank.MONARCH)),
 
     ORPHAN("orphan", Relationship.IS_ORPHAN.asConstraint()),
     NOT_ORPHAN("!orphan", Relationship.IS_ORPHAN.negate().asConstraint()),
@@ -66,7 +66,16 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     NOT_FOLLOWING("!following", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.FOLLOW),
 
     STAYING("staying", (villager, player) -> villager.getVillagerBrain().getMoveState() == MoveState.STAY),
-    NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY);
+    NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY),
+
+    SMALL_BOUNTY("small_bounty", (villager, player) -> {
+        if (villager instanceof VillagerEntityMCA v) {
+            return v.getSmallBounty() > 0;
+        } else {
+            return false;
+        }
+    }),
+    NOT_SMALL_BOUNTY("not_small_bounty", (villager, player) -> !SMALL_BOUNTY.test(villager, player));
 
     private static boolean isRankAtLeast(VillagerLike<?> villager, Entity player, Rank rank) {
         return player instanceof PlayerEntity && villager instanceof VillagerEntityMCA && ((VillagerEntityMCA)villager).getResidency().getHomeVillage()

@@ -180,7 +180,7 @@ public class GiftType {
         // condition chance
         for (GiftPredicate c : conditions) {
             int val = c.getSatisfactionFor(recipient, stack, player);
-            if (c.test(recipient, stack, player)) {
+            if (c.test(recipient, stack, player) > 0.0f) {
                 analysis.add(c.getConditionKeys().get(0), val);
             }
         }

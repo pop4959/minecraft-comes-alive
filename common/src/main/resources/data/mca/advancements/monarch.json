@@ -1,10 +1,10 @@
 {
   "display": {
     "title": {
-      "translate": "advancement.mca.king"
+      "translate": "advancement.mca.monarch"
     },
     "description": {
-      "translate": "advancement.mca.king.description"
+      "translate": "advancement.mca.monarch.description"
     },
     "icon": {
       "item": "minecraft:golden_helmet"
@@ -19,7 +19,7 @@
     "baby": {
       "trigger": "mca:rank",
       "conditions": {
-        "rank": "king"
+        "rank": "monarch"
       }
     }
   },

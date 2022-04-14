@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import mca.MCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerEntityMCA;
+import mca.entity.ai.LongTermMemory;
 import mca.network.s2c.InteractionDialogueResponse;
 import mca.resources.Dialogues;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -46,6 +47,17 @@ public class Actions {
             }
         });
 
+        register("say", JsonHelper::asString, id -> (villager, player) -> villager.sendChatMessage(player, "dialogue." + id));
+
+        register("remember", JsonHelper::asObject, json -> (villager, player) -> {
+            String id = LongTermMemory.parseId(json, player);
+            if (json.has("time")) {
+                villager.getLongTermMemory().remember(id, json.get("time").getAsLong());
+            } else {
+                villager.getLongTermMemory().remember(id);
+            }
+        });
+
         register("quit", (a, b) -> a, id -> (villager, player) -> villager.getInteractions().stopInteracting());
 
         register("negative", JsonHelper::asInt, hearts -> (villager, player) -> {
@@ -72,15 +84,19 @@ public class Actions {
 
     public static Actions fromJson(JsonObject json) {
         List<Action> actions = new LinkedList<>();
-        boolean positive = true;
+        boolean positive = false;
+        boolean negative = false;
 
         for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
             if (TYPES.containsKey(entry.getKey())) {
                 Action parsed = TYPES.get(entry.getKey()).parse(entry.getValue());
                 actions.add(parsed);
 
+                if (entry.getKey().equals("positive")) {
+                    positive = true;
+                }
                 if (entry.getKey().equals("negative")) {
-                    positive = false;
+                    negative = true;
                 }
             } else {
                 MCA.LOGGER.info("Unknown dialogue action " + entry.getKey());
@@ -92,7 +108,7 @@ public class Actions {
             actions.add(parsed);
         }
 
-        return new Actions(actions, positive);
+        return new Actions(actions, positive, negative);
     }
 
     public interface Action {
@@ -101,10 +117,12 @@ public class Actions {
 
     private final List<Action> actions;
     private final boolean positive;
+    private final boolean negative;
 
-    public Actions(List<Action> actions, boolean positive) {
+    public Actions(List<Action> actions, boolean positive, boolean negative) {
         this.actions = actions;
         this.positive = positive;
+        this.negative = negative;
     }
 
     public void trigger(VillagerEntityMCA villager, ServerPlayerEntity player) {
@@ -115,5 +133,9 @@ public class Actions {
 
     public boolean isPositive() {
         return positive;
+    }
+
+    public boolean isNegative() {
+        return negative;
     }
 }

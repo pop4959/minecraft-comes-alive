@@ -6,12 +6,14 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
+import mca.network.s2c.OpenGuiRequest;
 import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
@@ -42,6 +44,12 @@ public class ServerInteractionManager {
         return INSTANCE;
     }
 
+    public static void launchDestiny(ServerPlayerEntity player) {
+        NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.DESTINY, player), player);
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 10000000));
+        player.teleport(player.getX(), 10000000, player.getZ());
+    }
+
     public void tick() {
         List<UUID> removals = new ArrayList<>();
         procreateMap.keySet().stream()
@@ -51,12 +59,16 @@ public class ServerInteractionManager {
     }
 
     public void onPlayerJoin(ServerPlayerEntity player) {
-        PlayerSaveData playerData = PlayerSaveData.get((ServerWorld)player.world, player.getUuid());
+        PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
         if (!playerData.isEntityDataSet()) {
-            NetworkHandler.sendToPlayer(new ShowToastRequest(
-                    "server.playerNotCustomized.title",
-                    "server.playerNotCustomized.description"
-            ), player);
+            if (Config.getInstance().destinyEnabled) {
+                launchDestiny(player);
+            } else {
+                NetworkHandler.sendToPlayer(new ShowToastRequest(
+                        "server.playerNotCustomized.title",
+                        "server.playerNotCustomized.description"
+                ), player);
+            }
         }
 
         if (playerData.hasMail()) {
@@ -72,7 +84,7 @@ public class ServerInteractionManager {
      *
      * @return boolean
      */
-    private boolean hasProposalFrom(PlayerEntity sender, PlayerEntity receiver) {
+    private boolean hasProposalFrom(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         return getProposalsFor(receiver).contains(sender.getUuid());
     }
 
@@ -83,7 +95,7 @@ public class ServerInteractionManager {
      *
      * @return List<UUID>
      */
-    private List<UUID> getProposalsFor(PlayerEntity player) {
+    private List<UUID> getProposalsFor(ServerPlayerEntity player) {
         return proposals.getOrDefault(player.getUuid(), new ArrayList<>());
     }
 
@@ -93,7 +105,7 @@ public class ServerInteractionManager {
      * @param target   Target player who's proposal list will be modified.
      * @param proposer The proposer to the target player.
      */
-    private void removeProposalFor(PlayerEntity target, PlayerEntity proposer) {
+    private void removeProposalFor(ServerPlayerEntity target, ServerPlayerEntity proposer) {
         List<UUID> list = getProposalsFor(target);
         list.remove(proposer.getUuid());
         proposals.put(target.getUuid(), list);
@@ -104,7 +116,7 @@ public class ServerInteractionManager {
      *
      * @param sender Player whose active proposals will be listed.
      */
-    public void listProposals(PlayerEntity sender) {
+    public void listProposals(ServerPlayerEntity sender) {
         List<UUID> proposals = getProposalsFor(sender);
 
         if (proposals.size() == 0) {
@@ -115,7 +127,7 @@ public class ServerInteractionManager {
 
         // Send the name of all online players to the command sender.
         proposals.forEach((uuid -> {
-            PlayerEntity player = sender.getEntityWorld().getPlayerByUuid(uuid);
+            PlayerEntity player = sender.getWorld().getPlayerByUuid(uuid);
             if (player != null) {
                 infoMessage(sender, (BaseText)new LiteralText("- ").append(new LiteralText(player.getEntityName())));
             }
@@ -128,7 +140,7 @@ public class ServerInteractionManager {
      * @param sender   The player sending the proposal.
      * @param receiver The player being proposed to.
      */
-    public void sendProposal(PlayerEntity sender, PlayerEntity receiver) {
+    public void sendProposal(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         // Checks if the admin allows this
         if (!Config.getInstance().allowPlayerMarriage) {
             failMessage(sender, new TranslatableText("notify.playerMarriage.disabled"));
@@ -136,7 +148,7 @@ public class ServerInteractionManager {
         }
 
         // Ensure the sender isn't already married.
-        if (PlayerSaveData.get((ServerWorld)sender.world, sender.getUuid()).isMarried()) {
+        if (PlayerSaveData.get(sender.getWorld(), sender.getUuid()).isMarried()) {
             failMessage(sender, new TranslatableText("server.alreadyMarried"));
             return;
         }
@@ -168,7 +180,7 @@ public class ServerInteractionManager {
      * @param sender   The person rejecting the proposal.
      * @param receiver The initial proposer.
      */
-    public void rejectProposal(PlayerEntity sender, PlayerEntity receiver) {
+    public void rejectProposal(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         // Ensure a proposal existed.
         if (!hasProposalFrom(receiver, sender)) {
             failMessage(sender, new TranslatableText("server.noProposal", receiver.getDisplayName()));
@@ -186,7 +198,7 @@ public class ServerInteractionManager {
      * @param sender   The person accepting the proposal.
      * @param receiver The initial proposer.
      */
-    public void acceptProposal(PlayerEntity sender, PlayerEntity receiver) {
+    public void acceptProposal(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         // Ensure a proposal is active.
         if (!hasProposalFrom(receiver, sender)) {
             failMessage(sender, new TranslatableText("server.noProposal", receiver.getDisplayName()));
@@ -195,8 +207,8 @@ public class ServerInteractionManager {
             successMessage(receiver, new TranslatableText("server.proposalAccepted", sender.getDisplayName()));
 
             // Set both player datas as married.
-            PlayerSaveData.get((ServerWorld)sender.world, sender.getUuid()).marry(receiver);
-            PlayerSaveData.get((ServerWorld)receiver.world, receiver.getUuid()).marry(sender);
+            PlayerSaveData.get(sender.getWorld(), sender.getUuid()).marry(receiver);
+            PlayerSaveData.get(receiver.getWorld(), receiver.getUuid()).marry(sender);
 
             // Send success messages.
             successMessage(sender, new TranslatableText("server.married", receiver.getDisplayName()));
@@ -212,7 +224,7 @@ public class ServerInteractionManager {
      *
      * @param sender The person ending their marriage.
      */
-    public void endMarriage(PlayerEntity sender) {
+    public void endMarriage(ServerPlayerEntity sender) {
         // Retrieve all data instances and an instance of the ex-spouse if they are present.
         EntityRelationship.of(sender).ifPresent(senderData -> {
             // Ensure the sender is married
@@ -238,7 +250,7 @@ public class ServerInteractionManager {
                 }
             });
             senderData.endMarriage(MarriageState.SINGLE);
-            senderData.getSpouseUuid().map(id -> PlayerSaveData.get((ServerWorld)sender.world, id)).ifPresent(r -> r.endMarriage(MarriageState.SINGLE));
+            senderData.getSpouseUuid().map(id -> PlayerSaveData.get(sender.getWorld(), id)).ifPresent(r -> r.endMarriage(MarriageState.SINGLE));
         });
     }
 

@@ -2,6 +2,7 @@ package mca.entity.ai;
 
 import mca.Config;
 import mca.entity.EntityWrapper;
+import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.resources.API;
@@ -14,6 +15,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public interface Messenger extends EntityWrapper {
@@ -37,9 +39,9 @@ public interface Messenger extends EntityWrapper {
 
     default TranslatableText getTranslatable(PlayerEntity target, String phraseId, Object... params) {
         String targetName;
-        if (target.world instanceof ServerWorld) {
+        if (target.world instanceof ServerWorld world) {
             //todo won't work on the few client side use cases
-            targetName = FamilyTree.get((ServerWorld)target.world)
+            targetName = FamilyTree.get(world)
                     .getOrEmpty(target.getUuid())
                     .map(FamilyTreeNode::getName)
                     .filter(n -> !n.isEmpty())
@@ -47,7 +49,23 @@ public interface Messenger extends EntityWrapper {
         } else {
             targetName = target.getName().getString();
         }
-        return new TranslatableText(getDialogueType(target).name() + "." + phraseId, targetName, params);
+        Object[] newParams = new Object[params.length + 1];
+        System.arraycopy(params, 0, newParams, 1, params.length);
+        newParams[0] = targetName;
+
+        //also pass profession
+        String professionString = "";
+        if (!asEntity().isBaby() && asEntity() instanceof VillagerEntityMCA v) {
+            professionString = "#P" + Registry.VILLAGER_PROFESSION.getId(v.getProfession()).getPath() + ".";
+        }
+
+        //and personality
+        String personalityString = "";
+        if (!asEntity().isBaby() && asEntity() instanceof VillagerEntityMCA v) {
+            personalityString = "#E" + v.getVillagerBrain().getPersonality().name() + ".";
+        }
+
+        return new TranslatableText(personalityString + professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
     default void sendChatToAllAround(String phrase, Object... params) {

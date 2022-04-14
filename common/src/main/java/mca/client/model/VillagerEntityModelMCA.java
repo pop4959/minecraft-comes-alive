@@ -6,9 +6,9 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.LivingEntity;
 
-public class VillagerEntityModelMCA<T extends MobEntity & VillagerLike<T>> extends VillagerEntityBaseModelMCA<T> {
+public class VillagerEntityModelMCA<T extends LivingEntity> extends VillagerEntityBaseModelMCA<T> {
     protected static final String BREASTPLATE = "breastplate";
 
     public final ModelPart breastsWear;

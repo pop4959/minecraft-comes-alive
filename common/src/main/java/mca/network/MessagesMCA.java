@@ -39,5 +39,8 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(RenameVillageMessage.class);
         NetworkHandler.registerMessage(FamilyTreeUUIDLookup.class);
         NetworkHandler.registerMessage(FamilyTreeUUIDResponse.class);
+        NetworkHandler.registerMessage(DestinyMessage.class);
+        NetworkHandler.registerMessage(PlayerDataMessage.class);
+        NetworkHandler.registerMessage(PlayerDataRequest.class);
     }
 }

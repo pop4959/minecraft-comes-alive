@@ -1,11 +1,10 @@
 package mca.entity.ai;
 
 import mca.entity.ai.relationship.AgeState;
+import mca.entity.ai.relationship.Personality;
 import net.minecraft.util.Language;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,6 +21,8 @@ public enum DialogueType {
     TEENP(TEEN);
 
     public final DialogueType fallback;
+
+    private static final Random random = new Random();
 
     DialogueType(DialogueType fallback) {
         this.fallback = fallback;
@@ -56,29 +57,73 @@ public enum DialogueType {
         return VALUES[id];
     }
 
-    public static String applyFallback(String key) {
-        int split = key.indexOf(".");
+    private static Optional<String> getPrefixedPhrase(DialogueType type, String prefix, String key) {
+        DialogueType t = type;
+        while (t != null) {
+            String s = prefix + "." + t.name().toLowerCase(Locale.ENGLISH) + "." + key;
+            if (Language.getInstance().hasTranslation(s)) {
+                return Optional.of(s);
+            }
+            t = t.fallback;
+        }
+        String s = prefix + "." + key;
+        if (Language.getInstance().hasTranslation(s)) {
+            return Optional.of(s);
+        }
+        return Optional.empty();
+    }
 
-        if (split <= 0) {
+    public static String applyFallback(String key) {
+        if (!key.contains("#")) {
             return key;
         }
 
-        DialogueType type = DialogueType.MAP.get(key.substring(0, split));
+        //extract flags
+        Map<String, String> flags = new HashMap<>();
+        for (String s : key.split("\\.")) {
+            if (s.startsWith("#")) {
+                flags.put(s.substring(1, 2), s.substring(2));
+                key = key.replace(s + ".", "");
+            }
+        }
+
+        //check for type
+        DialogueType type = null;
+        if (flags.containsKey("T")) {
+            type = DialogueType.MAP.get(flags.get("T"));
+        }
         if (type == null) {
             return key;
         }
 
-        String phrase = key.substring(split + 1);
+        //first try professions
+        //children can't have profession, this is already checked in the Messenger
+        if (flags.containsKey("P") && random.nextBoolean()) {
+            Optional<String> p = getPrefixedPhrase(type, flags.get("P"), key);
+            if (p.isPresent()) {
+                return p.get();
+            }
+        }
 
-        while (type != null) {
-            String s = type.name().toLowerCase(Locale.ENGLISH) + "." + phrase;
+        //then try personality
+        if (flags.containsKey("E")) {
+            String personality = Personality.valueOf(flags.get("E")).name().toLowerCase(Locale.ROOT);
+            Optional<String> p = getPrefixedPhrase(type, personality, key);
+            if (p.isPresent()) {
+                return p.get();
+            }
+        }
 
+        //try all types
+        DialogueType t = type;
+        while (t != null) {
+            String s = t.name().toLowerCase(Locale.ENGLISH) + "." + key;
             if (Language.getInstance().hasTranslation(s)) {
                 return s;
             }
-
-            type = type.fallback;
+            t = t.fallback;
         }
-        return phrase;
+
+        return key;
     }
 }

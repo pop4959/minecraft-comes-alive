@@ -108,6 +108,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
 
+    private final LongTermMemory longTermMemory = new LongTermMemory(this);
+
     final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
 
     private final Genetics genetics = new Genetics(this);
@@ -204,6 +206,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public VillagerBrain<?> getVillagerBrain() {
         return mcaBrain;
+    }
+
+    public LongTermMemory getLongTermMemory() {
+        return longTermMemory;
     }
 
     public Residency getResidency() {
@@ -487,19 +493,21 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (attacker instanceof LivingEntity livingEntity && !isHostile() && !isFriend(attacker.getType())) {
             Vec3d pos = getPos();
             world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
-                if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64) && (v.isGuard())) {
+                if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
                     if (attacker instanceof PlayerEntity player) {
                         int bounty = v.getSmallBounty();
-                        int maxWarning = v.getMaxWarnings(player);
-                        if (bounty > maxWarning) {
-                            // ok, that was enough
-                            v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, livingEntity);
-                        } else if (bounty == 0 || bounty == maxWarning) {
-                            // just a warning
-                            v.sendChatMessage(player, "villager.warning");
+                        if (v.isGuard()) {
+                            int maxWarning = v.getMaxWarnings(player);
+                            if (bounty > maxWarning) {
+                                // ok, that was enough
+                                v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, livingEntity);
+                            } else if (bounty == 0 || bounty == maxWarning) {
+                                // just a warning
+                                v.sendChatMessage(player, "villager.warning");
+                            }
                         }
                         v.getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty + 1);
-                    } else {
+                    } else if (v.isGuard()) {
                         // non players get attacked straight away
                         v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, livingEntity);
                     }
@@ -533,7 +541,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return getProfession() == ProfessionsMCA.GUARD.get() || getProfession() == ProfessionsMCA.ARCHER.get();
     }
 
-    private int getSmallBounty() {
+    public int getSmallBounty() {
         return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY.get()).orElse(0);
     }
 
@@ -1142,6 +1150,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.readCustomDataFromNbt(nbt);
         getTypeDataManager().load(this, nbt);
         relations.readFromNbt(nbt);
+        longTermMemory.readFromNbt(nbt);
 
         updateSpeed();
 
@@ -1154,6 +1163,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.writeCustomDataToNbt(nbt);
         getTypeDataManager().save(this, nbt);
         relations.writeToNbt(nbt);
+        longTermMemory.writeToNbt(nbt);
         InventoryUtils.saveToNBT(inventory, nbt);
     }
 

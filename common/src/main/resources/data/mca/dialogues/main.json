@@ -1,12 +1,24 @@
 {
+  "silent": true,
   "answers": [
     {
-      "name": "greet",
-      "constraints": "!baby",
+      "name": "apologize",
+      "constraints": "small_bounty",
       "results": [
         {
           "actions": {
-            "next": "greet"
+            "next": "apologize"
+          }
+        }
+      ]
+    },
+    {
+      "name": "rumors",
+      "constraints": "rumors_cooldown",
+      "results": [
+        {
+          "actions": {
+            "next": "rumors"
           }
         }
       ]

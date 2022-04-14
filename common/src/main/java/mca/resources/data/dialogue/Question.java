@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import mca.client.gui.Constraint;
 import mca.entity.VillagerEntityMCA;
+import mca.entity.interaction.InteractionPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.LinkedList;
@@ -33,6 +34,19 @@ public class Question {
         List<Answer> answers = new LinkedList<>();
         for (JsonElement e : json.getAsJsonArray("answers")) {
             answers.add(Answer.fromJson(e.getAsJsonObject()));
+        }
+
+        //sometimes the conditions are the same for all results
+        if (json.has("baseConditions")) {
+            int r = 0;
+            for (JsonElement conditions : json.getAsJsonArray("baseConditions")) {
+                for (JsonElement e : conditions.getAsJsonArray()) {
+                    InteractionPredicate predicate = InteractionPredicate.fromJson(e.getAsJsonObject());
+                    int finalR = r;
+                    answers.forEach(a -> a.getResults().get(finalR).getConditions().add(predicate));
+                }
+                r++;
+            }
         }
 
         return new Question(id, group, answers, auto, silent);

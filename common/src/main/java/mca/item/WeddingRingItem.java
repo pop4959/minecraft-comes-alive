@@ -7,7 +7,6 @@ import mca.entity.ai.Relationship;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.item.Item;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 
 public class WeddingRingItem extends TooltippedItem implements SpecialCaseGift {
 
@@ -28,7 +27,7 @@ public class WeddingRingItem extends TooltippedItem implements SpecialCaseGift {
 
     @Override
     public boolean handle(ServerPlayerEntity player, VillagerEntityMCA villager) {
-        PlayerSaveData playerData = PlayerSaveData.get((ServerWorld)player.world, player.getUuid());
+        PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
         Memories memory = villager.getVillagerBrain().getMemoriesForPlayer(player);
         String response;
         boolean consume = false;

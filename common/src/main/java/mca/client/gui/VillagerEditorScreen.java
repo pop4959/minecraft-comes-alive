@@ -37,6 +37,7 @@ import net.minecraft.village.VillagerProfession;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -70,7 +71,7 @@ public class VillagerEditorScreen extends Screen {
     @Override
     public void init() {
         requestVillagerData();
-        setPage("loading");
+        setPage(Objects.requireNonNullElse(page, "loading"));
     }
 
     private int doubleGeneSliders(int y, Genetics.GeneType... genes) {
@@ -258,7 +259,7 @@ public class VillagerEditorScreen extends Screen {
                     if (p != Personality.UNASSIGNED) {
                         if (row == BUTTONS_PER_ROW) {
                             row = 0;
-                            y += 20;
+                            y += 19;
                         }
                         ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / BUTTONS_PER_ROW * row, y, DATA_WIDTH / BUTTONS_PER_ROW, 20, p.getName(), b -> {
                             villager.getVillagerBrain().setPersonality(p);
@@ -359,6 +360,7 @@ public class VillagerEditorScreen extends Screen {
             // Failsafe-conditions for empty names
             if (villagerUUID.equals(playerUUID)) {
                 villagerName = client.player.getName();
+                villager.setTrackedValue(VILLAGER_NAME, villagerName.asString());
             }
         }
         villagerNameField = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH / 3 * 2, 18, new TranslatableText("structure_block.structure_name")));
@@ -375,14 +377,14 @@ public class VillagerEditorScreen extends Screen {
 
     void drawGender(int x, int y) {
         assert villager != null;
-        genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.female"), sender -> {
+        genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.feminine"), sender -> {
             villager.getGenetics().setGender(Gender.FEMALE);
             genderButtonFemale.active = false;
             genderButtonMale.active = true;
         });
         addDrawableChild(genderButtonFemale);
 
-        genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.male"), sender -> {
+        genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.masculine"), sender -> {
             villager.getGenetics().setGender(Gender.MALE);
             genderButtonFemale.active = true;
             genderButtonMale.active = false;

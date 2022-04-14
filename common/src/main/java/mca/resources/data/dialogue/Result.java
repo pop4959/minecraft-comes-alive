@@ -56,10 +56,6 @@ public class Result {
         return applyFatigue;
     }
 
-    public boolean isPositive() {
-        return getActions().isPositive();
-    }
-
     public List<InteractionPredicate> getConditions() {
         return Objects.requireNonNullElse(conditions, Collections.emptyList());
     }
@@ -80,8 +76,9 @@ public class Result {
 
         // condition chance
         for (InteractionPredicate c : getConditions()) {
-            if (c.getChance() != 0 && c.test(villager, player)) {
-                analysis.add(c.getConditionKeys().get(0), c.getChance());
+            int chance = (int)(c.getChance() * c.test(villager, player));
+            if (chance != 0) {
+                analysis.add(c.getConditionKeys().get(0), chance);
             }
         }
 

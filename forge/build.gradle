@@ -78,7 +78,7 @@ modrinth {
     versionNumber = version.toString() + "_forge"
     versionName = "[Forge 1.18.2] MCA Reborn - " + version
     changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()})/changelog.md"
-    versionType = "release"
+    versionType = "alpha"
     uploadFile = remapJar
     gameVersions = ["1.18", "1.18.2"]
     loaders = ["forge"]
