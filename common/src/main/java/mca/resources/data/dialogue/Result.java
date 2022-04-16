@@ -65,7 +65,7 @@ public class Result {
         Memories memory = villager.getVillagerBrain().getMemoriesForPlayer(player);
 
         // base chance
-        if (getBaseChance() > 0) {
+        if (getBaseChance() != 0) {
             analysis.add("base", getBaseChance());
         }
 

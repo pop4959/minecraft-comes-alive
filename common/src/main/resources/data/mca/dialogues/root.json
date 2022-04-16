@@ -102,10 +102,24 @@
           }
         },
         {
-          "baseChance": 5,
+          "baseChance": 0,
           "actions": {
             "next": "greet"
           }
+        },
+        {
+          "baseChance": 0,
+          "actions": {
+            "next": "greet.negative"
+          },
+          "conditions": [
+            {
+              "chance": 30,
+              "hearts": {
+                "dividend": -100
+              }
+            }
+          ]
         },
         {
           "baseChance": -3,
