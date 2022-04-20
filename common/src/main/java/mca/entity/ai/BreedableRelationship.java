@@ -210,7 +210,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
         if (item instanceof SpecialCaseGift) {
             if (((SpecialCaseGift)item).handle(player, entity)) {
-                player.getMainHandStack().decrement(1);
+                stack.decrement(1);
             }
             return true;
         }
@@ -218,7 +218,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         if (item == Items.CAKE && !entity.isBaby()) {
             if (pregnancy.tryStartGestation()) {
                 player.world.sendEntityStatus(entity, Status.VILLAGER_HEARTS);
-                player.getMainHandStack().decrement(1);
+                stack.decrement(1);
                 entity.sendChatMessage(player, "gift.cake.success");
             } else {
                 entity.sendChatMessage(player, "gift.cake.fail");
@@ -230,6 +230,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         if (item == Items.GOLDEN_APPLE && entity.isBaby()) {
             // increase age by 5 minutes
             entity.growUp(1200 * 5);
+            stack.decrement(1);
             return true;
         }
 
