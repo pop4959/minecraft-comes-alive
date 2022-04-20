@@ -249,3 +249,4 @@
 * Fixed Destiny partly working on dedicated servers
 * Fixed mod conflicts
 * Added clothing selection
+* Bounty hunter no longer attack while in creative
