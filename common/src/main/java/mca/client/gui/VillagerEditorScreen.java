@@ -62,7 +62,7 @@ public class VillagerEditorScreen extends Screen {
 
     private int clothingPage;
     private int clothingPageCount;
-    private List<Identifier> filteredClothing = new LinkedList<>();
+    private List<String> filteredClothing = new LinkedList<>();
     private Gender filterGender = Gender.NEUTRAL;
     private String searchString = "";
     private int hoveredClothingId;

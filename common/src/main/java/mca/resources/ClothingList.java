@@ -55,7 +55,7 @@ public class ClothingList extends JsonDataLoader {
                 VillagerProfession profession = Registry.VILLAGER_PROFESSION.get(professionIdentifier);
 
                 for (int i = 0; i < count; i++) {
-                    Identifier identifier = new Identifier(String.format("%s:%s/%s/%d.png", id.getNamespace(), gender.getStrName(), professionIdentifier.getPath(), i));
+                    String identifier = String.format("%s:%s/%s/%d.png", id.getNamespace(), gender.getStrName(), professionIdentifier.getPath(), i);
                     clothing.add(new Clothing(identifier, gender, profession), chance);
                 }
             });
@@ -65,7 +65,7 @@ public class ClothingList extends JsonDataLoader {
     /**
      * Gets a pool of clothing options valid for this entity's gender and profession.
      */
-    public WeightedPool<Identifier> getPool(VillagerLike<?> villager) {
+    public WeightedPool<String> getPool(VillagerLike<?> villager) {
         Gender gender = villager.getGenetics().getGender();
         return switch (villager.getAgeState()) {
             case BABY, TODDLER -> getPool(gender, MCA.locate("baby"));
@@ -74,15 +74,15 @@ public class ClothingList extends JsonDataLoader {
         };
     }
 
-    public WeightedPool<Identifier> getPool(Gender gender, Identifier profession) {
+    public WeightedPool<String> getPool(Gender gender, Identifier profession) {
         return getPool(gender, Registry.VILLAGER_PROFESSION.get(profession));
     }
 
-    public WeightedPool<Identifier> getPool(Gender gender, @Nullable VillagerProfession profession) {
+    public WeightedPool<String> getPool(Gender gender, @Nullable VillagerProfession profession) {
         return clothing.entries.stream()
                 .filter(c -> c.getValue().gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.getValue().gender == gender)
                 .filter(c -> profession == null || c.getValue().profession == null || c.getValue().profession == profession)
-                .collect(() -> new WeightedPool.Mutable<>(new Identifier("mca:missing")),
+                .collect(() -> new WeightedPool.Mutable<>("mca:missing"),
                         (list, entry) -> list.add(entry.getValue().identifier, entry.getWeight()),
                         (a, b) -> {
                             a.entries.addAll(b.entries);
@@ -90,7 +90,7 @@ public class ClothingList extends JsonDataLoader {
     }
 
     public static class Clothing {
-        Identifier identifier;
+        String identifier;
         Gender gender;
 
         @Nullable
@@ -102,7 +102,7 @@ public class ClothingList extends JsonDataLoader {
         public Clothing() {
         }
 
-        public Clothing(Identifier identifier, Gender gender, VillagerProfession profession) {
+        public Clothing(String identifier, Gender gender, VillagerProfession profession) {
             this.identifier = identifier;
             this.gender = gender;
             this.profession = profession;
