@@ -86,7 +86,7 @@ public class ReaperSpawner {
             return;
         }
 
-        Set<BlockPos> totems = getTotems(world, pos);
+        Set<BlockPos> totems = getTotemsFires(world, pos);
 
         MCA.LOGGER.info("It is night time, found {} totems", totems.size());
 
@@ -136,11 +136,24 @@ public class ReaperSpawner {
         return time >= 13000 && time <= 23000;
     }
 
-    private Set<BlockPos> getTotems(World world, BlockPos pos) {
-        return Stream.of(HORIZONTALS).map(d -> pos.offset(d, 3)).filter(pillarCenter ->
-                world.getBlockState(pillarCenter).isOf(Blocks.OBSIDIAN)
-                && world.getBlockState(pillarCenter.down()).isOf(Blocks.OBSIDIAN)
-                && world.getBlockState(pillarCenter.up()).isIn(BlockTags.FIRE)).map(BlockPos::up).collect(Collectors.toSet());
+    private Set<BlockPos> getTotemsFires(World world, BlockPos pos) {
+        int groundY = pos.getY() - 2;
+        int leftSkyHeight = world.getTopY() - groundY;
+        int minPillarHeight = Math.min(Config.getInstance().minPillarHeight, leftSkyHeight);
+        BlockPos.Mutable target = new BlockPos.Mutable();
+        return Stream.of(HORIZONTALS).map(d -> target.set(pos).setY(groundY).move(d, 3)).filter(pillarPos -> {
+            for (int height = 1; height <= leftSkyHeight; height++) {
+                pillarPos.setY(groundY + height);
+                if (world.getBlockState(pillarPos).isOf(Blocks.OBSIDIAN)) {
+                    continue;
+                } else if (world.getBlockState(pillarPos).isIn(BlockTags.FIRE)) {
+                    return height - 1 >= minPillarHeight; // except fire one height
+                } else {
+                    return false;
+                }
+            }
+            return false;
+        }).map(BlockPos::toImmutable).collect(Collectors.toSet());
     }
 
     public NbtCompound writeNbt() {
