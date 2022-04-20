@@ -11,13 +11,14 @@ import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class ClothingList extends JsonDataLoader {
     protected static final Identifier ID = MCA.locate("skins/clothing");
 
-    private final Map<Gender, ProfessionPool> clothing = new EnumMap<>(Gender.class);
+    private final WeightedPool.Mutable<Clothing> clothing = new WeightedPool.Mutable<>(new Clothing());
 
     private static ClothingList INSTANCE;
 
@@ -32,7 +33,8 @@ public class ClothingList extends JsonDataLoader {
 
     @Override
     protected void apply(Map<Identifier, JsonElement> data, ResourceManager manager, Profiler profiler) {
-        clothing.clear();
+        clothing.entries.clear();
+
         data.forEach((id, file) -> {
             Gender gender = Gender.byName(id.getPath().split("\\.")[0]);
 
@@ -41,89 +43,71 @@ public class ClothingList extends JsonDataLoader {
                 return;
             }
 
-            // adds the skins to all respective pools.
-            gender.getTransients().map(this::byGender).forEach(pool ->
-                    JsonHelper.asObject(file, "root").getAsJsonObject().entrySet().forEach(entry ->
-                            pool.addToPool(
-                                    id.getNamespace(),
-                                    gender,
-                                    new Identifier(entry.getKey()),
-                                    JsonHelper.getInt(entry.getValue().getAsJsonObject(), "count"),
-                                    JsonHelper.getFloat(entry.getValue().getAsJsonObject(), "chance", 1)
-                            )
-            ));
-        });
-    }
+            // adds the skins to list
+            JsonHelper.asObject(file, "root").getAsJsonObject().entrySet().forEach(entry -> {
+                int count = JsonHelper.getInt(entry.getValue().getAsJsonObject(), "count");
+                float chance = JsonHelper.getFloat(entry.getValue().getAsJsonObject(), "chance", 1.0f);
+                if (count <= 0) {
+                    return;
+                }
 
-    /**
-     * Gets a pool of clothing options based on a specific gender.
-     */
-    public ProfessionPool byGender(Gender gender) {
-        return clothing.computeIfAbsent(gender, ProfessionPool::new);
+                Identifier professionIdentifier = new Identifier(entry.getKey());
+                VillagerProfession profession = Registry.VILLAGER_PROFESSION.get(professionIdentifier);
+
+                for (int i = 0; i < count; i++) {
+                    Identifier identifier = new Identifier(String.format("%s:%s/%s/%d.png", id.getNamespace(), gender.getStrName(), professionIdentifier.getPath(), i));
+                    clothing.add(new Clothing(identifier, gender, profession), chance);
+                }
+            });
+        });
     }
 
     /**
      * Gets a pool of clothing options valid for this entity's gender and profession.
      */
-    public WeightedPool<String> getPool(VillagerLike<?> villager) {
+    public WeightedPool<Identifier> getPool(VillagerLike<?> villager) {
+        Gender gender = villager.getGenetics().getGender();
         return switch (villager.getAgeState()) {
-            case BABY, TODDLER -> ClothingList.getInstance()
-                    .byGender(villager.getGenetics().getGender())
-                    .byIdentifier(MCA.locate("baby"));
-            case CHILD, TEEN -> ClothingList.getInstance()
-                    .byGender(villager.getGenetics().getGender())
-                    .byIdentifier(MCA.locate("child"));
-            default -> getPool(villager.getGenetics().getGender(), villager.getVillagerData().getProfession());
+            case BABY, TODDLER -> getPool(gender, MCA.locate("baby"));
+            case CHILD, TEEN -> getPool(gender, MCA.locate("child"));
+            default -> getPool(gender, villager.getVillagerData().getProfession());
         };
     }
 
-    public WeightedPool<String> getPool(Gender gender, VillagerProfession profession) {
-        return byGender(gender).byProfession(profession);
+    public WeightedPool<Identifier> getPool(Gender gender, Identifier profession) {
+        return getPool(gender, Registry.VILLAGER_PROFESSION.get(profession));
     }
 
-    public static class ProfessionPool {
-        private static final WeightedPool<String> EMPTY = new WeightedPool<>("");
+    public WeightedPool<Identifier> getPool(Gender gender, @Nullable VillagerProfession profession) {
+        return clothing.entries.stream()
+                .filter(c -> c.getValue().gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.getValue().gender == gender)
+                .filter(c -> profession == null || c.getValue().profession == null || c.getValue().profession == profession)
+                .collect(() -> new WeightedPool.Mutable<>(new Identifier("mca:missing")),
+                        (list, entry) -> list.add(entry.getValue().identifier, entry.getWeight()),
+                        (a, b) -> {
+                            a.entries.addAll(b.entries);
+                        });
+    }
 
-        private final Map<Identifier, WeightedPool.Mutable<String>> entries = new HashMap<>();
+    public static class Clothing {
+        Identifier identifier;
+        Gender gender;
 
-        ProfessionPool(Gender gender) { }
+        @Nullable
+        VillagerProfession profession;
 
-        public void addToPool(String namespace, Gender gender, Identifier profession, int count, float chance) {
-            if (count <= 0) {
-                return;
-            }
+        float temperatureMin;
+        float temperatureMax;
 
-            WeightedPool.Mutable<String> pool = entries.computeIfAbsent(profession, p -> new WeightedPool.Mutable<>(""));
-
-            for (int i = 0; i < count; i++) {
-                pool.add(String.format("%s:%s/%s/%d.png", namespace, gender.getStrName(), profession.getPath(), i), chance);
-            }
+        public Clothing() {
         }
 
-        private Optional<WeightedPool<String>> getOptions(VillagerProfession profession) {
-            return getOptions(Registry.VILLAGER_PROFESSION.getId(profession));
-        }
-
-        private Optional<WeightedPool<String>> getOptions(Identifier id) {
-            return Optional.ofNullable(entries.get(Objects.requireNonNull(id)));
-        }
-
-        /**
-         * Gets a pool of clothing options based on a specific profession.
-         * <p>
-         * Falls back to the NONE pool if a profession has no assigned textures, and an empty pool as a last resort.
-         */
-        public WeightedPool<String> byProfession(VillagerProfession profession) {
-            return getOptions(profession).orElseGet(() -> getOptions(VillagerProfession.NONE).orElse(EMPTY));
-        }
-
-        /**
-         * Gets a pool of clothing options based on a specific identifier.
-         * <p>
-         * Falls back to the NONE pool if a profession has no assigned textures, and an empty pool as a last resort.
-         */
-        public WeightedPool<String> byIdentifier(Identifier id) {
-            return getOptions(id).orElseGet(() -> getOptions(VillagerProfession.NONE).orElse(EMPTY));
+        public Clothing(Identifier identifier, Gender gender, VillagerProfession profession) {
+            this.identifier = identifier;
+            this.gender = gender;
+            this.profession = profession;
+            this.temperatureMin = -100.0f;
+            this.temperatureMax = 100.0f;
         }
     }
 }

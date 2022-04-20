@@ -37,6 +37,10 @@ public class WeightedPool<T> {
         return pickOne();
     }
 
+    public List<Entry<T>> getEntries() {
+        return entries;
+    }
+
     public static class Entry<T> {
         private final T value;
         private final float weight;
@@ -44,6 +48,14 @@ public class WeightedPool<T> {
         public Entry(T value, float weight) {
             this.value = value;
             this.weight = Math.max(1, weight);
+        }
+
+        public T getValue() {
+            return value;
+        }
+
+        public float getWeight() {
+            return weight;
         }
     }
 

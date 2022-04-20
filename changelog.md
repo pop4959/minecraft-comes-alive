@@ -234,7 +234,7 @@
 * Fixed player marriage not saving
 * Sneaking before interacting with a villager will now open trading
 
-# 7.3.0
+# 7.3.0 alpha 1
 
 * Added destiny
     * You are asked to customize the player
@@ -243,3 +243,9 @@
     * Added Rumor dialogue
     * Added Time specific dialogues
 * Grumpy, Gloomy and Shy personalities
+
+# 7.3.0 alpha 2
+
+* Fixed Destiny partly working on dedicated servers
+* Fixed mod conflicts
+* Added clothing selection

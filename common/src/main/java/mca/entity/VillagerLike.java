@@ -143,6 +143,10 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return getTrackedValue(CLOTHES);
     }
 
+    default void setClothes(Identifier clothes) {
+        setClothes(clothes.toString());
+    }
+
     default void setClothes(String clothes) {
         setTrackedValue(CLOTHES, clothes);
     }

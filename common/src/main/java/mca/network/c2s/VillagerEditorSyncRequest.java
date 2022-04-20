@@ -67,13 +67,21 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
             case "clothing":
                 villagerData = GetVillagerRequest.getVillagerData(entity);
                 if (villagerData != null) {
-                    String clothes = "";
+                    Identifier clothes = new Identifier("mca:missing");
                     if (entity instanceof PlayerEntity) {
-                        clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickNext(villagerData.getString("clothes"), getData().getInt("offset"));
+                        if (getData().contains("offset")) {
+                            clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickNext(new Identifier(villagerData.getString("clothes")), getData().getInt("offset"));
+                        } else {
+                            clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickOne();
+                        }
                     } else if (entity instanceof VillagerLike<?> villager) {
-                        clothes = ClothingList.getInstance().getPool(villager).pickNext(villager.getClothes(), getData().getInt("offset"));
+                        if (getData().contains("offset")) {
+                            clothes = ClothingList.getInstance().getPool(villager).pickNext(new Identifier(villager.getClothes()), getData().getInt("offset"));
+                        } else {
+                            clothes = ClothingList.getInstance().getPool(villager).pickOne();
+                        }
                     }
-                    villagerData.putString("clothes", clothes);
+                    villagerData.putString("clothes", clothes.toString());
                     saveEntity(player, entity, villagerData);
                 }
                 break;

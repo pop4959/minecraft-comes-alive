@@ -3,8 +3,6 @@ package mca.entity.interaction;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
 import mca.network.s2c.OpenGuiRequest;
-import mca.resources.ClothingList;
-import mca.resources.HairList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -51,20 +49,6 @@ public abstract class EntityCommandHandler<T extends Entity & VillagerLike<?>> {
      * Called on the server to respond to button events.
      */
     public boolean handle(ServerPlayerEntity player, String command) {
-        switch (command) {
-            case "clothing.randClothing" ->
-                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickOne());
-            case "clothing.prevClothing" ->
-                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), -1));
-            case "clothing.nextClothing" ->
-                    entity.setClothes(ClothingList.getInstance().getPool(entity).pickNext(entity.getClothes(), 1));
-            case "clothing.randHair" ->
-                    entity.setHair(HairList.getInstance().pickOne(entity));
-            case "clothing.prevHair" ->
-                    entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), -1));
-            case "clothing.nextHair" ->
-                    entity.setHair(HairList.getInstance().pickNext(entity, entity.getHair(), 1));
-        }
         return false;
     }
 }

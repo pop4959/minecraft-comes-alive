@@ -498,6 +498,7 @@
   "gui.villager_editor.page.personality": "Personality",
   "gui.villager_editor.page.traits": "Traits",
   "gui.villager_editor.page.debug": "Debug",
+  "gui.villager_editor.search": "Search",
 
   "blueprint.noBuilding": "You need to stand within a building",
   "blueprint.refreshed": "Buildings refreshed!",
