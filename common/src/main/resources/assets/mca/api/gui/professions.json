@@ -36,7 +36,7 @@
     "identifier": "gui.button.profession.archer",
     "x": -90,
     "y": 10,
-    "row": 0,
+    "row": 2,
     "width": 80,
     "height": 20,
     "notifyServer": true,
