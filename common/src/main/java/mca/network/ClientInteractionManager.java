@@ -32,4 +32,6 @@ public interface ClientInteractionManager {
     void handleFamilyTreeUUIDResponse(FamilyTreeUUIDResponse response);
 
     void handlePlayerDataMessage(PlayerDataMessage response);
+
+    void handleAnalysisResults(SkinListResponse response);
 }

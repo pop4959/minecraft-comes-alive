@@ -180,4 +180,12 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         mca.readCustomDataFromNbt(response.getData());
         PlayerEntityMCARenderer.playerData.put(response.uuid, mca);
     }
+
+    @Override
+    public void handleAnalysisResults(SkinListResponse message) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof VillagerEditorScreen gui) {
+            gui.setSkinList(message.getClothing());
+        }
+    }
 }

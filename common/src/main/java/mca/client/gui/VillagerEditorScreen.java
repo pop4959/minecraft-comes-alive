@@ -16,10 +16,9 @@ import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.Personality;
 import mca.network.c2s.GetVillagerRequest;
+import mca.network.c2s.SkinListRequest;
 import mca.network.c2s.VillagerEditorSyncRequest;
 import mca.network.c2s.VillagerNameRequest;
-import mca.resources.ClothingList;
-import mca.resources.WeightedPool;
 import mca.resources.data.Hair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -34,14 +33,10 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -63,6 +58,7 @@ public class VillagerEditorScreen extends Screen {
     private int clothingPage;
     private int clothingPageCount;
     private List<String> filteredClothing = new LinkedList<>();
+    private static List<String> clothing;
     private Gender filterGender = Gender.NEUTRAL;
     private String searchString = "";
     private int hoveredClothingId;
@@ -89,6 +85,11 @@ public class VillagerEditorScreen extends Screen {
 
     @Override
     public void init() {
+        if (clothing == null) {
+            clothing = new LinkedList<>();
+            NetworkHandler.sendToServer(new SkinListRequest());
+        }
+
         requestVillagerData();
         setPage(Objects.requireNonNullElse(page, "loading"));
     }
@@ -418,10 +419,18 @@ public class VillagerEditorScreen extends Screen {
     }
 
     private void filterClothing() {
-        filteredClothing = ClothingList.getInstance()
-                .getPool(filterGender, (VillagerProfession)null).getEntries().stream()
-                .map(WeightedPool.Entry::getValue)
-                .filter(v -> searchString.isEmpty() || v.toString().contains(searchString))
+        filteredClothing = clothing.stream()
+                .filter(v -> {
+                    //guess gender because I'm too lazy to transfer
+                    Gender g = Gender.MALE;
+                    if (v.contains("female")) {
+                        g = Gender.FEMALE;
+                    } else if (v.contains("neutral")) {
+                        g = Gender.NEUTRAL;
+                    }
+                    return filterGender == g || g == Gender.NEUTRAL;
+                })
+                .filter(v -> searchString.isEmpty() || v.contains(searchString))
                 .toList();
 
         clothingPageCount = (int)Math.ceil(filteredClothing.size() / ((float)CLOTHES_PER_PAGE));
@@ -602,5 +611,10 @@ public class VillagerEditorScreen extends Screen {
         ((MobEntity)villager).writeCustomDataToNbt(nbt);
         nbt.putInt("Age", villagerBreedingAge);
         NetworkHandler.sendToServer(new VillagerEditorSyncRequest("sync", villagerUUID, nbt));
+    }
+
+    public void setSkinList(List<String> clothing) {
+        VillagerEditorScreen.clothing = clothing;
+        filterClothing();
     }
 }

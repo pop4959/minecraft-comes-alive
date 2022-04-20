@@ -42,5 +42,7 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(DestinyMessage.class);
         NetworkHandler.registerMessage(PlayerDataMessage.class);
         NetworkHandler.registerMessage(PlayerDataRequest.class);
+        NetworkHandler.registerMessage(SkinListRequest.class);
+        NetworkHandler.registerMessage(SkinListResponse.class);
     }
 }
