@@ -201,7 +201,7 @@ public class VillagerEditorScreen extends Screen {
 
                 //clothes
                 addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.randClothing"), b -> {
-                    sendCommand("clothing", new NbtCompound());
+                    sendCommand("clothing");
                 }));
                 addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.selectClothing"), b -> {
                     setPage("clothing");
@@ -474,6 +474,8 @@ public class VillagerEditorScreen extends Screen {
     void drawGender(int x, int y) {
         genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.feminine"), sender -> {
             villager.getGenetics().setGender(Gender.FEMALE);
+            sendCommand("clothing");
+            sendCommand("hair");
             genderButtonFemale.active = false;
             genderButtonMale.active = true;
         });
@@ -481,6 +483,8 @@ public class VillagerEditorScreen extends Screen {
 
         genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.masculine"), sender -> {
             villager.getGenetics().setGender(Gender.MALE);
+            sendCommand("clothing");
+            sendCommand("hair");
             genderButtonFemale.active = true;
             genderButtonMale.active = false;
         });
@@ -488,6 +492,10 @@ public class VillagerEditorScreen extends Screen {
 
         genderButtonFemale.active = villager.getGenetics().getGender() != Gender.FEMALE;
         genderButtonMale.active = villager.getGenetics().getGender() != Gender.MALE;
+    }
+
+    private void sendCommand(String command) {
+        sendCommand(command, new NbtCompound());
     }
 
     private void sendCommand(String command, NbtCompound nbt) {

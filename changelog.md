@@ -253,3 +253,4 @@
 * Gifting a golden apple to a child now properly reduces the stack
 * Fixed a few wrong buttons
 * Added a few more config flags to control destiny, teleportation and editor access
+* Sneaking no longer breaks the model

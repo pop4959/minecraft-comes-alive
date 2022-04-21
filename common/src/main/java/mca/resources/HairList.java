@@ -73,7 +73,10 @@ public class HairList extends JsonDataLoader {
      * @return String location of the random skin
      */
     public Hair pickOne(VillagerLike<?> villager) {
-        return hair.get(villager.getGenetics().getGender()).pickOne();
+        return pickOne(villager.getGenetics().getGender());
+    }
+    public Hair pickOne(Gender gender) {
+        return hair.get(gender).pickOne();
     }
 
     //returns the next clothing with given offset to current

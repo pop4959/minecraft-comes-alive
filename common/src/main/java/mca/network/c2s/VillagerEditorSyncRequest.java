@@ -53,10 +53,15 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
                 villagerData = GetVillagerRequest.getVillagerData(entity);
                 if (villagerData != null) {
                     // fetch hair
-                    Hair hair = HairList.getInstance().pickNext(getGender(villagerData), new Hair(
-                            villagerData.getString("hair"),
-                            villagerData.getString("hairOverlay")
-                    ), getData().getInt("offset"));
+                    Hair hair;
+                    if (getData().contains("offset")) {
+                        hair = HairList.getInstance().pickNext(getGender(villagerData), new Hair(
+                                villagerData.getString("hair"),
+                                villagerData.getString("hairOverlay")
+                        ), getData().getInt("offset"));
+                    } else {
+                        hair = HairList.getInstance().pickOne(getGender(villagerData));
+                    }
 
                     // set
                     villagerData.putString("hair", hair.texture());
