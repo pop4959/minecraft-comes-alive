@@ -14,13 +14,6 @@ public enum RelationshipType {
         this.proximity = proximity;
     }
 
-    /**
-     * High proximity creates a smaller effect.
-     */
-    public int getInverseProximity() {
-        return this == STRANGER ? 5 : 1;
-    }
-
     public int getProximityAmplifier() {
         return proximity;
     }

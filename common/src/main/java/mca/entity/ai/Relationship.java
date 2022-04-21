@@ -110,23 +110,23 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
                 .filter(e -> !e.equals(entity)); // we exclude ourselves from the list of siblings
     }
 
-    public boolean onDeath(DamageSource cause) {
+    public void onDeath(DamageSource cause) {
         getFamilyEntry().setDeceased(true);
 
-        return GraveyardManager.get((ServerWorld)entity.world)
+        GraveyardManager.get((ServerWorld)entity.world)
                 .findNearest(entity.getBlockPos(), TombstoneState.EMPTY, 10)
-                .filter(pos -> {
+                .ifPresentOrElse(pos -> {
                     if (entity.world.getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
                         BlockEntity be = entity.world.getBlockEntity(pos);
                         if (be instanceof TombstoneBlock.Data) {
                             onTragedy(cause, pos);
                             ((TombstoneBlock.Data)be).setEntity(entity);
-                            return true;
                         }
                     }
                     onTragedy(cause, null);
-                    return false;
-                }).isPresent();
+                }, () -> {
+                    onTragedy(cause, null);
+                });
     }
 
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite) {
@@ -143,11 +143,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     @Override
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity with) {
         if (!cause.isOutOfWorld()) {
-            int moodAffect = 10;
-
-            moodAffect /= type.getInverseProximity();
-            moodAffect *= type.getProximityAmplifier();
-
+            int moodAffect = 5 * type.getProximityAmplifier();
             entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
             entity.getVillagerBrain().modifyMoodValue(-moodAffect);
 
