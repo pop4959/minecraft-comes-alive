@@ -28,6 +28,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 
@@ -281,20 +282,15 @@ public class AdminCommand {
     }
 
     private static void success(String message, CommandContext<ServerCommandSource> ctx, Object... events) {
-        MutableText data = new LiteralText(message).formatted(GREEN);
-        for (Object evt : events) {
-            if (evt instanceof ClickEvent clickEvent) {
-                data.styled((style -> style.withClickEvent(clickEvent)));
-            }
-            if (evt instanceof HoverEvent hoverEvent) {
-                data.styled((style -> style.withHoverEvent(hoverEvent)));
-            }
-        }
-        ctx.getSource().sendFeedback(data, true);
+        ctx.getSource().sendFeedback(message(message, GREEN, events), true);
     }
 
     private static void fail(String message, CommandContext<ServerCommandSource> ctx, Object... events) {
-        MutableText data = new LiteralText(message).formatted(RED);
+        ctx.getSource().sendError(message(message, RED, events));
+    }
+
+    private static Text message(String message, Formatting red, Object[] events) {
+        MutableText data = new LiteralText(message).formatted(red);
         for (Object evt : events) {
             if (evt instanceof ClickEvent clickEvent) {
                 data.styled((style -> style.withClickEvent(clickEvent)));
@@ -303,7 +299,7 @@ public class AdminCommand {
                 data.styled((style -> style.withHoverEvent(hoverEvent)));
             }
         }
-        ctx.getSource().sendError(data);
+        return data;
     }
 
     private static int displayHelp(CommandContext<ServerCommandSource> ctx) {

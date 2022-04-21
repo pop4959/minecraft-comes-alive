@@ -80,8 +80,12 @@ public final class Config implements Serializable {
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;
-    public boolean destinyEnabled = true;
+    public boolean launchIntoDestiny = true;
+    public boolean allowDestinyCommandOnce = true;
+    public boolean allowDestinyCommandMoreThanOnce = false;
+    public boolean allowDestinyTeleportation = true;
     public boolean letPlayerCustomize = true;
+    public boolean allowPlayerEditor = false;
     public Map<String, Integer> guardsTargetEntities = ImmutableMap.<String, Integer>builder()
             .put("minecraft:creeper", -1)
             .put("minecraft:drowned", 2)

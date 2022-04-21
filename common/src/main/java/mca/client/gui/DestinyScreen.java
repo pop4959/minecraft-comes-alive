@@ -20,11 +20,16 @@ import static mca.entity.VillagerLike.VILLAGER_NAME;
 
 public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
+    private static boolean allowTeleportation;
     private LinkedList<Text> story;
     private String location;
 
     public DestinyScreen(UUID playerUUID) {
         super(playerUUID, playerUUID);
+    }
+
+    public static void allowTeleportation(boolean b) {
+        DestinyScreen.allowTeleportation = b;
     }
 
     @Override
@@ -46,6 +51,7 @@ public class DestinyScreen extends VillagerEditorScreen {
 
     @Override
     public void renderBackground(MatrixStack matrices) {
+        assert MinecraftClient.getInstance().world != null;
         renderBackgroundTexture((int)MinecraftClient.getInstance().world.getTime());
     }
 
@@ -91,48 +97,55 @@ public class DestinyScreen extends VillagerEditorScreen {
 
     @Override
     protected void setPage(String page) {
+        if (page.equals("destiny") && !allowTeleportation) {
+            assert client != null;
+            client.setScreen(null);
+            return;
+        }
+
         this.page = page;
         clearChildren();
-        if (page.equals("general")) {
-            drawName(width / 2 - DATA_WIDTH / 2, height / 2 + 8);
-            drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 32);
-
-            addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 64, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
-                setPage("body");
-                if (villager.getTrackedValue(VILLAGER_NAME).isEmpty()) {
-                    villager.setTrackedValue(VILLAGER_NAME, "Nameless Traveller");
-                }
-            }));
-        } else if (page.equals("destiny")) {
-            int x = 0;
-            int y = 0;
-            for (String location : new String[] {"somewhere", "shipwreck_beached", "village_desert", "village_taiga", "village_snowy", "village_plains", "village_savanna"}) {
-                addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
-                    //story
-                    story = new LinkedList<>();
-                    story.add(new TranslatableText("destiny.story.reason"));
-                    story.add(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"));
-                    story.add(new TranslatableText("destiny.story." + location));
-                    this.location = location;
-                    setPage("story");
+        switch (page) {
+            case "general" -> {
+                drawName(width / 2 - DATA_WIDTH / 2, height / 2 + 8);
+                drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 32);
+                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 64, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
+                    setPage("body");
+                    if (villager.getTrackedValue(VILLAGER_NAME).isEmpty()) {
+                        villager.setTrackedValue(VILLAGER_NAME, "Nameless Traveller");
+                    }
                 }));
-                x++;
-                if (x >= 3) {
-                    x = 0;
-                    y++;
+            }
+            case "destiny" -> {
+                int x = 0;
+                int y = 0;
+                for (String location : new String[] {"somewhere", "shipwreck_beached", "village_desert", "village_taiga", "village_snowy", "village_plains", "village_savanna"}) {
+                    addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
+                        //story
+                        story = new LinkedList<>();
+                        story.add(new TranslatableText("destiny.story.reason"));
+                        story.add(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"));
+                        story.add(new TranslatableText("destiny.story." + location));
+                        this.location = location;
+                        setPage("story");
+                    }));
+                    x++;
+                    if (x >= 3) {
+                        x = 0;
+                        y++;
+                    }
                 }
             }
-        } else if (page.equals("story")) {
-            addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, new TranslatableText("gui.destiny.next"), sender -> {                NetworkHandler.sendToServer(new DestinyMessage(location));
+            case "story" -> addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, new TranslatableText("gui.destiny.next"), sender -> {
+                NetworkHandler.sendToServer(new DestinyMessage(location));
                 if (story.size() > 1) {
                     story.remove(0);
-                }else {
+                } else {
                     NetworkHandler.sendToServer(new DestinyMessage(location));
                     super.close();
                 }
             }));
-        } else {
-            super.setPage(page);
+            default -> super.setPage(page);
         }
     }
 }

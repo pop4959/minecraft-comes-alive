@@ -19,6 +19,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
+import net.minecraft.world.GameMode;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 
@@ -45,9 +47,11 @@ public class ServerInteractionManager {
     }
 
     public static void launchDestiny(ServerPlayerEntity player) {
-        NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.DESTINY, player), player);
-        player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 10000000));
-        player.teleport(player.getX(), 10000000, player.getZ());
+        NetworkHandler.sendToPlayer(new OpenGuiRequest(Config.getInstance().allowDestinyTeleportation ? OpenGuiRequest.Type.DESTINY : OpenGuiRequest.Type.DESTINY_NO_TP, player), player);
+
+        if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+            player.changeGameMode(GameMode.SPECTATOR);
+        }
     }
 
     public void tick() {
@@ -61,9 +65,14 @@ public class ServerInteractionManager {
     public void onPlayerJoin(ServerPlayerEntity player) {
         PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
         if (!playerData.isEntityDataSet()) {
-            if (Config.getInstance().destinyEnabled) {
+            if (Config.getInstance().launchIntoDestiny) {
                 launchDestiny(player);
-            } else {
+            } else if (Config.getInstance().allowDestinyCommandOnce) {
+                NetworkHandler.sendToPlayer(new ShowToastRequest(
+                        "server.destinyNotSet.title",
+                        "server.destinyNotSet.description"
+                ), player);
+            } else if (Config.getInstance().allowPlayerEditor) {
                 NetworkHandler.sendToPlayer(new ShowToastRequest(
                         "server.playerNotCustomized.title",
                         "server.playerNotCustomized.description"
@@ -318,5 +327,4 @@ public class ServerInteractionManager {
     private void infoMessage(PlayerEntity player, BaseText message) {
         player.sendSystemMessage(message.formatted(Formatting.YELLOW), Util.NIL_UUID);
     }
-
 }

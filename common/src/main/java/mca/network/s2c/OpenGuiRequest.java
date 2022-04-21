@@ -42,5 +42,6 @@ public class OpenGuiRequest implements Message {
         FAMILY_TREE,
         CLOSE,
         DESTINY,
+        DESTINY_NO_TP,
     }
 }

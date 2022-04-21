@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import mca.Config;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.s2c.OpenGuiRequest;
 import mca.server.ServerInteractionManager;
@@ -13,7 +14,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 
@@ -35,14 +38,29 @@ public class Command {
     }
 
     private static int editor(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.VILLAGER_EDITOR, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
-        return 0;
+        if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowPlayerEditor) {
+            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.VILLAGER_EDITOR, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
+            return 0;
+        } else {
+            ctx.getSource().getPlayer().sendSystemMessage(new TranslatableText("command.no_permission").formatted(Formatting.RED), Util.NIL_UUID);
+            return 1;
+        }
     }
 
     private static int destiny(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        ServerPlayerEntity player = ctx.getSource().getPlayer();
-        ServerInteractionManager.launchDestiny(player);
-        return 0;
+        if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowDestinyCommandOnce) {
+            ServerPlayerEntity player = ctx.getSource().getPlayer();
+            if (!PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).isEntityDataSet() || Config.getInstance().allowDestinyCommandMoreThanOnce) {
+                ServerInteractionManager.launchDestiny(player);
+                return 0;
+            } else {
+                ctx.getSource().getPlayer().sendSystemMessage(new TranslatableText("command.only_one_destiny").formatted(Formatting.RED), Util.NIL_UUID);
+                return 1;
+            }
+        } else {
+            ctx.getSource().getPlayer().sendSystemMessage(new TranslatableText("command.no_permission").formatted(Formatting.RED), Util.NIL_UUID);
+            return 1;
+        }
     }
 
     private static int mail(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {

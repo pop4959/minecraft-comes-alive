@@ -54,8 +54,10 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 break;
             case DESTINY:
+            case DESTINY_NO_TP:
                 assert MinecraftClient.getInstance().player != null;
                 client.setScreen(new DestinyScreen(MinecraftClient.getInstance().player.getUuid()));
+                DestinyScreen.allowTeleportation(message.gui == OpenGuiRequest.Type.DESTINY);
                 break;
             case BABY_NAME:
                 if (client.player != null) {
