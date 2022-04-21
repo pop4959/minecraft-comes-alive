@@ -16,6 +16,8 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
     private long startTime;
     private final float speed;
     private BlockPos bed;
+    private long lastFail = 0;
+    private static final long TICKS_BETWEEN_FAILS = 200;
 
     public ExtendedSleepTask(float speed) {
         super(ImmutableMap.of(
@@ -27,6 +29,10 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
+        if (world.getTime() - lastFail < TICKS_BETWEEN_FAILS) {
+            return false;
+        }
+
         boolean b = shouldRunInner(world, entity);
         if (!b) {
             if (entity.isSleeping()) {
@@ -67,7 +73,11 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
                         brain.remember(MemoryModuleType.WALK_TARGET, new WalkTarget(globalPos.getPos(), speed, 1));
                         return false;
                     }
+                } else {
+                    lastFail = world.getTime();
                 }
+            } else {
+                lastFail = world.getTime();
             }
         }
 
