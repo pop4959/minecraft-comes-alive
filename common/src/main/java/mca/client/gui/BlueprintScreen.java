@@ -81,7 +81,7 @@ public class BlueprintScreen extends ExtendedScreen {
         saveVillage();
     }
 
-    private ButtonWidget[] createValueChanger(int x, int y, int w, int h, Consumer<Boolean> onPress, String tooltip) {
+    private ButtonWidget[] createValueChanger(int x, int y, int w, int h, Consumer<Boolean> onPress, Text tooltip) {
         ButtonWidget[] buttons = new ButtonWidget[3];
 
         buttons[1] = addDrawableChild(new ButtonWidget(x - w / 2, y, w / 4, h,
@@ -91,9 +91,10 @@ public class BlueprintScreen extends ExtendedScreen {
                 new LiteralText(">>"), (b) -> onPress.accept(true)));
 
         buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
-                new LiteralText(""), (b) -> {},
+                new LiteralText(""), (b) -> {
+        },
                 (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
-                        renderTooltip(matrixStack, new TranslatableText(tooltip), mx, my)
+                        renderTooltip(matrixStack, FlowingText.wrap(tooltip, 160), mx, my)
         ));
 
         return buttons;
@@ -115,6 +116,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
     private void setPage(String page) {
         if (page.equals("close")) {
+            assert client != null;
             client.setScreen(null);
             return;
         }
@@ -147,6 +149,8 @@ public class BlueprintScreen extends ExtendedScreen {
             case "refresh":
                 NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FULL_SCAN));
                 NetworkHandler.sendToServer(new GetVillageRequest());
+                assert client != null;
+                assert client.player != null;
                 client.player.sendMessage(new TranslatableText("blueprint.refreshed"), true);
                 setPage("map");
                 break;
@@ -256,15 +260,15 @@ public class BlueprintScreen extends ExtendedScreen {
                 break;
             case "rules":
                 //taxes
-                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 10 : -10), "taxes");
+                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 10 : -10), new TranslatableText("gui.blueprint.tooltip.taxes"));
                 toggleButtons(buttonTaxes, false);
 
                 //birth threshold
-                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 10 : -10), "births");
+                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 10 : -10), new TranslatableText("gui.blueprint.tooltip.births"));
                 toggleButtons(buttonBirths, false);
 
                 //marriage threshold
-                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 10 : -10), "marriage");
+                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 10 : -10), new TranslatableText("gui.blueprint.tooltip.marriage"));
                 toggleButtons(buttonMarriage, false);
                 break;
             case "rename":
@@ -297,6 +301,7 @@ public class BlueprintScreen extends ExtendedScreen {
     public void render(MatrixStack transform, int sizeX, int sizeY, float offset) {
         renderBackground(transform);
 
+        assert client != null;
         this.mouseX = (int)(client.mouse.getX() * width / client.getWindow().getFramebufferWidth());
         this.mouseY = (int)(client.mouse.getY() * height / client.getWindow().getFramebufferHeight());
 
@@ -371,6 +376,7 @@ public class BlueprintScreen extends ExtendedScreen {
         transform.translate(-village.getCenter().getX(), -village.getCenter().getZ(), 0);
 
         //show the players location
+        assert client != null;
         ClientPlayerEntity player = client.player;
         if (player != null) {
             RectangleWidget.drawRectangle(transform, (int)player.getX() - 1, (int)player.getZ() - 1, (int)player.getX() + 1, (int)player.getZ() + 1, 0xffff00ff);
@@ -594,6 +600,7 @@ public class BlueprintScreen extends ExtendedScreen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (page.equals("villagers") && selectedVillager != null) {
+            assert client != null;
             client.setScreen(new FamilyTreeScreen(selectedVillager));
         }
 
