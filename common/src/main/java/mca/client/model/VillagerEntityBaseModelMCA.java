@@ -95,7 +95,7 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
             this.rightArm.roll = waveSideways;
         }
 
-        applyVillagerDimensions(getVillager(entity));
+        applyVillagerDimensions(getVillager(entity), entity.isSneaking());
     }
 
     @Override
@@ -128,11 +128,8 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
 
             if (breastSize > 0) {
                 matrices.push();
-                matrices.translate(0.0625 * 0.25, 0.175D + breastSize * 0.1, -0.075D - breastSize * 0.05);
-                matrices.scale(1.166666f, 0.8f + breastSize * 0.3f, 0.75f + breastSize * 0.45f);
-                matrices.scale(breastSize * 0.275f + 0.85f, breastSize * 0.65f + 0.75f, breastSize * 0.65f + 0.75f);
+                matrices.scale(breastSize * 0.2f + 1.05f, breastSize * 0.75f + 0.75f, breastSize * 0.75f + 0.75f);
                 for (ModelPart part : breastsParts()) {
-                    part.pitch = (float)Math.PI * 0.3f;
                     part.render(matrices, vertices, light, overlay, red, green, blue, alpha);
                 }
                 matrices.pop();
@@ -148,11 +145,21 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
         }
     }
 
-    public void applyVillagerDimensions(VillagerLike<?> entity) {
+    public void applyVillagerDimensions(VillagerLike<?> entity, boolean isSneaking) {
         dimensions = entity.getVillagerDimensions();
         breastSize = entity.getGenetics().getBreastSize();
-
         breasts.visible = entity.getGenetics().getGender() == Gender.FEMALE;
-        breasts.copyTransform(body);
+
+        for (ModelPart part : breastsParts()) {
+            part.pitch = (float)Math.PI * 0.3f + body.pitch;
+            float cy = 0.0f;
+            float cz = 0.0f;
+            if (isSneaking) {
+                cy = 1.75f;
+                cz = 0.75f;
+            }
+
+            part.setPivot(0.25f, (float)(5.0f - Math.pow(breastSize, 0.5) * 2.5f + cy), -1.5f + breastSize * 0.25f + cz);
+        }
     }
 }

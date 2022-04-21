@@ -93,7 +93,7 @@ public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
         features.forEach(feature -> {
             if (feature instanceof PlayerLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> playerFeature) {
                 if (playerFeature.model instanceof VillagerEntityBaseModelMCA<AbstractClientPlayerEntity> model) {
-                    model.applyVillagerDimensions(getVillager(entity));
+                    model.applyVillagerDimensions(getVillager(entity), entity.isInSneakingPose());
                 }
             }
         });
@@ -129,7 +129,7 @@ public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
         sleeve.yaw = 0.0f;
         sleeve.roll = 0.0f;
 
-        model.applyVillagerDimensions(getVillager(player));
+        model.applyVillagerDimensions(getVillager(player), player.isInSneakingPose());
 
         layer.renderFinal(matrices, vertexConsumers, light, player);
 

@@ -71,7 +71,7 @@ public class VillagerEntityModelMCA<T extends LivingEntity> extends VillagerEnti
         leftArmwear.copyTransform(leftArm);
         rightArmwear.copyTransform(rightArm);
         bodyWear.copyTransform(body);
-        breastsWear.copyTransform(body);
+        breastsWear.copyTransform(breasts);
     }
 
     @Override
