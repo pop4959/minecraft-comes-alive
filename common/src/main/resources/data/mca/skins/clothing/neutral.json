@@ -1,17 +1,55 @@
 {
-  "minecraft:none": { "count": 42, "chance": 0.15 },
-  "minecraft:armorer": { "count": 3 },
-  
-  "minecraft:cartographer": { "count": 3 },
-  "minecraft:cleric": { "count": 0 },
-  "minecraft:farmer": { "count": 3 },
-  "minecraft:fisherman": { "count": 1 },
-  "minecraft:fletcher": { "count": 2 },
-  "minecraft:leatherworker": { "count": 1 },
-  "minecraft:librarian": { "count": 6 },
-  "minecraft:mason": { "count": 3 },
-  
-  "minecraft:shepherd": { "count": 4 },
-  "minecraft:toolsmith": { "count": 1 },
-  "minecraft:weaponsmith": { "count": 4 }
+  "mca:skins/clothing/normal/neutral/none/%d.png": {
+    "count": 42,
+    "profession": "minecraft:none",
+    "chance": 0.15
+  },
+  "mca:skins/clothing/normal/neutral/armorer/%d.png": {
+    "count": 3,
+    "profession": "minecraft:armorer"
+  },
+  "mca:skins/clothing/normal/neutral/cartographer/%d.png": {
+    "count": 3,
+    "profession": "minecraft:cartographer"
+  },
+  "mca:skins/clothing/normal/neutral/cleric/%d.png": {
+    "count": 0,
+    "profession": "minecraft:cleric"
+  },
+  "mca:skins/clothing/normal/neutral/farmer/%d.png": {
+    "count": 3,
+    "profession": "minecraft:farmer"
+  },
+  "mca:skins/clothing/normal/neutral/fisherman/%d.png": {
+    "count": 1,
+    "profession": "minecraft:fisherman"
+  },
+  "mca:skins/clothing/normal/neutral/fletcher/%d.png": {
+    "count": 2,
+    "profession": "minecraft:fletcher"
+  },
+  "mca:skins/clothing/normal/neutral/leatherworker/%d.png": {
+    "count": 1,
+    "profession": "minecraft:leatherworker"
+  },
+  "mca:skins/clothing/normal/neutral/librarian/%d.png": {
+    "count": 6,
+    "profession": "minecraft:librarian"
+  },
+  "mca:skins/clothing/normal/neutral/mason/%d.png": {
+    "count": 3,
+    "profession": "minecraft:mason"
+  },
+  "mca:skins/clothing/normal/neutral/shepherd/%d.png": {
+    "count": 4,
+    "profession": "minecraft:shepherd"
+  },
+  "mca:skins/clothing/normal/neutral/toolsmith/%d.png": {
+    "count": 1,
+    "profession": "minecraft:toolsmith"
+  },
+  "mca:skins/clothing/normal/neutral/weaponsmith/%d.png": {
+    "count": 4,
+    "profession": "minecraft:weaponsmith"
+  }
 }
