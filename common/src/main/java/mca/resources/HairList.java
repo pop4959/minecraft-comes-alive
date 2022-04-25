@@ -1,23 +1,23 @@
 package mca.resources;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import mca.MCA;
-import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
-import mca.resources.data.Hair;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
-import java.util.EnumMap;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class HairList extends JsonDataLoader {
     protected static final Identifier ID = MCA.locate("skins/hair");
 
-    private final Map<Gender, WeightedPool.Mutable<Hair>> hair = new EnumMap<>(Gender.class);
+    public final HashMap<String, HairList.Hair> hair = new HashMap<>();
 
     private static HairList INSTANCE;
 
@@ -33,6 +33,7 @@ public class HairList extends JsonDataLoader {
     @Override
     protected void apply(Map<Identifier, JsonElement> data, ResourceManager manager, Profiler profiler) {
         hair.clear();
+
         data.forEach((id, file) -> {
             Gender gender = Gender.byName(id.getPath().split("\\.")[0]);
 
@@ -41,49 +42,48 @@ public class HairList extends JsonDataLoader {
                 return;
             }
 
-            // adds the skins to all respective pools.
-            gender.getTransients().map(this::byGender).forEach(pool -> {
-                int count = JsonHelper.getInt(file.getAsJsonObject(), "count");
-                float chance = JsonHelper.getFloat(file.getAsJsonObject(), "chance", 1);
-                for (int i = 0; i < count; i++) {
-                    pool.add(getHair(gender, i), chance);
+            for (String key : file.getAsJsonObject().keySet()) {
+                JsonObject object = file.getAsJsonObject().get(key).getAsJsonObject();
+
+                for (int i = 0; i < JsonHelper.getInt(object, "count", 1); i++) {
+                    String identifier = String.format(key, i);
+
+                    HairList.Hair c = new HairList.Hair(identifier);
+                    c.gender = gender;
+                    c.overlay = JsonHelper.getBoolean(object, "overlay", false);
+                    c.chance = JsonHelper.getFloat(object, "chance", 1.0f);
+                    c.temperature = JsonHelper.getInt(object, "temperature", 0);
+
+                    if (!hair.containsKey(identifier) || !object.has("count")) {
+                        hair.put(identifier, c);
+                    }
                 }
-            });
+            }
         });
     }
 
-    /**
-     * Gets a pool of clothing options based on a specific gender.
-     */
-    public WeightedPool.Mutable<Hair> byGender(Gender gender) {
-        return hair.computeIfAbsent(gender, (unused) -> new WeightedPool.Mutable<>(new Hair()));
+    public WeightedPool<String> getPool(Gender gender) {
+        return hair.values().stream()
+                .filter(c -> c.gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.gender == gender)
+                .collect(() -> new WeightedPool.Mutable<>("mca:missing"),
+                        (list, entry) -> list.add(entry.identifier, entry.chance),
+                        (a, b) -> {
+                            a.entries.addAll(b.entries);
+                        });
     }
 
-    private Hair getHair(Gender g, int i) {
-        return new Hair(
-                String.format("%s:skins/hair/%s/%d.png", MCA.MOD_ID, g.getStrName(), i),
-                String.format("%s:skins/hair/%s/%d_overlay.png", MCA.MOD_ID, g.getStrName(), i)
-        );
-    }
+    public static class Hair implements Serializable {
+        final String identifier;
+        Gender gender;
 
-    /**
-     * Returns a random hair and optional overlay based on the gender provided.
-     *
-     * @param villager The villager who will be assigned the hair.
-     * @return String location of the random skin
-     */
-    public Hair pickOne(VillagerLike<?> villager) {
-        return pickOne(villager.getGenetics().getGender());
-    }
-    public Hair pickOne(Gender gender) {
-        return hair.get(gender).pickOne();
-    }
+        boolean overlay;
 
-    //returns the next clothing with given offset to current
-    public Hair pickNext(VillagerLike<?> villager, Hair current, int next) {
-        return pickNext(villager.getGenetics().getGender(), current, next);
-    }
-    public Hair pickNext(Gender gender, Hair current, int next) {
-        return hair.get(gender).pickNext(current, next);
+        float temperature;
+
+        float chance;
+
+        public Hair(String identifier) {
+            this.identifier = identifier;
+        }
     }
 }

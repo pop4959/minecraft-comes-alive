@@ -47,7 +47,7 @@ public class WeightedPool<T> {
 
         public Entry(T value, float weight) {
             this.value = value;
-            this.weight = Math.max(1, weight);
+            this.weight = weight;
         }
 
         public T getValue() {

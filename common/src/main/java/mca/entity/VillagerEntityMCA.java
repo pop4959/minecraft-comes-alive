@@ -1156,6 +1156,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         inventory.clear();
         InventoryUtils.readFromNBT(inventory, nbt);
+
+        validateClothes();
     }
 
     @Override

@@ -12,6 +12,8 @@ import net.minecraft.util.Identifier;
 
 import java.util.Optional;
 
+import static mca.client.model.VillagerEntityBaseModelMCA.getVillager;
+
 public class HairLayer<T extends MobEntity & VillagerLike<T>> extends VillagerLayer<T, VillagerEntityModelMCA<T>> {
     public HairLayer(FeatureRendererContext<T, VillagerEntityModelMCA<T>> renderer, VillagerEntityModelMCA<T> model) {
         super(renderer, model);
@@ -24,12 +26,12 @@ public class HairLayer<T extends MobEntity & VillagerLike<T>> extends VillagerLa
 
     @Override
     protected Identifier getSkin(T villager) {
-        return cached(villager.getHair().texture(), Identifier::new);
+        return cached(villager.getHair(), Identifier::new);
     }
 
     @Override
     protected Identifier getOverlay(T villager) {
-        return cached(villager.getHair().overlay(), Identifier::new);
+        return cached(getVillager(villager).getHair().replace(".png", "_overlay.png"), Identifier::new);
     }
 
     @Override

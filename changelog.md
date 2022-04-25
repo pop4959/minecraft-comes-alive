@@ -248,7 +248,7 @@
 
 * Fixed Destiny partly working on dedicated servers
 * Fixed mod conflicts
-* Added clothing selection
+* Added clothing and hair selection
 * Bounty hunter no longer attack while in creative
 * Gifting a golden apple to a child now properly reduces the stack
 * Fixed a few wrong buttons

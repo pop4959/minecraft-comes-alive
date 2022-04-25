@@ -23,12 +23,12 @@ public class PlayerHairLayer<T extends LivingEntity> extends PlayerLayer<T, Play
 
     @Override
     protected Identifier getSkin(T villager) {
-        return cached(getVillager(villager).getHair().texture(), Identifier::new);
+        return cached(getVillager(villager).getHair(), Identifier::new);
     }
 
     @Override
     protected Identifier getOverlay(T villager) {
-        return cached(getVillager(villager).getHair().overlay(), Identifier::new);
+        return cached(getVillager(villager).getHair().replace(".png", "_overlay.png"), Identifier::new);
     }
 
     @Override

@@ -11,7 +11,6 @@ import mca.network.NbtDataMessage;
 import mca.network.s2c.PlayerDataMessage;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
-import mca.resources.data.Hair;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -53,19 +52,15 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
                 villagerData = GetVillagerRequest.getVillagerData(entity);
                 if (villagerData != null) {
                     // fetch hair
-                    Hair hair;
+                    String hair;
                     if (getData().contains("offset")) {
-                        hair = HairList.getInstance().pickNext(getGender(villagerData), new Hair(
-                                villagerData.getString("hair"),
-                                villagerData.getString("hairOverlay")
-                        ), getData().getInt("offset"));
+                        hair = HairList.getInstance().getPool(getGender(villagerData)).pickNext(villagerData.getString("hair"), getData().getInt("offset"));
                     } else {
-                        hair = HairList.getInstance().pickOne(getGender(villagerData));
+                        hair = HairList.getInstance().getPool(getGender(villagerData)).pickOne();
                     }
 
                     // set
-                    villagerData.putString("hair", hair.texture());
-                    villagerData.putString("hairOverlay", hair.overlay());
+                    villagerData.putString("hair", hair);
                     saveEntity(player, entity, villagerData);
                 }
                 break;

@@ -21,22 +21,12 @@ public class PlayerClothingLayer<T extends LivingEntity> extends PlayerLayer<T, 
         return cached(getVillager(villager).getClothes() + variant, clothes -> {
             Identifier id = new Identifier(getVillager(villager).getClothes());
 
-            String path = id.getPath();
-
-            // use it if it's valid
+            // use it if it's already valid
             if (canUse(id)) {
                 return id;
             }
 
-            // old values require conversion
-            if (path.startsWith("skins")) {
-                Identifier converted = new Identifier(id.getNamespace(), path.replace("/clothing/", "/clothing/" + variant));
-                if (canUse(converted)) {
-                    return converted;
-                }
-            }
-
-            return new Identifier(id.getNamespace(), String.format("skins/clothing/%s/%s", variant, path));
+            return new Identifier(id.getNamespace(), id.getPath().replace("normal", variant));
         });
     }
 }

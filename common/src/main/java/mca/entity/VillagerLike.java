@@ -19,7 +19,6 @@ import mca.entity.interaction.EntityCommandHandler;
 import mca.resources.API;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
-import mca.resources.data.Hair;
 import mca.server.world.data.PlayerSaveData;
 import mca.util.network.datasync.*;
 import net.minecraft.client.MinecraftClient;
@@ -45,7 +44,6 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     CDataParameter<String> CUSTOM_SKIN = CParameter.create("custom_skin", "");
     CDataParameter<String> CLOTHES = CParameter.create("clothes", "");
     CDataParameter<String> HAIR = CParameter.create("hair", "");
-    CDataParameter<String> HAIR_OVERLAY = CParameter.create("hairOverlay", "");
     CEnumParameter<DyeColor> HAIR_COLOR = CParameter.create("hairColor", DyeColor.class);
     CEnumParameter<AgeState> AGE_STATE = CParameter.create("ageState", AgeState.UNASSIGNED);
 
@@ -53,7 +51,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return new CDataManager.Builder<>(type)
-                .addAll(VILLAGER_NAME, CUSTOM_SKIN, CLOTHES, HAIR, HAIR_OVERLAY, HAIR_COLOR, AGE_STATE)
+                .addAll(VILLAGER_NAME, CUSTOM_SKIN, CLOTHES, HAIR, HAIR_COLOR, AGE_STATE)
                 .add(Genetics::createTrackedData)
                 .add(Traits::createTrackedData)
                 .add(VillagerBrain::createTrackedData);
@@ -127,7 +125,9 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         }
     }
 
-    default Identifier getProfessionId() { return MCA.locate("none"); }
+    default Identifier getProfessionId() {
+        return MCA.locate("none");
+    }
 
     default String getProfessionName() {
         String professionName = (
@@ -151,13 +151,12 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         setTrackedValue(CLOTHES, clothes);
     }
 
-    default Hair getHair() {
-        return new Hair(getTrackedValue(HAIR), getTrackedValue(HAIR_OVERLAY));
+    default String getHair() {
+        return getTrackedValue(HAIR);
     }
 
-    default void setHair(Hair hair) {
-        setTrackedValue(HAIR, hair.texture());
-        setTrackedValue(HAIR_OVERLAY, hair.overlay());
+    default void setHair(String hair) {
+        setTrackedValue(HAIR, hair);
     }
 
     default void setHairDye(DyeColor color) {
@@ -256,21 +255,51 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void initializeSkin() {
         randomizeClothes();
-        setHair(HairList.getInstance().pickOne(this));
+        randomizeHair();
     }
 
     default void randomizeClothes() {
         setClothes(ClothingList.getInstance().getPool(this).pickOne());
     }
 
-    @SuppressWarnings("unchecked")
+    default void randomizeHair() {
+        setHair(HairList.getInstance().getPool(getGenetics().getGender()).pickOne());
+    }
+
+    default void validateClothes() {
+        if (!asEntity().world.isClient()) {
+            if (!ClothingList.getInstance().clothing.containsKey(getClothes())) {
+                //try to port from old versions
+                if (getClothes() != null) {
+                    Identifier identifier = new Identifier(getClothes());
+                    String id = identifier.getNamespace() + ":skins/clothing/normal/" + identifier.getPath();
+                    if (ClothingList.getInstance().clothing.containsKey(id)) {
+                        setClothes(id);
+                    } else {
+                        MCA.LOGGER.info(String.format("Villagers clothing %s does not exist!", getClothes()));
+                        randomizeClothes();
+                    }
+                } else {
+                    MCA.LOGGER.info(String.format("Villagers clothing %s does not exist!", getClothes()));
+                    randomizeClothes();
+                }
+            }
+
+            if (!HairList.getInstance().hair.containsKey(getHair())) {
+                MCA.LOGGER.info(String.format("Villagers hair %s does not exist!", getHair()));
+                randomizeHair();
+            }
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "RedundantSuppression"})
     default NbtCompound toNbtForConversion(EntityType<?> convertingTo) {
         NbtCompound output = new NbtCompound();
         this.getTypeDataManager().save((E)asEntity(), output);
         return output;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "RedundantSuppression"})
     default void readNbtForConversion(EntityType<?> convertingFrom, NbtCompound input) {
         this.getTypeDataManager().load((E)asEntity(), input);
     }
@@ -295,9 +324,5 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default boolean isHostile() {
         return false;
-    }
-
-    default boolean isSneakingPose() {
-        return asEntity().isSneaking();
     }
 }

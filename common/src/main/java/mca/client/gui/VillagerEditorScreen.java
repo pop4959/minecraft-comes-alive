@@ -19,7 +19,6 @@ import mca.network.c2s.GetVillagerRequest;
 import mca.network.c2s.SkinListRequest;
 import mca.network.c2s.VillagerEditorSyncRequest;
 import mca.network.c2s.VillagerNameRequest;
-import mca.resources.data.Hair;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -36,7 +35,10 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -237,13 +239,8 @@ public class VillagerEditorScreen extends Screen {
                 //hair name
                 textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
                 textFieldWidget.setMaxLength(32);
-                textFieldWidget.setText(villager.getHair().texture());
-                textFieldWidget.setChangedListener(name -> villager.setHair(new Hair(name, villager.getHair().overlay())));
-                y += 20;
-                TextFieldWidget field2 = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
-                field2.setMaxLength(32);
-                field2.setText(villager.getHair().overlay());
-                field2.setChangedListener(name -> villager.setHair(new Hair(villager.getHair().texture(), name)));
+                textFieldWidget.setText(villager.getHair());
+                textFieldWidget.setChangedListener(villager::setHair);
                 y += 20;
 
                 //hair
@@ -415,7 +412,9 @@ public class VillagerEditorScreen extends Screen {
     }
 
     private void updateClothingPageWidget() {
-        pageButtonWidget.setMessage(new LiteralText(String.format("%d / %d", clothingPage + 1, clothingPageCount)));
+        if (pageButtonWidget != null) {
+            pageButtonWidget.setMessage(new LiteralText(String.format("%d / %d", clothingPage + 1, clothingPageCount)));
+        }
     }
 
     private void filterClothing() {

@@ -177,7 +177,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
             //an unassigned gender can happen if initialize() has been skipped
             //due the way how SpawnEggs on villagers work, initialize() would never be called
             //and since we have no proper isInitialized() I just check for missing clothes
-            if (getClothes().isEmpty() && getHair().texture().isEmpty()) {
+            if (getClothes().isEmpty() && getHair().isEmpty()) {
                 initialize(SpawnReason.TRIGGERED);
             }
         }
@@ -217,7 +217,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         InventoryUtils.readFromNBT(this.inventory, nbt);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "RedundantSuppression"})
     @Override
     @Nullable
     public <T extends MobEntity> T convertTo(EntityType<T> type, boolean keepInventory) {
@@ -251,6 +251,8 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
         inventory.clear();
         InventoryUtils.readFromNBT(inventory, nbt);
+
+        validateClothes();
     }
 
     @Override
