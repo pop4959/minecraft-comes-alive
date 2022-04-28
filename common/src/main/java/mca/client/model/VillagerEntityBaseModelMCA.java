@@ -156,8 +156,8 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
             float cy = 0.0f;
             float cz = 0.0f;
             if (isSneaking) {
-                cy = 2.0f;
-                cz = 0.75f;
+                cy = 3.0f;
+                cz = 1.5f;
             }
 
             part.setPivot(0.25f, (float)(5.0f - Math.pow(breastSize, 0.5) * 2.5f + cy), -1.5f + breastSize * 0.25f + cz);

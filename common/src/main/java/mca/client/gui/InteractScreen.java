@@ -28,7 +28,7 @@ public class InteractScreen extends AbstractDynamicScreen {
     public static final Identifier ICON_TEXTURES = MCA.locate("textures/gui.png");
 
     private final VillagerLike<?> villager;
-    private final PlayerEntity player = MinecraftClient.getInstance().player;
+    private final PlayerEntity player = Objects.requireNonNull(MinecraftClient.getInstance().player);
 
     private boolean inGiftMode;
     private int timeSinceLastClick;
@@ -109,6 +109,7 @@ public class InteractScreen extends AbstractDynamicScreen {
 
         // Dialog
         if (button == 0 && dialogAnswerHover != null && dialogQuestionText != null) {
+            //todo double click
             NetworkHandler.sendToServer(new InteractionDialogueMessage(villager.asEntity().getUuid(), dialogQuestionId, dialogAnswerHover));
         }
 
@@ -332,7 +333,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         String id = button.identifier();
 
         if (timeSinceLastClick <= 2) {
-            return; /* Prevents click-throughs on Mojang's button system */
+            return; /* Prevents click-through on Mojang's button system */
         }
         timeSinceLastClick = 0;
 

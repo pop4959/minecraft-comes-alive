@@ -51,6 +51,8 @@ public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
         clothingLayer = new PlayerClothingLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0625F))));
         addFeature(clothingLayer);
         addFeature(new PlayerHairLayer<>(this, createModel(VillagerEntityModelMCA.hairData(new Dilation(0.125F)))));
+
+        //todo sync layers with player to allow modded layers
     }
 
     private static VillagerEntityModelMCA<AbstractClientPlayerEntity> createModel(ModelData data) {
