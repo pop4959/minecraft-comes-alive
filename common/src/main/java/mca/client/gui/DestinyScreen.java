@@ -98,8 +98,8 @@ public class DestinyScreen extends VillagerEditorScreen {
     @Override
     protected void setPage(String page) {
         if (page.equals("destiny") && !allowTeleportation) {
-            assert client != null;
-            client.setScreen(null);
+            NetworkHandler.sendToServer(new DestinyMessage(null));
+            super.close();
             return;
         }
 

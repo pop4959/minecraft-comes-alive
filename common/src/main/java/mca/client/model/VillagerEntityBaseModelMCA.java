@@ -152,10 +152,11 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
 
         for (ModelPart part : breastsParts()) {
             part.pitch = (float)Math.PI * 0.3f + body.pitch;
+
             float cy = 0.0f;
             float cz = 0.0f;
             if (isSneaking) {
-                cy = 1.75f;
+                cy = 2.0f;
                 cz = 0.75f;
             }
 

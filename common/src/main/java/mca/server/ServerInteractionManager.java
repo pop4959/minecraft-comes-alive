@@ -10,8 +10,6 @@ import mca.network.s2c.OpenGuiRequest;
 import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.BaseText;
@@ -20,7 +18,6 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import net.minecraft.world.GameMode;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 
@@ -48,10 +45,6 @@ public class ServerInteractionManager {
 
     public static void launchDestiny(ServerPlayerEntity player) {
         NetworkHandler.sendToPlayer(new OpenGuiRequest(Config.getInstance().allowDestinyTeleportation ? OpenGuiRequest.Type.DESTINY : OpenGuiRequest.Type.DESTINY_NO_TP, player), player);
-
-        if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-            player.changeGameMode(GameMode.SPECTATOR);
-        }
     }
 
     public void tick() {
@@ -67,6 +60,10 @@ public class ServerInteractionManager {
         if (!playerData.isEntityDataSet()) {
             if (Config.getInstance().launchIntoDestiny) {
                 launchDestiny(player);
+
+                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+                    player.changeGameMode(GameMode.SPECTATOR);
+                }
             } else if (Config.getInstance().allowDestinyCommandOnce) {
                 NetworkHandler.sendToPlayer(new ShowToastRequest(
                         "server.destinyNotSet.title",

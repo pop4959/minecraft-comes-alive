@@ -21,7 +21,7 @@ public class DestinyMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        if (Config.getInstance().allowDestinyTeleportation) {
+        if (Config.getInstance().allowDestinyTeleportation && location != null) {
             WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 256).ifPresent(pos -> {
                 player.getWorld().getWorldChunk(pos);
                 pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
@@ -29,10 +29,10 @@ public class DestinyMessage implements Message {
                 pos = FuzzyPositionsCompat.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
                 player.teleport(pos.getX(), pos.getY(), pos.getZ());
             });
+        }
 
-            if (player.isSpectator()) {
-                player.changeGameMode(GameMode.SURVIVAL);
-            }
+        if (player.isSpectator()) {
+            player.changeGameMode(GameMode.SURVIVAL);
         }
     }
 }
