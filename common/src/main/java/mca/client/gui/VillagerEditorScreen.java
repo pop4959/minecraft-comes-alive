@@ -4,6 +4,7 @@ import mca.MCA;
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
 import mca.client.gui.widget.NamedTextFieldWidget;
+import mca.client.gui.widget.TooltipButtonWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.Infectable;
@@ -75,10 +76,21 @@ public class VillagerEditorScreen extends Screen {
     ButtonWidget widgetMasculine;
     ButtonWidget widgetFeminine;
 
+    private ButtonWidget playerSkinWidget;
+    private ButtonWidget villagerSkinWidget;
+
     public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
         super(new TranslatableText("gui.VillagerEditorScreen.title"));
         this.villagerUUID = villagerUUID;
         this.playerUUID = playerUUID;
+
+        requestVillagerData();
+        setPage(Objects.requireNonNullElse(page, "loading"));
+
+        if (clothing == null) {
+            clothing = new HashMap<>();
+            NetworkHandler.sendToServer(new SkinListRequest());
+        }
     }
 
     @Override
@@ -88,13 +100,7 @@ public class VillagerEditorScreen extends Screen {
 
     @Override
     public void init() {
-        if (clothing == null) {
-            clothing = new HashMap<>();
-            NetworkHandler.sendToServer(new SkinListRequest());
-        }
-
-        requestVillagerData();
-        setPage(Objects.requireNonNullElse(page, "loading"));
+        setPage(page);
     }
 
     private int doubleGeneSliders(int y, Genetics.GeneType... genes) {
@@ -173,6 +179,26 @@ public class VillagerEditorScreen extends Screen {
                 //gender
                 drawGender(width / 2, y);
                 y += 22;
+
+                if (villagerUUID.equals(playerUUID)) {
+                    villagerSkinWidget = addDrawableChild(new TooltipButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, "gui.villager_editor.villager_skin", b -> {
+                        villagerData.remove("usePlayerSkin");
+                        syncVillagerData();
+                        villagerSkinWidget.active = false;
+                        playerSkinWidget.active = true;
+                    }));
+                    villagerSkinWidget.active = villagerData.contains("usePlayerSkin");
+
+                    playerSkinWidget = addDrawableChild(new TooltipButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, "gui.villager_editor.player_skin", b -> {
+                        villagerData.putBoolean("usePlayerSkin", true);
+                        syncVillagerData();
+                        villagerSkinWidget.active = true;
+                        playerSkinWidget.active = false;
+                    }));
+                    playerSkinWidget.active = !villagerData.contains("usePlayerSkin");
+
+                    y += 22;
+                }
 
                 //age
                 addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
@@ -515,9 +541,9 @@ public class VillagerEditorScreen extends Screen {
         }
 
         if (page.equals("hair")) {
-            if (hoveredClothingId >= 0 && filteredClothing.size() > hoveredClothingId) {
-                villager.setHair(filteredClothing.get(hoveredClothingId));
-                setPage("hair");
+            if (hoveredClothingId >= 0 && filteredHair.size() > hoveredClothingId) {
+                villager.setHair(filteredHair.get(hoveredClothingId));
+                setPage("head");
                 return true;
             }
         }
@@ -571,7 +597,7 @@ public class VillagerEditorScreen extends Screen {
                         }
 
                         InventoryScreen.drawEntity(cx, cy, (hoveredClothingId == i) ? 35 : 30,
-                                -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
+                                -(mouseX - cx) / 2.0f, -(mouseY - cy - 64) / 2.0f, villagerVisualization);
                         i++;
                     } else {
                         break;

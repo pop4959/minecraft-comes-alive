@@ -106,7 +106,13 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
             syncFamilyTree(player, entity, villagerData);
 
             //also update players
-            serverPlayer.getWorld().getPlayers().forEach(p -> NetworkHandler.sendToPlayer(new PlayerDataMessage(player.getUuid(), villagerData), p));
+            if (villagerData.contains("usePlayerSkin")) {
+                NbtCompound compound = new NbtCompound();
+                compound.putBoolean("DELETE", true);
+                serverPlayer.getWorld().getPlayers().forEach(p -> NetworkHandler.sendToPlayer(new PlayerDataMessage(player.getUuid(), compound), p));
+            } else {
+                serverPlayer.getWorld().getPlayers().forEach(p -> NetworkHandler.sendToPlayer(new PlayerDataMessage(player.getUuid(), villagerData), p));
+            }
         } else if (entity instanceof VillagerLike) {
             ((LivingEntity)entity).readCustomDataFromNbt(villagerData);
             entity.calculateDimensions();

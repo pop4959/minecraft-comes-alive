@@ -254,3 +254,4 @@
 * Fixed a few wrong buttons
 * Added a few more config flags to control destiny, teleportation and editor access
 * Sneaking no longer breaks the model
+* Editor offers a button to select player or villager skin
