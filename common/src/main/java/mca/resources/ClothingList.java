@@ -94,20 +94,23 @@ public class ClothingList extends JsonDataLoader {
                         });
     }
 
-    public static class Clothing implements Serializable {
-        final String identifier;
-        Gender gender;
-
+    public static class Clothing extends ListEntry {
         @Nullable
-        String profession;
-
-        float temperature;
-
-        float chance;
-
-        boolean exclude;
+        public String profession;
+        public float temperature;
+        public boolean exclude;
 
         public Clothing(String identifier) {
+            super(identifier);
+        }
+    }
+
+    public static class ListEntry implements Serializable {
+        final String identifier;
+        public Gender gender;
+        public float chance;
+
+        public ListEntry(String identifier) {
             this.identifier = identifier;
         }
     }

@@ -72,18 +72,13 @@ public class HairList extends JsonDataLoader {
                         });
     }
 
-    public static class Hair implements Serializable {
-        final String identifier;
-        Gender gender;
-
-        boolean overlay;
-
-        float temperature;
-
-        float chance;
+    public static class Hair extends ClothingList.ListEntry {
+        //todo unused since not synced by default
+        public boolean overlay;
+        public float temperature;
 
         public Hair(String identifier) {
-            this.identifier = identifier;
+            super(identifier);
         }
     }
 }

@@ -19,6 +19,8 @@ import mca.network.c2s.GetVillagerRequest;
 import mca.network.c2s.SkinListRequest;
 import mca.network.c2s.VillagerEditorSyncRequest;
 import mca.network.c2s.VillagerNameRequest;
+import mca.resources.ClothingList;
+import mca.resources.HairList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -35,10 +37,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -59,13 +58,15 @@ public class VillagerEditorScreen extends Screen {
 
     private int clothingPage;
     private int clothingPageCount;
+    private ButtonWidget pageButtonWidget;
+
     private List<String> filteredClothing = new LinkedList<>();
-    private static List<String> clothing;
+    private List<String> filteredHair = new LinkedList<>();
+    private static HashMap<String, ClothingList.Clothing> clothing;
+    private static HashMap<String, HairList.Hair> hair;
     private Gender filterGender = Gender.NEUTRAL;
     private String searchString = "";
     private int hoveredClothingId;
-
-    private ButtonWidget pageButtonWidget;
 
     int CLOTHES_H = 8;
     int CLOTHES_V = 2;
@@ -88,7 +89,7 @@ public class VillagerEditorScreen extends Screen {
     @Override
     public void init() {
         if (clothing == null) {
-            clothing = new LinkedList<>();
+            clothing = new HashMap<>();
             NetworkHandler.sendToServer(new SkinListRequest());
         }
 
@@ -209,13 +210,12 @@ public class VillagerEditorScreen extends Screen {
                     setPage("clothing");
                 }));
                 y += 22;
-
-                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevClothing"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prev"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", -1);
                     sendCommand("clothing", compound);
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.nextClothing"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.next"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", 1);
                     sendCommand("clothing", compound);
@@ -236,20 +236,20 @@ public class VillagerEditorScreen extends Screen {
                 //genes
                 y = doubleGeneSliders(y, Genetics.FACE);
 
-                //hair name
-                textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2, y, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
-                textFieldWidget.setMaxLength(32);
-                textFieldWidget.setText(villager.getHair());
-                textFieldWidget.setChangedListener(villager::setHair);
-                y += 20;
-
                 //hair
-                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prevHair"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.randHair"), b -> {
+                    sendCommand("hair");
+                }));
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.selectHair"), b -> {
+                    setPage("hair");
+                }));
+                y += 22;
+                addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.prev"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", -1);
                     sendCommand("hair", compound);
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.nextHair"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.next"), b -> {
                     NbtCompound compound = new NbtCompound();
                     compound.putInt("offset", 1);
                     sendCommand("hair", compound);
@@ -359,7 +359,7 @@ public class VillagerEditorScreen extends Screen {
                 //mood
                 integerChanger(y, v -> villager.getVillagerBrain().modifyMoodValue(v), () -> new LiteralText(villager.getVillagerBrain().getMoodValue() + " mood"));
             }
-            case "clothing" -> {
+            case "clothing", "hair" -> {
                 filterGender = villager.getGenetics().getGender();
                 searchString = "";
 
@@ -369,44 +369,37 @@ public class VillagerEditorScreen extends Screen {
                 textFieldWidget.setMaxLength(64);
                 textFieldWidget.setChangedListener(v -> {
                     searchString = v;
-                    filterClothing();
+                    filter();
                 });
-
                 y = height / 2 + 85;
                 pageButtonWidget = addDrawableChild(new ButtonWidget(width / 2 - 30, y, 60, 20, new LiteralText(""), b -> {
                 }));
-
                 addDrawableChild(new ButtonWidget(width / 2 - 28 - 28, y, 28, 20, new LiteralText("<<"), b -> {
                     clothingPage = Math.max(0, clothingPage - 1);
                     updateClothingPageWidget();
                 }));
-
                 addDrawableChild(new ButtonWidget(width / 2 + 28, y, 28, 20, new LiteralText(">>"), b -> {
                     clothingPage = Math.max(0, Math.min(clothingPageCount - 1, clothingPage + 1));
                     updateClothingPageWidget();
                 }));
-
                 addDrawableChild(new ButtonWidget(width / 2 + 32 + 32, y, 128, 20, new TranslatableText("gui.button.done"), b -> {
                     setPage("body");
                 }));
-
                 widgetMasculine = addDrawableChild(new ButtonWidget(width / 2 - 32 - 96 - 64, y, 64, 20, new TranslatableText("gui.villager_editor.masculine"), b -> {
                     filterGender = Gender.MALE;
-                    filterClothing();
+                    filter();
                     widgetMasculine.active = false;
                     widgetFeminine.active = true;
                 }));
                 widgetMasculine.active = filterGender != Gender.MALE;
-
                 widgetFeminine = addDrawableChild(new ButtonWidget(width / 2 - 32 - 96 - 64 + 64, y, 64, 20, new TranslatableText("gui.villager_editor.feminine"), b -> {
                     filterGender = Gender.FEMALE;
-                    filterClothing();
+                    filter();
                     widgetMasculine.active = true;
                     widgetFeminine.active = false;
                 }));
                 widgetFeminine.active = filterGender != Gender.FEMALE;
-
-                filterClothing();
+                filter();
             }
         }
     }
@@ -417,25 +410,26 @@ public class VillagerEditorScreen extends Screen {
         }
     }
 
-    private void filterClothing() {
-        filteredClothing = clothing.stream()
+    private void filter() {
+        filteredClothing = filter(clothing);
+        filteredHair = filter(hair);
+    }
+
+    private <T extends ClothingList.ListEntry> List<String> filter(HashMap<String, T> map) {
+        List<String> filtered = map.entrySet().stream()
                 .filter(v -> {
-                    //guess gender because I'm too lazy to transfer
-                    Gender g = Gender.MALE;
-                    if (v.contains("female")) {
-                        g = Gender.FEMALE;
-                    } else if (v.contains("neutral")) {
-                        g = Gender.NEUTRAL;
-                    }
-                    return filterGender == g || g == Gender.NEUTRAL;
+                    return filterGender == v.getValue().gender || v.getValue().gender == Gender.NEUTRAL;
                 })
-                .filter(v -> searchString.isEmpty() || v.contains(searchString))
+                .filter(v -> searchString.isEmpty() || v.getKey().contains(searchString))
+                .map(Map.Entry::getKey)
                 .toList();
 
-        clothingPageCount = (int)Math.ceil(filteredClothing.size() / ((float)CLOTHES_PER_PAGE));
+        clothingPageCount = (int)Math.ceil(filtered.size() / ((float)CLOTHES_PER_PAGE));
         clothingPage = Math.max(0, Math.min(clothingPage, clothingPageCount - 1));
 
         updateClothingPageWidget();
+
+        return filtered;
     }
 
     protected String[] getPages() {
@@ -520,6 +514,14 @@ public class VillagerEditorScreen extends Screen {
             }
         }
 
+        if (page.equals("hair")) {
+            if (hoveredClothingId >= 0 && filteredClothing.size() > hoveredClothingId) {
+                villager.setHair(filteredClothing.get(hoveredClothingId));
+                setPage("hair");
+                return true;
+            }
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -539,7 +541,7 @@ public class VillagerEditorScreen extends Screen {
             InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
         }
 
-        if (page.equals("clothing")) {
+        if (page.equals("clothing") || page.equals("hair")) {
             NbtCompound nbt = new NbtCompound();
             villager.writeCustomDataToNbt(nbt);
             villagerVisualization.readCustomDataFromNbt(nbt);
@@ -551,10 +553,15 @@ public class VillagerEditorScreen extends Screen {
             for (int y = 0; y < CLOTHES_V; y++) {
                 for (int x = 0; x < CLOTHES_H + y; x++) {
                     int index = clothingPage * CLOTHES_PER_PAGE + i;
-                    if (filteredClothing.size() > index) {
+                    if ((page.equals("clothing") ? filteredClothing : filteredHair).size() > index) {
                         villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f + i * 17.0f;
                         villagerVisualization.limbDistance = 1.5f;
-                        villagerVisualization.setClothes(filteredClothing.get(index));
+
+                        if (page.equals("clothing")) {
+                            villagerVisualization.setClothes(filteredClothing.get(index));
+                        } else {
+                            villagerVisualization.setHair(filteredHair.get(index));
+                        }
 
                         int cx = width / 2 + (int)((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 40);
                         int cy = height / 2 + 25 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
@@ -582,11 +589,11 @@ public class VillagerEditorScreen extends Screen {
     }
 
     protected boolean shouldDrawEntity() {
-        return !page.equals("loading") && !page.equals("clothing");
+        return !page.equals("loading") && !page.equals("clothing") && !page.equals("hair");
     }
 
     protected boolean shouldShowPageSelection() {
-        return !page.equals("clothing");
+        return !page.equals("clothing") && !page.equals("hair");
     }
 
     public void setVillagerName(String name) {
@@ -620,8 +627,9 @@ public class VillagerEditorScreen extends Screen {
         NetworkHandler.sendToServer(new VillagerEditorSyncRequest("sync", villagerUUID, nbt));
     }
 
-    public void setSkinList(List<String> clothing) {
+    public void setSkinList(HashMap<String, ClothingList.Clothing> clothing, HashMap<String, HairList.Hair> hair) {
         VillagerEditorScreen.clothing = clothing;
-        filterClothing();
+        VillagerEditorScreen.hair = hair;
+        filter();
     }
 }
