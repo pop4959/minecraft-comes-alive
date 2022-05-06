@@ -438,8 +438,11 @@ public class VillagerEditorScreen extends Screen {
     }
 
     private void filter() {
-        filteredClothing = filter(clothing);
-        filteredHair = filter(hair);
+        if (Objects.equals(page, "clothing")) {
+            filteredClothing = filter(clothing);
+        } else {
+            filteredHair = filter(hair);
+        }
     }
 
     private <T extends ClothingList.ListEntry> List<String> filter(HashMap<String, T> map) {
