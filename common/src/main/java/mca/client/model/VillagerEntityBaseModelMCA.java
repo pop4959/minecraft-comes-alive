@@ -1,30 +1,26 @@
 package mca.client.model;
 
 import com.google.common.collect.ImmutableList;
-import mca.client.render.PlayerEntityMCARenderer;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
-import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.VillagerDimensions;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
-public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEntityModel<T> {
-
+public class VillagerEntityBaseModelMCA<T extends LivingEntity & VillagerLike<T>> extends BipedEntityModel<T> implements CommonVillagerModel<T> {
     protected static final String BREASTS = "breasts";
 
     public final ModelPart breasts;
 
-    public float breastSize;
-    public VillagerDimensions dimensions = AgeState.ADULT;
+    VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
+    float breastSize;
 
     public VillagerEntityBaseModelMCA(ModelPart root) {
-        super(root, false);
+        super(root);
         this.breasts = root.getChild(BREASTS);
     }
 
@@ -53,41 +49,37 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
         return ImmutableList.of(body, rightArm, leftArm, rightLeg, leftLeg);
     }
 
-    protected Iterable<ModelPart> breastsParts() {
-        return ImmutableList.of(breasts);
-    }
-
     @Override
     public void animateModel(T entity, float limbAngle, float limbDistance, float tickDelta) {
         super.animateModel(entity, limbDistance, limbAngle, tickDelta);
-        riding |= getVillager(entity).getAgeState() == AgeState.BABY;
+        riding |= entity.getAgeState() == AgeState.BABY;
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        if (getVillager(entity).getAgeState() == AgeState.BABY && !entity.hasVehicle()) {
-            limbDistance = (float)Math.sin(entity.age / 12F);
-            limbAngle = (float)Math.cos(entity.age / 9F) * 3;
-            headYaw += (float)Math.sin(entity.age / 2F);
+    public void setAngles(T villager, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+        if (villager.getAgeState() == AgeState.BABY && !villager.hasVehicle()) {
+            limbDistance = (float)Math.sin(villager.age / 12F);
+            limbAngle = (float)Math.cos(villager.age / 9F) * 3;
+            headYaw += (float)Math.sin(villager.age / 2F);
         }
 
         //remove the boost for babies
-        if (entity.isBaby()) {
+        if (villager.isBaby()) {
             limbAngle /= 3.0f;
         }
 
         //and add our own
-        limbAngle /= (0.2f + getVillager(entity).getRawScaleFactor());
+        limbAngle /= (0.2f + villager.getRawScaleFactor());
 
-        super.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
+        super.setAngles(villager, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
 
-        if (getVillager(entity).getVillagerBrain().isPanicking()) {
-            float toRadiums = (float)Math.PI / 180;
+        if (villager.getVillagerBrain().isPanicking()) {
+            float toRadians = (float)Math.PI / 180;
 
             float armRaise = (((float)Math.sin(animationProgress / 5) * 30 - 180)
                     + ((float)Math.sin(animationProgress / 3) * 3))
-                    * toRadiums;
-            float waveSideways = ((float)Math.sin(animationProgress / 2) * 12 - 17) * toRadiums;
+                    * toRadians;
+            float waveSideways = ((float)Math.sin(animationProgress / 2) * 12 - 17) * toRadians;
 
             this.leftArm.pitch = armRaise;
             this.leftArm.roll = -waveSideways;
@@ -95,7 +87,7 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
             this.rightArm.roll = waveSideways;
         }
 
-        applyVillagerDimensions(getVillager(entity), entity.isSneaking());
+        applyVillagerDimensions(villager, villager.isInSneakingPose());
     }
 
     @Override
@@ -103,8 +95,8 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
         super.setAttributes(target);
 
         if (target instanceof VillagerEntityBaseModelMCA<T> m) {
-            m.dimensions = dimensions;
-            m.breastSize = breastSize;
+            copyCommonAttributes(m);
+
             m.breasts.visible = breasts.visible;
             m.breasts.copyTransform(breasts);
         }
@@ -112,55 +104,46 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity> extends PlayerEn
 
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        //head
-        float headSize = dimensions.getHead();
-
-        matrices.push();
-        matrices.scale(headSize, headSize, headSize);
-        this.getHeadParts().forEach(a -> a.render(matrices, vertices, light, overlay, red, green, blue, alpha));
-        matrices.pop();
-
-        //body
-        this.getBodyParts().forEach(a -> a.render(matrices, vertices, light, overlay, red, green, blue, alpha));
-
-        if (breasts.visible && body.visible) {
-            float breastSize = this.breastSize * dimensions.getBreasts();
-
-            if (breastSize > 0) {
-                matrices.push();
-                matrices.scale(breastSize * 0.2f + 1.05f, breastSize * 0.75f + 0.75f, breastSize * 0.75f + 0.75f);
-                for (ModelPart part : breastsParts()) {
-                    part.render(matrices, vertices, light, overlay, red, green, blue, alpha);
-                }
-                matrices.pop();
-            }
-        }
+        renderCommon(matrices, vertices, light, overlay, red, green, blue, alpha);
     }
 
-    public static VillagerLike<?> getVillager(Entity villager) {
-        if (villager instanceof VillagerLike<?> v) {
-            return v;
-        } else {
-            return PlayerEntityMCARenderer.playerData.get(villager.getUuid());
-        }
+    @Override
+    public ModelPart getBreastPart() {
+        return breasts;
     }
 
-    public void applyVillagerDimensions(VillagerLike<?> entity, boolean isSneaking) {
-        dimensions = entity.getVillagerDimensions();
-        breastSize = entity.getGenetics().getBreastSize();
-        breasts.visible = entity.getGenetics().getGender() == Gender.FEMALE;
+    @Override
+    public ModelPart getBodyPart() {
+        return body;
+    }
 
-        for (ModelPart part : breastsParts()) {
-            part.pitch = (float)Math.PI * 0.3f + body.pitch;
+    @Override
+    public Iterable<ModelPart> getCommonHeadParts() {
+        return getHeadParts();
+    }
 
-            float cy = 0.0f;
-            float cz = 0.0f;
-            if (isSneaking) {
-                cy = 3.0f;
-                cz = 1.5f;
-            }
+    @Override
+    public Iterable<ModelPart> getCommonBodyParts() {
+        return getBodyParts();
+    }
 
-            part.setPivot(0.25f, (float)(5.0f - Math.pow(breastSize, 0.5) * 2.5f + cy), -1.5f + breastSize * 0.25f + cz);
-        }
+    @Override
+    public Iterable<ModelPart> getBreastParts() {
+        return ImmutableList.of(breasts);
+    }
+
+    @Override
+    public VillagerDimensions.Mutable getDimensions() {
+        return dimensions;
+    }
+
+    @Override
+    public float getBreastSize() {
+        return breastSize;
+    }
+
+    @Override
+    public void setBreastSize(float breastSize) {
+        this.breastSize = breastSize;
     }
 }

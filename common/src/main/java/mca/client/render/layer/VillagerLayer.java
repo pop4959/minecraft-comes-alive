@@ -1,8 +1,6 @@
 package mca.client.render.layer;
 
 import com.google.common.collect.Maps;
-import mca.client.model.VillagerEntityModelMCA;
-import mca.entity.VillagerLike;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -10,8 +8,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +18,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.function.Function;
 
-public abstract class VillagerLayer<T extends MobEntity & VillagerLike<T>, M extends VillagerEntityModelMCA<T>> extends FeatureRenderer<T, M> {
+import static mca.client.model.CommonVillagerModel.getVillager;
+
+public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
 
     private static final float[] DEFAULT_COLOR = new float[]{1, 1, 1};
 
@@ -51,23 +52,27 @@ public abstract class VillagerLayer<T extends MobEntity & VillagerLike<T>, M ext
     }
 
     @Override
-    public void render(MatrixStack transform, VertexConsumerProvider provider, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-        if (entity.hasCustomSkin()) {
+    public void render(MatrixStack transform, VertexConsumerProvider provider, int light, T villager, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+        if (getVillager(villager).hasCustomSkin()) {
             return;
         }
 
         //copy the animation to this layers model
         getContextModel().setAttributes(model);
 
-        int tint = LivingEntityRenderer.getOverlay(entity, 0);
+        renderFinal(transform, provider, light, villager);
+    }
 
-        Identifier skin = getSkin(entity);
+    public void renderFinal(MatrixStack transform, VertexConsumerProvider provider, int light, T villager) {
+        int tint = LivingEntityRenderer.getOverlay(villager, 0);
+
+        Identifier skin = getSkin(villager);
         if (canUse(skin)) {
-            float[] color = getColor(entity);
+            float[] color = getColor(villager);
             renderModel(transform, provider, light, model, color[0], color[1], color[2], skin, tint);
         }
 
-        Identifier overlay = getOverlay(entity);
+        Identifier overlay = getOverlay(villager);
         if (canUse(overlay)) {
             renderModel(transform, provider, light, model, 1, 1, 1, overlay, tint);
         }

@@ -10,7 +10,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 

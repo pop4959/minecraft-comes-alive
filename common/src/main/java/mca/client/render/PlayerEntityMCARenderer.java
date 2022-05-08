@@ -1,8 +1,8 @@
 package mca.client.render;
 
-import mca.client.model.VillagerEntityBaseModelMCA;
+import mca.client.model.PlayerEntityExtendedModel;
 import mca.client.model.VillagerEntityModelMCA;
-import mca.client.render.playerLayer.*;
+import mca.client.render.layer.*;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
 import net.minecraft.client.model.Dilation;
@@ -10,7 +10,6 @@ import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -20,58 +19,40 @@ import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 import net.minecraft.util.UseAction;
-import net.minecraft.util.math.Box;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static mca.client.model.VillagerEntityBaseModelMCA.getVillager;
+import static mca.client.model.CommonVillagerModel.getVillager;
 
 public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
     public static EntityRenderer<?> entityRenderer;
     public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
     public static Set<UUID> playerDataRequests = new HashSet<>();
 
-    PlayerSkinLayer<AbstractClientPlayerEntity> skinLayer;
-    PlayerClothingLayer<AbstractClientPlayerEntity> clothingLayer;
+    SkinLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> skinLayer;
+    ClothingLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> clothingLayer;
 
     public PlayerEntityMCARenderer(EntityRendererFactory.Context context) {
         super(context, false);
+        model = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F)));
 
-        skinLayer = new PlayerSkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));
+        skinLayer = new SkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));
         addFeature(skinLayer);
-        addFeature(new PlayerFaceLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.01F)))));
-        clothingLayer = new PlayerClothingLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0625F))));
+        addFeature(new FaceLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.01F))), "normal"));
+        clothingLayer = new ClothingLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0625F))), "normal");
         addFeature(clothingLayer);
-        addFeature(new PlayerHairLayer<>(this, createModel(VillagerEntityModelMCA.hairData(new Dilation(0.125F)))));
-
-        //todo sync layers with player to allow modded layers
+        addFeature(new HairLayer<>(this, createModel(VillagerEntityModelMCA.hairData(new Dilation(0.125F)))));
     }
 
-    private static VillagerEntityModelMCA<AbstractClientPlayerEntity> createModel(ModelData data) {
-        return new VillagerEntityModelMCA<>(TexturedModelData.of(data, 64, 64).createModel());
-    }
-
-    @Override
-    public boolean shouldRender(AbstractClientPlayerEntity entity, Frustum frustum, double x, double y, double z) {
-        if (!entity.shouldRender(x, y, z)) {
-            return false;
-        }
-        if (entity.ignoreCameraFrustum) {
-            return true;
-        }
-        Box box = ((Entity)entity).getVisibilityBoundingBox().expand(0.5);
-        if (box.isValid() || box.getAverageSideLength() == 0.0) {
-            box = new Box(entity.getX() - 2.0, entity.getY() - 2.0, entity.getZ() - 2.0, entity.getX() + 2.0, entity.getY() + 2.0, entity.getZ() + 2.0);
-        }
-        return frustum.isVisible(box);
+    private static PlayerEntityExtendedModel<AbstractClientPlayerEntity> createModel(ModelData data) {
+        return new PlayerEntityExtendedModel<>(TexturedModelData.of(data, 64, 64).createModel());
     }
 
     @Override
@@ -91,19 +72,6 @@ public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
     }
 
     @Override
-    public void render(AbstractClientPlayerEntity entity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        features.forEach(feature -> {
-            if (feature instanceof PlayerLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> playerFeature) {
-                if (playerFeature.model instanceof VillagerEntityBaseModelMCA<AbstractClientPlayerEntity> model) {
-                    model.applyVillagerDimensions(getVillager(entity), entity.isInSneakingPose());
-                }
-            }
-        });
-
-        super.render(entity, f, g, matrixStack, vertexConsumerProvider, i);
-    }
-
-    @Override
     public void renderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player) {
         renderArm(matrices, vertexConsumers, light, player, skinLayer.model.rightArm, skinLayer.model.rightSleeve, skinLayer);
         renderArm(matrices, vertexConsumers, light, player, clothingLayer.model.rightArm, clothingLayer.model.rightSleeve, clothingLayer);
@@ -115,8 +83,8 @@ public class PlayerEntityMCARenderer extends PlayerEntityRenderer {
         renderArm(matrices, vertexConsumers, light, player, clothingLayer.model.leftArm, clothingLayer.model.leftSleeve, clothingLayer);
     }
 
-    private void renderArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, PlayerLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> layer) {
-        VillagerEntityBaseModelMCA<AbstractClientPlayerEntity> model = (VillagerEntityBaseModelMCA<AbstractClientPlayerEntity>)layer.model;
+    private void renderArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, VillagerLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> layer) {
+        PlayerEntityExtendedModel<AbstractClientPlayerEntity> model = (PlayerEntityExtendedModel<AbstractClientPlayerEntity>)layer.model;
         setModelPose(model, player);
 
         model.setVisible(false);

@@ -8,7 +8,7 @@ import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.entity.LivingEntity;
 
-public class VillagerEntityModelMCA<T extends LivingEntity> extends VillagerEntityBaseModelMCA<T> {
+public class VillagerEntityModelMCA<T extends LivingEntity & VillagerLike<T>> extends VillagerEntityBaseModelMCA<T> {
     protected static final String BREASTPLATE = "breastplate";
 
     public final ModelPart breastsWear;
@@ -59,13 +59,13 @@ public class VillagerEntityModelMCA<T extends LivingEntity> extends VillagerEnti
     }
 
     @Override
-    protected Iterable<ModelPart> breastsParts() {
+    public Iterable<ModelPart> getBreastParts() {
         return ImmutableList.of(breasts, breastsWear);
     }
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-        super.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
+    public void setAngles(T villager, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
+        super.setAngles(villager, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
         leftLegwear.copyTransform(leftLeg);
         rightLegwear.copyTransform(rightLeg);
         leftArmwear.copyTransform(leftArm);

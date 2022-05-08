@@ -1,24 +1,25 @@
 package mca.client.render.layer;
 
-import mca.client.model.VillagerEntityModelMCA;
-import mca.entity.VillagerLike;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
-public class ClothingLayer<T extends MobEntity & VillagerLike<T>> extends VillagerLayer<T, VillagerEntityModelMCA<T>> {
+import static mca.client.model.CommonVillagerModel.getVillager;
+
+public class ClothingLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends VillagerLayer<T, M> {
 
     private final String variant;
 
-    public ClothingLayer(FeatureRendererContext<T, VillagerEntityModelMCA<T>> renderer, VillagerEntityModelMCA<T> model, String variant) {
+    public ClothingLayer(FeatureRendererContext<T, M> renderer, M model, String variant) {
         super(renderer, model);
         this.variant = variant;
     }
 
     @Override
     protected Identifier getSkin(T villager) {
-        return cached(villager.getClothes() + variant, clothes -> {
-            Identifier id = new Identifier(villager.getClothes());
+        return cached(getVillager(villager).getClothes() + variant, clothes -> {
+            Identifier id = new Identifier(getVillager(villager).getClothes());
 
             // use it if it's already valid
             if (canUse(id)) {
