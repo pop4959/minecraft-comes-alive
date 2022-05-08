@@ -597,7 +597,7 @@ public class VillagerEditorScreen extends Screen {
                         int cy = height / 2 + 25 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
 
                         if (Math.abs(cx - mouseX) <= 20 && Math.abs(cy - mouseY - 30) <= 30) {
-                            hoveredClothingId = i;
+                            hoveredClothingId = index;
                         }
 
                         InventoryScreen.drawEntity(cx, cy, (hoveredClothingId == i) ? 35 : 30,
