@@ -75,7 +75,13 @@ public class ClothingList extends JsonDataLoader {
         return switch (villager.getAgeState()) {
             case BABY, TODDLER -> getPool(gender, MCA.locate("baby").toString());
             case CHILD, TEEN -> getPool(gender, MCA.locate("child").toString());
-            default -> getPool(gender, villager.getVillagerData().getProfession());
+            default -> {
+                WeightedPool<String> pool = getPool(gender, villager.getVillagerData().getProfession());
+                if (pool.entries.size() == 0) {
+                    pool = getPool(gender, VillagerProfession.NONE);
+                }
+                yield pool;
+            }
         };
     }
 
