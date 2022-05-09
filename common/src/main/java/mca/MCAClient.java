@@ -7,8 +7,6 @@ import mca.network.c2s.PlayerDataRequest;
 
 import java.util.*;
 
-import static mca.client.model.CommonVillagerModel.getVillager;
-
 public class MCAClient {
     public static VillagerEntityMCA fallbackVillager;
     public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
@@ -19,7 +17,7 @@ public class MCAClient {
     }
 
     public static boolean useMCARenderer(UUID uuid) {
-        if (Config.getInstance().letPlayerCustomize) {
+        if (Config.getInstance().enableVillagerPlayerModel) {
             if (!MCAClient.playerDataRequests.contains(uuid)) {
                 MCAClient.playerDataRequests.add(uuid);
                 NetworkHandler.sendToServer(new PlayerDataRequest(uuid));

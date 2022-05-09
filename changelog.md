@@ -256,3 +256,9 @@
 * Sneaking no longer breaks the model
 * Editor offers a button to select player or villager skin
 * Fixed issues with resizing window while in editor
+
+# 7.3.0 alpha 3
+
+* Switched to an injected based player model to hopefully improve mod support
+* Using the Player model now makes use of size and gender
+* Females are now in average 5% shorter than males

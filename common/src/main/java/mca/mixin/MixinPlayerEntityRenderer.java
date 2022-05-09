@@ -45,7 +45,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "<init>(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;Z)V", at = @At("TAIL"))
     private void init(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        if (Config.getInstance().letPlayerCustomize) {
+        if (Config.getInstance().enableVillagerPlayerModel) {
             model = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F), slim));
 
             skinLayer = new SkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));

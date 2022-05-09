@@ -1,5 +1,6 @@
 package mca.entity.ai.relationship;
 
+import mca.Config;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ZombieVillagerEntityMCA;
@@ -91,6 +92,18 @@ public enum Gender {
 
     public static Gender byName(String name) {
         return REGISTRY.getOrDefault(name.toUpperCase(Locale.ENGLISH), UNASSIGNED);
+    }
+
+    public float getHorizontalScaleFactor() {
+        return this == Gender.FEMALE ? Config.getInstance().femaleVillagerWidthFactor :
+                this == Gender.MALE ? Config.getInstance().maleVillagerWidthFactorFactor :
+                        (Config.getInstance().femaleVillagerWidthFactor + Config.getInstance().maleVillagerWidthFactorFactor) * 0.5f;
+    }
+
+    public float getScaleFactor() {
+        return this == Gender.FEMALE ? Config.getInstance().femaleVillagerHeightFactor :
+                this == Gender.MALE ? Config.getInstance().maleVillagerHeight :
+                        (Config.getInstance().femaleVillagerHeightFactor + Config.getInstance().maleVillagerHeight) * 0.5f;
     }
 }
 
