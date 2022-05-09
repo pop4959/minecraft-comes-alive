@@ -177,14 +177,10 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
 
     @Override
     public void handlePlayerDataMessage(PlayerDataMessage response) {
-        if (response.getData().contains("DELETE")) {
-            MCAClient.playerData.remove(response.uuid);
-        } else {
-            VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
-            assert villager != null;
-            villager.readCustomDataFromNbt(response.getData());
-            MCAClient.playerData.put(response.uuid, villager);
-        }
+        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
+        assert villager != null;
+        villager.readCustomDataFromNbt(response.getData());
+        MCAClient.playerData.put(response.uuid, villager);
     }
 
     @Override

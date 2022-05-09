@@ -99,6 +99,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private static final CDataParameter<Integer> GROWTH_AMOUNT = CParameter.create("growthAmount", -AgeState.getMaxAge());
 
     private static final CDataManager<VillagerEntityMCA> DATA = createTrackedData(VillagerEntityMCA.class).build();
+    private boolean usePlayerSkin;
+
+    @Override
+    public boolean usePlayerSkin() {
+        return usePlayerSkin;
+    }
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
@@ -1151,6 +1157,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         getTypeDataManager().load(this, nbt);
         relations.readFromNbt(nbt);
         longTermMemory.readFromNbt(nbt);
+
+        usePlayerSkin = nbt.contains("usePlayerSkin");
 
         updateSpeed();
 

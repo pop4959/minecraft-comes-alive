@@ -63,7 +63,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "scale(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;F)V", at = @At("TAIL"), cancellable = true)
     private void injectScale(AbstractClientPlayerEntity villager, MatrixStack matrices, float f, CallbackInfo ci) {
-        if (MCAClient.useMCAModel(villager.getUuid())) {
+        if (MCAClient.useMCARenderer(villager.getUuid())) {
             float height = getVillager(villager).getRawScaleFactor();
             float width = getVillager(villager).getHorizontalScaleFactor();
             matrices.scale(width, height, width);

@@ -19,7 +19,7 @@ public class PlayerDataRequest implements Message {
     @Override
     public void receive(ServerPlayerEntity player) {
         PlayerSaveData data = PlayerSaveData.get(player.getWorld(), uuid);
-        if (data.isEntityDataSet() && !data.getEntityData().contains("usePlayerSkin")) {
+        if (data.isEntityDataSet()) {
             NbtCompound nbt = data.getEntityData();
             NetworkHandler.sendToPlayer(new PlayerDataMessage(uuid, nbt), player);
         }

@@ -325,4 +325,8 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     default boolean isHostile() {
         return false;
     }
+
+    default boolean usePlayerSkin() {
+        return false;
+    }
 }
