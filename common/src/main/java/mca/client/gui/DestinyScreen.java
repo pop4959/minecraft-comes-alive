@@ -68,7 +68,7 @@ public class DestinyScreen extends VillagerEditorScreen {
 
         switch (page) {
             case "general" -> {
-                drawScaledText(transform, new TranslatableText("gui.destiny.whoareyou"), width / 2, height / 2 - 16, 1.5f);
+                drawScaledText(transform, new TranslatableText("gui.destiny.whoareyou"), width / 2, height / 2 - 24, 1.5f);
                 transform.push();
                 transform.scale(0.25f, 0.25f, 0.25f);
                 RenderSystem.enableBlend();
@@ -107,9 +107,10 @@ public class DestinyScreen extends VillagerEditorScreen {
         clearChildren();
         switch (page) {
             case "general" -> {
-                drawName(width / 2 - DATA_WIDTH / 2, height / 2 + 8);
-                drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 32);
-                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 64, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
+                drawName(width / 2 - DATA_WIDTH / 2, height / 2);
+                drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);
+                drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
+                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
                     setPage("body");
                     if (villager.getTrackedValue(VILLAGER_NAME).isEmpty()) {
                         villager.setTrackedValue(VILLAGER_NAME, "Nameless Traveller");

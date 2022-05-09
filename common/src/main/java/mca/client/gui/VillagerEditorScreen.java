@@ -181,22 +181,7 @@ public class VillagerEditorScreen extends Screen {
                 y += 22;
 
                 if (villagerUUID.equals(playerUUID)) {
-                    villagerSkinWidget = addDrawableChild(new TooltipButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, "gui.villager_editor.villager_skin", b -> {
-                        villagerData.remove("usePlayerSkin");
-                        syncVillagerData();
-                        villagerSkinWidget.active = false;
-                        playerSkinWidget.active = true;
-                    }));
-                    villagerSkinWidget.active = villagerData.contains("usePlayerSkin");
-
-                    playerSkinWidget = addDrawableChild(new TooltipButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, "gui.villager_editor.player_skin", b -> {
-                        villagerData.putBoolean("usePlayerSkin", true);
-                        syncVillagerData();
-                        villagerSkinWidget.active = true;
-                        playerSkinWidget.active = false;
-                    }));
-                    playerSkinWidget.active = !villagerData.contains("usePlayerSkin");
-
+                    drawModel(width / 2, y);
                     y += 22;
                 }
 
@@ -515,6 +500,24 @@ public class VillagerEditorScreen extends Screen {
 
         genderButtonFemale.active = villager.getGenetics().getGender() != Gender.FEMALE;
         genderButtonMale.active = villager.getGenetics().getGender() != Gender.MALE;
+    }
+
+    void drawModel(int x, int y) {
+        villagerSkinWidget = addDrawableChild(new TooltipButtonWidget(x, y, DATA_WIDTH / 2, 20, "gui.villager_editor.villager_skin", b -> {
+            villagerData.remove("usePlayerSkin");
+            syncVillagerData();
+            villagerSkinWidget.active = false;
+            playerSkinWidget.active = true;
+        }));
+        villagerSkinWidget.active = villagerData.contains("usePlayerSkin");
+
+        playerSkinWidget = addDrawableChild(new TooltipButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, "gui.villager_editor.player_skin", b -> {
+            villagerData.putBoolean("usePlayerSkin", true);
+            syncVillagerData();
+            villagerSkinWidget.active = true;
+            playerSkinWidget.active = false;
+        }));
+        playerSkinWidget.active = !villagerData.contains("usePlayerSkin");
     }
 
     private void sendCommand(String command) {

@@ -262,3 +262,5 @@
 * Switched to an injected based player model to hopefully improve mod support
 * Using the Player model now makes use of size and gender
 * Females are now in average 5% shorter than males
+* You can now choose between player and villager model in the destiny screen
+* Fixed modded profession being naked
