@@ -2,6 +2,7 @@ package mca.fabric;
 
 import mca.ClientProxyAbstractImpl;
 import mca.Config;
+import mca.MCAClient;
 import mca.ParticleTypesMCA;
 import mca.block.BlockEntityTypesMCA;
 import mca.block.BlocksMCA;
@@ -31,7 +32,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
-public final class MCAClient extends ClientProxyAbstractImpl implements ClientModInitializer {
+public final class MCAFabricClient extends ClientProxyAbstractImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         if (Config.getInstance().useSquidwardModels) {
@@ -67,6 +68,8 @@ public final class MCAClient extends ClientProxyAbstractImpl implements ClientMo
         );
 
         BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
+
+        MCAClient.onInitializeClient();
     }
 
     @Override

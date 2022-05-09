@@ -1,6 +1,7 @@
 package mca.client.render.layer;
 
 import com.google.common.collect.Maps;
+import mca.MCAClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -11,6 +12,7 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +24,7 @@ import static mca.client.model.CommonVillagerModel.getVillager;
 
 public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
 
-    private static final float[] DEFAULT_COLOR = new float[]{1, 1, 1};
+    private static final float[] DEFAULT_COLOR = new float[] {1, 1, 1};
 
     private static final Map<String, Identifier> TEXTURE_CACHE = Maps.newHashMap();
 
@@ -54,6 +56,10 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
     @Override
     public void render(MatrixStack transform, VertexConsumerProvider provider, int light, T villager, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         if (getVillager(villager).hasCustomSkin()) {
+            return;
+        }
+
+        if (villager instanceof PlayerEntity && !MCAClient.useMCAModel(villager.getUuid())) {
             return;
         }
 

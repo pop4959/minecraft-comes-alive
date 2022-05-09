@@ -9,7 +9,6 @@
     "MixinCriteria",
     "MixinDefaultParticleType",
     "MixinEntityType",
-    "MixingEntityRenderers",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinPlayerEntity",
@@ -23,7 +22,8 @@
     "MixinZombieVillagerEntity"
   ],
   "client": [
-    "MixingEntityRenderDispatcher",
+    "MixinLivingEntityRenderer",
+    "MixinPlayerEntityRenderer",
     "client.MixinClientPlayerEntity",
     "client.MixinTranslationStorage"
   ],

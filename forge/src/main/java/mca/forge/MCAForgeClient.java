@@ -1,6 +1,7 @@
 package mca.forge;
 
 import mca.Config;
+import mca.MCAClient;
 import mca.ParticleTypesMCA;
 import mca.block.BlockEntityTypesMCA;
 import mca.block.BlocksMCA;
@@ -34,7 +35,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
 @Mod.EventBusSubscriber(modid = mca.MCA.MOD_ID, value = Dist.CLIENT, bus = Bus.MOD)
-public final class MCAClient {
+public final class MCAForgeClient {
     @SubscribeEvent
     public static void data(FMLConstructModEvent event) {
         new ClientProxyImpl();
@@ -71,6 +72,8 @@ public final class MCAClient {
         );
 
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
+
+        MCAClient.onInitializeClient();
     }
 
     @SubscribeEvent

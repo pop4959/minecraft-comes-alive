@@ -19,7 +19,7 @@
       "mca.fabric.MCAFabric"
     ],
     "client": [
-      "mca.fabric.MCAClient"
+      "mca.fabric.MCAFabricClient"
     ]
   },
   "mixins": [

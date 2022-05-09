@@ -1,8 +1,8 @@
 package mca.network;
 
+import mca.MCAClient;
 import mca.client.book.Book;
 import mca.client.gui.*;
-import mca.client.render.PlayerEntityMCARenderer;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
@@ -178,12 +178,12 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handlePlayerDataMessage(PlayerDataMessage response) {
         if (response.getData().contains("DELETE")) {
-            PlayerEntityMCARenderer.playerData.remove(response.uuid);
+            MCAClient.playerData.remove(response.uuid);
         } else {
             VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
             assert villager != null;
             villager.readCustomDataFromNbt(response.getData());
-            PlayerEntityMCARenderer.playerData.put(response.uuid, villager);
+            MCAClient.playerData.put(response.uuid, villager);
         }
     }
 

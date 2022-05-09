@@ -1,9 +1,11 @@
 package mca.client.model;
 
-import mca.client.render.PlayerEntityMCARenderer;
+import mca.MCAClient;
+import mca.entity.EntitiesMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.VillagerDimensions;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -81,7 +83,10 @@ public interface CommonVillagerModel<T extends LivingEntity> {
         if (villager instanceof VillagerLike<?> v) {
             return v;
         } else {
-            return PlayerEntityMCARenderer.playerData.get(villager.getUuid());
+            if (MCAClient.fallbackVillager == null) {
+                MCAClient.fallbackVillager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
+            }
+            return MCAClient.playerData.getOrDefault(villager.getUuid(), MCAClient.fallbackVillager);
         }
     }
 }
