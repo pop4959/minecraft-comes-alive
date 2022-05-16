@@ -22,6 +22,7 @@
     "MixinZombieVillagerEntity"
   ],
   "client": [
+    "MixinHeldItemFeatureRenderer",
     "MixinLivingEntityRenderer",
     "MixinPlayerEntityRenderer",
     "client.MixinClientPlayerEntity",
