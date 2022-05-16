@@ -7,7 +7,7 @@ license = "GNU"
 modId = "mca"
 version = "${version}"
 displayName = "Minecraft Comes Alive"
-authors = "WildBamaBoy, SheWolfDeadly"
+authors = "Luke100000, S0llace, CDAGaming, ffrannny, jahx_senpoopie, WildBamaBoy, SheWolfDeadly"
 description = '''
 No more squidward-villagers! Interact with male and female human villagers and raise a family.
 '''
