@@ -93,6 +93,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import static mca.client.model.CommonVillagerModel.getVillager;
+
 public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<VillagerEntityMCA>, NamedScreenHandlerFactory, CompassionateEntity<BreedableRelationship>, CrossbowUser {
     private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", MIN_INFECTION);
 
@@ -269,6 +271,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void setBaby(boolean isBaby) {
         setBreedingAge(isBaby ? -AgeState.getMaxAge() : 0);
+    }
+
+    @Override
+    public boolean isBaby() {
+        return super.isBaby();
     }
 
     @Override
@@ -731,7 +738,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             boolean left = passengers.get(0) == this;
             boolean head = passengers.size() > 2 && passengers.get(2) == this;
 
-            Vec3d offset = head ? new Vec3d(0, 0.55, 0) : new Vec3d(left ? 0.4F : -0.4F, 0, 0).rotateY(yaw);
+            Vec3d offset = head ? new Vec3d(0, 0.25, 0) : new Vec3d(left ? 0.4F : -0.4F, -0.2, 0).rotateY(yaw);
+
+            if (MCAClient.useMCARenderer(vehicle.getUuid())) {
+                float height = getVillager(vehicle).getRawScaleFactor();
+                offset = offset.multiply(1.0f, height, 1.0f);
+                offset = offset.add(0.0f, vehicle.getMountedHeightOffset() * height - vehicle.getMountedHeightOffset(), 0.0f);
+            }
 
             Vec3d pos = this.getPos();
             this.setPos(pos.getX() + offset.getX(), pos.getY() + offset.getY(), pos.getZ() + offset.getZ());
