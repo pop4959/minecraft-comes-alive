@@ -268,3 +268,7 @@
 * Fixed root advancement
 * Fixed Gifting advancements
 * Fixed missing riding phrase
+* Fixed duplication issue when villager use bonemeal
+* Fixed chore animations
+* Added wandering around when no tasks have been found
+* Fixed young villagers not holding tools correctly
