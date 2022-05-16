@@ -19,7 +19,7 @@
     "beginning_village": {
       "trigger": "minecraft:location",
       "conditions": {
-        "feature": "village"
+        "feature": "#minecraft:village"
       }
     }
   },
