@@ -59,7 +59,7 @@ public class HarvestingTask extends AbstractChoreTask {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA villager) {
-        return villager.getVillagerBrain().getCurrentJob() == Chore.HARVEST;
+        return villager.getVillagerBrain().getCurrentJob() == Chore.HARVEST && super.shouldRun(world, villager);
     }
 
     @Override
@@ -147,8 +147,6 @@ public class HarvestingTask extends AbstractChoreTask {
             if (villager.squaredDistanceTo(Vec3d.ofBottomCenter(fertileFarmLand)) <= 6 && tickAction()) {
                 plantSeeds(world, villager, fertileFarmLand.up());
             }
-
-            return;
         }
 
         BlockPos crops = searchCrop(16, 3, true);
@@ -158,6 +156,7 @@ public class HarvestingTask extends AbstractChoreTask {
         }
 
         if (crops == null) {
+            failedTicks = FAILED_COOLDOWN;
             return;
         }
 
@@ -169,7 +168,6 @@ public class HarvestingTask extends AbstractChoreTask {
         villager.moveTowards(crops);
 
         if (villager.squaredDistanceTo(Vec3d.ofBottomCenter(crops)) <= 4.5D && tickAction()) {
-
             BlockState state = world.getBlockState(crops);
 
             if (state.getBlock() instanceof CropBlock crop) {
@@ -211,9 +209,7 @@ public class HarvestingTask extends AbstractChoreTask {
         if (slot < 0) {
             return ITEM_MISSING;
         }
-        ItemStack found = inventory.removeStack(slot);
-        inventory.setStack(slot, stack);
-        villager.setStackInHand(Hand.MAIN_HAND, found);
+        villager.setStackInHand(Hand.MAIN_HAND, inventory.getStack(slot));
         return ITEM_FOUND;
     }
 

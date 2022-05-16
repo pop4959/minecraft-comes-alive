@@ -38,7 +38,7 @@ public class ChoppingTask extends AbstractChoreTask {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA villager) {
-        return villager.getVillagerBrain().getCurrentJob() == Chore.CHOP;
+        return villager.getVillagerBrain().getCurrentJob() == Chore.CHOP && super.shouldRun(world, villager);
     }
 
     @Override
@@ -52,7 +52,6 @@ public class ChoppingTask extends AbstractChoreTask {
         if (!stack.isEmpty()) {
             villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
         }
-        villager.swingHand(Hand.MAIN_HAND);
     }
 
     @Override
@@ -100,6 +99,8 @@ public class ChoppingTask extends AbstractChoreTask {
                     pos = pos.add(0, 1, 0);
                 }
             }
+
+            failedTicks = FAILED_COOLDOWN;
             return;
         }
 
@@ -127,19 +128,16 @@ public class ChoppingTask extends AbstractChoreTask {
      * Returns trues if origin is bottom point of tree.
      */
     private boolean isTreeStartLog(ServerWorld world, BlockPos origin) {
-        if (!world.getBlockState(origin).isIn(BlockTags.LOGS))
-            return false;
+        if (!world.getBlockState(origin).isIn(BlockTags.LOGS)) {return false;}
 
         // ensure we're looking at a valid tree before continuing
-        if (!isValidTree(world, origin.down()))
-            return false;
+        if (!isValidTree(world, origin.down())) {return false;}
 
         // check upside continues and valid leaves exist.
         BlockPos.Mutable pos_up = origin.mutableCopy(); // copy as mutable for reduce resources
         for (int y = 0; y < Config.getInstance().maxTreeHeight; y++) {
             BlockState up = world.getBlockState(pos_up.setY(pos_up.getY() + 1)); // use set directly instead of "pos_up.move(Direction.UP)" (set is faster)
-            if (up.isIn(BlockTags.LOGS)) continue;
-            else return up.isIn(BlockTags.LEAVES);
+            if (up.isIn(BlockTags.LOGS)) {continue;} else return up.isIn(BlockTags.LEAVES);
         }
         return false;
     }

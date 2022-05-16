@@ -29,7 +29,7 @@ public class HuntingTask extends AbstractChoreTask {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA villager) {
-        return villager.getVillagerBrain().getCurrentJob() == Chore.HUNT;
+        return villager.getVillagerBrain().getCurrentJob() == Chore.HUNT && super.shouldRun(world, villager);
     }
 
     @Override
@@ -43,7 +43,6 @@ public class HuntingTask extends AbstractChoreTask {
         if (!stack.isEmpty()) {
             villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
         }
-        villager.swingHand(Hand.MAIN_HAND);
     }
 
     @Override
@@ -85,11 +84,15 @@ public class HuntingTask extends AbstractChoreTask {
                             .min(Comparator.comparingDouble(villager::squaredDistanceTo))
                             .ifPresent(animal -> {
                                 target = animal;
-                                villager.moveTowards(target.getBlockPos());
+                                villager.moveTowards(target.getBlockPos(), 1.0f);
                             });
                 }
 
                 nextAction = 50;
+
+                if (target == null) {
+                    failedTicks = FAILED_COOLDOWN;
+                }
             }
         } else {
             villager.moveTowards(target.getBlockPos());

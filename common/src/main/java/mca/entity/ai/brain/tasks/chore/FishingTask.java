@@ -38,7 +38,7 @@ public class FishingTask extends AbstractChoreTask {
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA villager) {
-        return villager.getVillagerBrain().getCurrentJob() == Chore.FISH;
+        return villager.getVillagerBrain().getCurrentJob() == Chore.FISH && super.shouldRun(world, villager);
     }
 
     @Override
@@ -80,6 +80,10 @@ public class FishingTask extends AbstractChoreTask {
             targetWater = nearbyStaticLiquid.stream()
                     .filter((p) -> villager.world.getBlockState(p).getBlock() == Blocks.WATER)
                     .min(Comparator.comparingDouble(d -> villager.squaredDistanceTo(d.getX(), d.getY(), d.getZ()))).orElse(null);
+
+            if (targetWater == null) {
+                failedTicks = FAILED_COOLDOWN;
+            }
         } else if (villager.squaredDistanceTo(targetWater.getX(), targetWater.getY(), targetWater.getZ()) < 5.0D) {
             villager.getNavigation().stop();
             villager.lookAt(targetWater);
@@ -113,7 +117,5 @@ public class FishingTask extends AbstractChoreTask {
         if (!stack.isEmpty()) {
             villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
         }
-        villager.swingHand(Hand.MAIN_HAND);
     }
-
 }
