@@ -264,3 +264,7 @@
 * Females are now in average 5% shorter than males
 * You can now choose between player and villager model in the destiny screen
 * Fixed modded profession being naked
+* Fixed massive family crashing whistle
+* Fixed root advancement
+* Fixed Gifting advancements
+* Fixed missing riding phrase
