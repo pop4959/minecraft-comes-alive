@@ -272,3 +272,7 @@
 * Fixed chore animations
 * Added wandering around when no tasks have been found
 * Fixed young villagers not holding tools correctly
+
+# 7.3.0
+* Updated translations
+* Fixed crash on dedicated server when picking up children

@@ -159,9 +159,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public void updateCustomSkin() {
         if (!getTrackedValue(CUSTOM_SKIN).isEmpty()) {
             gameProfile = new GameProfile(null, getTrackedValue(CUSTOM_SKIN));
-            SkullBlockEntity.loadProperties(gameProfile, profile -> {
-                gameProfile = profile;
-            });
+            SkullBlockEntity.loadProperties(gameProfile, profile -> gameProfile = profile);
         } else {
             gameProfile = null;
         }
@@ -738,12 +736,15 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             boolean left = passengers.get(0) == this;
             boolean head = passengers.size() > 2 && passengers.get(2) == this;
 
-            Vec3d offset = head ? new Vec3d(0, 0.25, 0) : new Vec3d(left ? 0.4F : -0.4F, -0.2, 0).rotateY(yaw);
+            Vec3d offset = head ? new Vec3d(0, 0.35f, 0) : new Vec3d(left ? 0.4F : -0.4F, 0.05f, 0).rotateY(yaw);
 
-            if (MCAClient.useMCARenderer(vehicle.getUuid())) {
-                float height = getVillager(vehicle).getRawScaleFactor();
-                offset = offset.multiply(1.0f, height, 1.0f);
-                offset = offset.add(0.0f, vehicle.getMountedHeightOffset() * height - vehicle.getMountedHeightOffset(), 0.0f);
+            // todo currently only client side
+            if (isClient()) {
+                if (MCAClient.useMCARenderer(vehicle.getUuid())) {
+                    float height = getVillager(vehicle).getRawScaleFactor();
+                    offset = offset.multiply(1.0f, height, 1.0f);
+                    offset = offset.add(0.0f, vehicle.getMountedHeightOffset() * height - vehicle.getMountedHeightOffset(), 0.0f);
+                }
             }
 
             Vec3d pos = this.getPos();
