@@ -278,3 +278,4 @@
 * Fixed crash on dedicated server when picking up children
 * Cleaned up config, linked to config wiki
 * Villager can no longer plant modded plants to remove a crash
+* Fixed a few crashes

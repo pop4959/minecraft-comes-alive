@@ -51,35 +51,27 @@ public class FamilyTree extends PersistentState {
 
     @NotNull
     public FamilyTreeNode getOrCreate(Entity entity) {
-        return entries.computeIfAbsent(entity.getUuid(), uuid -> createEntry(entity, Util.NIL_UUID, Util.NIL_UUID));
+        return entries.computeIfAbsent(entity.getUuid(), uuid -> createEntry(
+                entity.getUuid(),
+                entity.getName().getString(),
+                entity instanceof VillagerEntityMCA ? ((VillagerEntityMCA)entity).getGenetics().getGender() : Gender.MALE,
+                entity instanceof PlayerEntity));
     }
 
     @NotNull
     public FamilyTreeNode getOrCreate(UUID id, String name, Gender gender) {
-        return entries.computeIfAbsent(id, uuid -> createEntry(uuid, name, gender));
+        return entries.computeIfAbsent(id, uuid -> createEntry(uuid, name, gender, false));
     }
 
-    private FamilyTreeNode createEntry(UUID uuid, String name, Gender gender) {
+    private FamilyTreeNode createEntry(UUID uuid, String name, Gender gender, boolean isPlayer) {
         markDirty();
         return new FamilyTreeNode(this,
                 uuid,
                 name,
-                false,
+                isPlayer,
                 gender,
                 Util.NIL_UUID,
                 Util.NIL_UUID
-        );
-    }
-
-    private FamilyTreeNode createEntry(Entity entity, UUID father, UUID mother) {
-        markDirty();
-        return new FamilyTreeNode(this,
-                entity.getUuid(),
-                entity.getName().getString(),
-                entity instanceof PlayerEntity,
-                entity instanceof VillagerEntityMCA ? ((VillagerEntityMCA)entity).getGenetics().getGender() : Gender.MALE, //TODO player genders
-                father,
-                mother
         );
     }
 }

@@ -89,7 +89,7 @@ public interface EntityRelationship {
         }
 
         if (entity instanceof CompassionateEntity<?> compassionateEntity) {
-            return Optional.of(compassionateEntity.getRelationships());
+            return Optional.ofNullable(compassionateEntity.getRelationships());
         }
 
         return Optional.empty();

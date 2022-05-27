@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
     private final UUID playerId;
 
@@ -58,26 +59,30 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     private final List<NbtCompound> inbox = new LinkedList<>();
 
-    public static PlayerSaveData get(ServerWorld world, UUID uuid) {
-        return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new PlayerSaveData(world, nbt), w -> new PlayerSaveData(w, uuid), "mca_player_" + uuid.toString());
+    public static PlayerSaveData get(ServerWorld world, @NotNull UUID uuid) {
+        return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new PlayerSaveData(world, nbt, uuid), w -> new PlayerSaveData(w, uuid), "mca_player_" + uuid);
     }
 
     PlayerSaveData(ServerWorld world, UUID playerId) {
-        assert playerId != null;
         this.world = world;
         this.playerId = playerId;
         this.marriageState = MarriageState.SINGLE;
+
+        tryToCreateFamilyNode();
         resetEntityData();
     }
 
-    PlayerSaveData(ServerWorld world, NbtCompound nbt) {
+    PlayerSaveData(ServerWorld world, NbtCompound nbt, UUID playerId) {
         this.world = world;
-        playerId = nbt.getUuid("playerId");
+        this.playerId = playerId;
+
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
         spouseUUID = nbt.contains("spouseUUID") ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
         spouseName = nbt.contains("spouseName") ? Optional.of(new LiteralText(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
         marriageState = MarriageState.byId(nbt.getInt("marriageState"));
+
+        tryToCreateFamilyNode();
 
         if (nbt.contains("entityData")) {
             entityData = nbt.getCompound("entityData");
@@ -91,6 +96,14 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
             for (int i = 0; i < inbox.size(); i++) {
                 this.inbox.add(inbox.getCompound(i));
             }
+        }
+    }
+
+    private void tryToCreateFamilyNode() {
+        // an attempt to fix the reoccurring getFamilyEntry errors
+        Entity entity = world.getEntity(playerId);
+        if (entity != null) {
+            getFamilyTree().getOrCreate(entity);
         }
     }
 
@@ -124,10 +137,6 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     @Override
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity victim) {
-        if (playerId == null) {
-            return; // legacy: old saves will not have this
-        }
-
         EntityRelationship.super.onTragedy(cause, burialSite, type, victim);
 
         // send letter of condolence
@@ -141,8 +150,8 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     public void updateLastSeenVillage(VillageManager manager, ServerPlayerEntity self) {
         Optional<Village> prevVillage = getLastSeenVillage(manager);
         Optional<Village> nextVillage = prevVillage
-                        .filter(v -> v.isWithinBorder(self))
-                        .or(() -> manager.findNearestVillage(self));
+                .filter(v -> v.isWithinBorder(self))
+                .or(() -> manager.findNearestVillage(self));
 
         setLastSeenVillage(self, prevVillage.orElse(null), nextVillage.orElse(null));
 
@@ -268,7 +277,6 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
-        nbt.putUuid("playerId", playerId);
         spouseUUID.ifPresent(id -> nbt.putUuid("spouseUUID", id));
         lastSeenVillage.ifPresent(id -> nbt.putInt("lastSeenVillage", id));
         spouseName.ifPresent(n -> nbt.putString("spouseName", n.getString()));
@@ -306,7 +314,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         NbtCompound nbt = new NbtCompound();
         nbt.put("pages", l);
         sendMail(nbt);
-        showMailNotification(player);
+
+        if (player != null) {
+            showMailNotification(player);
+        }
     }
 
     public void showMailNotification(ServerPlayerEntity player) {
