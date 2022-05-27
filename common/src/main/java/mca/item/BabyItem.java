@@ -119,7 +119,7 @@ public class BabyItem extends Item {
                 }
 
                 if (state.get().getName().isPresent() && world.getTime() % 1200 == 0) {
-                    stack.getNbt().putInt("age", stack.getNbt().getInt("age") + 1);
+                    stack.getNbt().putInt("age", stack.getNbt().getInt("age") + 1200);
                 }
             } else {
                 BabyTracker.invalidate(stack);
@@ -253,7 +253,8 @@ public class BabyItem extends Item {
             PlayerEntity player = ClientProxy.getClientPlayer();
             NbtCompound nbt = stack.getNbt();
 
-            int age = nbt.getInt("age") * 1200 + (int)(world == null ? 0 : world.getTime() % 1200);
+            assert nbt != null;
+            int age = nbt.getInt("age") + (int)(world == null ? 0 : world.getTime() % 1200);
 
             if (state.getName().isEmpty()) {
                 tooltip.add(new TranslatableText("item.mca.baby.give_name").formatted(Formatting.YELLOW));
@@ -326,20 +327,21 @@ public class BabyItem extends Item {
     }
 
     public static boolean hasBeenInvalidated(ItemStack stack) {
+        //noinspection ConstantConditions
         return (stack.hasNbt() && stack.getNbt().getBoolean("invalidated")) || BabyTracker.getStateId(stack).map(id -> {
             Optional<ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(id);
 
-            // Whoever wrote this needs to immediately ALT-F4
-            // I'm not touching this ####
+            //noinspection OptionalAssignedToNull
             return loaded != null && loaded.isEmpty();
         }).orElse(false);
     }
 
     private static boolean canGrow(int age) {
-        return age / 1200 >= Config.getInstance().babyGrowUpTime;
+        return age >= Config.getInstance().babyItemGrowUpTime;
     }
 
     private static boolean isReadyToGrowUp(ItemStack stack) {
-        return stack.hasNbt() && canGrow(stack.getNbt().getInt("age") * 1200);
+        //noinspection ConstantConditions
+        return stack.hasNbt() && canGrow(stack.getNbt().getInt("age"));
     }
 }

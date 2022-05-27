@@ -229,7 +229,7 @@ public class AdminCommand {
         ItemStack heldStack = player.getMainHandStack();
 
         if (heldStack.getItem() instanceof BabyItem) {
-            heldStack.getOrCreateNbt().putInt("age", Config.getInstance().babyGrowUpTime);
+            heldStack.getOrCreateNbt().putInt("age", Config.getInstance().babyItemGrowUpTime);
             success("Baby is old enough to place now.", ctx);
         } else {
             fail("Hold a baby first.", ctx);

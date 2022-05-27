@@ -197,7 +197,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         }
 
         //modify mood and hearts
-        entity.getVillagerBrain().modifyMoodValue(desaturatedSatisfaction / 2 + Config.getInstance().baseGiftMoodEffect * MathHelper.sign(desaturatedSatisfaction));
+        entity.getVillagerBrain().modifyMoodValue((int)(desaturatedSatisfaction * Config.getInstance().giftMoodEffect + Config.getInstance().baseGiftMoodEffect * MathHelper.sign(desaturatedSatisfaction)));
         CriterionMCA.HEARTS_CRITERION.trigger(player, memory.getHearts(), desaturatedSatisfaction, "gift");
         memory.modHearts(desaturatedSatisfaction);
     }

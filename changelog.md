@@ -123,7 +123,7 @@
 * Improved archer AI
 * Fixed villager getting stuck in doors
 * Guards no longer panic when a raid happens
-* A wiped-out village will only send a last, bigger bountyhunter wave
+* A wiped-out village will only send a last, bigger bounty hunter wave
 * Added all items to recipe book
 * Reworked female villager model
 * Fixed a bunch of marriage issues caused on death
@@ -276,3 +276,4 @@
 # 7.3.0
 * Updated translations
 * Fixed crash on dedicated server when picking up children
+* Cleaned up config, linked to config wiki

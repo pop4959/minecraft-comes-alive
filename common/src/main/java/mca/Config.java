@@ -20,6 +20,9 @@ public final class Config implements Serializable {
 
     public static final int VERSION = 1;
 
+    @SuppressWarnings("unused")
+    public String README = "https://minecraft-comes-alive-reborn.fandom.com/wiki/Config";
+
     public int version = 0;
 
     //mod features
@@ -36,11 +39,11 @@ public final class Config implements Serializable {
     //villager behavior
     public int chanceToHaveTwins = 2;
     public float marriageHeartsRequirement = 100;
-    public int babyGrowUpTime = 20;
+    public int babyItemGrowUpTime = 24000;
     public int villagerMaxAgeTime = 192000;
     public int villagerMaxHealth = 20;
     public boolean allowVillagerTeleporting = false;
-    public double villagerTeleportLimit = 144.0D;
+    public double villagerMinTeleportationDistance = 144.0D;
     public int childInitialHearts = 100;
     public int greetHeartsThreshold = 75;
     public int greetAfterDays = 1;
@@ -52,7 +55,7 @@ public final class Config implements Serializable {
     public boolean guardsTargetMonsters = false;
     public float maleVillagerHeight = 0.9f;
     public float femaleVillagerHeightFactor = 0.85f;
-    public float maleVillagerWidthFactorFactor = 1.0f;
+    public float maleVillagerWidthFactor = 1.0f;
     public float femaleVillagerWidthFactor = 0.95f;
     public boolean showNameTags = true;
     public boolean useVoices = false;
@@ -75,7 +78,8 @@ public final class Config implements Serializable {
     public float giftDesaturationFactor = 0.5f;
     public double giftDesaturationExponent = 0.85;
     public double giftSatisfactionFactor = 0.33;
-    public int baseGiftMoodEffect = 2;
+    public float giftMoodEffect = 0.5f;
+    public float baseGiftMoodEffect = 2;
     public int giftDesaturationReset = 24000;
 
     //player interactions
@@ -100,6 +104,7 @@ public final class Config implements Serializable {
     public boolean allowDestinyCommandMoreThanOnce = false;
     public boolean allowDestinyTeleportation = true;
     public boolean enableVillagerPlayerModel = true;
+    public boolean forceVillagerPlayerModel = false;
     public boolean allowPlayerEditor = true;
 
     public Map<String, Integer> guardsTargetEntities = ImmutableMap.<String, Integer>builder()

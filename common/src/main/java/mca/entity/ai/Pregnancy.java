@@ -63,10 +63,9 @@ public class Pregnancy {
             return;
         }
 
-        setBabyAge(getBabyAge() + 1);
+        setBabyAge(getBabyAge() + 60);
 
-        // grow up time is in minutes, and we measure age in seconds
-        if (getBabyAge() < Config.getInstance().babyGrowUpTime * 60) {
+        if (getBabyAge() < Config.getInstance().babyItemGrowUpTime) {
             return;
         }
 

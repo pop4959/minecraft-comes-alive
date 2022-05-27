@@ -42,7 +42,7 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
             BlockPos targetPos = walkTarget.getLookTarget().getBlockPos();
 
             // If the target is more than x blocks away, teleport to it immediately.
-            if (!targetPos.isWithinDistance(entity.getPos(), Config.getInstance().villagerTeleportLimit)) {
+            if (!targetPos.isWithinDistance(entity.getPos(), Config.getInstance().villagerMinTeleportationDistance)) {
                 tryTeleport(world, entity, targetPos);
             }
         }
