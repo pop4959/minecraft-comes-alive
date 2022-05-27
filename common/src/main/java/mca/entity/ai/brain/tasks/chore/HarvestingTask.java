@@ -5,7 +5,6 @@ import mca.TagsMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Chore;
 import mca.entity.ai.TaskUtils;
-import mca.item.NonPlayerItemUsageContext;
 import mca.util.InventoryUtils;
 import net.minecraft.block.*;
 import net.minecraft.entity.EquipmentSlot;
@@ -98,7 +97,7 @@ public class HarvestingTask extends AbstractChoreTask {
             harvestable.addAll(nearbyCrops.stream().filter(pos -> {
                 BlockState state = villager.world.getBlockState(pos);
                 return (state.getBlock() instanceof CropBlock crop && crop.isMature(state))
-                    || state.getBlock() instanceof GourdBlock;
+                        || state.getBlock() instanceof GourdBlock;
             }).toList());
         }
 
@@ -109,15 +108,15 @@ public class HarvestingTask extends AbstractChoreTask {
     private BlockPos searchUnusedFarmLand(int rangeX, int rangeY) {
         return TaskUtils.getNearestPoint(villager.getBlockPos(),
                 TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.world,
-                    blockState -> blockState.isOf(Blocks.FARMLAND), rangeX, rangeY)
-                .stream()
-                .filter(pos -> {
-                    BlockState state = villager.world.getBlockState(pos);
-                    return state.getBlock() instanceof FarmlandBlock
-                        && state.canPlaceAt(villager.world, pos)
-                        && villager.world.getBlockState(pos.up()).isAir();
-                })
-                .toList());
+                                blockState -> blockState.isOf(Blocks.FARMLAND), rangeX, rangeY)
+                        .stream()
+                        .filter(pos -> {
+                            BlockState state = villager.world.getBlockState(pos);
+                            return state.getBlock() instanceof FarmlandBlock
+                                    && state.canPlaceAt(villager.world, pos)
+                                    && villager.world.getBlockState(pos.up()).isAir();
+                        })
+                        .toList());
     }
 
     @Override
@@ -213,6 +212,20 @@ public class HarvestingTask extends AbstractChoreTask {
         return ITEM_FOUND;
     }
 
+    private boolean plantSeed(ItemStack itemStack, ServerWorld serverWorld, BlockPos currentTarget) {
+        if (itemStack.isOf(Items.WHEAT_SEEDS)) {
+            return serverWorld.setBlockState(currentTarget, Blocks.WHEAT.getDefaultState(), Block.NOTIFY_ALL);
+        } else if (itemStack.isOf(Items.POTATO)) {
+            return serverWorld.setBlockState(currentTarget, Blocks.POTATOES.getDefaultState(), Block.NOTIFY_ALL);
+        } else if (itemStack.isOf(Items.CARROT)) {
+            return serverWorld.setBlockState(currentTarget, Blocks.CARROTS.getDefaultState(), Block.NOTIFY_ALL);
+        } else if (itemStack.isOf(Items.BEETROOT_SEEDS)) {
+            return serverWorld.setBlockState(currentTarget, Blocks.BEETROOTS.getDefaultState(), Block.NOTIFY_ALL);
+        }
+        //todo add modded plants here
+        return false;
+    }
+
     private void plantSeeds(ServerWorld world, VillagerEntityMCA villager, BlockPos target) {
         BlockHitResult hitResult = new BlockHitResult(
                 Vec3d.ofBottomCenter(target),
@@ -222,11 +235,18 @@ public class HarvestingTask extends AbstractChoreTask {
         );
 
         ActionResult result = InventoryUtils.stream(villager.getInventory())
-            .filter(stack -> !stack.isEmpty() && stack.getItem() instanceof BlockItem && stack.isIn(TagsMCA.Items.VILLAGER_PLANTABLE))
-            .map(stack -> stack.useOnBlock(new NonPlayerItemUsageContext(world, Hand.MAIN_HAND, stack, hitResult)))
-            .filter(ActionResult::isAccepted)
-            .findFirst()
-            .orElse(ActionResult.FAIL);
+                .filter(stack -> !stack.isEmpty() && stack.getItem() instanceof BlockItem && stack.isIn(TagsMCA.Items.VILLAGER_PLANTABLE))
+                .filter(stack -> {
+                    if (plantSeed(stack, world, hitResult.getBlockPos())) {
+                        stack.decrement(1);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                })
+                .findFirst()
+                .map(v -> ActionResult.SUCCESS)
+                .orElse(ActionResult.FAIL);
 
         if (result.isAccepted()) {
             if (result.shouldSwingHand()) {
