@@ -34,3 +34,4 @@ forge*changelog.txt
 .architectury-transformer
 /logs
 /common/src/main/resources/assets/mca/textures/*.psd
+/scripts/topMembers.json
