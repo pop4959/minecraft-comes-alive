@@ -20,16 +20,19 @@ import static mca.entity.VillagerLike.VILLAGER_NAME;
 
 public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
-    private static boolean allowTeleportation;
     private LinkedList<Text> story;
     private String location;
 
-    public DestinyScreen(UUID playerUUID) {
-        super(playerUUID, playerUUID);
-    }
+    private final boolean allowTeleportation;
+    private final boolean allowPlayerModel;
+    private final boolean allowVillagerModel;
 
-    public static void allowTeleportation(boolean b) {
-        DestinyScreen.allowTeleportation = b;
+    public DestinyScreen(UUID playerUUID, boolean allowTeleportation, boolean allowPlayerModel, boolean allowVillagerModel) {
+        super(playerUUID, playerUUID);
+
+        this.allowTeleportation = allowTeleportation;
+        this.allowPlayerModel = allowPlayerModel;
+        this.allowVillagerModel = allowVillagerModel;
     }
 
     @Override
@@ -109,7 +112,11 @@ public class DestinyScreen extends VillagerEditorScreen {
             case "general" -> {
                 drawName(width / 2 - DATA_WIDTH / 2, height / 2);
                 drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);
-                drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
+
+                if (allowPlayerModel && allowVillagerModel) {
+                    drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
+                }
+
                 addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
                     setPage("body");
                     if (villager.getTrackedValue(VILLAGER_NAME).isEmpty()) {

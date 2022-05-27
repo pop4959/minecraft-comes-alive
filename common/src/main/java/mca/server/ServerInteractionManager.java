@@ -6,6 +6,7 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
+import mca.network.s2c.OpenDestinyGuiRequest;
 import mca.network.s2c.OpenGuiRequest;
 import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
@@ -44,7 +45,7 @@ public class ServerInteractionManager {
     }
 
     public static void launchDestiny(ServerPlayerEntity player) {
-        NetworkHandler.sendToPlayer(new OpenGuiRequest(Config.getInstance().allowDestinyTeleportation ? OpenGuiRequest.Type.DESTINY : OpenGuiRequest.Type.DESTINY_NO_TP, player), player);
+        NetworkHandler.sendToPlayer(new OpenDestinyGuiRequest(player), player);
     }
 
     public void tick() {

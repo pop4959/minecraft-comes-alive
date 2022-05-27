@@ -53,12 +53,6 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 assert MinecraftClient.getInstance().player != null;
                 client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 break;
-            case DESTINY:
-            case DESTINY_NO_TP:
-                assert MinecraftClient.getInstance().player != null;
-                client.setScreen(new DestinyScreen(MinecraftClient.getInstance().player.getUuid()));
-                DestinyScreen.allowTeleportation(message.gui == OpenGuiRequest.Type.DESTINY);
-                break;
             case BABY_NAME:
                 if (client.player != null) {
                     ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);
@@ -189,5 +183,11 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         if (screen instanceof VillagerEditorScreen gui) {
             gui.setSkinList(message.getClothing(), message.getHair());
         }
+    }
+
+    @Override
+    public void handleDestinyGuiRequest(OpenDestinyGuiRequest message) {
+        assert MinecraftClient.getInstance().player != null;
+        client.setScreen(new DestinyScreen(MinecraftClient.getInstance().player.getUuid(), message.allowTeleportation, message.allowPlayerModel, message.allowVillagerModel));
     }
 }

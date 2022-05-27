@@ -34,4 +34,6 @@ public interface ClientInteractionManager {
     void handlePlayerDataMessage(PlayerDataMessage response);
 
     void handleAnalysisResults(SkinListResponse response);
+
+    void handleDestinyGuiRequest(OpenDestinyGuiRequest request);
 }
