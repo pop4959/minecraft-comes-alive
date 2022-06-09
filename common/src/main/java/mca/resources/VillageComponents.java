@@ -36,7 +36,7 @@ public class VillageComponents implements Iterable<BuildingType> {
         Map<String, Double> names = Resources.<Map<String, Double>>read("api/names/villager/" + gender + ".json", HashMap.class);
         WeightedPool.Mutable<String> pool = new WeightedPool.Mutable<>("?");
         for (Map.Entry<String, Double> e : names.entrySet()) {
-            pool.add(e.getKey(), (float)Math.sqrt(e.getValue().floatValue()));
+            pool.add(e.getKey(), (float)Math.pow(e.getValue().floatValue(), 0.25));
         }
         return pool;
     }

@@ -281,6 +281,7 @@
 * Villager can no longer plant modded plants to remove a crash
 * Fixed a few crashes
 
-# 7.3.0
+# 7.3.1
 
 * Fixed advancements and book rewards
+* Improved name distribution
