@@ -11,13 +11,11 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:nether_star"
-          },
-          {
-            "item": "minecraft:end_rod"
-          },
-          {
-            "item": "mca:scythe"
+            "items": [
+              "minecraft:nether_star",
+              "minecraft:end_rod",
+              "mca:scythe"
+            ]
           }
         ]
       }

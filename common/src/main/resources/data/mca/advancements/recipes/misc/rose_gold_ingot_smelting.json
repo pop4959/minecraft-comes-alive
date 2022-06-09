@@ -14,7 +14,9 @@
       "conditions": {
         "items": [
           {
-            "item": "mca:rose_gold_ore"
+            "items": [
+              "mca:rose_gold_ingot"
+            ]
           }
         ]
       }

@@ -11,10 +11,10 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:iron_ingot"
-          },
-          {
-            "item": "minecraft:gold_block"
+            "items": [
+              "minecraft:iron_ingot",
+              "minecraft:gold_block"
+            ]
           }
         ]
       }

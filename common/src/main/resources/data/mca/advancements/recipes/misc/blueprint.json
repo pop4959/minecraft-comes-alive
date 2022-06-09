@@ -11,10 +11,10 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:paper"
-          },
-          {
-            "item": "minecraft:blue_dye"
+            "items": [
+              "minecraft:paper",
+              "minecraft:blue_dye"
+            ]
           }
         ]
       }

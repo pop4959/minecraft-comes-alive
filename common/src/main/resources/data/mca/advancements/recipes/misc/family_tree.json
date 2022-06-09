@@ -1,4 +1,3 @@
-
 {
   "parent": "minecraft:recipes/root",
   "rewards": {
@@ -12,10 +11,10 @@
       "conditions": {
         "items": [
           {
-            "item": "minecraft:book"
-          },
-          {
-            "item": "minecraft:oak_sapling"
+            "items": [
+              "minecraft:book",
+              "minecraft:oak_sapling"
+            ]
           }
         ]
       }

@@ -16,10 +16,34 @@
     "background": "minecraft:textures/block/oak_log.png"
   },
   "criteria": {
-    "beginning_village": {
+    "village_desert": {
       "trigger": "minecraft:location",
       "conditions": {
-        "feature": "#minecraft:village"
+        "feature": "minecraft:village_desert"
+      }
+    },
+    "village_plains": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "feature": "minecraft:village_plains"
+      }
+    },
+    "village_savanna": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "feature": "minecraft:village_savanna"
+      }
+    },
+    "village_taiga": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "feature": "minecraft:village_taiga"
+      }
+    },
+    "village_snowy": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "feature": "minecraft:village_snowy"
       }
     }
   },
@@ -27,5 +51,14 @@
     "loot": [
       "mca:books/romance"
     ]
-  }
+  },
+  "requirements": [
+    [
+      "village_desert",
+      "village_plains",
+      "village_savanna",
+      "village_taiga",
+      "village_snowy"
+    ]
+  ]
 }
