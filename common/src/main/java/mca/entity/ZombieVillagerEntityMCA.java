@@ -271,4 +271,9 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
         super.onTrackedDataSet(par);
     }
+
+    @Override
+    protected boolean isDisallowedInPeaceful() {
+        return !isPersistent();
+    }
 }

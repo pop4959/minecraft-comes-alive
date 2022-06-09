@@ -3,6 +3,7 @@ package mca.server;
 import mca.Config;
 import mca.ducks.IVillagerEntity;
 import mca.entity.VillagerFactory;
+import mca.entity.ZombieVillagerEntityMCA;
 import mca.entity.ZombieVillagerFactory;
 import mca.entity.ai.relationship.Gender;
 import net.minecraft.entity.Entity;
@@ -48,13 +49,17 @@ public class SpawnQueue {
 
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
-                ZombieVillagerFactory.newVillager(e.world)
+                ZombieVillagerEntityMCA z = ZombieVillagerFactory.newVillager(e.world)
                         .withName(e.hasCustomName() ? e.getName().getString() : null)
                         .withGender(Gender.getRandom())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
                         .spawn(((IVillagerEntity)e).getSpawnReason());
+
+                if (e.isPersistent()) {
+                    z.setPersistent();
+                }
             } else {
                 zombieVillagerSpawnQueue.add(e);
             }

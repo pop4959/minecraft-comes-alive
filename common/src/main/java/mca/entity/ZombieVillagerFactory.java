@@ -79,13 +79,14 @@ public class ZombieVillagerFactory {
         return withPosition(Vec3d.ofBottomCenter(pos.up()));
     }
 
-    public ZombieVillagerFactory spawn(SpawnReason reason) {
+    public ZombieVillagerEntityMCA spawn(SpawnReason reason) {
         if (position.isEmpty()) {
             MCA.LOGGER.info("Attempted to spawn villager without a position being set!");
         }
 
-        WorldUtils.spawnEntity(world, build(), reason);
-        return this;
+        ZombieVillagerEntityMCA build = build();
+        WorldUtils.spawnEntity(world, build, reason);
+        return build;
     }
 
     public ZombieVillagerEntityMCA build() {
