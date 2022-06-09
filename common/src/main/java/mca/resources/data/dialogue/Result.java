@@ -69,7 +69,7 @@ public class Result {
             analysis.add("base", getBaseChance());
         }
 
-        int f = memory.getInteractionFatigue() * Config.getInstance().interactionChanceFatigue;
+        int f = (int)(memory.getInteractionFatigue() * Config.getInstance().interactionChanceFatigue);
         if (shouldApplyFatigue() && f > 0) {
             analysis.add("fatigue", f);
         }

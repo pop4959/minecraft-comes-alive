@@ -63,7 +63,7 @@ public final class Config implements Serializable {
     public boolean showNameTags = true;
     public boolean useVoices = false;
     public boolean useVanillaVoices = false;
-    public int interactionChanceFatigue = 1;
+    public float interactionChanceFatigue = 1.0f;
     public int interactionFatigueCooldown = 4800;
     public int villagerHealthBonusPerLevel = 5;
     public boolean useSquidwardModels = false;
