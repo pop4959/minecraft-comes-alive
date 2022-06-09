@@ -235,7 +235,7 @@ public class Village implements Iterable<Building> {
     }
 
     public void tick(ServerWorld world, long time) {
-        boolean isTaxSeason = time % 24000 == 0;
+        boolean isTaxSeason = time % Config.getInstance().taxSeason == 0;
         boolean isVillageUpdateTime = time % MOVE_IN_COOLDOWN == 0;
 
         if (isTaxSeason && hasBuilding("storage")) {
@@ -303,22 +303,13 @@ public class Village implements Iterable<Building> {
 
     public void deliverTaxes(ServerWorld world) {
         if (hasStoredResource()) {
-            getBuildingsOfType("storage").forEach(building -> {
-                BlockPos pos0 = building.getPos0();
-                BlockPos pos1 = building.getPos1();
-                for (int x = pos0.getX(); x <= pos1.getX(); x++) {
-                    for (int y = pos0.getY(); y <= pos1.getY(); y++) {
-                        for (int z = pos0.getZ(); z <= pos1.getZ(); z++) {
-                            BlockPos p = new BlockPos(x, y, z);
-                            if (hasStoredResource()) {
-                                tryToPutIntoInventory(world, p);
-                            } else {
-                                return;
-                            }
+            getBuildingsOfType("storage").forEach(building -> building.getBlocks().values().stream()
+                    .flatMap(Collection::stream)
+                    .forEach(p -> {
+                        if (hasStoredResource()) {
+                            tryToPutIntoInventory(world, p);
                         }
-                    }
-                }
-            });
+                    }));
         }
     }
 

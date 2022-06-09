@@ -71,7 +71,8 @@ public final class Config implements Serializable {
 
     //village behavior
     public int guardSpawnRate = 6;
-    public float taxesFactor = 0.5f;
+    public float taxesFactor = 1.5f;
+    public int taxSeason = 168000;
     public int marriageChance = 5;
     public int childrenChance = 5;
     public int bountyHunterInterval = 24000;
