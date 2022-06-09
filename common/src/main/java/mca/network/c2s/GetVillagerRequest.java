@@ -32,7 +32,9 @@ public class GetVillagerRequest implements Message {
     public void receive(ServerPlayerEntity player) {
         Entity e = player.getWorld().getEntity(uuid);
         NbtCompound villagerData = getVillagerData(e);
-        NetworkHandler.sendToPlayer(new GetVillagerResponse(villagerData), player);
+        if (villagerData != null) {
+            NetworkHandler.sendToPlayer(new GetVillagerResponse(villagerData), player);
+        }
     }
 
     private static void storeNode(NbtCompound data, Optional<FamilyTreeNode> entry, String prefix) {
