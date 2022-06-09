@@ -294,7 +294,7 @@ public class Village implements Iterable<Building> {
             cleanReputation();
         }
 
-        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time) {
+        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time || true) {
             spawnGuards(world);
             procreate(world);
             marry(world);
@@ -402,7 +402,7 @@ public class Village implements Iterable<Building> {
     // if the population is low, find a couple and let them have a child
     public void procreate(ServerWorld world) {
         if (world.random.nextFloat() >= Config.getInstance().childrenChance / 100F) {
-            return;
+            //return;
         }
 
         int population = getPopulation();
@@ -414,11 +414,15 @@ public class Village implements Iterable<Building> {
         // look for married women without baby
         PoolUtil.pick(getResidents(world), world.random)
                 .filter(villager -> villager.getGenetics().getGender() == Gender.FEMALE)
-                .filter(villager -> world.random.nextFloat () < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
+                .filter(villager -> world.random.nextFloat() < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
                 .ifPresent(villager ->
-                        villager.getRelationships().getSpouse().ifPresent(spouse ->
-                                villager.sendEventMessage(new TranslatableText("events.baby", villager.getName(), spouse.getName()))
+                        villager.getRelationships().getSpouse().ifPresent(spouse -> {
+                                    // tell everyone about it
+                                    if (Config.getInstance().villagerBirthNotification && spouse instanceof VillagerEntityMCA spouseVillager) {
+                                        broadCastMessage(world, "events.baby", villager, spouseVillager);
+                                    }
+                                }
                         )
                 );
     }
@@ -426,7 +430,7 @@ public class Village implements Iterable<Building> {
     // if the amount of couples is low, let them marry
     public void marry(ServerWorld world) {
         if (world.random.nextFloat() >= Config.getInstance().marriageChance / 100f) {
-            return;
+            //return;
         }
 
         //list all and lonely villagers
@@ -454,8 +458,17 @@ public class Village implements Iterable<Building> {
                     mate.getRelationships().marry(suitor);
 
                     // tell everyone about it
-                    suitor.sendEventMessage(new TranslatableText("events.marry", suitor.getName(), mate.getName()));
+                    if (Config.getInstance().villagerMarriageNotification) {
+                        broadCastMessage(world, "events.marry", suitor, mate);
+                    }
                 });
+    }
+
+    private void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA suitor, VillagerEntityMCA mate) {
+        world.getPlayers().stream().filter(p -> PlayerSaveData.get(world, p.getUuid()).getLastSeenVillageId().orElse(-2) == getId()
+                        || suitor.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend
+                        || mate.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
+                .forEach(player -> player.sendMessage(new TranslatableText(event, suitor.getName(), mate.getName()), true));
     }
 
     public void markDirty(ServerWorld world) {

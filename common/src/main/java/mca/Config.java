@@ -35,6 +35,9 @@ public final class Config implements Serializable {
     public String villagerChatPrefix = "";
     public boolean canHurtBabies = true;
     public boolean enterVillageNotification = true;
+    public boolean villagerMarriageNotification = true;
+    public boolean villagerBirthNotification = true;
+    public int heartsToBeConsideredAsFriend = 40;
 
     //villager behavior
     public int chanceToHaveTwins = 2;
