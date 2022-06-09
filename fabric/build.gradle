@@ -76,11 +76,11 @@ modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "1W98a849"
     versionNumber = version.toString() + "_fabric"
-    versionName = "[Fabric 1.18.2] MCA Reborn - " + version
+    versionName = "[Fabric 1.19] MCA Reborn - " + version
     changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()})/changelog.md"
     versionType = "alpha"
     uploadFile = remapJar
-    gameVersions = ["1.18", "1.18.2"]
+    gameVersions = ["1.19"]
     loaders = ["fabric"]
     dependencies = []
 }
