@@ -294,7 +294,7 @@ public class Village implements Iterable<Building> {
             cleanReputation();
         }
 
-        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time || true) {
+        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time) {
             spawnGuards(world);
             procreate(world);
             marry(world);
@@ -402,7 +402,7 @@ public class Village implements Iterable<Building> {
     // if the population is low, find a couple and let them have a child
     public void procreate(ServerWorld world) {
         if (world.random.nextFloat() >= Config.getInstance().childrenChance / 100F) {
-            //return;
+            return;
         }
 
         int population = getPopulation();
@@ -430,7 +430,7 @@ public class Village implements Iterable<Building> {
     // if the amount of couples is low, let them marry
     public void marry(ServerWorld world) {
         if (world.random.nextFloat() >= Config.getInstance().marriageChance / 100f) {
-            //return;
+            return;
         }
 
         //list all and lonely villagers
