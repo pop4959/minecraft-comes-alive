@@ -127,6 +127,8 @@
   "tag.minecraft:beds": "Bed",
   "tag.minecraft:flower_pots": "Flower Pot",
   "tag.mca:chests": "Chests",
+  "tag.mca:iron_doors": "Iron Door",
+  "tag.mca:iron_bars": "Iron Bars",
 
   "block.mca.rose_gold_block": "Rose Gold Block",
   "block.mca.rose_gold_ore": "Rose Gold Ore",

@@ -287,3 +287,4 @@
 * Improved name distribution
 * Marriage and Birth notifications are now only printed within the village boundaries, or when being friends
 * Added config flag to disable boobs
+* Added support for Immersive Weathering
