@@ -1,6 +1,7 @@
 package mca.client.model;
 
 import com.google.common.collect.ImmutableList;
+import mca.Config;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.VillagerDimensions;
@@ -35,7 +36,9 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity & VillagerLike<T>
 
     protected static ModelPartBuilder newBreasts(Dilation dilation, int oy) {
         ModelPartBuilder builder = ModelPartBuilder.create();
-        builder.uv(18, 21 + oy).cuboid(-3.25F, -1.25F, -1.5F, 6, 3, 3, dilation);
+        if (Config.getInstance().enableBoobs) {
+            builder.uv(18, 21 + oy).cuboid(-3.25F, -1.25F, -1.5F, 6, 3, 3, dilation);
+        }
         return builder;
     }
 
