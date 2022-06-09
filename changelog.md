@@ -291,3 +291,4 @@
 * Fixed a few crashes
 * Taxes are now once a week
 * Fixed performance issue
+* Fixed persistent zombie villagers despawning
