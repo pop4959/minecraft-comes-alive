@@ -15,12 +15,8 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.PlayerModelPart;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Arm;
-import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,10 +27,7 @@ import static mca.client.model.CommonVillagerModel.getVillager;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
-    @Shadow
-    private static BipedEntityModel.ArmPose getArmPose(AbstractClientPlayerEntity player, Hand hand) {
-        return null;
-    }
+    @Shadow protected abstract void setModelPose(AbstractClientPlayerEntity player);
 
     SkinLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> skinLayer;
     ClothingLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> clothingLayer;
@@ -94,7 +87,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     private void renderCustomArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, ModelPart arm, ModelPart sleeve, VillagerLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> layer) {
         PlayerEntityExtendedModel<AbstractClientPlayerEntity> model = (PlayerEntityExtendedModel<AbstractClientPlayerEntity>)layer.model;
-        setCustomModelPose(model, player);
+        setModelPose(player);
 
         model.setVisible(false);
 
@@ -113,31 +106,5 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
         layer.renderFinal(matrices, vertexConsumers, light, player);
 
         model.setVisible(true);
-    }
-
-    private void setCustomModelPose(PlayerEntityModel<AbstractClientPlayerEntity> playerEntityModel, AbstractClientPlayerEntity player) {
-        if (player.isSpectator()) {
-            playerEntityModel.setVisible(false);
-            playerEntityModel.head.visible = true;
-            playerEntityModel.hat.visible = true;
-        } else {
-            playerEntityModel.setVisible(true);
-            playerEntityModel.hat.visible = player.isPartVisible(PlayerModelPart.HAT);
-            playerEntityModel.jacket.visible = player.isPartVisible(PlayerModelPart.JACKET);
-            playerEntityModel.leftPants.visible = player.isPartVisible(PlayerModelPart.LEFT_PANTS_LEG);
-            playerEntityModel.rightPants.visible = player.isPartVisible(PlayerModelPart.RIGHT_PANTS_LEG);
-            playerEntityModel.leftSleeve.visible = player.isPartVisible(PlayerModelPart.LEFT_SLEEVE);
-            playerEntityModel.rightSleeve.visible = player.isPartVisible(PlayerModelPart.RIGHT_SLEEVE);
-            playerEntityModel.sneaking = player.isInSneakingPose();
-            BipedEntityModel.ArmPose armPose = getArmPose(player, Hand.MAIN_HAND);
-            BipedEntityModel.ArmPose armPose2 = getArmPose(player, Hand.OFF_HAND);
-            if (player.getMainArm() == Arm.RIGHT) {
-                playerEntityModel.rightArmPose = armPose;
-                playerEntityModel.leftArmPose = armPose2;
-            } else {
-                playerEntityModel.rightArmPose = armPose2;
-                playerEntityModel.leftArmPose = armPose;
-            }
-        }
     }
 }
