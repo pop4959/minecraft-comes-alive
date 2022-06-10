@@ -23,7 +23,7 @@ public class ColorPaletteLoader extends SinglePreparationResourceReloader<Map<Id
 
     @SuppressWarnings("deprecation")
     private ColorPalette.Data loadPalette(Identifier id, ResourceManager manager) {
-        try (NativeImage img = NativeImage.read(manager.getResource(id).getInputStream())) {
+        try (NativeImage img = NativeImage.read(manager.getResource(id).get().getInputStream())) {
             return new ColorPalette.Data(
                     img.getWidth(),
                     img.getHeight(),

@@ -3,7 +3,6 @@ package mca.entity.ai.relationship;
 import mca.Config;
 import mca.resources.API;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.Locale;
@@ -41,7 +40,7 @@ public enum AgeState implements VillagerDimensions {
     }
 
     public Text getName() {
-        return new TranslatableText("enum.agestate." + name().toLowerCase(Locale.ENGLISH));
+        return Text.translatable("enum.agestate." + name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

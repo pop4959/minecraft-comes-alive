@@ -3,15 +3,15 @@ package mca.mixin;
 import mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.JumpingMount;
 import net.minecraft.entity.Saddleable;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.inventory.InventoryChangedListener;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(HorseBaseEntity.class)
+@Mixin(AbstractHorseEntity.class)
 abstract class MixinHorseBaseEntity extends AnimalEntity implements InventoryChangedListener, JumpingMount, Saddleable {
     MixinHorseBaseEntity() { super(null, null); }
 

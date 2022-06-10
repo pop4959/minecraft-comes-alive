@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerWorld.class)
 abstract class MixinServerWorld extends World implements StructureWorldAccess {
-    MixinServerWorld() { super(null, null, null, null, true, false, 0);}
+    MixinServerWorld() { super(null, null, null, null, true, false, 0, 0);}
 
     @Inject(method = "addEntity(Lnet/minecraft/entity/Entity;)Z",
             at = @At("HEAD"),

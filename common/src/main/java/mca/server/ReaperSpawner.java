@@ -18,7 +18,7 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -53,7 +53,7 @@ public class ReaperSpawner {
     private void warn(World world, BlockPos pos, String phrase) {
         world.getPlayers().stream()
                 .min(Comparator.comparingInt(a -> a.getBlockPos().getManhattanDistance(pos)))
-                .ifPresent(p -> p.sendMessage(new TranslatableText(phrase).formatted(Formatting.RED), true));
+                .ifPresent(p -> p.sendMessage(Text.translatable(phrase).formatted(Formatting.RED), true));
     }
 
     public void trySpawnReaper(ServerWorld world, BlockState state, BlockPos pos) {

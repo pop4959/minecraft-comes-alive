@@ -6,15 +6,14 @@ import mca.client.book.pages.Page;
 import mca.client.gui.widget.ExtendedPageTurnWidget;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 public class ExtendedBookScreen extends Screen {
@@ -122,7 +121,7 @@ public class ExtendedBookScreen extends Screen {
 
         // page number
         if (book.getPageCount() > 1) {
-            Text pageIndexText = new TranslatableText("book.pageIndicator", this.pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
+            Text pageIndexText = Text.translatable("book.pageIndicator", this.pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
             int k = textRenderer.getWidth(pageIndexText);
             textRenderer.draw(matrices, pageIndexText, i - k + 192 - 44, 18.0f, 0);
         }

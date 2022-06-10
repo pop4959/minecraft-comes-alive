@@ -20,7 +20,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -208,7 +208,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         }
 
         //warn the player
-        player.sendMessage(new TranslatableText(sender.getPopulation() == 0 ? "events.bountyHuntersFinal" : "events.bountyHunters", sender.getName()).formatted(Formatting.RED), false);
+        player.sendMessage(Text.translatable(sender.getPopulation() == 0 ? "events.bountyHuntersFinal" : "events.bountyHunters", sender.getName()).formatted(Formatting.RED), false);
     }
 
     private <T extends IllagerEntity> void spawnBountyHunter(EntityType<T> t, ServerPlayerEntity player) {

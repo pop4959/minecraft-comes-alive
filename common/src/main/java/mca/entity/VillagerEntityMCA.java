@@ -39,7 +39,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.VillagerEntity;
@@ -65,9 +65,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -467,7 +465,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // you can't hit babies!
         if (!Config.getInstance().canHurtBabies && !source.isUnblockable() && getAgeState() == AgeState.BABY) {
             if (source.getAttacker() instanceof PlayerEntity) {
-                Messenger.sendEventMessage(world, new TranslatableText("villager.baby_hit"));
+                Messenger.sendEventMessage(world, Text.translatable("villager.baby_hit"));
             }
             return super.damage(source, 0.0f);
         }
@@ -864,7 +862,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     protected boolean isRidingHorse() {
-        return hasVehicle() && getVehicle() instanceof HorseBaseEntity;
+        return hasVehicle() && getVehicle() instanceof AbstractHorseEntity;
     }
 
     @Override
@@ -994,18 +992,18 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (getVillagerBrain() != null) {
             MoveState state = getVillagerBrain().getMoveState();
             if (state != MoveState.MOVE) {
-                name = name.shallowCopy().append(" (").append(state.getName()).append(")");
+                name = name.copyContentOnly().append(" (").append(state.getName()).append(")");
             }
             Chore chore = getVillagerBrain().getCurrentJob();
             if (chore != Chore.NONE) {
-                name = name.shallowCopy().append(" (").append(chore.getName()).append(")");
+                name = name.copyContentOnly().append(" (").append(chore.getName()).append(")");
             }
         }
 
         if (isInfected()) {
-            return name.shallowCopy().formatted(Formatting.GREEN);
+            return name.copyContentOnly().formatted(Formatting.GREEN);
         } else if (getProfession() == ProfessionsMCA.OUTLAW.get()) {
-            return name.shallowCopy().formatted(Formatting.RED);
+            return name.copyContentOnly().formatted(Formatting.RED);
         }
         return name;
     }
@@ -1014,7 +1012,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Nullable
     public final Text getCustomName() {
         String value = getTrackedValue(VILLAGER_NAME);
-        return value.isEmpty() ? null : new LiteralText(value);
+        return value.isEmpty() ? null : Text.literal(value);
     }
 
     @Override
@@ -1074,7 +1072,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     relations.getParents()
                             .filter(e -> e instanceof PlayerEntity)
                             .map(PlayerEntity.class::cast).forEach(
-                                    p -> sendEventMessage(new TranslatableText("notify.child.grownup", getName()), p)
+                                    p -> sendEventMessage(Text.translatable("notify.child.grownup", getName()), p)
                             );
                 }
 

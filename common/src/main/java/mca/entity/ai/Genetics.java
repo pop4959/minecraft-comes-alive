@@ -9,6 +9,7 @@ import mca.util.network.datasync.CEnumParameter;
 import mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 
 import java.util.*;
 
@@ -43,7 +44,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
 
     public Genetics(VillagerLike<?> entity) {
         this.entity = entity;
-        random = new Random(entity.asEntity().world.random.nextLong());
+        random = Random.create(entity.asEntity().world.random.nextLong());
     }
 
     public float getVerticalScaleFactor() {
@@ -134,7 +135,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
 
     public void combine(Optional<Genetics> mother, Optional<Genetics> father, long seed) {
         Random old = random;
-        random = new Random(seed);
+        random = Random.create(seed);
         combine(mother, father);
         random = old;
     }

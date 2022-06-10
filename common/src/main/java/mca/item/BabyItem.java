@@ -33,9 +33,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +70,7 @@ public class BabyItem extends Item {
 
     public boolean onDropped(ItemStack stack, PlayerEntity player) {
         if (!hasBeenInvalidated(stack)) {
-            player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
+            player.sendMessage(Text.translatable("item.mca.baby.no_drop"), true);
             return false;
         }
 
@@ -137,7 +136,7 @@ public class BabyItem extends Item {
     @Override
     public Text getName(ItemStack stack) {
         return getClientCheckedState(stack).flatMap(ChildSaveState::getName).map(s ->
-                (Text)new TranslatableText(getTranslationKey(stack) + ".named", s)
+                (Text)Text.translatable(getTranslationKey(stack) + ".named", s)
         ).orElseGet(() -> super.getName(stack));
     }
 
@@ -257,31 +256,31 @@ public class BabyItem extends Item {
             int age = nbt.getInt("age") + (int)(world == null ? 0 : world.getTime() % 1200);
 
             if (state.getName().isEmpty()) {
-                tooltip.add(new TranslatableText("item.mca.baby.give_name").formatted(Formatting.YELLOW));
+                tooltip.add(Text.translatable("item.mca.baby.give_name").formatted(Formatting.YELLOW));
             } else {
-                final LiteralText text = new LiteralText(state.getName().get());
-                tooltip.add(new TranslatableText("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
+                final MutableText text = Text.literal(state.getName().get());
+                tooltip.add(Text.translatable("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
 
                 if (age > 0) {
-                    tooltip.add(new TranslatableText("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
+                    tooltip.add(Text.translatable("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
                 }
             }
 
-            tooltip.add(LiteralText.EMPTY);
+            tooltip.add(Text.literal(""));
 
             state.getOwner().ifPresent(owner ->
-                    tooltip.add(new TranslatableText("item.mca.baby.owner",
+                    tooltip.add(Text.translatable("item.mca.baby.owner",
                             player != null && owner.getLeft().equals(player.getUuid())
-                    ? new TranslatableText("item.mca.baby.owner.you")
+                    ? Text.translatable("item.mca.baby.owner.you")
                     : owner.getRight()
             ).formatted(Formatting.GRAY)));
 
             if (state.getName().isPresent() && canGrow(age)) {
-                tooltip.add(new TranslatableText("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
+                tooltip.add(Text.translatable("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
             }
 
             if (state.isInfected()) {
-                tooltip.add(new TranslatableText("item.mca.baby.state.infected").formatted(Formatting.DARK_GREEN));
+                tooltip.add(Text.translatable("item.mca.baby.state.infected").formatted(Formatting.DARK_GREEN));
             }
         });
     }

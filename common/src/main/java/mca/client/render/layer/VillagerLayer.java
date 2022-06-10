@@ -90,7 +90,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
     }
 
     protected final boolean canUse(Identifier texture) {
-        return texture != null && MinecraftClient.getInstance().getResourceManager().containsResource(texture);
+        return texture != null && MinecraftClient.getInstance().getResourceManager().getResource(texture).isPresent();
     }
 
     @Nullable

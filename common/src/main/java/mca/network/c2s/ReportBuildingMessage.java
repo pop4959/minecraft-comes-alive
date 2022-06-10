@@ -6,7 +6,7 @@ import mca.server.world.data.GraveyardManager;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.io.Serial;
 import java.util.Locale;
@@ -34,7 +34,7 @@ public class ReportBuildingMessage implements Message {
         switch (action) {
             case ADD, ADD_ROOM -> {
                 Building.validationResult result = villages.processBuilding(player.getBlockPos(), true, action == Action.ADD_ROOM);
-                player.sendMessage(new TranslatableText("blueprint.scan." + result.name().toLowerCase(Locale.ENGLISH)), true);
+                player.sendMessage(Text.translatable("blueprint.scan." + result.name().toLowerCase(Locale.ENGLISH)), true);
 
                 // also add tombstones
                 GraveyardManager.get(player.getWorld()).reportToVillageManager(player);
@@ -61,7 +61,7 @@ public class ReportBuildingMessage implements Message {
                         village.get().markDirty(player.getWorld());
                     }
                 } else {
-                    player.sendMessage(new TranslatableText("blueprint.noBuilding"), true);
+                    player.sendMessage(Text.translatable("blueprint.noBuilding"), true);
                 }
             }
         }

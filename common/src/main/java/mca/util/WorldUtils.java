@@ -16,7 +16,7 @@ import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.gen.structure.Structure;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,12 +55,12 @@ public interface WorldUtils {
 
     //a wrapper for the unnecessary complex query provided by minecraft
     static Optional<BlockPos> getClosestStructurePosition(ServerWorld world, BlockPos center, Identifier structure, int radius) {
-        Registry<ConfiguredStructureFeature<?, ?>> registry = world.getRegistryManager().get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
-        ConfiguredStructureFeature<?, ?> feature = registry.get(structure);
-        Optional<RegistryEntry<ConfiguredStructureFeature<?, ?>>> entry = registry.getEntry(registry.getRawId(feature));
+        Registry<Structure> registry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+        Structure feature = registry.get(structure);
+        Optional<RegistryEntry<Structure>> entry = registry.getEntry(registry.getRawId(feature));
         if (entry.isPresent()) {
-            RegistryEntryList.Direct<ConfiguredStructureFeature<?, ?>> of = RegistryEntryList.of(entry.get());
-            Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?, ?>>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, of, center, radius, false);
+            RegistryEntryList.Direct<Structure> of = RegistryEntryList.of(entry.get());
+            Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, of, center, radius, false);
             return pair == null ? Optional.empty() : Optional.ofNullable(pair.getFirst());
         } else {
             return Optional.empty();

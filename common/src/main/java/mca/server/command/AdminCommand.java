@@ -76,7 +76,7 @@ public class AdminCommand {
                     village.getPopulation(),
                     village.getMaxPopulation()
             ), ctx,
-                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("chat.coordinates.tooltip")),
+                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("chat.coordinates.tooltip")),
                     new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + pos.getX() + " ~ " + pos.getZ()));
         }
         return 0;
@@ -156,7 +156,7 @@ public class AdminCommand {
                 building.get().setForcedType(type);
             }
         } else {
-            fail(new TranslatableText("blueprint.noBuilding").getString(), ctx);
+            fail(Text.translatable("blueprint.noBuilding").getString(), ctx);
         }
         return 0;
     }
@@ -290,7 +290,7 @@ public class AdminCommand {
     }
 
     private static Text message(String message, Formatting red, Object[] events) {
-        MutableText data = new LiteralText(message).formatted(red);
+        MutableText data = Text.literal(message).formatted(red);
         for (Object evt : events) {
             if (evt instanceof ClickEvent clickEvent) {
                 data.styled((style -> style.withClickEvent(clickEvent)));
@@ -336,6 +336,6 @@ public class AdminCommand {
 
 
     private static void sendMessage(Entity commandSender, String message) {
-        commandSender.sendSystemMessage(new LiteralText(GOLD + "[MCA] " + RESET + message), Util.NIL_UUID);
+        commandSender.sendMessage(Text.literal(GOLD + "[MCA] " + RESET + message));
     }
 }

@@ -4,6 +4,7 @@ import mca.entity.ai.relationship.Gender;
 import mca.resources.Resources.BrokenResourceException;
 import mca.resources.data.BuildingType;
 import mca.resources.data.NameSet;
+import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

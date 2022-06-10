@@ -6,6 +6,7 @@ import mca.MCA;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.profiler.Profiler;
 
 import java.util.*;
@@ -15,7 +16,7 @@ public class Supporters extends JsonDataLoader {
 
     private static Supporters INSTANCE;
 
-    static final Random rng = new Random();
+    static final Random rng = Random.create();
 
     private final List<String> supporters = new ArrayList<>();
     private final Map<String, List<String>> supporterGroups = new HashMap<>();

@@ -11,7 +11,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.OrderedText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
@@ -54,7 +54,7 @@ public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<Tombsto
 
         int maxLineWidth = block.getLineWidth();
 
-        float y = drawText(text, text.wrapLines(new TranslatableText("block.mca.tombstone.header"), maxLineWidth), 0, matrices, vertexConsumers, light);
+        float y = drawText(text, text.wrapLines(Text.translatable("block.mca.tombstone.header"), maxLineWidth), 0, matrices, vertexConsumers, light);
 
         y += 5;
 
@@ -69,7 +69,7 @@ public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<Tombsto
 
         y += 5;
 
-        drawText(text, text.wrapLines(new TranslatableText("block.mca.tombstone.footer." + entity.getGender().binary().getStrName()), maxLineWidth), y, matrices, vertexConsumers, light);
+        drawText(text, text.wrapLines(Text.translatable("block.mca.tombstone.footer." + entity.getGender().binary().getStrName()), maxLineWidth), y, matrices, vertexConsumers, light);
 
         matrices.pop();
     }

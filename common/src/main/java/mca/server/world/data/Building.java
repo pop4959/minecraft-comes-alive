@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestType;
+import net.minecraft.world.poi.PointOfInterestTypes;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -171,7 +172,7 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public Stream<BlockPos> findEmptyBed(ServerWorld world) {
         return world.getPointOfInterestStorage().getInSquare(
-                        PointOfInterestType.HOME.getCompletionCondition(),
+                        PointOfInterestTypes.HOME.getCompletionCondition(),
                         getCenter(),
                         getPos0().getManhattanDistance(getPos1()),
                         PointOfInterestStorage.OccupationStatus.ANY)

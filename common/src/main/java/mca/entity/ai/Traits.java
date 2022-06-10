@@ -8,11 +8,10 @@ import mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.random.Random;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,11 +39,11 @@ public class Traits {
         }
 
         public Text getName() {
-            return new TranslatableText("trait." + name().toLowerCase(Locale.ENGLISH));
+            return Text.translatable("trait." + name().toLowerCase(Locale.ENGLISH));
         }
 
         public Text getDescription() {
-            return new TranslatableText("traitDescription." + name().toLowerCase(Locale.ENGLISH));
+            return Text.translatable("traitDescription." + name().toLowerCase(Locale.ENGLISH));
         }
     }
 
@@ -58,7 +57,7 @@ public class Traits {
 
     public Traits(VillagerLike<?> entity) {
         this.entity = entity;
-        random = new Random(entity.asEntity().world.random.nextLong());
+        random = Random.create(entity.asEntity().world.random.nextLong());
     }
 
     public Set<Trait> getTraits() {
@@ -104,7 +103,7 @@ public class Traits {
 
     public void inherit(Traits from, long seed) {
         Random old = random;
-        random = new Random(seed);
+        random = Random.create(seed);
         inherit(from);
         random = old;
     }

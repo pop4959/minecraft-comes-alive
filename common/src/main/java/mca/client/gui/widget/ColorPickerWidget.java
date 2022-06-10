@@ -6,7 +6,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
@@ -24,7 +24,7 @@ public class ColorPickerWidget extends ClickableWidget {
     private double valueY;
 
     public ColorPickerWidget(int x, int y, int width, int height, double valueX, double valueY, Identifier texture, DualConsumer<Double, Double> consumer) {
-        super(x, y, width, height, LiteralText.EMPTY);
+        super(x, y, width, height, Text.literal(""));
         this.consumer = consumer;
         this.texture = texture;
         this.valueX = valueX / width;

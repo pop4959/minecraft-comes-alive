@@ -3,7 +3,6 @@ package mca.network.s2c;
 import mca.ClientProxy;
 import mca.cobalt.network.Message;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.io.Serial;
 
@@ -20,11 +19,11 @@ public class ShowToastRequest implements Message {
     }
 
     public Text getTitle() {
-        return new TranslatableText(title);
+        return Text.translatable(title);
     }
 
     public Text getMessage() {
-        return new TranslatableText(message);
+        return Text.translatable(message);
     }
 
     @Override

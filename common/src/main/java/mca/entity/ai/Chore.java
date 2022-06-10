@@ -2,7 +2,6 @@ package mca.entity.ai;
 
 import net.minecraft.item.*;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
@@ -37,7 +36,7 @@ public enum Chore {
     }
 
     public Text getName() {
-        return new TranslatableText("gui.label." + friendlyName);
+        return Text.translatable("gui.label." + friendlyName);
     }
 
     @Nullable

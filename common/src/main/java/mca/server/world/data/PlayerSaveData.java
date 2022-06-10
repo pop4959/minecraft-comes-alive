@@ -28,9 +28,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
@@ -78,7 +76,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
         spouseUUID = nbt.contains("spouseUUID") ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
-        spouseName = nbt.contains("spouseName") ? Optional.of(new LiteralText(nbt.getString("spouseName"))) : Optional.empty();
+        spouseName = nbt.contains("spouseName") ? Optional.of(Text.literal(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
         marriageState = MarriageState.byId(nbt.getInt("marriageState"));
 
@@ -186,13 +184,13 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     protected void onLeave(PlayerEntity self, Village village) {
         if (Config.getInstance().enterVillageNotification) {
-            self.sendMessage(new TranslatableText("gui.village.left", village.getName()).formatted(Formatting.GOLD), true);
+            self.sendMessage(Text.translatable("gui.village.left", village.getName()).formatted(Formatting.GOLD), true);
         }
     }
 
     protected void onEnter(PlayerEntity self, Village village) {
         if (Config.getInstance().enterVillageNotification) {
-            self.sendMessage(new TranslatableText("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
+            self.sendMessage(Text.translatable("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
         }
         village.deliverTaxes(world);
     }

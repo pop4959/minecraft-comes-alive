@@ -5,7 +5,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.List;
@@ -27,8 +26,8 @@ public class TitlePage extends Page {
     }
 
     public TitlePage(String title, String subtitle, Formatting color) {
-        this(new TranslatableText(title).formatted(color).formatted(Formatting.BOLD),
-                new TranslatableText(subtitle).formatted(color).formatted(Formatting.ITALIC));
+        this(Text.translatable(title).formatted(color).formatted(Formatting.BOLD),
+                Text.translatable(subtitle).formatted(color).formatted(Formatting.ITALIC));
     }
 
     public TitlePage(Text title, Text subtitle) {

@@ -16,7 +16,7 @@ import mca.entity.ai.relationship.Gender;
 import mca.resources.Supporters;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -92,15 +92,15 @@ public interface ItemsMCA {
             .setBackground(MCA.locate("textures/gui/books/supporters.png"))
             .addPage(new TitlePage("supporters"))
             .addPage(new DynamicListPage("mca.books.supporters.patrons",
-                    page -> Supporters.getSupporterGroup("mca:patrons").stream().map(s -> new LiteralText(s).formatted(Formatting.RED)).collect(Collectors.toList())))
+                    page -> Supporters.getSupporterGroup("mca:patrons").stream().map(s -> Text.literal(s).formatted(Formatting.RED)).collect(Collectors.toList())))
             .addPage(new DynamicListPage("mca.books.supporters.wiki",
-                    page -> Supporters.getSupporterGroup("mca:wiki").stream().map(s -> new LiteralText(s).formatted(Formatting.GOLD)).collect(Collectors.toList())))
+                    page -> Supporters.getSupporterGroup("mca:wiki").stream().map(s -> Text.literal(s).formatted(Formatting.GOLD)).collect(Collectors.toList())))
             .addPage(new DynamicListPage("mca.books.supporters.contributors",
-                    page -> Supporters.getSupporterGroup("mca:contributors").stream().map(s -> new LiteralText(s).formatted(Formatting.DARK_GREEN)).collect(Collectors.toList())))
+                    page -> Supporters.getSupporterGroup("mca:contributors").stream().map(s -> Text.literal(s).formatted(Formatting.DARK_GREEN)).collect(Collectors.toList())))
             .addPage(new DynamicListPage("mca.books.supporters.translators",
-                    page -> Supporters.getSupporterGroup("mca:translators").stream().map(s -> new LiteralText(s).formatted(Formatting.DARK_BLUE)).collect(Collectors.toList())))
+                    page -> Supporters.getSupporterGroup("mca:translators").stream().map(s -> Text.literal(s).formatted(Formatting.DARK_BLUE)).collect(Collectors.toList())))
             .addPage(new DynamicListPage("mca.books.supporters.old",
-                    page -> Supporters.getSupporterGroup("mca:old").stream().map(s -> new LiteralText(s).formatted(Formatting.BLACK)).collect(Collectors.toList())))
+                    page -> Supporters.getSupporterGroup("mca:old").stream().map(s -> Text.literal(s).formatted(Formatting.BLACK)).collect(Collectors.toList())))
             .addPage(new TitlePage("mca.books.supporters.thanks", ""))));
 
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)

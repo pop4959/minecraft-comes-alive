@@ -16,9 +16,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.random.Random;
 
 import java.util.Optional;
-import java.util.Random;
 
 /**
  * The progenator. Preg-genator? Preg-genator.

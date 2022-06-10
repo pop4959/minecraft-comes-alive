@@ -22,7 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -111,7 +110,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     @Nullable
     public final Text getCustomName() {
         String value = getTrackedValue(VILLAGER_NAME);
-        return value.isEmpty() ? null : new LiteralText(value).formatted(Formatting.RED);
+        return value.isEmpty() ? null : Text.literal(value).formatted(Formatting.RED);
     }
 
     @Override
@@ -153,7 +152,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.ZOMBIE_EGGS) && stack.getItem() != Items.GOLDEN_APPLE) {
             if (player instanceof ServerPlayerEntity) {
                 String t = new String(new char[getRandom().nextInt(8) + 2]).replace("\0", ". ");
-                sendChatMessage(new LiteralText(t), player);
+                sendChatMessage(Text.literal(t), player);
             }
         }
         return super.interactAt(player, pos, hand);

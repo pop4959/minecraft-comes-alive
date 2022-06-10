@@ -15,9 +15,8 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Matrix4f;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +49,7 @@ public class FamilyTreeScreen extends Screen {
     private final Screen parent;
 
     public FamilyTreeScreen(UUID entityId) {
-        super(new TranslatableText("gui.family_tree.title"));
+        super(Text.translatable("gui.family_tree.title"));
         this.focusedEntityId = entityId;
         this.parent = MinecraftClient.getInstance().currentScreen;
     }
@@ -78,7 +77,7 @@ public class FamilyTreeScreen extends Screen {
     public void init() {
         focusEntity(focusedEntityId);
 
-        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 25, 200, 20, new TranslatableText("gui.done"), sender -> {
+        addDrawableChild(new ButtonWidget(width / 2 - 100, height - 25, 200, 20, Text.translatable("gui.done"), sender -> {
             close();
         }));
     }
@@ -142,7 +141,7 @@ public class FamilyTreeScreen extends Screen {
 
         FamilyTreeNode selected = family.get(focusedEntityId);
 
-        Text label = selected == null ? title : new LiteralText(selected.getName()).append("'s ").append(title);
+        Text label = selected == null ? title : Text.literal(selected.getName()).append("'s ").append(title);
 
         drawCenteredText(matrices, textRenderer, label, width / 2, 10, 16777215);
 
@@ -211,7 +210,7 @@ public class FamilyTreeScreen extends Screen {
         private TreeNode() {
             this.id = null;
             this.deceased = false;
-            this.label.add(new LiteralText(defaultNodeName));
+            this.label.add(Text.literal(defaultNodeName));
         }
 
         public TreeNode(FamilyTreeNode node, boolean recurse) {
@@ -222,18 +221,18 @@ public class FamilyTreeScreen extends Screen {
             nodes.put(node.id(), this);
             this.id = node.id();
             this.deceased = node.isDeceased();
-            final LiteralText text = new LiteralText(node.getName().isEmpty() ? defaultNodeName : node.getName());
+            final MutableText text = Text.literal(node.getName().isEmpty() ? defaultNodeName : node.getName());
             this.label.add(text.setStyle(text.getStyle().withColor(node.gender().getColor())));
-            this.label.add(new TranslatableText("entity.minecraft.villager." + node.getProfessionName()).formatted(Formatting.GRAY));
+            this.label.add(Text.translatable("entity.minecraft.villager." + node.getProfessionName()).formatted(Formatting.GRAY));
 
             FamilyTreeNode father = family.get(node.father());
             FamilyTreeNode mother = family.get(node.mother());
             if ((father == null || father.isDeceased()) && (mother == null || mother.isDeceased())) {
-                this.label.add(new TranslatableText("gui.family_tree.label.orphan").formatted(Formatting.GRAY));
+                this.label.add(Text.translatable("gui.family_tree.label.orphan").formatted(Formatting.GRAY));
             }
 
             if (node.getMarriageState() != MarriageState.SINGLE) {
-                this.label.add(new TranslatableText("marriage." + node.getMarriageState().base().getIcon()));
+                this.label.add(Text.translatable("marriage." + node.getMarriageState().base().getIcon()));
             }
 
             if (recurse) {
@@ -335,7 +334,7 @@ public class FamilyTreeScreen extends Screen {
                 if (isFocused && mouseX <= bounds.left + 20) {
                     matrices.push();
                     matrices.translate(0, 0, 20);
-                    renderTooltip(matrices, new TranslatableText("gui.family_tree.label.deceased"), mouseX, mouseY);
+                    renderTooltip(matrices, Text.translatable("gui.family_tree.label.deceased"), mouseX, mouseY);
                     matrices.pop();
                 }
             }

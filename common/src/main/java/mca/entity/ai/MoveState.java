@@ -1,7 +1,6 @@
 package mca.entity.ai;
 
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.Locale;
 import java.util.Map;
@@ -25,7 +24,7 @@ public enum MoveState {
     }
 
     public Text getName() {
-        return new TranslatableText("gui.label." + friendlyName);
+        return Text.translatable("gui.label." + friendlyName);
     }
 
     public static Optional<MoveState> byCommand(String action) {

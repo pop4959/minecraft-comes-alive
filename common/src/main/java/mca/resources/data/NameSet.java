@@ -2,9 +2,9 @@ package mca.resources.data;
 
 import com.google.common.base.Strings;
 import mca.resources.PoolUtil;
+import net.minecraft.util.math.random.Random;
 
 import java.util.Locale;
-import java.util.Random;
 
 public final class NameSet {
 

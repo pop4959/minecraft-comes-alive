@@ -5,7 +5,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class ListPage extends Page {
     }
 
     public ListPage(String title, List<Text> text) {
-        this(new TranslatableText(title).formatted(Formatting.BLACK).formatted(Formatting.BOLD), text);
+        this(Text.translatable(title).formatted(Formatting.BLACK).formatted(Formatting.BOLD), text);
     }
 
     private static void drawCenteredText(MatrixStack matrices, TextRenderer textRenderer, Text text, int centerX, int y, int color) {

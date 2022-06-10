@@ -2,12 +2,11 @@ package mca.entity.ai.relationship;
 
 import mca.entity.ai.MoodGroup;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.util.math.random.Random;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 public enum Personality {
     //Fallback on error.
@@ -55,7 +54,8 @@ public enum Personality {
             }
         }
 
-        return validList.get(new Random().nextInt(validList.size()));
+        // TODO: Make Random.create() a separate value so we are not making 100s of this
+        return validList.get(Random.create().nextInt(validList.size()));
     }
 
     public int getId() {
@@ -100,10 +100,10 @@ public enum Personality {
     }
 
     public Text getName() {
-        return new TranslatableText("personality." + name().toLowerCase(Locale.ENGLISH));
+        return Text.translatable("personality." + name().toLowerCase(Locale.ENGLISH));
     }
 
     public Text getDescription() {
-        return new TranslatableText("personalityDescription." + name().toLowerCase(Locale.ENGLISH));
+        return Text.translatable("personalityDescription." + name().toLowerCase(Locale.ENGLISH));
     }
 }

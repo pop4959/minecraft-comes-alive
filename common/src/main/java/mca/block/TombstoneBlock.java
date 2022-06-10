@@ -37,9 +37,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
@@ -47,6 +45,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.*;
@@ -285,7 +284,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                 .ifPresent(name -> {
                     stacks.stream().filter(TombstoneBlock::isRemains).forEach(stack -> {
                         stack.removeCustomName();
-                        stack.setCustomName(new TranslatableText("block.mca.tombstone.remains", stack.getName(), name));
+                        stack.setCustomName(Text.translatable("block.mca.tombstone.remains", stack.getName(), name));
                     });
 
                 });
@@ -406,7 +405,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
             if (hasWorld()) {
                 world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_BELL_USE, SoundCategory.BLOCKS, 1, 1);
                 world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(getCachedState()));
-                world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos);
+                world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(getCachedState()));
                 ((TombstoneBlock) getCachedState().getBlock()).updateNeighbors(getCachedState(), world, pos);
 
                 if (!world.isClient) {
@@ -432,7 +431,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
         public FlowingText getOrCreateEntityName(Function<Text, FlowingText> factory) {
             if (computedName == null) {
-                computedName = factory.apply(getEntityName().orElse(LiteralText.EMPTY));
+                computedName = factory.apply(getEntityName().orElse(Text.literal("")));
             }
             return computedName;
         }
@@ -496,7 +495,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                     NbtHelper.computeIfAbsent(
                             stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY),
                             ItemStack.LORE_KEY, NbtElement.LIST_TYPE, NbtList::new)
-                            .add(0, NbtString.of(name.asString()));
+                            .add(0, NbtString.of(name.getString()));
                 });
             });
         }
@@ -512,7 +511,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
             public EntityData(NbtCompound nbt, Text name, Gender gender) {
                 this.nbt = nbt;
-                this.name = name == null ? LiteralText.EMPTY : new LiteralText(name.asString());
+                this.name = name == null ? Text.literal("") : Text.literal(name.getString());
                 this.gender = gender;
             }
 

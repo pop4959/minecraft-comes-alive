@@ -9,7 +9,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import java.util.LinkedList;
@@ -71,7 +70,7 @@ public class DestinyScreen extends VillagerEditorScreen {
 
         switch (page) {
             case "general" -> {
-                drawScaledText(transform, new TranslatableText("gui.destiny.whoareyou"), width / 2, height / 2 - 24, 1.5f);
+                drawScaledText(transform, Text.translatable("gui.destiny.whoareyou"), width / 2, height / 2 - 24, 1.5f);
                 transform.push();
                 transform.scale(0.25f, 0.25f, 0.25f);
                 RenderSystem.enableBlend();
@@ -81,7 +80,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                 DrawableHelper.drawTexture(transform, width * 2 - 512, -40, 0, 0, 1024, 512, 1024, 512);
                 transform.pop();
             }
-            case "destiny" -> drawScaledText(transform, new TranslatableText("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
+            case "destiny" -> drawScaledText(transform, Text.translatable("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
             case "story" -> {
                 List<Text> text = FlowingText.wrap(story.getFirst(), 256);
                 int y = (int)(height / 2 - 20 - 7.5f * text.size());
@@ -117,7 +116,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                     drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
                 }
 
-                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, Text.translatable("gui.button.accept"), sender -> {
                     setPage("body");
                     if (villager.getTrackedValue(VILLAGER_NAME).isEmpty()) {
                         villager.setTrackedValue(VILLAGER_NAME, "Nameless Traveller");
@@ -128,12 +127,12 @@ public class DestinyScreen extends VillagerEditorScreen {
                 int x = 0;
                 int y = 0;
                 for (String location : new String[] {"somewhere", "shipwreck_beached", "village_desert", "village_taiga", "village_snowy", "village_plains", "village_savanna"}) {
-                    addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
+                    addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, Text.translatable("gui.destiny." + location), sender -> {
                         //story
                         story = new LinkedList<>();
-                        story.add(new TranslatableText("destiny.story.reason"));
-                        story.add(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"));
-                        story.add(new TranslatableText("destiny.story." + location));
+                        story.add(Text.translatable("destiny.story.reason"));
+                        story.add(Text.translatable(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"));
+                        story.add(Text.translatable("destiny.story." + location));
                         this.location = location;
                         setPage("story");
                     }));
@@ -144,7 +143,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                     }
                 }
             }
-            case "story" -> addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, new TranslatableText("gui.destiny.next"), sender -> {
+            case "story" -> addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, Text.translatable("gui.destiny.next"), sender -> {
                 NetworkHandler.sendToServer(new DestinyMessage(location));
                 if (story.size() > 1) {
                     story.remove(0);

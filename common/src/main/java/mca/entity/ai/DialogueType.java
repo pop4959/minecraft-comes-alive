@@ -3,6 +3,7 @@ package mca.entity.ai;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Personality;
 import net.minecraft.util.Language;
+import net.minecraft.util.math.random.Random;
 
 import java.util.*;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ public enum DialogueType {
 
     public final DialogueType fallback;
 
-    private static final Random random = new Random();
+    private static final Random random = Random.create();
 
     DialogueType(DialogueType fallback) {
         this.fallback = fallback;

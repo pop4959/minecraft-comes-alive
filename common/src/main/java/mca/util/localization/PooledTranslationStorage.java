@@ -3,6 +3,7 @@ package mca.util.localization;
 import mca.resources.PoolUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.random.Random;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -14,7 +15,7 @@ public class PooledTranslationStorage {
 
     private final Map<String, List<String>> multiTranslations = new HashMap<>();
 
-    private final Random rand = new Random();
+    private final Random rand = Random.create();
 
     public PooledTranslationStorage(Map<String, String> translations) {
         translations.forEach(this::addTranslation);

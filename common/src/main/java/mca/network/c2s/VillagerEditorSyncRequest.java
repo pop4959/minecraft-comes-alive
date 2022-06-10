@@ -18,7 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -123,26 +123,26 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
             UUID uuid = UUID.fromString(name);
             Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
             if (node.isPresent()) {
-                player.sendMessage(new TranslatableText("gui.villager_editor.uuid_known", name, node.get().getName()), true);
+                player.sendMessage(Text.translatable("gui.villager_editor.uuid_known", name, node.get().getName()), true);
                 return node;
             } else {
-                player.sendMessage(new TranslatableText("gui.villager_editor.uuid_unknown", name).formatted(Formatting.RED), true);
+                player.sendMessage(Text.translatable("gui.villager_editor.uuid_unknown", name).formatted(Formatting.RED), true);
                 return Optional.empty();
             }
         } catch (IllegalArgumentException exception) {
             List<FamilyTreeNode> nodes = tree.getAllWithName(name).toList();
             if (nodes.isEmpty()) {
                 //create a new entry
-                player.sendMessage(new TranslatableText("gui.villager_editor.name_created", name).formatted(Formatting.YELLOW), true);
+                player.sendMessage(Text.translatable("gui.villager_editor.name_created", name).formatted(Formatting.YELLOW), true);
                 return Optional.of(tree.getOrCreate(UUID.randomUUID(), name, gender));
             } else {
                 if (nodes.size() > 1) {
-                    player.sendMessage(new TranslatableText("gui.villager_editor.name_not_unique", name).formatted(Formatting.RED), true);
+                    player.sendMessage(Text.translatable("gui.villager_editor.name_not_unique", name).formatted(Formatting.RED), true);
 
                     String uuids = nodes.stream().map(FamilyTreeNode::id).map(UUID::toString).collect(Collectors.joining(", "));
-                    player.sendMessage(new TranslatableText("gui.villager_editor.list_of_ids", uuids), false);
+                    player.sendMessage(Text.translatable("gui.villager_editor.list_of_ids", uuids), false);
                 } else {
-                    player.sendMessage(new TranslatableText("gui.villager_editor.name_unique", name), true);
+                    player.sendMessage(Text.translatable("gui.villager_editor.name_unique", name), true);
                 }
 
                 return Optional.ofNullable(nodes.get(0));

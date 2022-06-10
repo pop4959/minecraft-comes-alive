@@ -28,6 +28,7 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
+import net.minecraft.world.poi.PointOfInterestTypes;
 
 import java.util.Optional;
 
@@ -160,7 +161,7 @@ public class VillagerTasksMCA {
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(3, new InteractTask(speedModifier)),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
-                Pair.of(10, new FindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
+                Pair.of(10, new FindPointOfInterestTask(PointOfInterestTypes.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
         );
     }
 
@@ -355,7 +356,7 @@ public class VillagerTasksMCA {
                 Pair.of(10, new FindInteractionTargetTask(EntityType.PLAYER, 4)),
                 Pair.of(2, new VillagerWalkTowardsTask(MemoryModuleType.MEETING_POINT, speedModifier, 6, 100, 200)),
                 Pair.of(3, new GiveGiftsToHeroTask(100)),
-                Pair.of(3, new ForgetCompletedPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT)),
+                Pair.of(3, new ForgetCompletedPointOfInterestTask(PointOfInterestTypes.MEETING, MemoryModuleType.MEETING_POINT)),
                 Pair.of(3, new CompositeTask<>(
                         ImmutableMap.of(),
                         ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET),

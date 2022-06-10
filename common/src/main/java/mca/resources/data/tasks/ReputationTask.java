@@ -3,7 +3,8 @@ package mca.resources.data.tasks;
 import com.google.gson.JsonObject;
 import mca.server.world.data.Village;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.JsonHelper;
 
 import java.io.Serial;
@@ -34,7 +35,7 @@ public class ReputationTask extends Task {
     }
 
     @Override
-    public TranslatableText getTranslatable() {
-        return new TranslatableText("task.reputation", reputation);
+    public MutableText getTranslatable() {
+        return Text.translatable("task.reputation", reputation);
     }
 }

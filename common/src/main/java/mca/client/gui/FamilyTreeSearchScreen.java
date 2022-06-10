@@ -7,9 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +26,7 @@ public class FamilyTreeSearchScreen extends Screen {
     private int mouseY;
 
     public FamilyTreeSearchScreen() {
-        super(new TranslatableText("gui.family_tree.title"));
+        super(Text.translatable("gui.family_tree.title"));
     }
 
     @Override
@@ -38,27 +36,27 @@ public class FamilyTreeSearchScreen extends Screen {
 
     @Override
     public void init() {
-        TextFieldWidget field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - DATA_WIDTH / 2, height / 2 - 80, DATA_WIDTH, 18, new TranslatableText("structure_block.structure_name")));
+        TextFieldWidget field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - DATA_WIDTH / 2, height / 2 - 80, DATA_WIDTH, 18, Text.translatable("structure_block.structure_name")));
         field.setMaxLength(32);
         field.setChangedListener(this::searchVillager);
         field.setTextFieldFocused(true);
         setFocused(field);
 
-        addDrawableChild(new ButtonWidget(width / 2 - 44, height / 2 + 82, 88, 20, new TranslatableText("gui.done"), sender -> {
+        addDrawableChild(new ButtonWidget(width / 2 - 44, height / 2 + 82, 88, 20, Text.translatable("gui.done"), sender -> {
             close();
         }));
 
-        addDrawableChild(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 60, 20, 20, new LiteralText("<"), (b) -> {
+        addDrawableChild(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 60, 20, 20, Text.literal("<"), (b) -> {
             if (pageNumber > 0) {
                 pageNumber--;
             }
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + 24, height / 2 + 60, 20, 20, new LiteralText(">"), (b) -> {
+        addDrawableChild(new ButtonWidget(width / 2 + 24, height / 2 + 60, 20, 20, Text.literal(">"), (b) -> {
             if (pageNumber < Math.ceil(list.size() / 9.0) - 1) {
                 pageNumber++;
             }
         }));
-        buttonPage = addDrawableChild(new ButtonWidget(width / 2 - 24, height / 2 + 60, 48, 20, new LiteralText("0/0)"), (b) -> {
+        buttonPage = addDrawableChild(new ButtonWidget(width / 2 - 24, height / 2 + 60, 48, 20, Text.literal("0/0)"), (b) -> {
         }));
     }
 
@@ -74,14 +72,14 @@ public class FamilyTreeSearchScreen extends Screen {
 
         renderVillagers(matrices);
 
-        drawCenteredText(matrices, textRenderer, new TranslatableText("gui.title.family_tree"), width / 2, height / 2 - 100, 16777215);
+        drawCenteredText(matrices, textRenderer, Text.translatable("gui.title.family_tree"), width / 2, height / 2 - 100, 16777215);
 
         super.render(matrices, mouseX, mouseY, delta);
     }
 
     private void renderVillagers(MatrixStack transform) {
         int maxPages = (int)Math.ceil(list.size() / 9.0);
-        buttonPage.setMessage(new LiteralText((pageNumber + 1) + "/" + maxPages));
+        buttonPage.setMessage(Text.literal((pageNumber + 1) + "/" + maxPages));
 
         selectedVillager = null;
         for (int i = 0; i < 9; i++) {
@@ -95,13 +93,13 @@ public class FamilyTreeSearchScreen extends Screen {
 
                 Text text;
                 if (left.isEmpty() && right.isEmpty()) {
-                    text = new TranslatableText("gui.family_tree.child_of_0");
+                    text = Text.translatable("gui.family_tree.child_of_0");
                 } else if (left.isEmpty()) {
-                    text = new TranslatableText("gui.family_tree.child_of_1", right);
+                    text = Text.translatable("gui.family_tree.child_of_1", right);
                 } else if (right.isEmpty()) {
-                    text = new TranslatableText("gui.family_tree.child_of_1", left);
+                    text = Text.translatable("gui.family_tree.child_of_1", left);
                 } else {
-                    text = new TranslatableText("gui.family_tree.child_of_2", left, right);
+                    text = Text.translatable("gui.family_tree.child_of_2", left, right);
                 }
 
                 drawCenteredText(transform, textRenderer, text, width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);

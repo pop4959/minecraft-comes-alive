@@ -32,7 +32,6 @@ import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -255,24 +254,24 @@ public class Village implements Iterable<Building> {
             Text msg;
             float r = MathHelper.lerp(0.5f, getTaxes() / 100.0f, world.random.nextFloat());
             if (getTaxes() == 0.0f) {
-                msg = new TranslatableText("gui.village.taxes.no", getName()).formatted(Formatting.GREEN);
+                msg = Text.translatable("gui.village.taxes.no", getName()).formatted(Formatting.GREEN);
                 moodImpact = 5;
             } else if (r < 0.1) {
-                msg = new TranslatableText("gui.village.taxes.more", getName()).formatted(Formatting.GREEN);
+                msg = Text.translatable("gui.village.taxes.more", getName()).formatted(Formatting.GREEN);
                 taxes += getPopulation() * 0.25;
             } else if (r < 0.3) {
-                msg = new TranslatableText("gui.village.taxes.happy", getName()).formatted(Formatting.DARK_GREEN);
+                msg = Text.translatable("gui.village.taxes.happy", getName()).formatted(Formatting.DARK_GREEN);
                 moodImpact = 5;
             } else if (r < 0.7) {
-                msg = new TranslatableText("gui.village.taxes", getName());
+                msg = Text.translatable("gui.village.taxes", getName());
             } else if (r < 0.8) {
-                msg = new TranslatableText("gui.village.taxes.sad", getName()).formatted(Formatting.GOLD);
+                msg = Text.translatable("gui.village.taxes.sad", getName()).formatted(Formatting.GOLD);
                 moodImpact = -5;
             } else if (r < 0.9) {
-                msg = new TranslatableText("gui.village.taxes.angry", getName()).formatted(Formatting.RED);
+                msg = Text.translatable("gui.village.taxes.angry", getName()).formatted(Formatting.RED);
                 moodImpact = -10;
             } else {
-                msg = new TranslatableText("gui.village.taxes.riot", getName()).formatted(Formatting.DARK_RED);
+                msg = Text.translatable("gui.village.taxes.riot", getName()).formatted(Formatting.DARK_RED);
                 taxes = 0;
             }
 
@@ -510,7 +509,7 @@ public class Village implements Iterable<Building> {
         world.getPlayers().stream().filter(p -> PlayerSaveData.get(world, p.getUuid()).getLastSeenVillageId().orElse(-2) == getId()
                         || suitor.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend
                         || mate.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
-                .forEach(player -> player.sendMessage(new TranslatableText(event, suitor.getName(), mate.getName()), true));
+                .forEach(player -> player.sendMessage(Text.translatable(event, suitor.getName(), mate.getName()), true));
     }
 
     public void markDirty(ServerWorld world) {

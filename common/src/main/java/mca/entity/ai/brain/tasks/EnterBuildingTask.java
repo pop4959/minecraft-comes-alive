@@ -9,11 +9,11 @@ import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.Random;
 
 public class EnterBuildingTask extends Task<VillagerEntityMCA> {
     private final String building;

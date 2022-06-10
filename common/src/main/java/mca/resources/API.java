@@ -3,6 +3,7 @@ package mca.resources;
 import mca.MCA;
 import mca.resources.Resources.BrokenResourceException;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.math.random.Random;
 
 import java.util.*;
 
@@ -10,7 +11,7 @@ import java.util.*;
  * Class API handles interaction with MCAs configurable options via JSON in the resources folder
  */
 public class API {
-    static final Random rng = new Random();
+    static final Random rng = Random.create();
     static Data instance = new Data();
 
     public static VillageComponents getVillagePool() {

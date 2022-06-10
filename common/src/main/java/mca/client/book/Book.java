@@ -4,7 +4,6 @@ import mca.client.book.pages.EmptyPage;
 import mca.client.book.pages.Page;
 import mca.client.book.pages.TextPage;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +20,7 @@ public class Book {
     private boolean pageTurnSound = true;
 
     public Book(String bookName) {
-        this(bookName, new TranslatableText(String.format("mca.books.%s.author", bookName)).formatted(Formatting.GRAY));
+        this(bookName, Text.translatable(String.format("mca.books.%s.author", bookName)).formatted(Formatting.GRAY));
     }
 
     public Book(String bookName, Text bookAuthor) {

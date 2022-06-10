@@ -13,9 +13,8 @@ import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import net.minecraft.world.GameMode;
@@ -127,16 +126,16 @@ public class ServerInteractionManager {
         List<UUID> proposals = getProposalsFor(sender);
 
         if (proposals.size() == 0) {
-            infoMessage(sender, new TranslatableText("server.noProposals"));
+            infoMessage(sender, Text.translatable("server.noProposals"));
         } else {
-            infoMessage(sender, new TranslatableText("server.proposals"));
+            infoMessage(sender, Text.translatable("server.proposals"));
         }
 
         // Send the name of all online players to the command sender.
         proposals.forEach((uuid -> {
             PlayerEntity player = sender.getWorld().getPlayerByUuid(uuid);
             if (player != null) {
-                infoMessage(sender, (BaseText)new LiteralText("- ").append(new LiteralText(player.getEntityName())));
+                infoMessage(sender, (MutableText)Text.literal("- ").append(Text.literal(player.getEntityName())));
             }
         }));
     }
@@ -150,29 +149,29 @@ public class ServerInteractionManager {
     public void sendProposal(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         // Checks if the admin allows this
         if (!Config.getInstance().allowPlayerMarriage) {
-            failMessage(sender, new TranslatableText("notify.playerMarriage.disabled"));
+            failMessage(sender, Text.translatable("notify.playerMarriage.disabled"));
             return;
         }
 
         // Ensure the sender isn't already married.
         if (PlayerSaveData.get(sender.getWorld(), sender.getUuid()).isMarried()) {
-            failMessage(sender, new TranslatableText("server.alreadyMarried"));
+            failMessage(sender, Text.translatable("server.alreadyMarried"));
             return;
         }
 
         // Ensure the sender isn't himself.
         if (sender == receiver) {
-            failMessage(sender, new TranslatableText("server.proposedToYourself"));
+            failMessage(sender, Text.translatable("server.proposedToYourself"));
             return;
         }
 
         // Ensure the receiver hasn't already been proposed to by this player.
         if (hasProposalFrom(sender, receiver)) {
-            failMessage(sender, new TranslatableText("server.sentProposal", receiver.getEntityName()));
+            failMessage(sender, Text.translatable("server.sentProposal", receiver.getEntityName()));
         } else {
             // Send the proposal messages.
-            successMessage(sender, new TranslatableText("server.proposalSent", receiver.getEntityName()));
-            infoMessage(receiver, new TranslatableText("server.proposedMarriage", sender.getEntityName()));
+            successMessage(sender, Text.translatable("server.proposalSent", receiver.getEntityName()));
+            infoMessage(receiver, Text.translatable("server.proposedMarriage", sender.getEntityName()));
 
             // Add the proposal to the receiver's proposal list.
             List<UUID> list = getProposalsFor(receiver);
@@ -190,11 +189,11 @@ public class ServerInteractionManager {
     public void rejectProposal(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         // Ensure a proposal existed.
         if (!hasProposalFrom(receiver, sender)) {
-            failMessage(sender, new TranslatableText("server.noProposal", receiver.getDisplayName()));
+            failMessage(sender, Text.translatable("server.noProposal", receiver.getDisplayName()));
         } else {
             // Notify of the proposal failure and remove it.
-            successMessage(sender, new TranslatableText("server.proposalRejectionSent"));
-            failMessage(receiver, new TranslatableText("server.proposalRejected", sender.getEntityName()));
+            successMessage(sender, Text.translatable("server.proposalRejectionSent"));
+            failMessage(receiver, Text.translatable("server.proposalRejected", sender.getEntityName()));
             removeProposalFor(sender, receiver);
         }
     }
@@ -208,18 +207,18 @@ public class ServerInteractionManager {
     public void acceptProposal(ServerPlayerEntity sender, ServerPlayerEntity receiver) {
         // Ensure a proposal is active.
         if (!hasProposalFrom(receiver, sender)) {
-            failMessage(sender, new TranslatableText("server.noProposal", receiver.getDisplayName()));
+            failMessage(sender, Text.translatable("server.noProposal", receiver.getDisplayName()));
         } else {
             // Notify of acceptance.
-            successMessage(receiver, new TranslatableText("server.proposalAccepted", sender.getDisplayName()));
+            successMessage(receiver, Text.translatable("server.proposalAccepted", sender.getDisplayName()));
 
             // Set both player data as married.
             PlayerSaveData.get(sender.getWorld(), sender.getUuid()).marry(receiver);
             PlayerSaveData.get(receiver.getWorld(), receiver.getUuid()).marry(sender);
 
             // Send success messages.
-            successMessage(sender, new TranslatableText("server.married", receiver.getDisplayName()));
-            successMessage(receiver, new TranslatableText("server.married", sender.getDisplayName()));
+            successMessage(sender, Text.translatable("server.married", receiver.getDisplayName()));
+            successMessage(receiver, Text.translatable("server.married", sender.getDisplayName()));
 
             // Remove the proposal.
             removeProposalFor(sender, receiver);
@@ -236,24 +235,24 @@ public class ServerInteractionManager {
         EntityRelationship.of(sender).ifPresent(senderData -> {
             // Ensure the sender is married
             if (!senderData.isMarried()) {
-                failMessage(sender, new TranslatableText("server.endMarriageNotMarried"));
+                failMessage(sender, Text.translatable("server.endMarriageNotMarried"));
                 return;
             }
 
             // Lookup the spouse, if it's a villager, we can't continue
             if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
-                failMessage(sender, new TranslatableText("server.marriedToVillager"));
+                failMessage(sender, Text.translatable("server.marriedToVillager"));
                 return;
             }
 
             // Notify the sender of the success and end both marriages.
             senderData.getSpouseName().ifPresent(name ->
-                    successMessage(sender, new TranslatableText("server.endMarriage", name.getString()))
+                    successMessage(sender, Text.translatable("server.endMarriage", name.getString()))
             );
             senderData.getSpouse().ifPresent(spouse -> {
                 if (spouse instanceof PlayerEntity player) {
                     // Notify the ex if they are online.
-                    failMessage(player, new TranslatableText("server.marriageEnded", sender.getEntityName()));
+                    failMessage(player, Text.translatable("server.marriageEnded", sender.getEntityName()));
                 }
             });
             senderData.endMarriage(MarriageState.SINGLE);
@@ -270,13 +269,13 @@ public class ServerInteractionManager {
         // Ensure the sender is married.
         PlayerSaveData senderData = PlayerSaveData.get(sender.getWorld(), sender.getUuid());
         if (!senderData.isMarried()) {
-            failMessage(sender, new TranslatableText("server.notMarried"));
+            failMessage(sender, Text.translatable("server.notMarried"));
             return;
         }
 
         // Ensure the spouse is a player
         if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
-            failMessage(sender, new TranslatableText("server.marriedToVillager"));
+            failMessage(sender, Text.translatable("server.marriedToVillager"));
             return;
         }
 
@@ -285,9 +284,9 @@ public class ServerInteractionManager {
         BabyTracker.Pairing pairing = tracker.getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
         if (tracker.hasActiveBaby(sender.getUuid(), senderData.getSpouseUuid().orElse(null))) {
             if (pairing.locateBaby(sender).getRight().wasFound()) {
-                failMessage(sender, new TranslatableText("server.babyPresent"));
+                failMessage(sender, Text.translatable("server.babyPresent"));
             } else {
-                failMessage(sender, new TranslatableText("server.babyLost"));
+                failMessage(sender, Text.translatable("server.babyLost"));
                 pairing.reconstructBaby(sender);
             }
             return;
@@ -299,11 +298,11 @@ public class ServerInteractionManager {
             // Otherwise, we notify the spouse that they must also enter the command.
             if (!procreateMap.containsKey(spouse.getUuid())) {
                 procreateMap.put(sender.getUuid(), System.currentTimeMillis() + 10000);
-                infoMessage(spouse, new TranslatableText("server.procreationRequest", sender.getEntityName()));
+                infoMessage(spouse, Text.translatable("server.procreationRequest", sender.getEntityName()));
             } else {
                 // On success, add a randomly generated baby to the original requester.
-                successMessage(sender, new TranslatableText("server.procreationSuccessful"));
-                successMessage(spouse, new TranslatableText("server.procreationSuccessful"));
+                successMessage(sender, Text.translatable("server.procreationSuccessful"));
+                successMessage(spouse, Text.translatable("server.procreationSuccessful"));
 
                 pairing.addChild(s -> {
                     s.setGender(Gender.getRandom());
@@ -311,18 +310,18 @@ public class ServerInteractionManager {
                     spouse.giveItemStack(s.createItem());
                 });
             }
-        }, () -> failMessage(sender, new TranslatableText("server.spouseNotPresent")));
+        }, () -> failMessage(sender, Text.translatable("server.spouseNotPresent")));
     }
 
-    private void successMessage(PlayerEntity player, BaseText message) {
-        player.sendSystemMessage(message.formatted(Formatting.GREEN), Util.NIL_UUID);
+    private void successMessage(PlayerEntity player, MutableText message) {
+        player.sendMessage(message.formatted(Formatting.GREEN));
     }
 
-    private void failMessage(PlayerEntity player, BaseText message) {
-        player.sendSystemMessage(message.formatted(Formatting.RED), Util.NIL_UUID);
+    private void failMessage(PlayerEntity player, MutableText message) {
+        player.sendMessage(message.formatted(Formatting.RED));
     }
 
-    private void infoMessage(PlayerEntity player, BaseText message) {
-        player.sendSystemMessage(message.formatted(Formatting.YELLOW), Util.NIL_UUID);
+    private void infoMessage(PlayerEntity player, MutableText message) {
+        player.sendMessage(message.formatted(Formatting.YELLOW));
     }
 }

@@ -47,7 +47,7 @@ public class InteractScreen extends AbstractDynamicScreen {
     private static Analysis<?> analysis;
 
     public InteractScreen(VillagerLike<?> villager) {
-        super(new LiteralText("Interact"));
+        super(Text.literal("Interact"));
         this.villager = villager;
     }
 
@@ -58,7 +58,7 @@ public class InteractScreen extends AbstractDynamicScreen {
 
     public void setSpouse(MarriageState marriageState, String spouse) {
         this.marriageState = marriageState;
-        this.spouse = spouse == null ? new TranslatableText("gui.interact.label.parentUnknown") : new LiteralText(spouse);
+        this.spouse = spouse == null ? Text.translatable("gui.interact.label.parentUnknown") : Text.literal(spouse);
     }
 
     @Override
@@ -171,19 +171,19 @@ public class InteractScreen extends AbstractDynamicScreen {
         //name or state tip (gifting, ...)
         int h = 17;
         if (inGiftMode) {
-            renderTooltip(transform, new TranslatableText("gui.interact.label.giveGift"), 10, 28);
+            renderTooltip(transform, Text.translatable("gui.interact.label.giveGift"), 10, 28);
         } else {
             renderTooltip(transform, villager.asEntity().getName(), 10, 28);
         }
 
         //age or profession
-        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : new TranslatableText("entity.minecraft.villager." + villager.getProfessionName()), 10, 30 + h);
+        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : Text.translatable("entity.minecraft.villager." + villager.getProfessionName()), 10, 30 + h);
 
         VillagerBrain<?> brain = villager.getVillagerBrain();
 
         //mood
         renderTooltip(transform,
-                new TranslatableText("gui.interact.label.mood", brain.getMood().getText())
+                Text.translatable("gui.interact.label.mood", brain.getMood().getText())
                         .formatted(brain.getMood().getColor()), 10, 30 + h * 2);
 
         //personality
@@ -191,7 +191,7 @@ public class InteractScreen extends AbstractDynamicScreen {
             renderTooltip(transform, brain.getPersonality().getDescription(), 10, 30 + h * 3);
         } else {
             //White as we don't know if a personality is negative
-            renderTooltip(transform, new TranslatableText("gui.interact.label.personality", brain.getPersonality().getName()).formatted(Formatting.WHITE), 10, 30 + h * 3);
+            renderTooltip(transform, Text.translatable("gui.interact.label.personality", brain.getPersonality().getName()).formatted(Formatting.WHITE), 10, 30 + h * 3);
         }
 
         //traits
@@ -200,14 +200,14 @@ public class InteractScreen extends AbstractDynamicScreen {
             if (hoveringOverText(10, 30 + h * 4, 128)) {
                 //details
                 List<Text> traitText = traits.stream().map(Traits.Trait::getDescription).collect(Collectors.toList());
-                traitText.add(0, new TranslatableText("traits.title"));
+                traitText.add(0, Text.translatable("traits.title"));
                 renderTooltip(transform, traitText, 10, 30 + h * 4);
             } else {
                 //list
-                TranslatableText traitText = new TranslatableText("traits.title");
+                MutableText traitText = Text.translatable("traits.title");
                 traits.stream().map(Traits.Trait::getName).forEach(t -> {
                     if (traitText.getSiblings().size() > 0) {
-                        traitText.append(new LiteralText(", "));
+                        traitText.append(Text.literal(", "));
                     }
                     traitText.append(t);
                 });
@@ -218,37 +218,37 @@ public class InteractScreen extends AbstractDynamicScreen {
         //hearts
         if (hoveringOverIcon("redHeart")) {
             int hearts = brain.getMemoriesForPlayer(player).getHearts();
-            drawHoveringIconText(transform, new LiteralText(hearts + " hearts"), "redHeart");
+            drawHoveringIconText(transform, Text.literal(hearts + " hearts"), "redHeart");
         }
 
         //marriage status
         if (marriageState != null && hoveringOverIcon("married") && villager instanceof CompassionateEntity<?>) {
             String ms = marriageState.base().getIcon().toLowerCase(Locale.ENGLISH);
-            drawHoveringIconText(transform, new TranslatableText("gui.interact.label." + ms, spouse), "married");
+            drawHoveringIconText(transform, Text.translatable("gui.interact.label." + ms, spouse), "married");
         }
 
         //parents
         if (canDrawParentsIcon() && hoveringOverIcon("parents")) {
-            drawHoveringIconText(transform, new TranslatableText("gui.interact.label.parents",
-                    father == null ? new TranslatableText("gui.interact.label.parentUnknown") : father,
-                    mother == null ? new TranslatableText("gui.interact.label.parentUnknown") : mother
+            drawHoveringIconText(transform, Text.translatable("gui.interact.label.parents",
+                    father == null ? Text.translatable("gui.interact.label.parentUnknown") : father,
+                    mother == null ? Text.translatable("gui.interact.label.parentUnknown") : mother
             ), "parents");
         }
 
         //gift
         if (canDrawGiftIcon() && hoveringOverIcon("gift")) {
-            drawHoveringIconText(transform, new TranslatableText("gui.interact.label.gift"), "gift");
+            drawHoveringIconText(transform, Text.translatable("gui.interact.label.gift"), "gift");
         }
 
         //genes
         if (hoveringOverIcon("genes")) {
             List<Text> lines = new LinkedList<>();
-            lines.add(new LiteralText("Genes"));
+            lines.add(Text.literal("Genes"));
 
             for (Genetics.Gene gene : villager.getGenetics()) {
                 String key = gene.getType().getTranslationKey();
                 int value = (int)(gene.get() * 100);
-                lines.add(new TranslatableText("gene.tooltip", new TranslatableText(key), value));
+                lines.add(Text.translatable("gene.tooltip", Text.translatable(key), value));
             }
 
             drawHoveringIconText(transform, lines, "genes");
@@ -257,18 +257,18 @@ public class InteractScreen extends AbstractDynamicScreen {
         //analysis
         if (hoveringOverIcon("analysis") && analysis != null) {
             List<Text> lines = new LinkedList<>();
-            lines.add(new TranslatableText("analysis.title").formatted(Formatting.GRAY));
+            lines.add(Text.translatable("analysis.title").formatted(Formatting.GRAY));
 
             //summands
             for (Analysis.AnalysisElement d : analysis) {
-                lines.add(new TranslatableText("analysis." + d.getKey())
-                        .append(new LiteralText(": " + (d.isPositive() ? "+" : "") + d.getValue()))
+                lines.add(Text.translatable("analysis." + d.getKey())
+                        .append(Text.literal(": " + (d.isPositive() ? "+" : "") + d.getValue()))
                         .formatted(d.isPositive() ? Formatting.GREEN : Formatting.RED));
             }
 
             //total
             String chance = analysis.getTotalAsString();
-            lines.add(new TranslatableText("analysis.total").append(": " + chance));
+            lines.add(Text.translatable("analysis.total").append(": " + chance));
 
             drawHoveringIconText(transform, lines, "analysis");
         }
@@ -294,7 +294,7 @@ public class InteractScreen extends AbstractDynamicScreen {
             int y = height / 2 - 35;
             for (String a : dialogAnswers) {
                 boolean hover = hoveringOver(width / 2 - 100, y - 3, 200, 10);
-                drawCenteredText(transform, textRenderer, new TranslatableText(Question.getTranslationKey(dialogQuestionId, a)), width / 2, y, hover ? 0xFFD7D784 : 0xAAFFFFFF);
+                drawCenteredText(transform, textRenderer, Text.translatable(Question.getTranslationKey(dialogQuestionId, a)), width / 2, y, hover ? 0xFFD7D784 : 0xAAFFFFFF);
                 if (hover) {
                     dialogAnswerHover = a;
                 }
@@ -320,7 +320,7 @@ public class InteractScreen extends AbstractDynamicScreen {
     public void setDialogue(String dialogue, List<String> answers, boolean silent) {
         dialogQuestionId = dialogue;
         dialogAnswers = answers;
-        BaseText translatable = villager.getTranslatable(player, Question.getTranslationKey(dialogQuestionId));
+        MutableText translatable = villager.getTranslatable(player, Question.getTranslationKey(dialogQuestionId));
         dialogQuestionText = textRenderer.wrapLines(translatable, 160);
 
         if (!silent) {

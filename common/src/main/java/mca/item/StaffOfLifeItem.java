@@ -4,9 +4,7 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Rarity;
 import net.minecraft.world.World;
@@ -32,8 +30,8 @@ public class StaffOfLifeItem extends TooltippedItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(new TranslatableText(getTranslationKey(stack) + ".uses", stack.getMaxDamage() - stack.getDamage()));
-        tooltip.add(LiteralText.EMPTY);
+        tooltip.add(Text.translatable(getTranslationKey(stack) + ".uses", stack.getMaxDamage() - stack.getDamage()));
+        tooltip.add(Text.literal(""));
         super.appendTooltip(stack, world, tooltip, context);
     }
 
