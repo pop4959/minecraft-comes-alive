@@ -62,6 +62,15 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                     client.setScreen(new NeedleScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 }
                 break;
+            case COMB:
+                assert MinecraftClient.getInstance().player != null;
+                entity = client.world.getEntityById(message.villager);
+                if (entity == null) {
+                    client.setScreen(new CombScreen(MinecraftClient.getInstance().player.getUuid()));
+                } else {
+                    client.setScreen(new CombScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
+                }
+                break;
             case BABY_NAME:
                 if (client.player != null) {
                     ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);

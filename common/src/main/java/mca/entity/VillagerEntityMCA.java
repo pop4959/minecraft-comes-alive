@@ -394,7 +394,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public boolean canInteractWithItemStackInHand(ItemStack stack) {
-        return stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get() && stack.getItem() != ItemsMCA.NEEDLE_AND_THREAD.get();
+        return stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get() && stack.getItem() != ItemsMCA.NEEDLE_AND_THREAD.get() && stack.getItem() != ItemsMCA.COMB.get();
     }
 
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {

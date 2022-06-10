@@ -6,12 +6,12 @@ import mca.network.c2s.DamageItemMessage;
 
 import java.util.UUID;
 
-public class NeedleScreen extends VillagerEditorScreen {
-    public NeedleScreen(UUID playerUUID) {
+public class CombScreen extends VillagerEditorScreen {
+    public CombScreen(UUID playerUUID) {
         super(playerUUID, playerUUID);
     }
 
-    public NeedleScreen(UUID villagerUUID, UUID playerUUID) {
+    public CombScreen(UUID villagerUUID, UUID playerUUID) {
         super(villagerUUID, playerUUID);
     }
 
@@ -27,8 +27,8 @@ public class NeedleScreen extends VillagerEditorScreen {
 
     @Override
     protected void eventCallback(String event) {
-        if (event.equals("clothing")) {
-            NetworkHandler.sendToServer(new DamageItemMessage(MCA.locate("needle_and_thread")));
+        if (event.equals("hair")) {
+            NetworkHandler.sendToServer(new DamageItemMessage(MCA.locate("comb")));
         }
     }
 
@@ -36,11 +36,11 @@ public class NeedleScreen extends VillagerEditorScreen {
     protected void setPage(String page) {
         if (page.equals("loading")) {
             super.setPage("loading");
-        } else if (page.equals("body")) {
+        } else if (page.equals("head")) {
             syncVillagerData();
             close();
         } else {
-            super.setPage("clothing");
+            super.setPage("hair");
         }
     }
 }
