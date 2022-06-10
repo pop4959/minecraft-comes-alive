@@ -45,5 +45,6 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(SkinListRequest.class);
         NetworkHandler.registerMessage(SkinListResponse.class);
         NetworkHandler.registerMessage(OpenDestinyGuiRequest.class);
+        NetworkHandler.registerMessage(DamageItemMessage.class);
     }
 }

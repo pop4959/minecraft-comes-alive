@@ -543,6 +543,7 @@ public class VillagerEditorScreen extends Screen {
             if (hoveredClothingId >= 0 && filteredClothing.size() > hoveredClothingId) {
                 villager.setClothes(filteredClothing.get(hoveredClothingId));
                 setPage("body");
+                eventCallback("clothing");
                 return true;
             }
         }
@@ -551,11 +552,16 @@ public class VillagerEditorScreen extends Screen {
             if (hoveredClothingId >= 0 && filteredHair.size() > hoveredClothingId) {
                 villager.setHair(filteredHair.get(hoveredClothingId));
                 setPage("head");
+                eventCallback("hair");
                 return true;
             }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    protected void eventCallback(String event) {
+
     }
 
     @Override
