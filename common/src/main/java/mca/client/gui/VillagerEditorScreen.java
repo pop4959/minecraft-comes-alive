@@ -84,13 +84,13 @@ public class VillagerEditorScreen extends Screen {
         this.villagerUUID = villagerUUID;
         this.playerUUID = playerUUID;
 
-        requestVillagerData();
-        setPage(Objects.requireNonNullElse(page, "loading"));
-
         if (clothing == null) {
             clothing = new HashMap<>();
             NetworkHandler.sendToServer(new SkinListRequest());
         }
+
+        requestVillagerData();
+        setPage(Objects.requireNonNullElse(page, "loading"));
     }
 
     @Override
@@ -386,11 +386,11 @@ public class VillagerEditorScreen extends Screen {
                 y = height / 2 + 85;
                 pageButtonWidget = addDrawableChild(new ButtonWidget(width / 2 - 30, y, 60, 20, new LiteralText(""), b -> {
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 - 28 - 28, y, 28, 20, new LiteralText("<<"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 32 - 28, y, 28, 20, new LiteralText("<<"), b -> {
                     clothingPage = Math.max(0, clothingPage - 1);
                     updateClothingPageWidget();
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 28, y, 28, 20, new LiteralText(">>"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 32, y, 28, 20, new LiteralText(">>"), b -> {
                     clothingPage = Math.max(0, Math.min(clothingPageCount - 1, clothingPage + 1));
                     updateClothingPageWidget();
                 }));
@@ -653,7 +653,7 @@ public class VillagerEditorScreen extends Screen {
         NetworkHandler.sendToServer(new GetVillagerRequest(villagerUUID));
     }
 
-    private void syncVillagerData() {
+    void syncVillagerData() {
         NbtCompound nbt = villagerData;
         ((MobEntity)villager).writeCustomDataToNbt(nbt);
         nbt.putInt("Age", villagerBreedingAge);

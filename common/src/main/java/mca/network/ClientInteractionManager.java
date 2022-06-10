@@ -21,7 +21,7 @@ public interface ClientInteractionManager {
 
     void handleChildData(GetChildDataResponse message);
 
-    void handleAnalysisResults(AnalysisResults message);
+    void handleSkinListResponse(AnalysisResults message);
 
     void handleBabyNameResponse(BabyNameResponse message);
 
@@ -33,7 +33,7 @@ public interface ClientInteractionManager {
 
     void handlePlayerDataMessage(PlayerDataMessage response);
 
-    void handleAnalysisResults(SkinListResponse response);
+    void handleSkinListResponse(SkinListResponse response);
 
     void handleDestinyGuiRequest(OpenDestinyGuiRequest request);
 }

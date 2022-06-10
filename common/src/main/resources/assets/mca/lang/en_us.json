@@ -36,6 +36,9 @@
 
   "item.mca.matchmakers_ring": "Matchmaker's Ring",
 
+  "item.mca.needle_and_thread": "Needle and Thread",
+  "item.mca.needle_and_thread.tooltip": "Right-click to change your appearance.",
+
   "item.mca.baby_boy": "Unnamed Baby Boy",
   "item.mca.baby_boy.blanket": "Empty Blanket",
   "item.mca.baby_boy.named": "Little %s (Male)",

@@ -18,6 +18,6 @@ public class AnalysisResults implements Message {
 
     @Override
     public void receive() {
-        ClientProxy.getNetworkHandler().handleAnalysisResults(this);
+        ClientProxy.getNetworkHandler().handleSkinListResponse(this);
     }
 }

@@ -18,7 +18,7 @@ public class SkinListResponse implements Message {
 
     @Override
     public void receive() {
-        ClientProxy.getNetworkHandler().handleAnalysisResults(this);
+        ClientProxy.getNetworkHandler().handleSkinListResponse(this);
     }
 
     public HashMap<String, ClothingList.Clothing> getClothing() {

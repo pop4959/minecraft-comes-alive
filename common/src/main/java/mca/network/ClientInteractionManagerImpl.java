@@ -53,6 +53,15 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 assert MinecraftClient.getInstance().player != null;
                 client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 break;
+            case NEEDLE_AND_THREAD:
+                assert MinecraftClient.getInstance().player != null;
+                entity = client.world.getEntityById(message.villager);
+                if (entity == null) {
+                    client.setScreen(new NeedleScreen(MinecraftClient.getInstance().player.getUuid()));
+                } else {
+                    client.setScreen(new NeedleScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
+                }
+                break;
             case BABY_NAME:
                 if (client.player != null) {
                     ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);
@@ -136,7 +145,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     }
 
     @Override
-    public void handleAnalysisResults(AnalysisResults message) {
+    public void handleSkinListResponse(AnalysisResults message) {
         InteractScreen.setAnalysis(message.analysis);
     }
 
@@ -178,7 +187,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     }
 
     @Override
-    public void handleAnalysisResults(SkinListResponse message) {
+    public void handleSkinListResponse(SkinListResponse message) {
         Screen screen = client.currentScreen;
         if (screen instanceof VillagerEditorScreen gui) {
             gui.setSkinList(message.getClothing(), message.getHair());

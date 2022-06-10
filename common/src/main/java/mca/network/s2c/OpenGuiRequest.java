@@ -40,6 +40,8 @@ public class OpenGuiRequest implements Message {
         VILLAGER_EDITOR,
         BOOK,
         FAMILY_TREE,
-        CLOSE
+        NEEDLE_AND_THREAD,
+        COMB,
+        CLOSE,
     }
 }

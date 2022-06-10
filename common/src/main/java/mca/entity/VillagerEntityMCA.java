@@ -393,10 +393,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
     }
 
-    @Override
+    public boolean canInteractWithItemStackInHand(ItemStack stack) {
+        return stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get() && stack.getItem() != ItemsMCA.NEEDLE_AND_THREAD.get();
+    }
+
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get()) {
+        if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && canInteractWithItemStackInHand(stack)) {
             if (!getVillagerBrain().isPanicking()) {
                 playWelcomeSound();
 
@@ -418,7 +421,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get() && !getVillagerBrain().isPanicking()) {
+        if (canInteractWithItemStackInHand(stack) && !getVillagerBrain().isPanicking()) {
             return super.interactMob(player, hand);
         } else {
             return ActionResult.PASS;
