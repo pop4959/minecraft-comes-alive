@@ -19,6 +19,9 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -35,6 +38,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.village.VillagerProfession;
+import net.minecraft.world.BlockView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -298,6 +302,7 @@ public class Village implements Iterable<Building> {
             spawnGuards(world);
             procreate(world);
             marry(world);
+            inn(world);
         }
     }
 
@@ -453,6 +458,39 @@ public class Village implements Iterable<Building> {
                         broadCastMessage(world, "events.marry", suitor, mate);
                     }
                 });
+    }
+
+    private void inn(ServerWorld world) {
+        getBuildingsOfType("inn").forEach((b) -> {
+            if (world.random.nextFloat() < Config.getInstance().adventurerAtInnChance / 100f) {
+                List<BlockPos> values = new ArrayList<>(b.getBlocks().values().stream().flatMap(Collection::stream).toList());
+                Collections.shuffle(values);
+                for (BlockPos p : values) {
+                    if (trySpawnAdventurer(world, p.up())) {
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean doesNotSuffocateAt(BlockView world, BlockPos pos) {
+        for (BlockPos blockPos : BlockPos.iterate(pos, pos.up())) {
+            if (world.getBlockState(blockPos).getCollisionShape(world, blockPos).isEmpty()) continue;
+            return false;
+        }
+        return true;
+    }
+
+    private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
+        if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
+            WanderingTraderEntity wanderingTraderEntity = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
+            if (wanderingTraderEntity != null) {
+                wanderingTraderEntity.setDespawnDelay(48000);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA suitor, VillagerEntityMCA mate) {

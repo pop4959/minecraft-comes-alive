@@ -283,6 +283,7 @@
 
 # 7.3.1
 
+* Traders now spawn in Inns
 * Added comb to modify the hairstyle of villagers and players
 * Added needle and thread to modify clothes of villagers and players
 * Fixed advancements and book rewards
