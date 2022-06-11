@@ -88,7 +88,7 @@
     },
     {
       "name": "procreate",
-      "constraints": "spouse",
+      "constraints": "spouse,adult",
       "results": [
         {
           "actions": {
