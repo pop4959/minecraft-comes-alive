@@ -87,7 +87,7 @@ public interface Messenger extends EntityWrapper {
             message = new TranslatableText(API.getRandomSentence("baby", message.getString()));
         }
 
-        receiver.sendSystemMessage(new LiteralText(Config.getInstance().villagerChatPrefix).append(asEntity().getDisplayName()).append(": ").append(message), receiver.getUuid());
+        receiver.sendSystemMessage(new LiteralText(Config.getInstance().villagerChatPrefix).append(asEntity().getDisplayName()).append(": ").append(message), this.asEntity().getUuid());
 
         playSpeechEffect();
     }
