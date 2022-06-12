@@ -299,3 +299,4 @@
 # 7.3.2
 
 * Added Adventurers
+* Villager now chooses the best equipment

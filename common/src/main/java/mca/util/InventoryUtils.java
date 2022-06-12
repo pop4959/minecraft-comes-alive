@@ -77,14 +77,14 @@ public interface InventoryUtils {
                 .filter(s -> s.getItem() instanceof ArmorItem)
                 .map(s -> (ArmorItem)s.getItem())
                 .filter(a -> a.getSlotType() == slot)
-                .min(Comparator.comparingDouble(ArmorItem::getProtection));
+                .max(Comparator.comparingDouble(ArmorItem::getProtection));
     }
 
     static Optional<SwordItem> getBestSword(Inventory inv) {
         return stream(inv)
                 .filter(s -> s.getItem() instanceof SwordItem)
                 .map(s -> (SwordItem)s.getItem())
-                .min(Comparator.comparingDouble(SwordItem::getAttackDamage));
+                .max(Comparator.comparingDouble(SwordItem::getAttackDamage));
     }
 
     static void dropAllItems(Entity entity, Inventory inv) {
