@@ -103,6 +103,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private static final CDataManager<VillagerEntityMCA> DATA = createTrackedData(VillagerEntityMCA.class).build();
     private boolean usePlayerSkin;
 
+    private int despawnDelay;
+
     @Override
     public boolean usePlayerSkin() {
         return usePlayerSkin;
@@ -253,7 +255,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public boolean isProfessionImportant() {
-        return getProfession() == ProfessionsMCA.ARCHER.get() || getProfession() == ProfessionsMCA.GUARD.get() || getProfession() == ProfessionsMCA.OUTLAW.get();
+        return ProfessionsMCA.isImportant.contains(getProfession());
     }
 
     @Override
@@ -583,6 +585,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     }
                 }
             }
+
+            tickDespawnDelay();
 
             residency.tick();
 
@@ -1182,6 +1186,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         inventory.clear();
         InventoryUtils.readFromNBT(inventory, nbt);
 
+        if (nbt.contains("DespawnDelay")) {
+            this.despawnDelay = nbt.getInt("DespawnDelay");
+        }
+
         validateClothes();
     }
 
@@ -1191,6 +1199,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         getTypeDataManager().save(this, nbt);
         relations.writeToNbt(nbt);
         longTermMemory.writeToNbt(nbt);
+        nbt.putInt("DespawnDelay", this.despawnDelay);
         InventoryUtils.saveToNBT(inventory, nbt);
     }
 
@@ -1278,5 +1287,20 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public static DefaultAttributeContainer.Builder createVillagerAttributes() {
         return VillagerEntity.createVillagerAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, Config.getInstance().villagerMaxHealth);
+    }
+
+    private void tickDespawnDelay() {
+        //todo adventurers with 20+ hearts stay
+        if (this.despawnDelay > 0 && !this.hasCustomer() && --this.despawnDelay == 0) {
+            this.discard();
+        }
+    }
+
+    public void setDespawnDelay(int despawnDelay) {
+        this.despawnDelay = despawnDelay;
+    }
+
+    public boolean requiresHome() {
+        return getProfession() != ProfessionsMCA.ADVENTURER.get();
     }
 }

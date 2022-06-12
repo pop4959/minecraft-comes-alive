@@ -5,6 +5,14 @@
     {
       "results": [
         {
+          "baseChance": 10000,
+          "constraints": "adventurer",
+          "conditions": [],
+          "actions": {
+            "next": "main"
+          }
+        },
+        {
           "baseChance": 0,
           "constraints": "peasant",
           "conditions": [

@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
 public class FollowTask extends Task<VillagerEntityMCA> {
+    private long coolDown = 0;
 
     public FollowTask() {
         super(ImmutableMap.of(

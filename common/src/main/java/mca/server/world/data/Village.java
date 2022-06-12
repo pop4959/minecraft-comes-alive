@@ -4,7 +4,7 @@ import mca.Config;
 import mca.entity.EquipmentSet;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
-import mca.entity.ai.ProfessionsMCA;
+import mca.ProfessionsMCA;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.resources.API;
@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 
 public class Village implements Iterable<Building> {
 
-    private static final int MOVE_IN_COOLDOWN = 1200;
+    private static final int MOVE_IN_COOLDOWN = 120; //todo
     private static final int MAX_STORAGE_SIZE = 1024;
 
     public final static int BORDER_MARGIN = 32;
@@ -198,6 +198,10 @@ public class Village implements Iterable<Building> {
 
     public int getId() {
         return id;
+    }
+
+    public boolean hasSpace() {
+        return getPopulation() < getMaxPopulation();
     }
 
     public int getPopulation() {
@@ -484,10 +488,19 @@ public class Village implements Iterable<Building> {
 
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
         if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
-            WanderingTraderEntity wanderingTraderEntity = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
-            if (wanderingTraderEntity != null) {
-                wanderingTraderEntity.setDespawnDelay(48000);
-                return true;
+            if (world.random.nextBoolean()) {
+                WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
+                if (trader != null) {
+                    trader.setDespawnDelay(48000);
+                    return true;
+                }
+            } else {
+                VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
+                if (adventurer != null) {
+                    adventurer.setProfession(ProfessionsMCA.ADVENTURER.get());
+                    adventurer.setDespawnDelay(48000);
+                    return true;
+                }
             }
         }
         return false;

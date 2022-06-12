@@ -3,14 +3,18 @@ package mca.client.gui;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.MoveState;
-import mca.entity.ai.ProfessionsMCA;
+import mca.ProfessionsMCA;
 import mca.entity.ai.Relationship;
 import mca.entity.ai.relationship.AgeState;
 import mca.resources.Rank;
 import mca.resources.Tasks;
+import mca.server.world.data.PlayerSaveData;
+import mca.server.world.data.Village;
+import mca.server.world.data.VillageManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.village.VillagerProfession;
 
 import java.util.*;
@@ -41,6 +45,9 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     CLERIC("cleric", (villager, player) -> villager.getVillagerData().getProfession() == VillagerProfession.CLERIC),
     NOT_CLERIC("!cleric", (villager, player) -> villager.getVillagerData().getProfession() != VillagerProfession.CLERIC),
 
+    ADVENTURER("adventurer", (villager, player) -> villager.getVillagerData().getProfession() == ProfessionsMCA.ADVENTURER.get()),
+    NOT_ADVENTURER("!adventurer", (villager, player) -> villager.getVillagerData().getProfession() != ProfessionsMCA.ADVENTURER.get()),
+
     OUTLAWED("outlawed", (villager, player) -> villager.getVillagerData().getProfession() == ProfessionsMCA.OUTLAW.get()),
     NOT_OUTLAWED("!outlawed", (villager, player) -> villager.getVillagerData().getProfession() != ProfessionsMCA.OUTLAW.get()),
 
@@ -67,6 +74,9 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
 
     STAYING("staying", (villager, player) -> villager.getVillagerBrain().getMoveState() == MoveState.STAY),
     NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY),
+
+    VILLAGE_HAS_SPACE("village_has_space", (villager, player) -> PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isPresent()),
+    NOT_VILLAGE_HAS_SPACE("!village_has_space", (villager, player) -> PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isEmpty()),
 
     SMALL_BOUNTY("small_bounty", (villager, player) -> {
         if (villager instanceof VillagerEntityMCA v) {

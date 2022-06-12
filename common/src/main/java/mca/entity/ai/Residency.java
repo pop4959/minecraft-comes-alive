@@ -1,5 +1,6 @@
 package mca.entity.ai;
 
+import mca.ProfessionsMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.server.world.data.Building;
 import mca.server.world.data.GraveyardManager;
@@ -98,6 +99,10 @@ public class Residency {
     }
 
     public void tick() {
+        if (!entity.requiresHome()) {
+            return;
+        }
+
         if (entity.age % 600 == 0) {
             if (getHomeVillage().filter(v -> !v.isAutoScan()).isEmpty()) {
                 reportBuildings();

@@ -1,0 +1,35 @@
+{
+  "silent": true,
+  "answers": [
+    {
+      "name": "short",
+      "results": [
+        {
+          "actions": {
+            "command": "hire_short"
+          }
+        }
+      ]
+    },
+    {
+      "name": "long",
+      "results": [
+        {
+          "actions": {
+            "command": "hire_long"
+          }
+        }
+      ]
+    },
+    {
+      "name": "cancel",
+      "results": [
+        {
+          "actions": {
+            "next": "main"
+          }
+        }
+      ]
+    }
+  ]
+}

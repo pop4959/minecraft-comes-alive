@@ -9,7 +9,7 @@ import mca.entity.EquipmentSet;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.ActivityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.entity.ai.ProfessionsMCA;
+import mca.ProfessionsMCA;
 import mca.entity.ai.SchedulesMCA;
 import mca.entity.ai.brain.tasks.*;
 import mca.entity.ai.brain.tasks.chore.ChoppingTask;
@@ -93,7 +93,15 @@ public class VillagerTasksMCA {
         VillagerProfession profession = villager.getVillagerData().getProfession();
         AgeState age = AgeState.byCurrentAge(villager.getBreedingAge());
 
-        if (age == AgeState.BABY) {
+        boolean noDefault = false;
+
+        if (profession == ProfessionsMCA.ADVENTURER.get()) {
+            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
+            brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage(profession, 0.5F));
+            noDefault = true;
+        } else if (age == AgeState.BABY) {
             brain.setSchedule(Schedule.VILLAGER_BABY);
             //todo babies may get a little bit more AI
             return brain;
@@ -118,15 +126,17 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.RAID, VillagerTasksMCA.getRaidPackage(profession, 0.5F));
         }
 
-        brain.setTaskList(Activity.CORE, VillagerTasksMCA.getCorePackage(profession, 0.5F));
-        brain.setTaskList(Activity.MEET, VillagerTasksMCA.getMeetPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryModuleState.VALUE_PRESENT)));
-        brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(profession, 0.5F));
-        brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getIdlePackage(profession, 0.5F));
-        brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
-        brain.setTaskList(Activity.PRE_RAID, VillagerTasksMCA.getPreRaidPackage(profession, 0.5F));
-        brain.setTaskList(Activity.HIDE, VillagerTasksMCA.getHidePackage(profession, 0.5F));
-        brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage(profession, 0.5F));
-        brain.setTaskList(ActivityMCA.GRIEVE.get(), VillagerTasksMCA.getGrievingPackage());
+        if (!noDefault) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getCorePackage(profession, 0.5F));
+            brain.setTaskList(Activity.MEET, VillagerTasksMCA.getMeetPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryModuleState.VALUE_PRESENT)));
+            brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(profession, 0.5F));
+            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getIdlePackage(profession, 0.5F));
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
+            brain.setTaskList(Activity.PRE_RAID, VillagerTasksMCA.getPreRaidPackage(profession, 0.5F));
+            brain.setTaskList(Activity.HIDE, VillagerTasksMCA.getHidePackage(profession, 0.5F));
+            brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage(profession, 0.5F));
+            brain.setTaskList(ActivityMCA.GRIEVE.get(), VillagerTasksMCA.getGrievingPackage());
+        }
 
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
@@ -443,6 +453,17 @@ public class VillagerTasksMCA {
                 Pair.of(0, new FishingTask()),
                 Pair.of(0, new HarvestingTask()),
                 Pair.of(0, new HuntingTask())
+        );
+    }
+
+    private static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getAdventurerPackage(float speedModifier) {
+        return ImmutableList.of(
+                Pair.of(5, FindEntityTask.create(EntitiesMCA.FEMALE_VILLAGER.get(), 8, MemoryModuleType.INTERACTION_TARGET, speedModifier, 2)),
+                Pair.of(5, FindEntityTask.create(EntitiesMCA.MALE_VILLAGER.get(), 8, MemoryModuleType.INTERACTION_TARGET, speedModifier, 2)),
+                Pair.of(5, FindEntityTask.create(EntityType.CAT, 8, MemoryModuleType.INTERACTION_TARGET, speedModifier, 2)),
+                Pair.of(5, new FindWalkTargetTask(speedModifier)),
+                Pair.of(5, new GoTowardsLookTarget(speedModifier, 2)),
+                Pair.of(5, new EnterBuildingTask("inn", 0.5f))
         );
     }
 

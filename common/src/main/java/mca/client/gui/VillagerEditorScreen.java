@@ -11,7 +11,7 @@ import mca.entity.Infectable;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Memories;
-import mca.entity.ai.ProfessionsMCA;
+import mca.ProfessionsMCA;
 import mca.entity.ai.Traits;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;

@@ -2,6 +2,67 @@
   "silent": true,
   "answers": [
     {
+      "name": "hire",
+      "constraints": "adventurer",
+      "results": [
+        {
+          "actions": {
+            "next": "hire"
+          }
+        }
+      ]
+    },
+    {
+      "name": "stay",
+      "constraints": "adventurer",
+      "results": [
+        {
+          "baseChance": 10,
+          "conditions": [
+            {
+              "chance": 100,
+              "hearts": {
+                "add": 0.0,
+                "max": 1.0,
+                "dividend": 100
+              }
+            }
+          ],
+          "actions": {
+            "next": "stay.success",
+            "command": "stay_in_village"
+          }
+        },
+        {
+          "baseChance": 10,
+          "conditions": [
+            {
+              "chance": 10000,
+              "memory": {
+                "id": "asked_to_stay",
+                "var": "player",
+                "dividend": 1.0
+              }
+            }
+          ],
+          "actions": {
+            "next": "stay.fail",
+            "remember": {
+              "id": "asked_to_stay",
+              "var": "player"
+            }
+          }
+        },
+        {
+          "baseChance": 100000,
+          "constraints": "!village_has_space",
+          "actions": {
+            "next": "stay.no_space"
+          }
+        }
+      ]
+    },
+    {
       "name": "apologize",
       "constraints": "small_bounty",
       "results": [

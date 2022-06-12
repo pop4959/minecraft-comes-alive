@@ -1,9 +1,9 @@
-package mca.entity.ai;
+package mca;
 
 import com.google.common.collect.ImmutableSet;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
-import mca.MCA;
+import mca.entity.ai.PointOfInterestTypeMCA;
 import mca.mixin.MixinVillagerProfession;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -21,12 +21,14 @@ import java.util.Set;
 public interface ProfessionsMCA {
     DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(MCA.MOD_ID, Registry.VILLAGER_PROFESSION_KEY);
 
-    RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
-    RegistrySupplier<VillagerProfession> GUARD = register("guard", false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
-    RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
+    RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
+    RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     // VillagerProfession JEWELER = register("jeweler", PointOfInterestTypeMCA.JEWELER, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
 
     Set<VillagerProfession> canNotTrade = new HashSet<>();
+    Set<VillagerProfession> isImportant = new HashSet<>();
 
     static void bootstrap() {
         PROFESSIONS.register();
@@ -34,13 +36,15 @@ public interface ProfessionsMCA {
 
         canNotTrade.add(VillagerProfession.NONE);
         canNotTrade.add(VillagerProfession.NITWIT);
+
+        TradeOffersMCA.bootstrap();
     }
 
-    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, PointOfInterestType workStation, @Nullable SoundEvent workSound) {
-        return register(name, canTradeWith, workStation, ImmutableSet.of(), ImmutableSet.of(), workSound);
+    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, PointOfInterestType workStation, @Nullable SoundEvent workSound) {
+        return register(name, canTradeWith, important, workStation, ImmutableSet.of(), ImmutableSet.of(), workSound);
     }
 
-    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, PointOfInterestType workStation, ImmutableSet<Item> gatherableItems, ImmutableSet<Block> secondaryJobSites, @Nullable SoundEvent workSound) {
+    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, PointOfInterestType workStation, ImmutableSet<Item> gatherableItems, ImmutableSet<Block> secondaryJobSites, @Nullable SoundEvent workSound) {
         Identifier id = new Identifier(MCA.MOD_ID, name);
         return PROFESSIONS.register(id, () -> {
             VillagerProfession result = MixinVillagerProfession.init(
@@ -48,6 +52,9 @@ public interface ProfessionsMCA {
             );
             if (!canTradeWith) {
                 canNotTrade.add(result);
+            }
+            if (important) {
+                isImportant.add(result);
             }
             return result;
         });

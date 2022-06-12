@@ -6,7 +6,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import mca.MCA;
 import mca.entity.ai.ActivityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
-import mca.entity.ai.ProfessionsMCA;
+import mca.ProfessionsMCA;
 import mca.entity.ai.SchedulesMCA;
 import mca.entity.ai.relationship.Gender;
 import net.minecraft.entity.EntityType;

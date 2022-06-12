@@ -1,5 +1,7 @@
 package mca.entity.interaction;
 
+import mca.Config;
+import mca.ProfessionsMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.*;
@@ -32,7 +34,7 @@ import java.util.Comparator;
 import java.util.Optional;
 
 public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityMCA> {
-    private static final String[] structures = new String[]{
+    private static final String[] structures = new String[] {
             "igloo",
             "pyramid",
             "ruined_portal_desert",
@@ -106,7 +108,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     entity.stopRiding();
                 } else {
                     entity.world.getOtherEntities(player, player.getBoundingBox()
-                                    .expand(10), e -> e instanceof Saddleable && ((Saddleable) e).isSaddled())
+                                    .expand(10), e -> e instanceof Saddleable && ((Saddleable)e).isSaddled())
                             .stream()
                             .filter(horse -> !horse.hasPassengers())
                             .min(Comparator.comparingDouble(a -> a.squaredDistanceTo(entity))).ifPresentOrElse(horse -> {
@@ -153,7 +155,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 parentSpouse.ifPresent(p -> entity.getRelationships().getFamilyEntry().assignParent(p));
             }
             case "procreate" -> {
-                BabyTracker tracker = BabyTracker.get((ServerWorld) entity.world);
+                BabyTracker tracker = BabyTracker.get((ServerWorld)entity.world);
                 if (tracker.hasActiveBaby(player.getUuid(), entity.getUuid())) {
                     BabyTracker.Pairing pairing = tracker.getPairing(player.getUuid(), entity.getUuid());
 
@@ -197,6 +199,21 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "pardon" -> {
                 entity.setProfession(VillagerProfession.NONE);
+                return true;
+            }
+            case "stay_in_village" -> {
+                entity.setProfession(VillagerProfession.NONE);
+                entity.setDespawnDelay(0);
+                return true;
+            }
+            case "hire_short" -> {
+                //todo
+                entity.setDespawnDelay(24000 * 3);
+                return true;
+            }
+            case "hire_long" -> {
+                //todo
+                entity.setDespawnDelay(24000 * 7);
                 return true;
             }
             case "infected" -> {
