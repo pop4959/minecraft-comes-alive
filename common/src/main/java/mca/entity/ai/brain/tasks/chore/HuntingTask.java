@@ -81,6 +81,7 @@ public class HuntingTask extends AbstractChoreTask {
                 if (villager.world.random.nextFloat() >= 0.0D) {
                     villager.world.getNonSpectatingEntities(AnimalEntity.class, villager.getBoundingBox().expand(15, 3, 15)).stream()
                             .filter((a) -> !(a instanceof TameableEntity))
+                            .filter((a) -> !a.isBaby())
                             .min(Comparator.comparingDouble(villager::squaredDistanceTo))
                             .ifPresent(animal -> {
                                 target = animal;
