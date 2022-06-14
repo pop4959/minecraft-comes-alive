@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import static mca.client.model.CommonVillagerModel.getVillager;
 
 public class FaceLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends VillagerLayer<T, M> {
+    private static final int FACE_COUNT = 21;
 
     private final String variant;
 
@@ -28,8 +29,7 @@ public class FaceLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
 
     @Override
     protected Identifier getSkin(T villager) {
-        int totalFaces = 11;
-        int index = (int) Math.min(totalFaces - 1, Math.max(0, getVillager(villager).getGenetics().getGene(Genetics.FACE) * totalFaces));
+        int index = (int) Math.min(FACE_COUNT - 1, Math.max(0, getVillager(villager).getGenetics().getGene(Genetics.FACE) * FACE_COUNT));
         int time = villager.age / 2 + (int) (getVillager(villager).getGenetics().getGene(Genetics.HEMOGLOBIN) * 65536);
         boolean blink = time % 50 == 1 || time % 57 == 1 || villager.isSleeping() || villager.isDead();
         boolean hasHeterochromia = variant.equals("normal") && getVillager(villager).getTraits().hasTrait(Traits.Trait.HETEROCHROMIA);
