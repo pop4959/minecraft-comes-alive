@@ -69,7 +69,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
         }
 
         // decrease interaction fatigue
-        if (entity.age % Config.getInstance().interactionFatigueCooldown == 0) {
+        if (entity.age % Math.max(1, Config.getInstance().interactionFatigueCooldown) == 0) {
             NbtCompound nbt = entity.getTrackedValue(MEMORIES);
             if (nbt != null) {
                 for (String uuid : nbt.getKeys()) {
