@@ -64,6 +64,7 @@ public final class MCAForgeClient {
 
         BlockEntityRendererFactories.register(BlockEntityTypesMCA.TOMBSTONE.get(), TombstoneBlockEntityRenderer::new);
 
+        // todo java.util.ConcurrentModificationException occurred in computeIfAbsent
         ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
                 BabyItem.hasBeenInvalidated(stack) ? 1 : 0
         );
