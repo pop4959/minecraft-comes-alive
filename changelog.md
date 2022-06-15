@@ -300,3 +300,4 @@
 
 * Added Adventurers
 * Villager now chooses the best equipment
+* Added more eye variants
