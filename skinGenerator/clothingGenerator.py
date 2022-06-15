@@ -58,7 +58,7 @@ def convert_to_burnt(skin_file: str):
     # burnt effect
     burnt_tex_rolled = np.roll(burn_tex, int(r * 64), axis=0)
     burnt_tex_rolled = np.roll(burnt_tex_rolled, int(r * 64), axis=1)
-    alpha = np.stack((burnt_tex_rolled[:, :, 3] * img[:, :, 3],) * 3, axis=2)
+    alpha = np.stack((burnt_tex_rolled[:, :, 3] * img[:, :, 3],) * 3, axis=2) ** 1.5
     result[:, :, 0:3] *= 1.0 - alpha
     result[:, :, 0:3] += burnt_tex_rolled[:, :, 0:3] * alpha
 
