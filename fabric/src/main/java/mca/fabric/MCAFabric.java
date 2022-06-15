@@ -14,7 +14,7 @@ import mca.server.command.AdminCommand;
 import mca.server.command.Command;
 import mca.server.world.data.VillageManager;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -54,7 +54,7 @@ public final class MCAFabric implements ModInitializer {
                 ServerInteractionManager.getInstance().onPlayerJoin(handler.player)
         );
 
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             AdminCommand.register(dispatcher);
             Command.register(dispatcher);
         });

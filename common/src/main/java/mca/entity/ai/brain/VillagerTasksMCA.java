@@ -161,17 +161,17 @@ public class VillagerTasksMCA {
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(3, new InteractTask(speedModifier)),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
-                Pair.of(10, new FindPointOfInterestTask(PointOfInterestTypes.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
+                Pair.of(10, new FindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
         );
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getWorkingCorePackage(VillagerProfession profession, float speedModifier) {
         return ImmutableList.of(
-                Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.getWorkStation(), MemoryModuleType.JOB_SITE)),
-                Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.getWorkStation(), MemoryModuleType.POTENTIAL_JOB_SITE)),
+                Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.heldWorkstation(), MemoryModuleType.JOB_SITE)),
+                Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.heldWorkstation(), MemoryModuleType.POTENTIAL_JOB_SITE)),
                 Pair.of(2, new WorkStationCompetitionTask(profession)),
                 Pair.of(3, new FollowCustomerTask(speedModifier)),
-                Pair.of(6, new FindPointOfInterestTask(profession.getWorkStation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
+                Pair.of(6, new FindPointOfInterestTask(profession.heldWorkstation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
                 Pair.of(7, new WalkTowardJobSiteTask(speedModifier)),
                 Pair.of(8, new TakeJobSiteTask(speedModifier)),
                 Pair.of(10, new GoToWorkTask()),
@@ -356,7 +356,7 @@ public class VillagerTasksMCA {
                 Pair.of(10, new FindInteractionTargetTask(EntityType.PLAYER, 4)),
                 Pair.of(2, new VillagerWalkTowardsTask(MemoryModuleType.MEETING_POINT, speedModifier, 6, 100, 200)),
                 Pair.of(3, new GiveGiftsToHeroTask(100)),
-                Pair.of(3, new ForgetCompletedPointOfInterestTask(PointOfInterestTypes.MEETING, MemoryModuleType.MEETING_POINT)),
+                Pair.of(3, new ForgetCompletedPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT)),
                 Pair.of(3, new CompositeTask<>(
                         ImmutableMap.of(),
                         ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET),

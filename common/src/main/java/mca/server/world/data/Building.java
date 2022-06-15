@@ -172,7 +172,7 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public Stream<BlockPos> findEmptyBed(ServerWorld world) {
         return world.getPointOfInterestStorage().getInSquare(
-                        PointOfInterestTypes.HOME.getCompletionCondition(),
+                        registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME),
                         getCenter(),
                         getPos0().getManhattanDistance(getPos1()),
                         PointOfInterestStorage.OccupationStatus.ANY)

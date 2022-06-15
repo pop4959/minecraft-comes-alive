@@ -182,7 +182,7 @@ public class Residency {
 
         //fetch all near POIs
         Stream<BlockPos> stream = ((ServerWorld)entity.world).getPointOfInterestStorage().getPositions(
-                PointOfInterestType.ALWAYS_TRUE,
+                (type) -> true,
                 (p) -> !manager.cache.contains(p),
                 entity.getBlockPos(),
                 48,
