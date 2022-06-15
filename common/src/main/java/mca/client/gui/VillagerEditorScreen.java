@@ -395,7 +395,11 @@ public class VillagerEditorScreen extends Screen {
                     updateClothingPageWidget();
                 }));
                 addDrawableChild(new ButtonWidget(width / 2 + 32 + 32, y, 128, 20, new TranslatableText("gui.button.done"), b -> {
-                    setPage("body");
+                    if (page.equals("clothing")) {
+                        setPage("body");
+                    } else {
+                        setPage("head");
+                    }
                 }));
                 widgetMasculine = addDrawableChild(new ButtonWidget(width / 2 - 32 - 96 - 64, y, 64, 20, new TranslatableText("gui.villager_editor.masculine"), b -> {
                     filterGender = Gender.MALE;
