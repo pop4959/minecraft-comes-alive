@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import static mca.client.model.CommonVillagerModel.getVillager;
 
 public class FaceLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends VillagerLayer<T, M> {
-    private static final int FACE_COUNT = 21;
+    private static final int FACE_COUNT = 22;
 
     private final String variant;
 
