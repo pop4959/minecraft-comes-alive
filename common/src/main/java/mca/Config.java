@@ -68,6 +68,7 @@ public final class Config implements Serializable {
     public int villagerHealthBonusPerLevel = 5;
     public boolean useSquidwardModels = false;
     public boolean enableBoobs = true;
+    public int burnedClothingTickLength = 3600;
 
     //village behavior
     public int guardSpawnRate = 6;

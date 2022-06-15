@@ -104,10 +104,16 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private boolean usePlayerSkin;
 
     private int despawnDelay;
+    private int burned;
 
     @Override
     public boolean usePlayerSkin() {
         return usePlayerSkin;
+    }
+
+    @Override
+    public boolean isBurned() {
+        return burned > 0;
     }
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
@@ -568,7 +574,16 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void tickMovement() {
         tickHandSwing();
+
         super.tickMovement();
+
+        burned--;
+        if (isOnFire()) {
+            burned = Config.getInstance().burnedClothingTickLength;
+        }
+        if (burned > 0) {
+            spawnBurntParticles();
+        }
 
         if (!world.isClient) {
             if (age % 200 == 0 && getHealth() < getMaxHealth()) {
@@ -578,6 +593,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 if (food.isFood()) {
                     eatFood(world, food);
                 } else {
+                    //noinspection ConstantConditions
                     if (!findAndEquipToMain(i -> i.isFood()
                             && i.getItem().getFoodComponent().getHunger() > 0
                             && i.getItem().getFoodComponent().getStatusEffects().stream().allMatch(e -> e.getFirst().getEffectType().isBeneficial()))) {
@@ -720,6 +736,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public ItemStack eatFood(World world, ItemStack stack) {
         if (stack.isFood()) {
+            //noinspection ConstantConditions
             heal(stack.getItem().getFoodComponent().getHunger() / 4F);
         }
         return super.eatFood(world, stack);

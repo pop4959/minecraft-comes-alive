@@ -1,5 +1,6 @@
 package mca.entity;
 
+import mca.Config;
 import mca.TagsMCA;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Relationship;
@@ -47,6 +48,8 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     private final ZombieCommandHandler interactions = new ZombieCommandHandler(this);
     private final UpdatableInventory inventory = new UpdatableInventory(27);
 
+    private int burned;
+
     public ZombieVillagerEntityMCA(EntityType<? extends ZombieVillagerEntity> type, World world, Gender gender) {
         super(type, world);
         genetics.setGender(gender);
@@ -82,6 +85,11 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     @Override
     public ZombieCommandHandler getInteractions() {
         return interactions;
+    }
+
+    @Override
+    public boolean isBurned() {
+        return burned > 0;
     }
 
     @Override
@@ -164,6 +172,14 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     @Override
     public void tickMovement() {
         super.tickMovement();
+
+        burned--;
+        if (isOnFire()) {
+            burned = Config.getInstance().burnedClothingTickLength;
+        }
+        if (burned > 0) {
+            spawnBurntParticles();
+        }
 
         if (!world.isClient) {
             // Natural regeneration every 10 seconds

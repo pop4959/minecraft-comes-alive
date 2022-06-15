@@ -30,6 +30,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -37,6 +38,7 @@ import net.minecraft.village.VillagerDataContainer;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrackedEntity<E>, VillagerDataContainer, Infectable, Messenger {
@@ -328,5 +330,17 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default boolean usePlayerSkin() {
         return false;
+    }
+
+    boolean isBurned();
+
+    default void spawnBurntParticles() {
+        Random random = asEntity().getRandom();
+        if (random.nextInt(4) == 0) {
+            double d = random.nextGaussian() * 0.02;
+            double e = random.nextGaussian() * 0.02;
+            double f = random.nextGaussian() * 0.02;
+            asEntity().world.addParticle(ParticleTypes.SMOKE, asEntity().getParticleX(1.0), asEntity().getRandomBodyY() + 1.0, asEntity().getParticleZ(1.0), d, e, f);
+        }
     }
 }

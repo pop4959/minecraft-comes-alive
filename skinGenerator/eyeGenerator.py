@@ -15,16 +15,15 @@ def img_load(img_file):
 def convert_to_zombie(skin_file: str):
     image = img_load(skin_file)
 
-    # todo blur and apply
     alpha = image[:, :, 3]
     alpha_blend = gaussian_filter(alpha, 1) * 0.5
 
     img = cv2.cvtColor(image[:, :, 0:3], cv2.COLOR_BGR2HSV).astype(float)
 
     if img[:, :, 0].mean() > 128:
-        img[:, :, 0] = img[:, :, 0] * 0.05 + 180 * 0.95
+        img[:, :, 0] = img[:, :, 0] * 0.1 + 180 * 0.9
     else:
-        img[:, :, 0] = img[:, :, 0] * 0.05
+        img[:, :, 0] = img[:, :, 0] * 0.1
 
     img[:, :, 1] *= 1.5
     img[:, :, 2] *= 0.75

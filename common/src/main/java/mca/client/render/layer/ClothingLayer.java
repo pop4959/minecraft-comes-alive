@@ -8,7 +8,6 @@ import net.minecraft.util.Identifier;
 import static mca.client.model.CommonVillagerModel.getVillager;
 
 public class ClothingLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends VillagerLayer<T, M> {
-
     private final String variant;
 
     public ClothingLayer(FeatureRendererContext<T, M> renderer, M model, String variant) {
@@ -18,15 +17,16 @@ public class ClothingLayer<T extends LivingEntity, M extends BipedEntityModel<T>
 
     @Override
     protected Identifier getSkin(T villager) {
-        return cached(getVillager(villager).getClothes() + variant, clothes -> {
+        String v = getVillager(villager).isBurned() ? "burnt" : variant;
+        return cached(getVillager(villager).getClothes() + v, clothes -> {
             Identifier id = new Identifier(getVillager(villager).getClothes());
 
-            // use it if it's already valid
-            if (canUse(id)) {
-                return id;
+            Identifier idNew = new Identifier(id.getNamespace(), id.getPath().replace("normal", v));
+            if (canUse(idNew)) {
+                return idNew;
             }
 
-            return new Identifier(id.getNamespace(), id.getPath().replace("normal", variant));
+            return id;
         });
     }
 }
