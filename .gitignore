@@ -37,3 +37,4 @@ forge*changelog.txt
 /scripts/topMembers.json
 
 .vscode/
+*.kra

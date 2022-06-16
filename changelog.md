@@ -301,7 +301,11 @@
 * Added support for 1.19
 * Added support for advancements tied to fate
 * Added Adventurers
+    * Spawn twice a day at inns
+    * Despawn after 2 days
+    * Can trade, be hired and asked to stay
 * Villager now chooses the best equipment
 * Added more eye variants
 * Fixed zombies not always using zombie clothing
 * Villager on fire will now burn their clothes
+* The Sirben cult appeared

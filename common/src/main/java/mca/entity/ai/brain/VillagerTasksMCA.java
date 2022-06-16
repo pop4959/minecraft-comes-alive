@@ -97,6 +97,7 @@ public class VillagerTasksMCA {
         boolean noDefault = false;
 
         if (profession == ProfessionsMCA.ADVENTURER.get()) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(profession, 0.5F));
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
@@ -128,6 +129,7 @@ public class VillagerTasksMCA {
         }
 
         if (!noDefault) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(profession, 0.5F));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getCorePackage(profession, 0.5F));
             brain.setTaskList(Activity.MEET, VillagerTasksMCA.getMeetPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryModuleState.VALUE_PRESENT)));
             brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(profession, 0.5F));
@@ -147,19 +149,24 @@ public class VillagerTasksMCA {
         return brain;
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getCorePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getImportantCorePackage(VillagerProfession profession, float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new FollowTask()),
                 Pair.of(0, new StayTask()),
-                Pair.of(0, new GreetPlayerTask()),
                 Pair.of(0, new StayAboveWaterTask(0.8F)),
                 Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
+                Pair.of(1, new WanderOrTeleportToTargetTask()),
+                Pair.of(3, new InteractTask(speedModifier))
+        );
+    }
+
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getCorePackage(VillagerProfession profession, float speedModifier) {
+        return ImmutableList.of(
+                Pair.of(0, new GreetPlayerTask()),
                 Pair.of(0, new WakeUpTask()),
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
-                Pair.of(1, new WanderOrTeleportToTargetTask()),
-                Pair.of(3, new InteractTask(speedModifier)),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
                 Pair.of(10, new FindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
         );

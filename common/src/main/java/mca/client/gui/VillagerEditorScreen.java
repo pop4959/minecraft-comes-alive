@@ -458,7 +458,7 @@ public class VillagerEditorScreen extends Screen {
     }
 
     protected void drawName(int x, int y) {
-        Text villagerName = villager.getName();
+        Text villagerName = villager.getCustomName();
         if (villagerName == null || villagerName.getString().isEmpty()) {
             // Failsafe-conditions for empty names
             if (villagerUUID.equals(playerUUID)) {

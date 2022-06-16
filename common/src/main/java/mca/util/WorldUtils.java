@@ -48,8 +48,8 @@ public interface WorldUtils {
         return world.getPersistentStateManager().getOrCreate(loader, () -> factory.apply(world), dataId);
     }
 
-    static void spawnEntity(World world, Entity entity, SpawnReason reason) {
-        ((MobEntity) entity).initialize((ServerWorldAccess) world, world.getLocalDifficulty(entity.getBlockPos()), reason, null, null);
+    static void spawnEntity(World world, MobEntity entity, SpawnReason reason) {
+        entity.initialize((ServerWorldAccess) world, world.getLocalDifficulty(entity.getBlockPos()), reason, null, null);
         world.spawnEntity(entity);
     }
 
