@@ -7,6 +7,7 @@ import mca.MCA;
 import mca.TagsMCA;
 import mca.block.BlocksMCA;
 import mca.client.book.Book;
+import mca.client.book.pages.CenteredTextPage;
 import mca.client.book.pages.DynamicListPage;
 import mca.client.book.pages.ScribbleTextPage;
 import mca.client.book.pages.TitlePage;
@@ -25,9 +26,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public interface ItemsMCA {
-    
     DeferredRegister<Item> ITEMS = DeferredRegister.create(MCA.MOD_ID, Registry.ITEM_KEY);
-    
+
     RegistrySupplier<Item> MALE_VILLAGER_SPAWN_EGG = register("male_villager_spawn_egg", () -> new ArchitecturySpawnEggItem(EntitiesMCA.MALE_VILLAGER, 0x5e9aff, 0x3366bc, baseProps()));
     RegistrySupplier<Item> FEMALE_VILLAGER_SPAWN_EGG = register("female_villager_spawn_egg", () -> new ArchitecturySpawnEggItem(EntitiesMCA.FEMALE_VILLAGER, 0xe85ca1, 0xe3368c, baseProps()));
 
@@ -102,6 +102,15 @@ public interface ItemsMCA {
             .addPage(new DynamicListPage("mca.books.supporters.old",
                     page -> Supporters.getSupporterGroup("mca:old").stream().map(s -> new LiteralText(s).formatted(Formatting.BLACK)).collect(Collectors.toList())))
             .addPage(new TitlePage("mca.books.supporters.thanks", ""))));
+
+    RegistrySupplier<Item> BOOK_CULT_0 = register("book_cult_0", () -> new ExtendedWrittenBookItem(baseProps(), new Book("cult_0")
+            .setBackground(MCA.locate("textures/gui/books/cult.png"))
+            .setTextFormatting(Formatting.DARK_RED)
+            .addPage(new TitlePage("cult_0", Formatting.DARK_RED))
+            .addPage(new CenteredTextPage("cult_0", 0))
+            .addPage(new CenteredTextPage("cult_0", 1))
+            .addPage(new CenteredTextPage("cult_0", 2))
+            .addPage(new CenteredTextPage("cult_0", 3))));
 
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));

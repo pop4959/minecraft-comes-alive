@@ -20,24 +20,27 @@ public class TextPage extends Page {
         this.content = content;
     }
 
+    protected List<OrderedText> getCachedPage(ExtendedBookScreen screen) {
+        if (cachedPage == null) {
+            StringVisitable stringVisitable = StringVisitable.plain(content);
+            try {
+                stringVisitable = Text.Serializer.fromJson(content);
+            } catch (Exception ignored) {
+            }
+
+            cachedPage = screen.getTextRenderer().wrapLines(stringVisitable, 114);
+        }
+        return cachedPage;
+    }
+
     public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         //prepare page
         if (content != null) {
-            if (cachedPage == null) {
-                StringVisitable stringVisitable = StringVisitable.plain(content);
-                try {
-                    stringVisitable = Text.Serializer.fromJson(content);
-                } catch (Exception ignored) {
-                }
-
-                cachedPage = screen.getTextRenderer().wrapLines(stringVisitable, 114);
-            }
-
             // text
-            int l = Math.min(128 / 9, cachedPage.size());
+            int l = Math.min(128 / 9, getCachedPage(screen).size());
             int i = (screen.width - 192) / 2;
             for (int m = 0; m < l; ++m) {
-                OrderedText orderedText = cachedPage.get(m);
+                OrderedText orderedText = getCachedPage(screen).get(m);
                 float x = i + 36;
                 screen.getTextRenderer().draw(matrices, orderedText, x, (32.0f + m * 9.0f), 0);
             }

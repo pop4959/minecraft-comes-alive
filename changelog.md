@@ -308,3 +308,4 @@
 * Added more eye variants
 * Fixed zombies not always using zombie clothing
 * Villager on fire will now burn their clothes
+* The Sirben cult appeared
