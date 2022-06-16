@@ -11,6 +11,7 @@ public interface CriterionMCA {
     ChildAgeStateChangeCriterion CHILD_AGE_STATE_CHANGE = register(new ChildAgeStateChangeCriterion());
     FamilyCriterion FAMILY = register(new FamilyCriterion());
     RankCriterion RANK = register(new RankCriterion());
+    VillagerFateCriterion FATE = register(new VillagerFateCriterion());
 
     static <T extends Criterion<?>> T register(T obj) {
         return MixinCriteria.register(obj);

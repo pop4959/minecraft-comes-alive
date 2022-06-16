@@ -12,6 +12,8 @@ import mca.entity.ai.relationship.*;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
 import mca.network.c2s.InteractionVillagerMessage;
+import mca.resources.Rank;
+import mca.resources.Tasks;
 import mca.server.world.data.Village;
 import mca.util.InventoryUtils;
 import mca.util.network.datasync.CDataManager;
@@ -836,10 +838,20 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         //this prevents rapid drops in village reputation as well as bounty hunters to know what you did
         Optional<Village> village = residency.getHomeVillage();
         if (village.isPresent()) {
+            ServerWorld servRef = (ServerWorld)world;
             Map<UUID, Memories> memories = mcaBrain.getMemories();
             for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
                 village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
-                village.get().markDirty((ServerWorld)world);
+                village.get().markDirty(servRef);
+            }
+
+            //send all player with rank mayor or above a notification
+            if (cause.getAttacker() != null) {
+                servRef.getPlayers().forEach(player -> {
+                    Rank relationToVillage = Tasks.getRank(village.get(), player);
+                    Identifier causeId = EntityType.getId(cause.getAttacker().getType());
+                    CriterionMCA.FATE.trigger(player, causeId, relationToVillage);
+                });
             }
         }
 

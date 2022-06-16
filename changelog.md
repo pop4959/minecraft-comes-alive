@@ -298,6 +298,8 @@
 
 # 7.3.2
 
+* Added support for 1.19
+* Added support for advancements tied to fate
 * Added Adventurers
 * Villager now chooses the best equipment
 * Added more eye variants
