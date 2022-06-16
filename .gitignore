@@ -35,3 +35,5 @@ forge*changelog.txt
 /logs
 /common/src/main/resources/assets/mca/textures/*.psd
 /scripts/topMembers.json
+
+.vscode/
