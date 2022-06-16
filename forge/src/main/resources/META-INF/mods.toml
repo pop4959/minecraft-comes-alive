@@ -22,12 +22,12 @@ logoFile = "mca.png"
 [[dependencies.mca]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,1.19)"
+    versionRange="[1.19,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.mca]]
     modId="architectury"
     mandatory=true
-    versionRange="[4.1.32,)"
+    versionRange="[5.6.21,)"
     ordering="AFTER"
     side="BOTH"
