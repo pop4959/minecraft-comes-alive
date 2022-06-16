@@ -1219,7 +1219,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             this.despawnDelay = nbt.getInt("DespawnDelay");
         }
 
-        validateClothes();
+        if (nbt.contains("clothes")) {
+            validateClothes();
+        }
     }
 
     @Override
