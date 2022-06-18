@@ -22,8 +22,8 @@ public class DestinyMessage implements Message {
             WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 256).ifPresent(pos -> {
                 player.getWorld().getWorldChunk(pos);
                 pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
-                pos = FuzzyPositionsCompat.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
                 pos = FuzzyPositionsCompat.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
+                pos = FuzzyPositionsCompat.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
                 player.teleport(pos.getX(), pos.getY(), pos.getZ());
                 //todo set world spawn
             });
