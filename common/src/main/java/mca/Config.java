@@ -114,6 +114,8 @@ public final class Config implements Serializable {
     public boolean forceVillagerPlayerModel = false;
     public boolean allowPlayerEditor = true;
 
+    public boolean useModernUSANamesOnly = false;
+
     public Map<String, Integer> guardsTargetEntities = ImmutableMap.<String, Integer>builder()
             .put("minecraft:creeper", -1)
             .put("minecraft:drowned", 2)

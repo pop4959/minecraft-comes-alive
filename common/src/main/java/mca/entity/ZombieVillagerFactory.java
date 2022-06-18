@@ -2,7 +2,7 @@ package mca.entity;
 
 import mca.MCA;
 import mca.entity.ai.relationship.Gender;
-import mca.resources.API;
+import mca.resources.Names;
 import mca.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
@@ -93,7 +93,7 @@ public class ZombieVillagerFactory {
         Gender gender = this.gender.orElseGet(Gender::getRandom);
         ZombieVillagerEntityMCA zombie = gender.getZombieType().create(world);
         zombie.getGenetics().setGender(gender);
-        zombie.setName(name.orElseGet(() -> API.getVillagePool().pickCitizenName(gender)));
+        zombie.setName(name.orElseGet(() -> Names.pickCitizenName(gender, zombie)));
         position.ifPresent(pos -> zombie.updatePosition(pos.getX(), pos.getY(), pos.getZ()));
         VillagerData data = zombie.getVillagerData();
         zombie.setVillagerData(new VillagerData(

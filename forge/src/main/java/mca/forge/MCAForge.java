@@ -41,11 +41,6 @@ public final class MCAForge {
         event.addListener(new GiftLoader());
         event.addListener(new Dialogues());
         event.addListener(new Tasks());
+        event.addListener(new Names());
     }
-
-//    @SubscribeEvent
-//    public static void onCreateEntityAttributes(EntityAttributeCreationEvent event) {
-//        EntitiesMCA.bootstrapAttributes();
-//        RegistrationImpl.ENTITY_ATTRIBUTES.forEach((type, attributes) -> event.put(type, attributes.get().build()));
-//    }
 }

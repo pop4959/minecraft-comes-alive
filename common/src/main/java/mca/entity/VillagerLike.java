@@ -16,9 +16,9 @@ import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.VillagerDimensions;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.entity.interaction.EntityCommandHandler;
-import mca.resources.API;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
+import mca.resources.Names;
 import mca.server.world.data.PlayerSaveData;
 import mca.util.network.datasync.*;
 import net.minecraft.client.MinecraftClient;
@@ -79,7 +79,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
             }
 
             if (Strings.isNullOrEmpty(getTrackedValue(VILLAGER_NAME))) {
-                setName(API.getVillagePool().pickCitizenName(getGenetics().getGender()));
+                setName(Names.pickCitizenName(getGenetics().getGender(), asEntity()));
             }
 
             initializeSkin();

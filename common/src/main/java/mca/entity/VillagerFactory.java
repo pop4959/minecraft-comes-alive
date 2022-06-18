@@ -3,7 +3,7 @@ package mca.entity;
 import mca.MCA;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
-import mca.resources.API;
+import mca.resources.Names;
 import mca.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
@@ -107,9 +107,9 @@ public class VillagerFactory {
         Gender gender = this.gender.orElseGet(Gender::getRandom);
         VillagerEntityMCA villager = gender.getVillagerType().create(world);
         villager.getGenetics().setGender(gender);
-        villager.setName(name.orElseGet(() -> API.getVillagePool().pickCitizenName(gender)));
         villager.setBreedingAge(age.orElseGet(() -> villager.getRandom().nextInt(AgeState.getMaxAge() * 3) - AgeState.getMaxAge()));
         position.ifPresent(pos -> villager.updatePosition(pos.getX(), pos.getY(), pos.getZ()));
+        villager.setName(name.orElseGet(() -> Names.pickCitizenName(gender, villager)));
         VillagerData data = villager.getVillagerData();
         villager.setVillagerData(new VillagerData(
                 type.orElseGet(data::getType),

@@ -109,6 +109,7 @@ public interface ItemsMCA {
             .addPage(new TitlePage("cult_0", Formatting.DARK_RED))
             .addPage(new CenteredTextPage("cult_0", 0))
             .addPage(new CenteredTextPage("cult_0", 1))
+            .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), "cult_0", 3))
             .addPage(new CenteredTextPage("cult_0", 2))
             .addPage(new CenteredTextPage("cult_0", 3))));
 
