@@ -2,6 +2,7 @@ package mca.fabric;
 
 import mca.ParticleTypesMCA;
 import mca.SoundsMCA;
+import mca.TradeOffersMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
 import mca.entity.EntitiesMCA;
@@ -33,6 +34,8 @@ public final class MCAFabric implements ModInitializer {
         EntitiesMCA.bootstrap();
         MessagesMCA.bootstrap();
         CriterionMCA.bootstrap();
+
+        TradeOffersMCA.bootstrap();
 
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new ApiIdentifiableReloadListener());
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new FabricClothingList());
