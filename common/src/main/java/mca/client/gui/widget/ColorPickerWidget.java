@@ -27,8 +27,8 @@ public class ColorPickerWidget extends ClickableWidget {
         super(x, y, width, height, Text.literal(""));
         this.consumer = consumer;
         this.texture = texture;
-        this.valueX = valueX / width;
-        this.valueY = valueY / height;
+        this.valueX = valueX;
+        this.valueY = valueY;
     }
 
     @Override

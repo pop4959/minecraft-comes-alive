@@ -145,6 +145,16 @@ public class BlueprintScreen extends ExtendedScreen {
         }
 
         switch (page) {
+            case "empty":
+                //add building
+                bx = width / 2 - 48;
+                by = height / 2;
+                addDrawableChild(new ButtonWidget(bx, by + 5, 96, 20, Text.translatable("gui.blueprint.addBuilding"), (b) -> {
+                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
+                    NetworkHandler.sendToServer(new GetVillageRequest());
+                    close();
+                }));
+                break;
             case "refresh":
                 NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FULL_SCAN));
                 NetworkHandler.sendToServer(new GetVillageRequest());
@@ -309,7 +319,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.waiting"), width / 2, height / 2, 0xffaaaaaa);
                 break;
             case "empty":
-                drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2, 0xffaaaaaa);
+                drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2 - 20, 0xffaaaaaa);
                 break;
             case "map":
                 renderStats(transform);

@@ -43,8 +43,8 @@ import java.util.function.Supplier;
 import static mca.entity.VillagerLike.VILLAGER_NAME;
 
 public class VillagerEditorScreen extends Screen {
-    private final UUID villagerUUID;
-    private final UUID playerUUID;
+    final UUID villagerUUID;
+    final UUID playerUUID;
     private int villagerBreedingAge;
     protected String page;
     protected final VillagerEntityMCA villager = Objects.requireNonNull(EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world));
@@ -184,12 +184,14 @@ public class VillagerEditorScreen extends Screen {
                 }
 
                 //age
-                addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, Text.translatable("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
-                    villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
-                    villager.setBreedingAge(villagerBreedingAge);
-                    villager.calculateDimensions();
-                }));
-                y += 28;
+                if (!villagerUUID.equals(playerUUID)) {
+                    addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, Text.translatable("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
+                        villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
+                        villager.setBreedingAge(villagerBreedingAge);
+                        villager.calculateDimensions();
+                    }));
+                    y += 28;
+                }
 
                 //relations
                 for (String who : new String[] {"father", "mother", "spouse"}) {
@@ -232,7 +234,6 @@ public class VillagerEditorScreen extends Screen {
                 y += 22;
 
                 //skin color
-                //todo cursor sync issues
                 addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
                         genetics.getGene(Genetics.HEMOGLOBIN),
                         genetics.getGene(Genetics.MELANIN),
@@ -484,8 +485,7 @@ public class VillagerEditorScreen extends Screen {
     void drawGender(int x, int y) {
         genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, Text.translatable("gui.villager_editor.feminine"), sender -> {
             villager.getGenetics().setGender(Gender.FEMALE);
-            sendCommand("clothing");
-            sendCommand("hair");
+            sendCommand("gender");
             genderButtonFemale.active = false;
             genderButtonMale.active = true;
         });
@@ -493,8 +493,7 @@ public class VillagerEditorScreen extends Screen {
 
         genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, Text.translatable("gui.villager_editor.masculine"), sender -> {
             villager.getGenetics().setGender(Gender.MALE);
-            sendCommand("clothing");
-            sendCommand("hair");
+            sendCommand("gender");
             genderButtonFemale.active = true;
             genderButtonMale.active = false;
         });
@@ -566,6 +565,10 @@ public class VillagerEditorScreen extends Screen {
 
     }
 
+    protected boolean shouldUsePlayerModel() {
+        return false;
+    }
+
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
@@ -579,7 +582,12 @@ public class VillagerEditorScreen extends Screen {
         villager.age = (int)(System.currentTimeMillis() / 50L);
 
         if (shouldDrawEntity()) {
-            InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+            if (villagerUUID.equals(playerUUID) && shouldUsePlayerModel()) {
+                assert MinecraftClient.getInstance().player != null;
+                InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, MinecraftClient.getInstance().player);
+            } else {
+                InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+            }
         }
 
         if (page.equals("clothing") || page.equals("hair")) {

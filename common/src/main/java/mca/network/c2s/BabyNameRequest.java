@@ -4,7 +4,7 @@ import mca.cobalt.network.Message;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.Gender;
 import mca.network.s2c.BabyNameResponse;
-import mca.resources.API;
+import mca.resources.Names;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
@@ -21,7 +21,7 @@ public class BabyNameRequest implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        String name = API.getVillagePool().pickCitizenName(gender);
+        String name = Names.pickCitizenName(gender);
         NetworkHandler.sendToPlayer(new BabyNameResponse(name), player);
     }
 }

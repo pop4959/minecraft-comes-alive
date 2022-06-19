@@ -43,47 +43,58 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
         this.uuid = uuid;
     }
 
+    private void setHair(ServerPlayerEntity player, Entity entity) {
+        NbtCompound villagerData = GetVillagerRequest.getVillagerData(entity);
+        if (villagerData != null) {
+            // fetch hair
+            String hair;
+            if (getData().contains("offset")) {
+                hair = HairList.getInstance().getPool(getGender(villagerData)).pickNext(villagerData.getString("hair"), getData().getInt("offset"));
+            } else {
+                hair = HairList.getInstance().getPool(getGender(villagerData)).pickOne();
+            }
+
+            // set
+            villagerData.putString("hair", hair);
+            saveEntity(player, entity, villagerData);
+        }
+    }
+
+    private void setClothing(ServerPlayerEntity player, Entity entity) {
+        NbtCompound villagerData = GetVillagerRequest.getVillagerData(entity);
+        if (villagerData != null) {
+            String clothes = "mca:missing";
+            if (entity instanceof PlayerEntity) {
+                if (getData().contains("offset")) {
+                    clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickNext(villagerData.getString("clothes"), getData().getInt("offset"));
+                } else {
+                    clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickOne();
+                }
+            } else if (entity instanceof VillagerLike<?> villager) {
+                if (getData().contains("offset")) {
+                    clothes = ClothingList.getInstance().getPool(villager).pickNext(villager.getClothes(), getData().getInt("offset"));
+                } else {
+                    clothes = ClothingList.getInstance().getPool(villager).pickOne();
+                }
+            }
+            villagerData.putString("clothes", clothes);
+            saveEntity(player, entity, villagerData);
+        }
+    }
+
     @Override
     public void receive(ServerPlayerEntity player) {
         Entity entity = player.getWorld().getEntity(uuid);
-        NbtCompound villagerData;
         switch (command) {
             case "hair":
-                villagerData = GetVillagerRequest.getVillagerData(entity);
-                if (villagerData != null) {
-                    // fetch hair
-                    String hair;
-                    if (getData().contains("offset")) {
-                        hair = HairList.getInstance().getPool(getGender(villagerData)).pickNext(villagerData.getString("hair"), getData().getInt("offset"));
-                    } else {
-                        hair = HairList.getInstance().getPool(getGender(villagerData)).pickOne();
-                    }
-
-                    // set
-                    villagerData.putString("hair", hair);
-                    saveEntity(player, entity, villagerData);
-                }
+                setHair(player, entity);
                 break;
             case "clothing":
-                villagerData = GetVillagerRequest.getVillagerData(entity);
-                if (villagerData != null) {
-                    String clothes = "mca:missing";
-                    if (entity instanceof PlayerEntity) {
-                        if (getData().contains("offset")) {
-                            clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickNext(villagerData.getString("clothes"), getData().getInt("offset"));
-                        } else {
-                            clothes = ClothingList.getInstance().getPool(getGender(villagerData), VillagerProfession.NONE).pickOne();
-                        }
-                    } else if (entity instanceof VillagerLike<?> villager) {
-                        if (getData().contains("offset")) {
-                            clothes = ClothingList.getInstance().getPool(villager).pickNext(villager.getClothes(), getData().getInt("offset"));
-                        } else {
-                            clothes = ClothingList.getInstance().getPool(villager).pickOne();
-                        }
-                    }
-                    villagerData.putString("clothes", clothes);
-                    saveEntity(player, entity, villagerData);
-                }
+                setClothing(player, entity);
+                break;
+            case "gender":
+                setHair(player, entity);
+                setClothing(player, entity);
                 break;
             case "sync":
                 saveEntity(player, entity, getData());

@@ -309,3 +309,8 @@
 * Fixed zombies not always using zombie clothing
 * Villager on fire will now burn their clothes
 * The Sirben cult appeared
+* Added 50.000 names from 55 different countries
+    * Config option available to use modern USA names only
+* Destiny now sets spawn location
+* The /mca editor has been replaced by a limited version (configurable) to prefer comb and needle and string items
+* You can now start a village without villagers using the blueprint

@@ -38,6 +38,7 @@ public class OpenGuiRequest implements Message {
         BLUEPRINT,
         INTERACT,
         VILLAGER_EDITOR,
+        LIMITED_VILLAGER_EDITOR,
         BOOK,
         FAMILY_TREE,
         NEEDLE_AND_THREAD,

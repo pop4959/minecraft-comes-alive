@@ -7,7 +7,6 @@ import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.MarriageState;
 import mca.network.s2c.OpenDestinyGuiRequest;
-import mca.network.s2c.OpenGuiRequest;
 import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
 import mca.server.world.data.PlayerSaveData;
@@ -69,7 +68,7 @@ public class ServerInteractionManager {
                         "server.destinyNotSet.title",
                         "server.destinyNotSet.description"
                 ), player);
-            } else if (Config.getInstance().allowPlayerEditor) {
+            } else if (Config.getInstance().allowFullPlayerEditor) {
                 NetworkHandler.sendToPlayer(new ShowToastRequest(
                         "server.playerNotCustomized.title",
                         "server.playerNotCustomized.description"

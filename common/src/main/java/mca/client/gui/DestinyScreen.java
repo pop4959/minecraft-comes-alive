@@ -21,6 +21,7 @@ public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
     private LinkedList<Text> story;
     private String location;
+    private boolean teleported = false;
 
     private final boolean allowTeleportation;
     private final boolean allowPlayerModel;
@@ -144,11 +145,14 @@ public class DestinyScreen extends VillagerEditorScreen {
                 }
             }
             case "story" -> addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, Text.translatable("gui.destiny.next"), sender -> {
-                NetworkHandler.sendToServer(new DestinyMessage(location));
+                //we teleport early here to avoid initial flickering
+                if (!teleported) {
+                    NetworkHandler.sendToServer(new DestinyMessage(location));
+                    teleported = true;
+                }
                 if (story.size() > 1) {
                     story.remove(0);
                 } else {
-                    NetworkHandler.sendToServer(new DestinyMessage(location));
                     super.close();
                 }
             }));

@@ -27,6 +27,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleGuiRequest(OpenGuiRequest message) {
         Entity entity;
         assert client.world != null;
+        assert MinecraftClient.getInstance().player != null;
         switch (message.gui) {
             case WHISTLE:
                 client.setScreen(new WhistleScreen());
@@ -50,11 +51,14 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
             case VILLAGER_EDITOR:
                 entity = client.world.getEntityById(message.villager);
                 assert entity != null;
-                assert MinecraftClient.getInstance().player != null;
                 client.setScreen(new VillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
                 break;
+            case LIMITED_VILLAGER_EDITOR:
+                entity = client.world.getEntityById(message.villager);
+                assert entity != null;
+                client.setScreen(new LimitedVillagerEditorScreen(entity.getUuid(), MinecraftClient.getInstance().player.getUuid()));
+                break;
             case NEEDLE_AND_THREAD:
-                assert MinecraftClient.getInstance().player != null;
                 entity = client.world.getEntityById(message.villager);
                 if (entity == null) {
                     client.setScreen(new NeedleScreen(MinecraftClient.getInstance().player.getUuid()));
@@ -63,7 +67,6 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 }
                 break;
             case COMB:
-                assert MinecraftClient.getInstance().player != null;
                 entity = client.world.getEntityById(message.villager);
                 if (entity == null) {
                     client.setScreen(new CombScreen(MinecraftClient.getInstance().player.getUuid()));

@@ -1,11 +1,9 @@
 package mca.resources;
 
-import mca.entity.ai.relationship.Gender;
 import mca.resources.Resources.BrokenResourceException;
 import mca.resources.data.BuildingType;
 import mca.resources.data.NameSet;
 import net.minecraft.util.math.random.Random;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -13,8 +11,6 @@ public class VillageComponents implements Iterable<BuildingType> {
     private final Map<String, BuildingType> buildingTypes = new HashMap<>();
 
     private final Map<String, NameSet> namePool = new HashMap<>();
-
-    private final Map<Gender, WeightedPool<String>> villagerNames = new EnumMap<>(Gender.class);
 
     private final Random rng;
 
@@ -28,29 +24,6 @@ public class VillageComponents implements Iterable<BuildingType> {
         }
 
         namePool.put("village", Resources.read("api/names/village.json", NameSet.class));
-
-        villagerNames.put(Gender.MALE, loadResidentNames("male"));
-        villagerNames.put(Gender.FEMALE, loadResidentNames("female"));
-    }
-
-    WeightedPool<String> loadResidentNames(String gender) throws BrokenResourceException {
-        Map<String, Double> names = Resources.<Map<String, Double>>read("api/names/villager/" + gender + ".json", HashMap.class);
-        WeightedPool.Mutable<String> pool = new WeightedPool.Mutable<>("?");
-        for (Map.Entry<String, Double> e : names.entrySet()) {
-            pool.add(e.getKey(), (float)Math.pow(e.getValue().floatValue(), 0.25));
-        }
-        return pool;
-    }
-
-    /**
-     * Gets a random name based on the gender provided.
-     *
-     * @param gender The gender the name should be appropriate for.
-     *
-     * @return A gender appropriate name based on the provided gender.
-     */
-    public String pickCitizenName(@NotNull Gender gender) {
-        return villagerNames.get(gender.binary()).pickOne();
     }
 
     //returns a random generated name for a given name set
