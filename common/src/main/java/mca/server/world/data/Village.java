@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Village implements Iterable<Building> {
-    private static final int MOVE_IN_COOLDOWN = 12;
+    private static final int MOVE_IN_COOLDOWN = 1200;
     private static final int MAX_STORAGE_SIZE = 1024;
 
     public final static int BORDER_MARGIN = 32;
@@ -487,7 +487,7 @@ public class Village implements Iterable<Building> {
 
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
         if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
-            int i = world.random.nextInt(3);
+            int i = world.random.nextInt(10);
             if (i == 0) {
                 WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (trader != null) {
