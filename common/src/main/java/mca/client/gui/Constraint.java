@@ -48,6 +48,9 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     ADVENTURER("adventurer", (villager, player) -> villager.getVillagerData().getProfession() == ProfessionsMCA.ADVENTURER.get()),
     NOT_ADVENTURER("!adventurer", (villager, player) -> villager.getVillagerData().getProfession() != ProfessionsMCA.ADVENTURER.get()),
 
+    MERCENARY("mercenary", (villager, player) -> villager.getVillagerData().getProfession() == ProfessionsMCA.MERCENARY.get()),
+    NOT_MERCENARY("!mercenary", (villager, player) -> villager.getVillagerData().getProfession() != ProfessionsMCA.MERCENARY.get()),
+
     OUTLAWED("outlawed", (villager, player) -> villager.getVillagerData().getProfession() == ProfessionsMCA.OUTLAW.get()),
     NOT_OUTLAWED("!outlawed", (villager, player) -> villager.getVillagerData().getProfession() != ProfessionsMCA.OUTLAW.get()),
 

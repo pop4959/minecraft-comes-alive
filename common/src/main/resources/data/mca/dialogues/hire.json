@@ -5,8 +5,22 @@
       "name": "short",
       "results": [
         {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 10000000000,
+              "emeralds": 5
+            }
+          ],
           "actions": {
-            "command": "hire_short"
+            "command": "hire_short",
+            "say": "hire"
+          }
+        },
+        {
+          "baseChance": 1,
+          "actions": {
+            "say": "no_money"
           }
         }
       ]
@@ -15,8 +29,22 @@
       "name": "long",
       "results": [
         {
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 10000000000,
+              "emeralds": 10
+            }
+          ],
           "actions": {
-            "command": "hire_long"
+            "command": "hire_long",
+            "say": "hire"
+          }
+        },
+        {
+          "baseChance": 1,
+          "actions": {
+            "say": "no_money"
           }
         }
       ]

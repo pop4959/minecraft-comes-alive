@@ -44,8 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Village implements Iterable<Building> {
-
-    private static final int MOVE_IN_COOLDOWN = 120; //todo
+    private static final int MOVE_IN_COOLDOWN = 1200;
     private static final int MAX_STORAGE_SIZE = 1024;
 
     public final static int BORDER_MARGIN = 32;

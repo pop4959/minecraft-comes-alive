@@ -101,6 +101,12 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
+            noDefault = true;
+        } else if (profession == ProfessionsMCA.MERCENARY.get()) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(profession, 0.5F));
+            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getMercenaryPackage(0.5f));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getGuardCorePackage(villager));
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
             brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage(profession, 0.5F));
             noDefault = true;
         } else if (age == AgeState.BABY) {
@@ -472,6 +478,13 @@ public class VillagerTasksMCA {
                 Pair.of(5, new FindWalkTargetTask(speedModifier)),
                 Pair.of(5, new GoTowardsLookTarget(speedModifier, 2)),
                 Pair.of(5, new EnterBuildingTask("inn", 0.5f))
+        );
+    }
+
+    private static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getMercenaryPackage(float speedModifier) {
+        return ImmutableList.of(
+                Pair.of(5, new FindWalkTargetTask(speedModifier)),
+                Pair.of(5, new GoTowardsLookTarget(speedModifier, 2))
         );
     }
 

@@ -1,6 +1,7 @@
 package mca;
 
 import com.google.common.collect.ImmutableMap;
+import dev.architectury.registry.registries.RegistrySupplier;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -9,33 +10,32 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
+import net.minecraft.village.VillagerProfession;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TradeOffersMCA {
+    public static Map<String, Pair<Integer, TradeOffers.Factory[]>> TRADES = new HashMap<>();
 
-    static void bootstrap() {
-        TradeOffers.PROFESSION_TO_LEVELED_TRADE.put(ProfessionsMCA.ADVENTURER.get(), new Int2ObjectOpenHashMap<>(
-                ImmutableMap.of(1, new TradeOffers.Factory[] {
-                                new SellItemFactory(Items.ENCHANTED_BOOK, 10, 16, 2),
-                                new SellItemFactory(Items.SLIME_BALL, 1, 10, 16, 1),
-                                new SellItemFactory(Items.LEATHER_HORSE_ARMOR, 3, 16, 10),
-                                new SellItemFactory(Items.SADDLE, 4, 1, 3, 5),
-                                new SellItemFactory(Items.IRON_HORSE_ARMOR, 5, 2, 20),
-                                new SellItemFactory(Items.DIAMOND, 4, 5, 20),
-                                new SellItemFactory(Blocks.DRIPSTONE_BLOCK, 1, 1, 16, 10),
-                                new SellItemFactory(Items.GOLDEN_HORSE_ARMOR, 10, 1, 3, 30),
-                                new SellItemFactory(Items.GOLDEN_APPLE, 3, 1, 8, 30),
-                                new SellItemFactory(Items.DIAMOND_HORSE_ARMOR, 15, 1, 1, 30),
-                                new SellItemFactory(Items.ENCHANTED_GOLDEN_APPLE, 20, 1, 3, 50),
-                                new BuyForOneEmeraldFactory(Items.BREAD, 15, 10, 50)
-                        },
-                        2, new TradeOffers.Factory[] {},
-                        3, new TradeOffers.Factory[] {},
-                        4, new TradeOffers.Factory[] {},
-                        5, new TradeOffers.Factory[] {}
-                )));
+    public static void bootstrap() {
+        TRADES.put("adventurer", new Pair<>(1, new TradeOffers.Factory[] {
+                new SellItemFactory(Items.ENCHANTED_BOOK, 10, 16, 2),
+                new SellItemFactory(Items.SLIME_BALL, 1, 10, 16, 1),
+                new SellItemFactory(Items.LEATHER_HORSE_ARMOR, 3, 16, 10),
+                new SellItemFactory(Items.SADDLE, 4, 1, 3, 5),
+                new SellItemFactory(Items.IRON_HORSE_ARMOR, 5, 2, 20),
+                new SellItemFactory(Items.DIAMOND, 4, 5, 20),
+                new SellItemFactory(Items.GOLDEN_HORSE_ARMOR, 10, 1, 3, 30),
+                new SellItemFactory(Items.GOLDEN_APPLE, 3, 1, 8, 30),
+                new SellItemFactory(Items.DIAMOND_HORSE_ARMOR, 15, 1, 1, 30),
+                new SellItemFactory(Items.ENCHANTED_GOLDEN_APPLE, 20, 1, 3, 50),
+                new BuyForOneEmeraldFactory(Items.BREAD, 15, 10, 50)
+        }));
     }
 
 

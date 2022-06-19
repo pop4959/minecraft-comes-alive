@@ -1,6 +1,7 @@
 package mca;
 
 import com.google.common.collect.ImmutableSet;
+import dev.architectury.registry.level.entity.trade.TradeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import mca.entity.ai.PointOfInterestTypeMCA;
@@ -10,9 +11,11 @@ import net.minecraft.item.Item;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +31,7 @@ public interface ProfessionsMCA {
     RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
     RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> MERCENARY = register("mercenary", false, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     // VillagerProfession JEWELER = register("jeweler", PointOfInterestTypeMCA.JEWELER, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
 
     Set<VillagerProfession> canNotTrade = new HashSet<>();
@@ -39,8 +43,6 @@ public interface ProfessionsMCA {
 
         canNotTrade.add(VillagerProfession.NONE);
         canNotTrade.add(VillagerProfession.NITWIT);
-
-        TradeOffersMCA.bootstrap();
     }
 
     private static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, RegistryKey<PointOfInterestType> heldWorkstation, @Nullable SoundEvent workSound) {
@@ -74,6 +76,10 @@ public interface ProfessionsMCA {
             }
             if (important) {
                 isImportant.add(result);
+            }
+            if (TradeOffersMCA.TRADES.containsKey(name)) {
+                Pair<Integer, TradeOffers.Factory[]> pair = TradeOffersMCA.TRADES.get(name);
+                TradeRegistry.registerVillagerTrade(result, pair.getLeft(), pair.getRight());
             }
             return result;
         });

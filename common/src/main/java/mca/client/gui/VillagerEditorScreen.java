@@ -619,7 +619,7 @@ public class VillagerEditorScreen extends Screen {
                             hoveredClothingId = index;
                         }
 
-                        InventoryScreen.drawEntity(cx, cy, (hoveredClothingId == i) ? 35 : 30,
+                        InventoryScreen.drawEntity(cx, cy, (hoveredClothingId == index) ? 35 : 30,
                                 -(mouseX - cx) / 2.0f, -(mouseY - cy - 64) / 2.0f, villagerVisualization);
                         i++;
                     } else {
