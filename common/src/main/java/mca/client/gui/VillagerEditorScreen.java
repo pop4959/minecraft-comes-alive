@@ -186,7 +186,7 @@ public class VillagerEditorScreen extends Screen {
                 }
 
                 //age
-                if (villagerUUID.equals(playerUUID)) {
+                if (!villagerUUID.equals(playerUUID)) {
                     addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
                         villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
                         villager.setBreedingAge(villagerBreedingAge);
@@ -568,6 +568,10 @@ public class VillagerEditorScreen extends Screen {
 
     }
 
+    protected boolean shouldUsePlayerModel() {
+        return false;
+    }
+
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
@@ -581,7 +585,12 @@ public class VillagerEditorScreen extends Screen {
         villager.age = (int)(System.currentTimeMillis() / 50L);
 
         if (shouldDrawEntity()) {
-            InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+            if (villagerUUID.equals(playerUUID) && shouldUsePlayerModel()) {
+                assert MinecraftClient.getInstance().player != null;
+                InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, MinecraftClient.getInstance().player);
+            } else {
+                InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+            }
         }
 
         if (page.equals("clothing") || page.equals("hair")) {

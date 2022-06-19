@@ -13,6 +13,11 @@ public class LimitedVillagerEditorScreen extends VillagerEditorScreen {
     }
 
     @Override
+    protected boolean shouldUsePlayerModel() {
+        return villagerData.contains("usePlayerSkin");
+    }
+
+    @Override
     protected void setPage(String page) {
         this.page = page;
 
