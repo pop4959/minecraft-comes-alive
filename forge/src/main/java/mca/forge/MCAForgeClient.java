@@ -15,6 +15,7 @@ import mca.client.resources.ColorPaletteLoader;
 import mca.entity.EntitiesMCA;
 import mca.item.BabyItem;
 import mca.item.ItemsMCA;
+import mca.item.SirbenBabyItem;
 import mca.resources.Supporters;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
@@ -70,6 +71,12 @@ public final class MCAForgeClient {
         );
         ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
                 BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
         );
 
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());

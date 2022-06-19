@@ -17,6 +17,7 @@ import mca.fabric.resources.FabricColorPaletteLoader;
 import mca.fabric.resources.FabricSupportersLoader;
 import mca.item.BabyItem;
 import mca.item.ItemsMCA;
+import mca.item.SirbenBabyItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -65,6 +66,12 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
         );
         ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
                 BabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
+        );
+        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
+                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
         );
 
         BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
