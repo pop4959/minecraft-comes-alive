@@ -1155,8 +1155,8 @@
   "dialogue.adopt.confirm": "confirm",
   "dialogue.adopt.cancel": "cancel",
 
-  "dialogue.hire.short": "hire for 3 days",
-  "dialogue.hire.long": "hire for a week",
+  "dialogue.hire.short": "hire for 3 days (5 emeralds)",
+  "dialogue.hire.long": "hire for a week (10 emeralds)",
   "dialogue.hire.cancel": "cancel",
 
   "dialogue.stay.fail/1": "Nah thanks, I'm more the adventurer.",
@@ -1165,5 +1165,6 @@
 
   "dialogue.divorcePapers": "Here you go, bring these papers to your spouse to confirm the divorce.",
 
-  "dialogue.hire": "Alright, just tell me when you need help. I will be around for the paid time."
+  "dialogue.hire": "Alright, just tell me when you need help. I will be around for the paid time.",
+  "dialogue.no_money": "You need more emeralds!"
 }

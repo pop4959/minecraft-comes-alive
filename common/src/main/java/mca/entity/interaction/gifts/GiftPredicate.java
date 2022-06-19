@@ -16,6 +16,7 @@ import mca.resources.Tasks;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.tag.TagKey;
@@ -151,6 +152,7 @@ public class GiftPredicate {
             long ticks = villager.getLongTermMemory().getMemory(id);
             return divideAndAdd(json, ticks);
         });
+        register("emeralds", JsonHelper::asInt, amount -> (villager, stack, player) -> player.getInventory().count(Items.EMERALD) >= amount ? 1.0f : 0.0f);
         register("village_has_building", JsonHelper::asString, name ->
                 (villager, stack, player) ->
                         villager.getResidency().getHomeVillage().filter(v -> v.hasBuilding(name)).isPresent() ? 1.0f : 0.0f
