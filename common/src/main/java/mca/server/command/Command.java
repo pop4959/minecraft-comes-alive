@@ -38,8 +38,11 @@ public class Command {
     }
 
     private static int editor(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowPlayerEditor) {
+        if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowFullPlayerEditor) {
             NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.VILLAGER_EDITOR, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
+            return 0;
+        } else if (Config.getInstance().allowLimitedPlayerEditor) {
+            NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.LIMITED_VILLAGER_EDITOR, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
             return 0;
         } else {
             ctx.getSource().getPlayer().sendSystemMessage(new TranslatableText("command.no_permission").formatted(Formatting.RED), Util.NIL_UUID);

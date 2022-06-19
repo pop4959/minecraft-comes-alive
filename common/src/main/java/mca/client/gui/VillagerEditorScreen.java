@@ -45,8 +45,8 @@ import java.util.function.Supplier;
 import static mca.entity.VillagerLike.VILLAGER_NAME;
 
 public class VillagerEditorScreen extends Screen {
-    private final UUID villagerUUID;
-    private final UUID playerUUID;
+    final UUID villagerUUID;
+    final UUID playerUUID;
     private int villagerBreedingAge;
     protected String page;
     protected final VillagerEntityMCA villager = Objects.requireNonNull(EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world));
@@ -186,12 +186,14 @@ public class VillagerEditorScreen extends Screen {
                 }
 
                 //age
-                addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
-                    villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
-                    villager.setBreedingAge(villagerBreedingAge);
-                    villager.calculateDimensions();
-                }));
-                y += 28;
+                if (villagerUUID.equals(playerUUID)) {
+                    addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
+                        villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
+                        villager.setBreedingAge(villagerBreedingAge);
+                        villager.calculateDimensions();
+                    }));
+                    y += 28;
+                }
 
                 //relations
                 for (String who : new String[] {"father", "mother", "spouse"}) {
@@ -486,8 +488,7 @@ public class VillagerEditorScreen extends Screen {
     void drawGender(int x, int y) {
         genderButtonFemale = new ButtonWidget(x, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.feminine"), sender -> {
             villager.getGenetics().setGender(Gender.FEMALE);
-            sendCommand("clothing");
-            sendCommand("hair");
+            sendCommand("gender");
             genderButtonFemale.active = false;
             genderButtonMale.active = true;
         });
@@ -495,8 +496,7 @@ public class VillagerEditorScreen extends Screen {
 
         genderButtonMale = new ButtonWidget(x + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20, new TranslatableText("gui.villager_editor.masculine"), sender -> {
             villager.getGenetics().setGender(Gender.MALE);
-            sendCommand("clothing");
-            sendCommand("hair");
+            sendCommand("gender");
             genderButtonFemale.active = true;
             genderButtonMale.active = false;
         });
