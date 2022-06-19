@@ -93,7 +93,6 @@
   },
   "mca:skins/clothing/normal/male/cultist/%d.png": {
     "count": 1,
-    "profession": "mca:cultist",
-    "exclude": false
+    "profession": "mca:cultist"
   }
 }

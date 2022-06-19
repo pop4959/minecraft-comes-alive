@@ -435,8 +435,13 @@ public class VillagerEditorScreen extends Screen {
 
     private <T extends ClothingList.ListEntry> List<String> filter(HashMap<String, T> map) {
         List<String> filtered = map.entrySet().stream()
+                .filter(v -> filterGender == v.getValue().gender || v.getValue().gender == Gender.NEUTRAL)
                 .filter(v -> {
-                    return filterGender == v.getValue().gender || v.getValue().gender == Gender.NEUTRAL;
+                    if (v.getValue() instanceof ClothingList.Clothing c) {
+                        return !c.exclude;
+                    } else {
+                        return true;
+                    }
                 })
                 .filter(v -> searchString.isEmpty() || v.getKey().contains(searchString))
                 .map(Map.Entry::getKey)
