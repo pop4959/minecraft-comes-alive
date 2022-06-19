@@ -46,6 +46,18 @@
     "hideOnFail": true
   },
   {
+    "identifier": "gui.button.inventory",
+    "x": -90,
+    "y": 10,
+    "row": 3,
+    "width": 80,
+    "height": 20,
+    "notifyServer": true,
+    "targetServer": false,
+    "constraints": "mercenary",
+    "hideOnFail": true
+  },
+  {
     "identifier": "gui.button.work",
     "x": -90,
     "y": 10,
@@ -55,6 +67,18 @@
     "notifyServer": false,
     "targetServer": false,
     "constraints": "family,!baby",
+    "hideOnFail": true
+  },
+  {
+    "identifier": "gui.button.work",
+    "x": -90,
+    "y": 10,
+    "row": 4,
+    "width": 80,
+    "height": 20,
+    "notifyServer": false,
+    "targetServer": false,
+    "constraints": "!family,mercenary",
     "hideOnFail": true
   },
   {

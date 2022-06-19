@@ -13,6 +13,7 @@
   "entity.minecraft.villager.mca.warrior": "Warrior",
   "entity.minecraft.villager.mca.archer": "Archer",
   "entity.minecraft.villager.mca.adventurer": "Adventurer",
+  "entity.minecraft.villager.mca.mercenary": "Mercenary",
   "entity.minecraft.villager.mca.child": "Child",
 
   "entity.mca.grim_reaper": "Grim Reaper",
@@ -136,6 +137,7 @@
   "tag.mca:chests": "Chests",
   "tag.mca:iron_doors": "Iron Door",
   "tag.mca:iron_bars": "Iron Bars",
+  "tag.minecraft:cauldrons": "Cauldrons",
 
   "block.mca.rose_gold_block": "Rose Gold Block",
   "block.mca.rose_gold_ore": "Rose Gold Ore",

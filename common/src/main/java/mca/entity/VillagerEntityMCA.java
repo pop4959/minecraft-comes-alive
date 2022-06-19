@@ -70,10 +70,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -1333,5 +1330,16 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public boolean requiresHome() {
         return getProfession() != ProfessionsMCA.ADVENTURER.get();
+    }
+
+    public void makeMercenary(ServerPlayerEntity player) {
+        setProfession(ProfessionsMCA.MERCENARY.get());
+
+        inventory.addStack(new ItemStack(Items.IRON_SWORD));
+        inventory.addStack(new ItemStack(Items.IRON_AXE));
+        inventory.addStack(new ItemStack(Items.IRON_PICKAXE));
+        inventory.addStack(new ItemStack(Items.IRON_HOE));
+        inventory.addStack(new ItemStack(Items.FISHING_ROD));
+        inventory.addStack(new ItemStack(Items.BREAD, 16));
     }
 }

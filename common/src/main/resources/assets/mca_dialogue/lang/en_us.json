@@ -1163,5 +1163,7 @@
   "dialogue.stay.success/1": "Thanks, I would love to stay at this village!",
   "dialogue.stay.no_space/1": "Hmm, this village seems pretty crowded already.",
 
-  "dialogue.divorcePapers": "Here you go, bring these papers to your spouse to confirm the divorce."
+  "dialogue.divorcePapers": "Here you go, bring these papers to your spouse to confirm the divorce.",
+
+  "dialogue.hire": "Alright, just tell me when you need help. I will be around for the paid time."
 }

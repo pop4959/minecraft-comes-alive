@@ -6,7 +6,8 @@
       "results": [
         {
           "actions": {
-            "command": "hire_short"
+            "command": "hire_short",
+            "say": "hire"
           }
         }
       ]
@@ -16,7 +17,8 @@
       "results": [
         {
           "actions": {
-            "command": "hire_long"
+            "command": "hire_long",
+            "say": "hire"
           }
         }
       ]
