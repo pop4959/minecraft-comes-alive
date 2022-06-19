@@ -90,5 +90,10 @@
     "count": 20,
     "profession": "mca:toddler",
     "exclude": true
+  },
+  "mca:skins/clothing/normal/male/cultist/%d.png": {
+    "count": 1,
+    "profession": "mca:cultist",
+    "exclude": false
   }
 }

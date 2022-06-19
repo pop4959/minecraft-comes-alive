@@ -14,6 +14,7 @@
   "entity.minecraft.villager.mca.archer": "Archer",
   "entity.minecraft.villager.mca.adventurer": "Adventurer",
   "entity.minecraft.villager.mca.mercenary": "Mercenary",
+  "entity.minecraft.villager.mca.cultist": "Cultist",
   "entity.minecraft.villager.mca.child": "Child",
 
   "entity.mca.grim_reaper": "Grim Reaper",
@@ -44,9 +45,11 @@
   "item.mca.comb.tooltip": "Right-click to change your hairstyle.",
 
   "item.mca.baby_boy": "Unnamed Baby Boy",
+  "item.mca.sirben_baby_boy": "Sirben Baby Boy",
   "item.mca.baby_boy.blanket": "Empty Blanket",
   "item.mca.baby_boy.named": "Little %s (Male)",
   "item.mca.baby_girl": "Unnamed Baby Girl",
+  "item.mca.sirben_baby_girl": "Sirben Baby Girl",
   "item.mca.baby_girl.blanket": "Empty Blanket",
   "item.mca.baby_girl.named": "Little %s (Female)",
   "item.mca.baby.state.infected": "Infected!",

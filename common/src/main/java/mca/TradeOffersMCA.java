@@ -1,10 +1,7 @@
 package mca;
 
-import com.google.common.collect.ImmutableMap;
-import dev.architectury.registry.registries.RegistrySupplier;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import mca.item.ItemsMCA;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -13,7 +10,6 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Pair;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
-import net.minecraft.village.VillagerProfession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +31,20 @@ public class TradeOffersMCA {
                 new SellItemFactory(Items.DIAMOND_HORSE_ARMOR, 15, 1, 1, 30),
                 new SellItemFactory(Items.ENCHANTED_GOLDEN_APPLE, 20, 1, 3, 50),
                 new BuyForOneEmeraldFactory(Items.BREAD, 15, 10, 50)
+        }));
+
+        TRADES.put("cultist", new Pair<>(1, new TradeOffers.Factory[] {
+                new SellItemFactory(ItemsMCA.SIRBEN_BABY_BOY.get(), 3, 1, 1),
+                new SellItemFactory(ItemsMCA.SIRBEN_BABY_GIRL.get(), 3, 1, 1),
+                new BuyForOneEmeraldFactory(ItemsMCA.BABY_BOY.get(), 1, 1, 1),
+                new BuyForOneEmeraldFactory(ItemsMCA.BABY_GIRL.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_DEATH.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_INFECTION.get(), 1, 1, 1),
+                new SellItemFactory(ItemsMCA.BOOK_SUPPORTERS.get(), 1, 1, 1)
         }));
     }
 

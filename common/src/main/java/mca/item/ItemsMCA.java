@@ -38,6 +38,8 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> BABY_BOY = register("baby_boy", () -> new BabyItem(Gender.MALE, baseProps().maxCount(1)));
     RegistrySupplier<Item> BABY_GIRL = register("baby_girl", () -> new BabyItem(Gender.FEMALE, baseProps().maxCount(1)));
+    RegistrySupplier<Item> SIRBEN_BABY_BOY = register("sirben_baby_boy", () -> new SirbenBabyItem(Gender.MALE, baseProps().maxCount(1)));
+    RegistrySupplier<Item> SIRBEN_BABY_GIRL = register("sirben_baby_girl", () -> new SirbenBabyItem(Gender.FEMALE, baseProps().maxCount(1)));
 
     RegistrySupplier<Item> WEDDING_RING = register("wedding_ring", () -> new WeddingRingItem(unstackableProps()));
     RegistrySupplier<Item> WEDDING_RING_RG = register("wedding_ring_rg", () -> new WeddingRingItem(unstackableProps()));
@@ -109,7 +111,7 @@ public interface ItemsMCA {
             .addPage(new TitlePage("cult_0", Formatting.DARK_RED))
             .addPage(new CenteredTextPage("cult_0", 0))
             .addPage(new CenteredTextPage("cult_0", 1))
-            .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), "cult_0", 3))
+            //.addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), "cult_0", 3))
             .addPage(new CenteredTextPage("cult_0", 2))
             .addPage(new CenteredTextPage("cult_0", 3))));
 
