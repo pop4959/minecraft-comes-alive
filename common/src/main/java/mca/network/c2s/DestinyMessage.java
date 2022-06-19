@@ -25,7 +25,12 @@ public class DestinyMessage implements Message {
                 pos = FuzzyPositionsCompat.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
                 pos = FuzzyPositionsCompat.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
                 player.teleport(pos.getX(), pos.getY(), pos.getZ());
-                //todo set world spawn
+
+                //set spawn
+                player.setSpawnPoint(player.world.getRegistryKey(), pos, 0.0f, true, false);
+                if (player.world.getServer() != null && player.world.getServer().isHost(player.getGameProfile())) {
+                    player.getWorld().setSpawnPos(pos, 0.0f);
+                }
             });
         }
 

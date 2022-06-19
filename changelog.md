@@ -310,4 +310,5 @@
 * Villager on fire will now burn their clothes
 * The Sirben cult appeared
 * Added 50.000 names from 55 different countries
-  * Config option available to use modern USA names only
+    * Config option available to use modern USA names only
+* Destiny now sets spawn location

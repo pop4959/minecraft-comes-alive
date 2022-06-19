@@ -145,7 +145,6 @@ public class DestinyScreen extends VillagerEditorScreen {
                 }
             }
             case "story" -> addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, new TranslatableText("gui.destiny.next"), sender -> {
-                NetworkHandler.sendToServer(new DestinyMessage(location));
                 if (story.size() > 1) {
                     story.remove(0);
                 } else {
