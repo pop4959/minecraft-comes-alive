@@ -189,8 +189,7 @@ public class BabyItem extends Item {
         });
     }
 
-    private void birthChild(BabyTracker.ChildSaveState state, ServerWorld world, ServerPlayerEntity player) {
-
+    protected VillagerEntityMCA birthChild(ChildSaveState state, ServerWorld world, ServerPlayerEntity player) {
         VillagerEntityMCA child = VillagerFactory.newVillager(world)
                 .withName(state.getName().orElse("Unnamed"))
                 .withPosition(player.getPos())
@@ -243,6 +242,8 @@ public class BabyItem extends Item {
                 });
 
         BabyTracker.get(world).getPairing(state).removeChild(state);
+
+        return child;
     }
 
     @Override
