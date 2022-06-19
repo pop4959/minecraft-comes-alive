@@ -26,7 +26,10 @@ public class MixinAbstractFurnaceBlockEntity {
             // Note: This could become a switch case possibly if this grows too big
             if (identifier.getNamespace().equals(MCA.MOD_ID)) {
                 final String path = identifier.getPath();
-                if (path.startsWith("baby_boy") || path.startsWith("baby_girl")) {
+                if (path.endsWith("baby_boy") || path.endsWith("baby_girl")) {
+                    if (path.startsWith("sirben_")) {
+                        CriterionMCA.BABY_SIRBEN_SMELTED_CRITERION.trigger(player, count);
+                    }
                     CriterionMCA.BABY_SMELTED_CRITERION.trigger(player, count);
                 }
             }
