@@ -313,3 +313,4 @@
     * Config option available to use modern USA names only
 * Destiny now sets spawn location
 * The /mca editor has been replaced by a limited version (configurable) to prefer comb and needle and string items
+* You can now start a village without villagers using the blueprint

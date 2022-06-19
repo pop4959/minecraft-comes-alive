@@ -236,7 +236,6 @@ public class VillagerEditorScreen extends Screen {
                 y += 22;
 
                 //skin color
-                //todo cursor sync issues
                 addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
                         genetics.getGene(Genetics.HEMOGLOBIN),
                         genetics.getGene(Genetics.MELANIN),
