@@ -14,6 +14,7 @@ import mca.entity.VillagerLike;
 import mca.entity.ai.Memories;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;
+import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.c2s.GetChildDataRequest;
 import mca.network.s2c.OpenGuiRequest;
@@ -215,16 +216,11 @@ public class BabyItem extends Item {
         father.map(VillagerLike::toVillager).map(VillagerLike::getTraits).ifPresent(t -> child.getTraits().inherit(t, state.getSeed()));
 
         // assign parents
-        FamilyTreeNode family = PlayerSaveData.get(world, player.getUuid()).getFamilyEntry();
-
         state.getParents().forEach(p ->
-                family.getRoot().getOrEmpty(p).ifPresent(parent ->
+                FamilyTree.get(world).getOrEmpty(p).ifPresent(parent ->
                         child.getRelationships().getFamilyEntry().assignParent(parent)
                 )
         );
-
-        // in case one of the above was not found
-        child.getRelationships().getFamilyEntry().assignParent(family);
 
         WorldUtils.spawnEntity(world, child, SpawnReason.BREEDING);
 

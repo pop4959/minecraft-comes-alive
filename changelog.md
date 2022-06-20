@@ -314,3 +314,7 @@
 * Destiny now sets spawn location
 * The /mca editor has been replaced by a limited version (configurable) to prefer comb and needle and string items
 * You can now start a village without villagers using the blueprint
+
+# 7.3.3
+
+* Parents with same gender are now properly registered
