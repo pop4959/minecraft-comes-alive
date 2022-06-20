@@ -1,7 +1,6 @@
 package mca;
 
 import com.google.common.collect.ImmutableSet;
-import dev.architectury.registry.level.entity.trade.TradeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import mca.entity.ai.PointOfInterestTypeMCA;
@@ -11,11 +10,9 @@ import net.minecraft.item.Item;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.village.TradeOffers;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 import org.jetbrains.annotations.Nullable;
@@ -77,10 +74,6 @@ public interface ProfessionsMCA {
             }
             if (important) {
                 isImportant.add(result);
-            }
-            if (TradeOffersMCA.TRADES.containsKey(name)) {
-                Pair<Integer, TradeOffers.Factory[]> pair = TradeOffersMCA.TRADES.get(name);
-                TradeRegistry.registerVillagerTrade(result, pair.getLeft(), pair.getRight());
             }
             return result;
         });

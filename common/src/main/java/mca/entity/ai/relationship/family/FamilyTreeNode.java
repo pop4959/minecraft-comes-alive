@@ -292,20 +292,24 @@ public final class FamilyTreeNode implements Serializable {
     }
 
     public boolean assignParent(FamilyTreeNode parent) {
-        // neutral gender will fill up missing assignments first
-        if (parent.gender() == Gender.NEUTRAL) {
+        int parents = (isValid(father) ?  1 : 0) + (isValid(mother) ?  1 : 0);
+
+        if (parents == 1) {
+            //fill up last slot, independent on gender
             if (!isValid(father)) {
                 return setFather(parent);
             } else if (!isValid(mother)) {
                 return setMother(parent);
             }
-        }
-
-        if (parent.gender() == Gender.MALE) {
-            return setFather(parent);
         } else {
-            return setMother(parent);
+            //fill up gender respective slot
+            if (parent.gender() == Gender.MALE) {
+                return setFather(parent);
+            } else {
+                return setMother(parent);
+            }
         }
+        return true;
     }
 
     public boolean setFather(FamilyTreeNode parent) {

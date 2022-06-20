@@ -3,6 +3,7 @@ package mca.forge;
 import dev.architectury.platform.forge.EventBuses;
 import mca.ParticleTypesMCA;
 import mca.SoundsMCA;
+import mca.TradeOffersMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
 import mca.entity.EntitiesMCA;
@@ -13,8 +14,10 @@ import mca.network.MessagesMCA;
 import mca.resources.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(mca.MCA.MOD_ID)
@@ -32,6 +35,11 @@ public final class MCAForge {
         EntitiesMCA.bootstrap();
         MessagesMCA.bootstrap();
         CriterionMCA.bootstrap();
+    }
+
+    @SubscribeEvent
+    public static void onFMLCommonSetupEvent(FMLCommonSetupEvent event) {
+        TradeOffersMCA.bootstrap();
     }
 
     private void onAddReloadListener(AddReloadListenerEvent event) {

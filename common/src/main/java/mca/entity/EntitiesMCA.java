@@ -4,7 +4,6 @@ import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import mca.MCA;
-import mca.TradeOffersMCA;
 import mca.entity.ai.ActivityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
 import mca.ProfessionsMCA;
@@ -50,7 +49,6 @@ public interface EntitiesMCA {
         MemoryModuleTypeMCA.bootstrap();
         ActivityMCA.bootstrap();
         SchedulesMCA.bootstrap();
-        TradeOffersMCA.bootstrap();
         ProfessionsMCA.bootstrap();
     }
 
