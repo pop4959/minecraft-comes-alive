@@ -38,8 +38,8 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> BABY_BOY = register("baby_boy", () -> new BabyItem(Gender.MALE, baseProps().maxCount(1)));
     RegistrySupplier<Item> BABY_GIRL = register("baby_girl", () -> new BabyItem(Gender.FEMALE, baseProps().maxCount(1)));
-    RegistrySupplier<Item> SIRBEN_BABY_BOY = register("sirben_baby_boy", () -> new SirbenBabyItem(Gender.MALE, baseProps().maxCount(1)));
-    RegistrySupplier<Item> SIRBEN_BABY_GIRL = register("sirben_baby_girl", () -> new SirbenBabyItem(Gender.FEMALE, baseProps().maxCount(1)));
+    RegistrySupplier<Item> SIRBEN_BABY_BOY = register("sirben_baby_boy", () -> new SirbenBabyItem(Gender.MALE, baseProps().group(null).maxCount(1)));
+    RegistrySupplier<Item> SIRBEN_BABY_GIRL = register("sirben_baby_girl", () -> new SirbenBabyItem(Gender.FEMALE, baseProps().group(null).maxCount(1)));
 
     RegistrySupplier<Item> WEDDING_RING = register("wedding_ring", () -> new WeddingRingItem(unstackableProps()));
     RegistrySupplier<Item> WEDDING_RING_RG = register("wedding_ring_rg", () -> new WeddingRingItem(unstackableProps()));
