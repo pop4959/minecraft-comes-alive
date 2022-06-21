@@ -14,4 +14,11 @@ public class TooltipButtonWidget extends ButtonWidget {
             MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack, FlowingText.wrap(new TranslatableText(message + ".tooltip"), 160), mx, my);
         });
     }
+    public TooltipButtonWidget(int x, int y, int width, int height, TranslatableText message, PressAction onPress) {
+        super(x, y, width, height, message, onPress, (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
+        {
+            assert MinecraftClient.getInstance().currentScreen != null;
+            MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack, FlowingText.wrap(new TranslatableText(message.getKey() + ".tooltip"), 160), mx, my);
+        });
+    }
 }
