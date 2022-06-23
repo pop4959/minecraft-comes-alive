@@ -217,7 +217,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         spouseUUID = Optional.empty();
         spouseName = Optional.empty();
         marriageState = newState;
-        getFamilyEntry().setMarriageState(newState);
+        getFamilyEntry().updateMarriage(null, newState);
         markDirty();
     }
 

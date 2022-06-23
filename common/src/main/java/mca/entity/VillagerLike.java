@@ -10,10 +10,7 @@ import mca.entity.ai.Genetics;
 import mca.entity.ai.Messenger;
 import mca.entity.ai.Traits;
 import mca.entity.ai.brain.VillagerBrain;
-import mca.entity.ai.relationship.AgeState;
-import mca.entity.ai.relationship.EntityRelationship;
-import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.VillagerDimensions;
+import mca.entity.ai.relationship.*;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.entity.interaction.EntityCommandHandler;
 import mca.resources.ClothingList;
@@ -240,8 +237,10 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                 Optional<EntityRelationship> r = EntityRelationship.of(asEntity());
                 if (r.isPresent()) {
                     FamilyTreeNode relationship = r.get().getFamilyEntry();
-                    if (relationship.spouse().equals(receiver.getUuid())) {
+                    if (r.get().isMarriedTo(receiver.getUuid())) {
                         return DialogueType.SPOUSE;
+                    } else if (r.get().isEngagedWith(receiver.getUuid())) {
+                        return DialogueType.ENGAGED;
                     } else if (relationship.isParent(receiver.getUuid())) {
                         return type.toChild();
                     }

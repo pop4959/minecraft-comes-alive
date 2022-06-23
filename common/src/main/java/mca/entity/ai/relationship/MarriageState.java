@@ -6,7 +6,11 @@ public enum MarriageState {
      */
     SINGLE("notMarried"),
     /**
-     * Unused.
+     * Promised.
+     */
+    PROMISED("promised"),
+    /**
+     * Engaged.
      */
     ENGAGED("engaged"),
     /**

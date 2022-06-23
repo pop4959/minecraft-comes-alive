@@ -43,8 +43,8 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> WEDDING_RING = register("wedding_ring", () -> new WeddingRingItem(unstackableProps()));
     RegistrySupplier<Item> WEDDING_RING_RG = register("wedding_ring_rg", () -> new WeddingRingItem(unstackableProps()));
-    RegistrySupplier<Item> ENGAGEMENT_RING = register("engagement_ring", () -> new WeddingRingItem(unstackableProps(), 0.5F));
-    RegistrySupplier<Item> ENGAGEMENT_RING_RG = register("engagement_ring_rg", () -> new WeddingRingItem(unstackableProps(), 0.5F));
+    RegistrySupplier<Item> ENGAGEMENT_RING = register("engagement_ring", () -> new EngagementRingItem(unstackableProps()));
+    RegistrySupplier<Item> ENGAGEMENT_RING_RG = register("engagement_ring_rg", () -> new EngagementRingItem(unstackableProps()));
     RegistrySupplier<Item> MATCHMAKERS_RING = register("matchmakers_ring", () -> new MatchmakersRingItem(baseProps().maxCount(2)));
 
     RegistrySupplier<Item> VILLAGER_EDITOR = register("villager_editor", () -> new VillagerEditorItem(baseProps()));

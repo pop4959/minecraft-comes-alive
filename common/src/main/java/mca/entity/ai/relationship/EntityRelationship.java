@@ -76,11 +76,23 @@ public interface EntityRelationship {
     Optional<Text> getSpouseName();
 
     default boolean isMarried() {
-        return !getSpouseUuid().orElse(Util.NIL_UUID).equals(Util.NIL_UUID);
+        return getMarriageState() == MarriageState.MARRIED_TO_PLAYER || getMarriageState() == MarriageState.MARRIED_TO_VILLAGER;
+    }
+
+    default boolean isEngaged() {
+        return getMarriageState() == MarriageState.ENGAGED;
+    }
+
+    default boolean isPromised() {
+        return getMarriageState() == MarriageState.PROMISED;
     }
 
     default boolean isMarriedTo(UUID uuid) {
-        return getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid);
+        return getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid) && isMarried();
+    }
+
+    default boolean isEngagedWith(UUID uuid) {
+        return getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid) && isEngaged();
     }
 
     static Optional<EntityRelationship> of(Entity entity) {

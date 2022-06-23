@@ -6,6 +6,7 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.ProfessionsMCA;
 import mca.entity.ai.relationship.Gender;
+import mca.entity.ai.relationship.MarriageState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.resources.API;
 import mca.resources.PoolUtil;
@@ -435,7 +436,9 @@ public class Village implements Iterable<Building> {
         //list all and lonely villagers
         List<VillagerEntityMCA> allVillagers = getResidents(world);
         List<VillagerEntityMCA> availableVillagers = allVillagers.stream()
-                .filter(v -> !v.getRelationships().isMarried() && !v.isBaby())
+                .filter(v -> !v.isBaby())
+                .filter(v -> !v.getRelationships().isMarried())
+                .filter(v -> !v.getRelationships().getMarriageState().equals(MarriageState.ENGAGED))
                 .collect(Collectors.toList());
 
         if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * getMarriageThreshold() / 100f) {
