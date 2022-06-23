@@ -97,16 +97,28 @@ public interface EntityRelationship {
 
     default void marry(Entity spouse) {
         RelationshipState state = spouse instanceof PlayerEntity ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
-
-        if (spouse instanceof ServerPlayerEntity) {
-            CriterionMCA.GENERIC_EVENT_CRITERION.trigger((ServerPlayerEntity)spouse, "marriage");
+        if (spouse instanceof ServerPlayerEntity spouseEntity) {
+            CriterionMCA.GENERIC_EVENT_CRITERION.trigger(spouseEntity, "marriage");
         }
+        getFamilyEntry().updatePartner(spouse, state);
+    }
 
-        getFamilyEntry().updateSpouse(spouse, state);
+    default void engage(Entity spouse) {
+        if (spouse instanceof ServerPlayerEntity spouseEntity) {
+            CriterionMCA.GENERIC_EVENT_CRITERION.trigger(spouseEntity, "engage");
+        }
+        getFamilyEntry().updatePartner(spouse, RelationshipState.ENGAGED);
+    }
+
+    default void promise(Entity spouse) {
+        if (spouse instanceof ServerPlayerEntity spouseEntity) {
+            CriterionMCA.GENERIC_EVENT_CRITERION.trigger(spouseEntity, "promise");
+        }
+        getFamilyEntry().updatePartner(spouse, RelationshipState.PROMISED);
     }
 
     default void endRelationShip(RelationshipState newState) {
-        getFamilyEntry().updateSpouse(null, newState);
+        getFamilyEntry().updatePartner(null, newState);
     }
 
     default RelationshipState getRelationshipState() {

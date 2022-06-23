@@ -154,25 +154,32 @@ public final class FamilyTreeNode implements Serializable {
         return relationshipState;
     }
 
-    public void setRelationshipState(RelationshipState state) {
-        this.relationshipState = state;
-        markDirty();
-    }
-
-    public void updateSpouse(@Nullable Entity partner, @Nullable RelationshipState state) {
-        this.partner = partner == null ? Util.NIL_UUID : partner.getUuid();
-        this.relationshipState = state == null && partner == null ? RelationshipState.SINGLE : state;
-
-        if (rootNode != null) {
-            if (partner != null) {
-                // ensure the family tree has an entry
-                rootNode.getOrCreate(partner);
-            }
-            rootNode.markDirty();
+    public void updatePartner(@Nullable Entity newPartner, @Nullable RelationshipState state) {
+        //cancel relationship with previous partner
+        if (!this.partner.equals(Util.NIL_UUID) && (newPartner == null || !this.partner.equals(newPartner.getUuid()))) {
+            getRoot().getOrEmpty(this.partner).ifPresent(n -> {
+                if (n.relationshipState == RelationshipState.ENGAGED) {
+                    if (isPlayer) {
+                        //todo letter
+                    }
+                }
+                n.partner = Util.NIL_UUID;
+                n.relationshipState = RelationshipState.SINGLE;
+            });
         }
+
+        this.partner = newPartner == null ? Util.NIL_UUID : newPartner.getUuid();
+        this.relationshipState = state == null && newPartner == null ? RelationshipState.SINGLE : state;
+
+        // ensure the family tree has an entry
+        if (newPartner != null) {
+            rootNode.getOrCreate(newPartner);
+        }
+
+        rootNode.markDirty();
     }
 
-    public void updateSpouse(FamilyTreeNode spouse) {
+    public void updatePartner(FamilyTreeNode spouse) {
         this.partner = spouse.id();
         this.relationshipState = spouse.isPlayer ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
         markDirty();

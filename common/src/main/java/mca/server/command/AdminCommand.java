@@ -122,7 +122,7 @@ public class AdminCommand {
         //remove spouse too
         FamilyTree tree = FamilyTree.get(ctx.getSource().getWorld());
         Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
-        node.filter(n -> n.partner() != null).ifPresent(n -> n.updateSpouse(null, RelationshipState.WIDOW));
+        node.filter(n -> n.partner() != null).ifPresent(n -> n.updatePartner(null, RelationshipState.WIDOW));
 
         //remove from player spouse
         ctx.getSource().getWorld().getPlayers().forEach(player -> {

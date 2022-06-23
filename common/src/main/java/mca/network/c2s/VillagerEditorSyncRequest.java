@@ -188,12 +188,12 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
         if (villagerData.contains("tree_spouse_new")) {
             String name = villagerData.getString("tree_spouse_new");
             if (name.isEmpty()) {
-                Optional.of(entry.partner()).flatMap(tree::getOrEmpty).ifPresent(node -> node.updateSpouse(null, null));
-                entry.updateSpouse(null, null);
+                Optional.of(entry.partner()).flatMap(tree::getOrEmpty).ifPresent(node -> node.updatePartner(null, null));
+                entry.updatePartner(null, null);
             } else {
                 getFamilyNode(player, tree, name, entry.gender().opposite()).ifPresent(node -> {
-                    entry.updateSpouse(node);
-                    node.updateSpouse(entry);
+                    entry.updatePartner(node);
+                    node.updatePartner(entry);
                 });
             }
         }

@@ -2,17 +2,16 @@ package mca.item;
 
 import mca.Config;
 import mca.entity.VillagerEntityMCA;
-import mca.entity.ai.Memories;
 import mca.entity.ai.Relationship;
-import mca.entity.ai.relationship.RelationshipState;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class EngagementRingItem extends TooltippedItem implements SpecialCaseGift {
+public class EngagementRingItem extends RelationshipItem {
     public EngagementRingItem(Settings properties) {
         super(properties);
     }
 
+    @Override
     protected float getHeartsRequired() {
         return Config.getInstance().engagementHeartsRequirement;
     }
@@ -20,29 +19,17 @@ public class EngagementRingItem extends TooltippedItem implements SpecialCaseGif
     @Override
     public boolean handle(ServerPlayerEntity player, VillagerEntityMCA villager) {
         PlayerSaveData playerData = PlayerSaveData.get(player);
-        Memories memory = villager.getVillagerBrain().getMemoriesForPlayer(player);
         String response;
         boolean consume = false;
 
-        if (villager.isBaby()) {
-            response = "interaction.engage.fail.isbaby";
-        } else if (Relationship.IS_PARENT.test(villager, player)) {
-            response = "interaction.marry.fail.isparent";
-        } else if (Relationship.IS_MARRIED.test(villager, player)) {
-            response = "interaction.marry.fail.marriedtogiver";
-        } else if (villager.getRelationships().isMarried()) {
-            response = "interaction.marry.fail.marriedtoother";
-        } else if (villager.getRelationships().isEngaged() && !Relationship.IS_ENGAGED.test(villager, player)) {
-            response = "interaction.marry.fail.engaged";
+        if (super.handle(player, villager)) {
+            return false;
         } else if (Relationship.IS_ENGAGED.test(villager, player)) {
             response = "interaction.engage.fail.engaged";
-        } else if (playerData.isMarried()) {
-            response = "interaction.marry.fail.playermarried";
-        } else if (memory.getHearts() < getHeartsRequired()) {
-            response = "interaction.marry.fail.lowhearts";
         } else {
             response = "interaction.engage.success";
-            villager.getRelationships().getFamilyEntry().updateSpouse(player, RelationshipState.ENGAGED);
+            playerData.engage(villager);
+            villager.getRelationships().engage(player);
             villager.getVillagerBrain().modifyMoodValue(10);
             consume = true;
         }

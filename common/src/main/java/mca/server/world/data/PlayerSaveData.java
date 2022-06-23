@@ -34,7 +34,10 @@ import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
@@ -111,6 +114,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         EntityRelationship.super.onTragedy(cause, burialSite, type, victim);
 
         // send letter of condolence
+        // todo does not work when offline
         if (victim instanceof VillagerEntityMCA victimVillager) {
             sendLetterOfCondolence(player,
                     victimVillager.getName().getString(),
@@ -229,10 +233,25 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
+    public void sendAngryEngagedLetter(ServerPlayerEntity player, String name) {
+        sendLetter(player, List.of(
+                String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",
+                        getFamilyEntry().getName(), name)
+        ));
+    }
+
     public void sendLetterOfCondolence(ServerPlayerEntity player, String name, String village) {
+        sendLetter(player, List.of(
+                String.format("{ \"translate\": \"mca.letter.condolence\", \"with\": [\"%s\", \"%s\", \"%s\"] }",
+                        getFamilyEntry().getName(), name, village)
+        ));
+    }
+
+    public void sendLetter(ServerPlayerEntity player, List<String> lines) {
         NbtList l = new NbtList();
-        l.add(0, NbtString.of(String.format("{ \"translate\": \"mca.letter.condolence\", \"with\": [\"%s\", \"%s\", \"%s\"] }",
-                getFamilyEntry().getName(), name, village)));
+        for (String line : lines) {
+            l.add(0, NbtString.of(line));
+        }
         NbtCompound nbt = new NbtCompound();
         nbt.put("pages", l);
         sendMail(nbt);
