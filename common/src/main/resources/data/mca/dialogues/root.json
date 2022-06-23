@@ -5,16 +5,7 @@
     {
       "results": [
         {
-          "baseChance": 10000,
-          "constraints": "adventurer",
-          "conditions": [],
-          "actions": {
-            "next": "main"
-          }
-        },
-        {
           "baseChance": 0,
-          "constraints": "peasant",
           "conditions": [
             {
               "chance": 100,
@@ -24,6 +15,10 @@
                 "dividend": -1.0,
                 "add": 1.0
               }
+            },
+            {
+              "chance": -100,
+              "profession": "adventurer"
             }
           ],
           "actions": {
