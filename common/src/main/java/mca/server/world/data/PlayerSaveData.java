@@ -38,9 +38,7 @@ import java.util.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
-    private final UUID playerId;
-
-    private final ServerWorld world;
+    private final ServerPlayerEntity player;
 
     private Optional<Integer> lastSeenVillage = Optional.empty();
 
@@ -50,29 +48,20 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     private final List<NbtCompound> inbox = new LinkedList<>();
 
     public static PlayerSaveData get(ServerPlayerEntity player) {
-        return get((ServerWorld)player.world, player.getUuid());
+        return WorldUtils.loadData(player.getWorld().getServer().getOverworld(), nbt -> new PlayerSaveData(player, nbt), w -> new PlayerSaveData(player), "mca_player_" + player.getUuid());
     }
 
-    public static PlayerSaveData get(ServerWorld world, @NotNull UUID uuid) {
-        return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new PlayerSaveData(world, nbt, uuid), w -> new PlayerSaveData(w, uuid), "mca_player_" + uuid);
-    }
+    PlayerSaveData(ServerPlayerEntity player) {
+        this.player = player;
 
-    PlayerSaveData(ServerWorld world, UUID playerId) {
-        this.world = world;
-        this.playerId = playerId;
-
-        tryToCreateFamilyNode();
         resetEntityData();
     }
 
-    PlayerSaveData(ServerWorld world, NbtCompound nbt, UUID playerId) {
-        this.world = world;
-        this.playerId = playerId;
+    PlayerSaveData(ServerPlayerEntity player, NbtCompound nbt) {
+        this.player = player;
 
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
-
-        tryToCreateFamilyNode();
 
         if (nbt.contains("entityData")) {
             entityData = nbt.getCompound("entityData");
@@ -89,18 +78,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
-    private void tryToCreateFamilyNode() {
-        // an attempt to fix the reoccurring getFamilyEntry errors
-        Entity entity = world.getEntity(playerId);
-        if (entity != null) {
-            getFamilyTree().getOrCreate(entity);
-        }
-    }
-
     private void resetEntityData() {
         entityData = new NbtCompound();
 
-        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(world);
+        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(player.getWorld());
         assert villager != null;
         villager.initializeSkin();
         villager.getGenetics().randomize();
@@ -131,7 +112,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
         // send letter of condolence
         if (victim instanceof VillagerEntityMCA victimVillager) {
-            sendLetterOfCondolence((ServerPlayerEntity)world.getEntity(playerId),
+            sendLetterOfCondolence(player,
                     victimVillager.getName().getString(),
                     victimVillager.getResidency().getHomeVillage().map(Village::getName).orElse(API.getVillagePool().pickVillageName("village")));
         }
@@ -184,7 +165,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         if (Config.getInstance().enterVillageNotification) {
             self.sendMessage(new TranslatableText("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
         }
-        village.deliverTaxes(world);
+        village.deliverTaxes(player.getWorld());
     }
 
     @Override
@@ -201,17 +182,17 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     @Override
     public ServerWorld getWorld() {
-        return world;
+        return player.getWorld();
     }
 
     @Override
     public UUID getUUID() {
-        return playerId;
+        return player.getUuid();
     }
 
     @Override
     public @NotNull FamilyTreeNode getFamilyEntry() {
-        return getFamilyTree().getOrCreate(Objects.requireNonNull(world.getEntity(playerId)));
+        return getFamilyTree().getOrCreate(player);
     }
 
     public void reset() {
