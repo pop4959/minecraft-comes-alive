@@ -5,7 +5,7 @@ import mca.Config;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.network.s2c.OpenDestinyGuiRequest;
 import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
@@ -240,13 +240,13 @@ public class ServerInteractionManager {
             }
 
             // Lookup the spouse, if it's a villager, we can't continue
-            if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
+            if (senderData.getRelationshipState() != RelationshipState.MARRIED_TO_PLAYER) {
                 failMessage(sender, new TranslatableText("server.marriedToVillager"));
                 return;
             }
 
             // Notify the sender of the success and end both marriages.
-            senderData.getSpouseName().ifPresent(name ->
+            senderData.getPartnerName().ifPresent(name ->
                     successMessage(sender, new TranslatableText("server.endMarriage", name.getString()))
             );
             senderData.getSpouse().ifPresent(spouse -> {
@@ -255,8 +255,8 @@ public class ServerInteractionManager {
                     failMessage(player, new TranslatableText("server.marriageEnded", sender.getEntityName()));
                 }
             });
-            senderData.endMarriage(MarriageState.SINGLE);
-            senderData.getSpouseUuid().map(id -> PlayerSaveData.get(sender.getWorld(), id)).ifPresent(r -> r.endMarriage(MarriageState.SINGLE));
+            senderData.endRelationShip(RelationshipState.SINGLE);
+            senderData.getPartnerUUID().map(id -> PlayerSaveData.get(sender.getWorld(), id)).ifPresent(r -> r.endRelationShip(RelationshipState.SINGLE));
         });
     }
 
@@ -274,15 +274,15 @@ public class ServerInteractionManager {
         }
 
         // Ensure the spouse is a player
-        if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
+        if (senderData.getRelationshipState() != RelationshipState.MARRIED_TO_PLAYER) {
             failMessage(sender, new TranslatableText("server.marriedToVillager"));
             return;
         }
 
         // Ensure we don't already have a baby
         BabyTracker tracker = BabyTracker.get(sender.getWorld());
-        BabyTracker.Pairing pairing = tracker.getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
-        if (tracker.hasActiveBaby(sender.getUuid(), senderData.getSpouseUuid().orElse(null))) {
+        BabyTracker.Pairing pairing = tracker.getPairing(sender.getUuid(), senderData.getPartnerUUID().orElse(null));
+        if (tracker.hasActiveBaby(sender.getUuid(), senderData.getPartnerUUID().orElse(null))) {
             if (pairing.locateBaby(sender).getRight().wasFound()) {
                 failMessage(sender, new TranslatableText("server.babyPresent"));
             } else {

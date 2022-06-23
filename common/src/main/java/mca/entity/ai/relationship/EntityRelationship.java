@@ -59,40 +59,42 @@ public interface EntityRelationship {
 
         // end the marriage for both the deceased one and the spouse
         if (type == RelationshipType.SPOUSE || type == RelationshipType.SELF) {
-            if (getMarriageState().isMarried()) {
-                endMarriage(MarriageState.WIDOW);
+            if (getRelationshipState().isMarried()) {
+                endRelationShip(RelationshipState.WIDOW);
+            } else {
+                endRelationShip(RelationshipState.SINGLE);
             }
         }
     }
 
     void marry(Entity spouse);
 
-    void endMarriage(MarriageState newState);
+    void endRelationShip(RelationshipState newState);
 
-    MarriageState getMarriageState();
+    RelationshipState getRelationshipState();
 
-    Optional<UUID> getSpouseUuid();
+    Optional<UUID> getPartnerUUID();
 
-    Optional<Text> getSpouseName();
+    Optional<Text> getPartnerName();
 
     default boolean isMarried() {
-        return getMarriageState() == MarriageState.MARRIED_TO_PLAYER || getMarriageState() == MarriageState.MARRIED_TO_VILLAGER;
+        return getRelationshipState() == RelationshipState.MARRIED_TO_PLAYER || getRelationshipState() == RelationshipState.MARRIED_TO_VILLAGER;
     }
 
     default boolean isEngaged() {
-        return getMarriageState() == MarriageState.ENGAGED;
+        return getRelationshipState() == RelationshipState.ENGAGED;
     }
 
     default boolean isPromised() {
-        return getMarriageState() == MarriageState.PROMISED;
+        return getRelationshipState() == RelationshipState.PROMISED;
     }
 
     default boolean isMarriedTo(UUID uuid) {
-        return getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid) && isMarried();
+        return getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid) && isMarried();
     }
 
     default boolean isEngagedWith(UUID uuid) {
-        return getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid) && isEngaged();
+        return getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid) && isEngaged();
     }
 
     static Optional<EntityRelationship> of(Entity entity) {

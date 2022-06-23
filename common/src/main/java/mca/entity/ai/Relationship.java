@@ -67,13 +67,13 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     }
 
     @Override
-    public Optional<Text> getSpouseName() {
-        return getFamilyTree().getOrEmpty(getFamilyEntry().spouse()).map(FamilyTreeNode::getName).map(LiteralText::new);
+    public Optional<Text> getPartnerName() {
+        return getFamilyTree().getOrEmpty(getFamilyEntry().partner()).map(FamilyTreeNode::getName).map(LiteralText::new);
     }
 
     @Override
     public Optional<Entity> getSpouse() {
-        return Optional.ofNullable(((ServerWorld)entity.world).getEntity(getFamilyEntry().spouse()));
+        return Optional.ofNullable(((ServerWorld)entity.world).getEntity(getFamilyEntry().partner()));
     }
 
     @Override
@@ -164,13 +164,13 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     }
 
     @Override
-    public MarriageState getMarriageState() {
-        return getFamilyEntry().getMarriageState();
+    public RelationshipState getRelationshipState() {
+        return getFamilyEntry().getRelationshipState();
     }
 
     @Override
-    public Optional<UUID> getSpouseUuid() {
-        UUID spouse = getFamilyEntry().spouse();
+    public Optional<UUID> getPartnerUUID() {
+        UUID spouse = getFamilyEntry().partner();
         if (spouse.equals(Util.NIL_UUID)) {
             return Optional.empty();
         } else {
@@ -180,18 +180,18 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
     @Override
     public void marry(Entity spouse) {
-        MarriageState state = spouse instanceof PlayerEntity ? MarriageState.MARRIED_TO_PLAYER : MarriageState.MARRIED_TO_VILLAGER;
+        RelationshipState state = spouse instanceof PlayerEntity ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
 
         if (spouse instanceof ServerPlayerEntity) {
             CriterionMCA.GENERIC_EVENT_CRITERION.trigger((ServerPlayerEntity)spouse, "marriage");
         }
 
-        getFamilyEntry().updateMarriage(spouse, state);
+        getFamilyEntry().updateSpouse(spouse, state);
     }
 
     @Override
-    public void endMarriage(MarriageState newState) {
-        getFamilyEntry().updateMarriage(null, newState);
+    public void endRelationShip(RelationshipState newState) {
+        getFamilyEntry().updateSpouse(null, newState);
     }
 
     public GiftSaturation getGiftSaturation() {

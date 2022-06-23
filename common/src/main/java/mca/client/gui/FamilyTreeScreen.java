@@ -2,7 +2,7 @@ package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import mca.cobalt.network.NetworkHandler;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.c2s.GetFamilyTreeRequest;
 import net.minecraft.client.MinecraftClient;
@@ -232,8 +232,8 @@ public class FamilyTreeScreen extends Screen {
                 this.label.add(new TranslatableText("gui.family_tree.label.orphan").formatted(Formatting.GRAY));
             }
 
-            if (node.getMarriageState() != MarriageState.SINGLE) {
-                this.label.add(new TranslatableText("marriage." + node.getMarriageState().base().getIcon()));
+            if (node.getRelationshipState() != RelationshipState.SINGLE) {
+                this.label.add(new TranslatableText("marriage." + node.getRelationshipState().base().getIcon()));
             }
 
             if (recurse) {
@@ -244,7 +244,7 @@ public class FamilyTreeScreen extends Screen {
                     }
                 });
 
-                FamilyTreeNode spouse = family.get(node.spouse());
+                FamilyTreeNode spouse = family.get(node.partner());
 
                 if (spouse != null) {
                     this.spouse = new TreeNode(spouse, parsed, false);

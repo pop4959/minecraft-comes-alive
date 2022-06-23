@@ -1,11 +1,10 @@
 package mca.entity.interaction;
 
-import mca.Config;
 import mca.ProfessionsMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.*;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
@@ -151,7 +150,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 entity.sendChatMessage(player, "interaction.adopt.success");
                 FamilyTreeNode parentNode = FamilyTree.get(player.getWorld()).getOrCreate(player);
                 entity.getRelationships().getFamilyEntry().assignParent(parentNode);
-                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get(player.getWorld()).getOrEmpty(parentNode.spouse());
+                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get(player.getWorld()).getOrEmpty(parentNode.partner());
                 parentSpouse.ifPresent(p -> entity.getRelationships().getFamilyEntry().assignParent(p));
             }
             case "procreate" -> {
@@ -188,9 +187,9 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     memories.modHearts(-200);
                 }
                 entity.getVillagerBrain().modifyMoodValue(-5);
-                entity.getRelationships().endMarriage(MarriageState.SINGLE);
+                entity.getRelationships().endRelationShip(RelationshipState.SINGLE);
                 PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
-                playerData.endMarriage(MarriageState.SINGLE);
+                playerData.endRelationShip(RelationshipState.SINGLE);
                 return true;
             }
             case "execute" -> {

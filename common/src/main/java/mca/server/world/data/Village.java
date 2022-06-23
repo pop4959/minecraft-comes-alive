@@ -6,7 +6,7 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.ProfessionsMCA;
 import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.resources.API;
 import mca.resources.PoolUtil;
@@ -438,7 +438,7 @@ public class Village implements Iterable<Building> {
         List<VillagerEntityMCA> availableVillagers = allVillagers.stream()
                 .filter(v -> !v.isBaby())
                 .filter(v -> !v.getRelationships().isMarried())
-                .filter(v -> !v.getRelationships().getMarriageState().equals(MarriageState.ENGAGED))
+                .filter(v -> !v.getRelationships().getRelationshipState().equals(RelationshipState.ENGAGED))
                 .collect(Collectors.toList());
 
         if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * getMarriageThreshold() / 100f) {

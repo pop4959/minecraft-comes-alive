@@ -2,7 +2,7 @@ package mca.entity.ai.relationship.family;
 
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.util.NbtHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
@@ -38,8 +38,8 @@ public final class FamilyTreeNode implements Serializable {
     private UUID father;
     private UUID mother;
 
-    private UUID spouse = Util.NIL_UUID;
-    private MarriageState marriageState = MarriageState.SINGLE;
+    private UUID partner = Util.NIL_UUID;
+    private RelationshipState relationshipState = RelationshipState.SINGLE;
 
     private boolean deceased;
 
@@ -71,9 +71,9 @@ public final class FamilyTreeNode implements Serializable {
         profession = nbt.getString("profession");
         deceased = nbt.getBoolean("isDeceased");
         if (nbt.containsUuid("spouse")) {
-            spouse = nbt.getUuid("spouse");
+            partner = nbt.getUuid("spouse");
         }
-        marriageState = MarriageState.byId(nbt.getInt("marriageState"));
+        relationshipState = RelationshipState.byId(nbt.getInt("marriageState"));
     }
 
     public UUID id() {
@@ -144,37 +144,37 @@ public final class FamilyTreeNode implements Serializable {
     }
 
     /**
-     * Id of the last this entity's most recent spouse.
+     * Id of the last this entity's most recent partner.
      */
-    public UUID spouse() {
-        return spouse;
+    public UUID partner() {
+        return partner;
     }
 
-    public MarriageState getMarriageState() {
-        return marriageState;
+    public RelationshipState getRelationshipState() {
+        return relationshipState;
     }
 
-    public void setMarriageState(MarriageState state) {
-        this.marriageState = state;
+    public void setRelationshipState(RelationshipState state) {
+        this.relationshipState = state;
         markDirty();
     }
 
-    public void updateMarriage(@Nullable Entity spouse, @Nullable MarriageState state) {
-        this.spouse = spouse == null ? Util.NIL_UUID : spouse.getUuid();
-        this.marriageState = state == null && spouse == null ? MarriageState.SINGLE : state;
+    public void updateSpouse(@Nullable Entity partner, @Nullable RelationshipState state) {
+        this.partner = partner == null ? Util.NIL_UUID : partner.getUuid();
+        this.relationshipState = state == null && partner == null ? RelationshipState.SINGLE : state;
 
         if (rootNode != null) {
-            if (spouse != null) {
+            if (partner != null) {
                 // ensure the family tree has an entry
-                rootNode.getOrCreate(spouse);
+                rootNode.getOrCreate(partner);
             }
             rootNode.markDirty();
         }
     }
 
-    public void updateMarriage(FamilyTreeNode spouse) {
-        this.spouse = spouse.id();
-        this.marriageState = spouse.isPlayer ? MarriageState.MARRIED_TO_PLAYER : MarriageState.MARRIED_TO_VILLAGER;
+    public void updateSpouse(FamilyTreeNode spouse) {
+        this.partner = spouse.id();
+        this.relationshipState = spouse.isPlayer ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
         markDirty();
     }
 
@@ -388,8 +388,8 @@ public final class FamilyTreeNode implements Serializable {
         nbt.putInt("gender", gender.getId());
         nbt.putUuid("father", father);
         nbt.putUuid("mother", mother);
-        nbt.putUuid("spouse", spouse);
-        nbt.putInt("marriageState", marriageState.ordinal());
+        nbt.putUuid("spouse", partner);
+        nbt.putInt("marriageState", relationshipState.ordinal());
         nbt.put("children", NbtHelper.fromList(children, child -> {
             NbtCompound n = new NbtCompound();
             n.putUuid("uuid", child);

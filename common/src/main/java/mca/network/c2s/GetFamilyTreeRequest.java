@@ -28,7 +28,7 @@ public class GetFamilyTreeRequest implements Message {
     public void receive(ServerPlayerEntity player) {
         FamilyTree.get(player.getWorld()).getOrEmpty(uuid).ifPresent(entry -> {
             Map<UUID, FamilyTreeNode> familyEntries = Stream.concat(
-                            entry.lookup(Stream.of(entry.id(), entry.spouse())),
+                            entry.lookup(Stream.of(entry.id(), entry.partner())),
                             entry.lookup(entry.getRelatives(2, 1))
                     ).distinct()
                     .collect(Collectors.toMap(FamilyTreeNode::id, Function.identity()));

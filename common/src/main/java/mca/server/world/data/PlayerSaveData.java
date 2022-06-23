@@ -6,7 +6,7 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.EntityRelationship;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.RelationshipType;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
@@ -48,7 +48,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     private Optional<Text> spouseName = Optional.empty();
 
-    private MarriageState marriageState;
+    private RelationshipState marriageState;
 
     private final ServerWorld world;
 
@@ -66,7 +66,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     PlayerSaveData(ServerWorld world, UUID playerId) {
         this.world = world;
         this.playerId = playerId;
-        this.marriageState = MarriageState.SINGLE;
+        this.marriageState = RelationshipState.SINGLE;
 
         tryToCreateFamilyNode();
         resetEntityData();
@@ -80,7 +80,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         spouseUUID = nbt.contains("spouseUUID") ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
         spouseName = nbt.contains("spouseName") ? Optional.of(new LiteralText(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
-        marriageState = MarriageState.byId(nbt.getInt("marriageState"));
+        marriageState = RelationshipState.byId(nbt.getInt("marriageState"));
 
         tryToCreateFamilyNode();
 
@@ -198,36 +198,36 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     @Override
-    public Optional<UUID> getSpouseUuid() {
+    public Optional<UUID> getPartnerUUID() {
         return spouseUUID;
     }
 
     @Override
     public void marry(Entity spouse) {
-        MarriageState marriageState = spouse instanceof PlayerEntity ? MarriageState.MARRIED_TO_PLAYER : MarriageState.MARRIED_TO_VILLAGER;
+        RelationshipState marriageState = spouse instanceof PlayerEntity ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
         this.spouseUUID = Optional.of(spouse.getUuid());
         this.spouseName = Optional.of(spouse.getName());
         this.marriageState = marriageState;
-        getFamilyEntry().updateMarriage(spouse, marriageState);
+        getFamilyEntry().updateSpouse(spouse, marriageState);
         markDirty();
     }
 
     @Override
-    public void endMarriage(MarriageState newState) {
+    public void endRelationShip(RelationshipState newState) {
         spouseUUID = Optional.empty();
         spouseName = Optional.empty();
         marriageState = newState;
-        getFamilyEntry().updateMarriage(null, newState);
+        getFamilyEntry().updateSpouse(null, newState);
         markDirty();
     }
 
     @Override
-    public MarriageState getMarriageState() {
+    public RelationshipState getRelationshipState() {
         return marriageState;
     }
 
     @Override
-    public Optional<Text> getSpouseName() {
+    public Optional<Text> getPartnerName() {
         return isMarried() ? spouseName : Optional.empty();
     }
 
@@ -271,7 +271,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     public void reset() {
-        endMarriage(MarriageState.SINGLE);
+        endRelationShip(RelationshipState.SINGLE);
         markDirty();
     }
 

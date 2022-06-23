@@ -4,7 +4,7 @@ import mca.Config;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.entity.ai.Relationship;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -42,7 +42,7 @@ public class EngagementRingItem extends TooltippedItem implements SpecialCaseGif
             response = "interaction.marry.fail.lowhearts";
         } else {
             response = "interaction.engage.success";
-            villager.getRelationships().getFamilyEntry().updateMarriage(player, MarriageState.ENGAGED);
+            villager.getRelationships().getFamilyEntry().updateSpouse(player, RelationshipState.ENGAGED);
             villager.getVillagerBrain().modifyMoodValue(10);
             consume = true;
         }

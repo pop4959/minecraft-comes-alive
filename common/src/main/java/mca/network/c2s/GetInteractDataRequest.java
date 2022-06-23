@@ -6,7 +6,7 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.VillagerLike;
 import mca.entity.ai.relationship.CompassionateEntity;
 import mca.entity.ai.relationship.EntityRelationship;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.s2c.GetInteractDataResponse;
 import net.minecraft.entity.Entity;
@@ -39,8 +39,8 @@ public class GetInteractDataRequest implements Message {
 
             String fatherName = relationship.getFamilyTree().getOrEmpty(family.father()).map(FamilyTreeNode::getName).orElse(null);
             String motherName = relationship.getFamilyTree().getOrEmpty(family.mother()).map(FamilyTreeNode::getName).orElse(null);
-            String spouseName = relationship.getFamilyTree().getOrEmpty(family.spouse()).map(FamilyTreeNode::getName).orElse(null);
-            MarriageState marriageState = relationship.getMarriageState();
+            String spouseName = relationship.getFamilyTree().getOrEmpty(family.partner()).map(FamilyTreeNode::getName).orElse(null);
+            RelationshipState marriageState = relationship.getRelationshipState();
 
             NetworkHandler.sendToPlayer(new GetInteractDataResponse(constraints, fatherName, motherName, spouseName, marriageState), player);
         }

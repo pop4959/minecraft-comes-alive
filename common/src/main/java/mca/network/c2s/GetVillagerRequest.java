@@ -62,7 +62,7 @@ public class GetVillagerRequest implements Message {
         FamilyTree tree = FamilyTree.get((ServerWorld)e.world);
         FamilyTreeNode entry = tree.getOrCreate(e);
 
-        storeNode(data, tree.getOrEmpty(entry.spouse()), "spouse");
+        storeNode(data, tree.getOrEmpty(entry.partner()), "spouse");
         storeNode(data, tree.getOrEmpty(entry.father()), "father");
         storeNode(data, tree.getOrEmpty(entry.mother()), "mother");
 

@@ -1,6 +1,6 @@
 package mca.entity.ai.relationship;
 
-public enum MarriageState {
+public enum RelationshipState {
     /**
      * The default state. All entities when born are not married.
      */
@@ -26,11 +26,11 @@ public enum MarriageState {
      */
     WIDOW("widow");
 
-    private static final MarriageState[] VALUES = values();
+    private static final RelationshipState[] VALUES = values();
 
     private final String icon;
 
-    MarriageState(String icon) {
+    RelationshipState(String icon) {
         this.icon = icon;
     }
 
@@ -38,7 +38,7 @@ public enum MarriageState {
         return this == MARRIED_TO_PLAYER || this == MARRIED_TO_VILLAGER;
     }
 
-    public MarriageState base() {
+    public RelationshipState base() {
         return this == MARRIED_TO_PLAYER ? MARRIED_TO_VILLAGER : this;
     }
 
@@ -46,7 +46,7 @@ public enum MarriageState {
         return icon;
     }
 
-    public static MarriageState byId(int id) {
+    public static RelationshipState byId(int id) {
         if (id < 0 || id >= VALUES.length) {
             return SINGLE;
         }

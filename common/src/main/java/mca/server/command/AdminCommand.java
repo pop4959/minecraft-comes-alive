@@ -10,7 +10,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mca.Config;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.BabyItem;
@@ -121,13 +121,13 @@ public class AdminCommand {
         //remove spouse too
         FamilyTree tree = FamilyTree.get(ctx.getSource().getWorld());
         Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
-        node.filter(n -> n.spouse() != null).ifPresent(n -> n.updateMarriage(null, MarriageState.WIDOW));
+        node.filter(n -> n.partner() != null).ifPresent(n -> n.updateSpouse(null, RelationshipState.WIDOW));
 
         //remove from player spouse
         ctx.getSource().getWorld().getPlayers().forEach(player -> {
             PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
-            if (playerData.getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid)) {
-                playerData.endMarriage(MarriageState.SINGLE);
+            if (playerData.getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid)) {
+                playerData.endRelationShip(RelationshipState.SINGLE);
             }
         });
     }
@@ -202,7 +202,7 @@ public class AdminCommand {
     private static int resetMarriage(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         PlayerEntity player = ctx.getSource().getPlayer();
         PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
-        playerData.endMarriage(MarriageState.SINGLE);
+        playerData.endRelationShip(RelationshipState.SINGLE);
         success("Marriage reset.", ctx);
         return 0;
     }
