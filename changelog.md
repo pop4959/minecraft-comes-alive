@@ -319,4 +319,5 @@
 
 * Parents with same gender are now properly registered
 * Engagement rings now set the relationship to engaged
-  * Engaged villagers won't marry someone else
+    * Engaged villagers won't marry someone else
+* Gifting a bouquet prevents villagers from marrying other villagers

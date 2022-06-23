@@ -146,6 +146,8 @@
   "interaction.engage.success/4": "Is...is this real? I mean, this moment, not the ring. But the ring is real, right?",
   "interaction.engage.fail.engaged/1": "But honey, we are already engaged!",
 
+  "interaction.promise.success/1": "todo",
+
   "adult.interaction.matchmaker.fail.married/1": "I am already married to someone.",
   "adult.interaction.matchmaker.fail.married/2": "I'm happily married, I do not want another spouse.",
   "adult.interaction.matchmaker.fail.married/3": "I don't want that - I'm already married.",

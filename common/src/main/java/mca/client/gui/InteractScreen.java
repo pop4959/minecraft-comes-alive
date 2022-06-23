@@ -79,9 +79,7 @@ public class InteractScreen extends AbstractDynamicScreen {
 
     @Override
     public void tick() {
-        if (timeSinceLastClick < 100) {
-            timeSinceLastClick++;
-        }
+        timeSinceLastClick++;
     }
 
     @Override

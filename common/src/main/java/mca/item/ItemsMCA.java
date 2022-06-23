@@ -53,6 +53,8 @@ public interface ItemsMCA {
     RegistrySupplier<Item> BLUEPRINT = register("blueprint", () -> new BlueprintItem(baseProps()));
     RegistrySupplier<Item> FAMILY_TREE = register("family_tree", () -> new FamilyTreeItem(baseProps()));
 
+    RegistrySupplier<Item> BOUQUET = register("bouquet", () -> new BouquetItem(baseProps()));
+
     RegistrySupplier<Item> NEEDLE_AND_THREAD = register("needle_and_thread", () -> new NeedleAndThreadItem(baseProps().maxDamage(8)));
     RegistrySupplier<Item> COMB = register("comb", () -> new CombItem(baseProps().maxDamage(8)));
 

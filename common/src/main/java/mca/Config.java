@@ -43,6 +43,7 @@ public final class Config implements Serializable {
     public int chanceToHaveTwins = 2;
     public float marriageHeartsRequirement = 100;
     public float engagementHeartsRequirement = 50;
+    public float bouquetHeartsRequirement = 10;
     public int babyItemGrowUpTime = 24000;
     public int villagerMaxAgeTime = 192000;
     public int villagerMaxHealth = 20;
