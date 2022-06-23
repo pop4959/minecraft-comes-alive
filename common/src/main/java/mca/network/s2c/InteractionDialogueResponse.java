@@ -4,7 +4,7 @@ import mca.ClientProxy;
 import mca.cobalt.network.Message;
 import mca.entity.VillagerEntityMCA;
 import mca.resources.data.dialogue.Question;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 import java.util.List;
@@ -17,7 +17,7 @@ public class InteractionDialogueResponse implements Message {
     public final List<String> answers;
     public final boolean silent;
 
-    public InteractionDialogueResponse(Question question, PlayerEntity player, VillagerEntityMCA villager) {
+    public InteractionDialogueResponse(Question question, ServerPlayerEntity player, VillagerEntityMCA villager) {
         this.question = question.getId();
         this.answers = question.getValidAnswers(player, villager);
         this.silent = question.isSilent();

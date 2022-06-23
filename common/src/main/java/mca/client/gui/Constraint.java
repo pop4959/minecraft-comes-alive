@@ -11,8 +11,6 @@ import mca.resources.Tasks;
 import mca.server.world.data.PlayerSaveData;
 import mca.server.world.data.Village;
 import mca.server.world.data.VillageManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.village.VillagerProfession;
@@ -23,7 +21,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
+public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntity> {
     FAMILY("family", Relationship.IS_FAMILY.asConstraint()),
     NOT_FAMILY("!family", Relationship.IS_FAMILY.negate().asConstraint()),
 
@@ -78,8 +76,8 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     STAYING("staying", (villager, player) -> villager.getVillagerBrain().getMoveState() == MoveState.STAY),
     NOT_STAYING("!staying", (villager, player) -> villager.getVillagerBrain().getMoveState() != MoveState.STAY),
 
-    VILLAGE_HAS_SPACE("village_has_space", (villager, player) -> PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isPresent()),
-    NOT_VILLAGE_HAS_SPACE("!village_has_space", (villager, player) -> PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isEmpty()),
+    VILLAGE_HAS_SPACE("village_has_space", (villager, player) -> PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isPresent()),
+    NOT_VILLAGE_HAS_SPACE("!village_has_space", (villager, player) -> PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isEmpty()),
 
     SMALL_BOUNTY("small_bounty", (villager, player) -> {
         if (villager instanceof VillagerEntityMCA v) {
@@ -90,23 +88,23 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
     }),
     NOT_SMALL_BOUNTY("not_small_bounty", (villager, player) -> !SMALL_BOUNTY.test(villager, player));
 
-    private static boolean isRankAtLeast(VillagerLike<?> villager, Entity player, Rank rank) {
-        return player instanceof PlayerEntity && villager instanceof VillagerEntityMCA && ((VillagerEntityMCA)villager).getResidency().getHomeVillage()
-                .filter(village -> Tasks.getRank(village, (ServerPlayerEntity)player).isAtLeast(rank)).isPresent();
+    private static boolean isRankAtLeast(VillagerLike<?> villager, ServerPlayerEntity player, Rank rank) {
+        return player != null && villager instanceof VillagerEntityMCA && ((VillagerEntityMCA)villager).getResidency().getHomeVillage()
+                .filter(village -> Tasks.getRank(village, player).isAtLeast(rank)).isPresent();
     }
 
     public static final Map<String, Constraint> REGISTRY = Stream.of(values()).collect(Collectors.toMap(a -> a.id, Function.identity()));
 
     private final String id;
-    private final BiPredicate<VillagerLike<?>, Entity> check;
+    private final BiPredicate<VillagerLike<?>, ServerPlayerEntity> check;
 
-    Constraint(String id, BiPredicate<VillagerLike<?>, Entity> check) {
+    Constraint(String id, BiPredicate<VillagerLike<?>, ServerPlayerEntity> check) {
         this.id = id;
         this.check = check;
     }
 
     @Override
-    public boolean test(VillagerLike<?> t, Entity u) {
+    public boolean test(VillagerLike<?> t, ServerPlayerEntity u) {
         return check.test(t, u);
     }
 
@@ -114,7 +112,7 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, Entity> {
         return new HashSet<>(REGISTRY.values());
     }
 
-    public static Set<Constraint> allMatching(VillagerLike<?> villager, Entity player) {
+    public static Set<Constraint> allMatching(VillagerLike<?> villager, ServerPlayerEntity player) {
         return Stream.of(values()).filter(c -> c.test(villager, player)).collect(Collectors.toSet());
     }
 

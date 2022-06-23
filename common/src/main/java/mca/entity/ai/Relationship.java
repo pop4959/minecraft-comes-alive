@@ -24,6 +24,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -158,7 +159,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
             return (villager, partner) -> !test(villager, partner);
         }
 
-        default BiPredicate<VillagerLike<?>, Entity> asConstraint() {
+        default BiPredicate<VillagerLike<?>, ServerPlayerEntity> asConstraint() {
             return (villager, player) -> villager instanceof CompassionateEntity<?> && (test((CompassionateEntity<?>)villager, player));
         }
     }

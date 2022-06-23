@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import mca.client.gui.Constraint;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.interaction.InteractionPredicate;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -89,7 +89,7 @@ public class Question {
         return auto;
     }
 
-    public List<String> getValidAnswers(PlayerEntity player, VillagerEntityMCA villager) {
+    public List<String> getValidAnswers(ServerPlayerEntity player, VillagerEntityMCA villager) {
         Set<Constraint> constraints = Constraint.allMatching(villager, player);
         List<String> ans = new LinkedList<>();
         for (Answer a : answers) {
