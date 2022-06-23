@@ -77,7 +77,7 @@
     "profession": "mca:guard"
   },
   "mca:skins/clothing/normal/male/child/%d.png": {
-    "count": 10,
+    "count": 12,
     "profession": "mca:child",
     "exclude": true
   },
