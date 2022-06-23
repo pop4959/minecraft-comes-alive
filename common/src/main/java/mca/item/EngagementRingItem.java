@@ -19,7 +19,7 @@ public class EngagementRingItem extends TooltippedItem implements SpecialCaseGif
 
     @Override
     public boolean handle(ServerPlayerEntity player, VillagerEntityMCA villager) {
-        PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
+        PlayerSaveData playerData = PlayerSaveData.get(player);
         Memories memory = villager.getVillagerBrain().getMemoriesForPlayer(player);
         String response;
         boolean consume = false;

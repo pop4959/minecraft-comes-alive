@@ -8,7 +8,6 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.RelationshipType;
-import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
 import mca.network.s2c.ShowToastRequest;
@@ -28,8 +27,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -38,17 +35,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
     private final UUID playerId;
-
-    private Optional<UUID> spouseUUID = Optional.empty();
-
-    private Optional<Text> spouseName = Optional.empty();
-
-    private RelationshipState marriageState;
 
     private final ServerWorld world;
 
@@ -59,6 +49,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     private final List<NbtCompound> inbox = new LinkedList<>();
 
+    public static PlayerSaveData get(ServerPlayerEntity player) {
+        return get((ServerWorld)player.world, player.getUuid());
+    }
+
     public static PlayerSaveData get(ServerWorld world, @NotNull UUID uuid) {
         return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new PlayerSaveData(world, nbt, uuid), w -> new PlayerSaveData(w, uuid), "mca_player_" + uuid);
     }
@@ -66,7 +60,6 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     PlayerSaveData(ServerWorld world, UUID playerId) {
         this.world = world;
         this.playerId = playerId;
-        this.marriageState = RelationshipState.SINGLE;
 
         tryToCreateFamilyNode();
         resetEntityData();
@@ -77,10 +70,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         this.playerId = playerId;
 
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
-        spouseUUID = nbt.contains("spouseUUID") ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
-        spouseName = nbt.contains("spouseName") ? Optional.of(new LiteralText(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
-        marriageState = RelationshipState.byId(nbt.getInt("marriageState"));
 
         tryToCreateFamilyNode();
 
@@ -198,76 +188,30 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     @Override
-    public Optional<UUID> getPartnerUUID() {
-        return spouseUUID;
-    }
-
-    @Override
     public void marry(Entity spouse) {
-        RelationshipState marriageState = spouse instanceof PlayerEntity ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
-        this.spouseUUID = Optional.of(spouse.getUuid());
-        this.spouseName = Optional.of(spouse.getName());
-        this.marriageState = marriageState;
-        getFamilyEntry().updateSpouse(spouse, marriageState);
+        EntityRelationship.super.marry(spouse);
         markDirty();
     }
 
     @Override
     public void endRelationShip(RelationshipState newState) {
-        spouseUUID = Optional.empty();
-        spouseName = Optional.empty();
-        marriageState = newState;
-        getFamilyEntry().updateSpouse(null, newState);
+        EntityRelationship.super.endRelationShip(newState);
         markDirty();
     }
 
     @Override
-    public RelationshipState getRelationshipState() {
-        return marriageState;
+    public ServerWorld getWorld() {
+        return world;
     }
 
     @Override
-    public Optional<Text> getPartnerName() {
-        return isMarried() ? spouseName : Optional.empty();
-    }
-
-    @Override
-    public FamilyTree getFamilyTree() {
-        return FamilyTree.get(world);
-    }
-
-    @Override
-    public Stream<Entity> getFamily(int parents, int children) {
-        return getFamilyEntry()
-                .getRelatives(parents, children)
-                .map(world::getEntity)
-                .filter(Objects::nonNull)
-                .filter(e -> !e.getUuid().equals(playerId));
+    public UUID getUUID() {
+        return playerId;
     }
 
     @Override
     public @NotNull FamilyTreeNode getFamilyEntry() {
         return getFamilyTree().getOrCreate(Objects.requireNonNull(world.getEntity(playerId)));
-    }
-
-    @Override
-    public Stream<Entity> getParents() {
-        return getFamilyEntry().streamParents().map(world::getEntity).filter(Objects::nonNull);
-    }
-
-    @Override
-    public Stream<Entity> getSiblings() {
-        return getFamilyEntry()
-                .siblings()
-                .stream()
-                .map(world::getEntity)
-                .filter(Objects::nonNull)
-                .filter(e -> !e.getUuid().equals(playerId)); // we exclude ourselves from the list of siblings
-    }
-
-    @Override
-    public Optional<Entity> getSpouse() {
-        return spouseUUID.map(world::getEntity);
     }
 
     public void reset() {
@@ -277,13 +221,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
-        spouseUUID.ifPresent(id -> nbt.putUuid("spouseUUID", id));
         lastSeenVillage.ifPresent(id -> nbt.putInt("lastSeenVillage", id));
-        spouseName.ifPresent(n -> nbt.putString("spouseName", n.getString()));
         nbt.put("entityData", entityData);
         nbt.putBoolean("entityDataSet", entityDataSet);
         nbt.put("inbox", NbtHelper.fromList(inbox, v -> v));
-        nbt.putInt("marriageState", marriageState.ordinal());
         return nbt;
     }
 

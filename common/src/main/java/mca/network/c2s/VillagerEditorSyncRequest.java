@@ -111,7 +111,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
 
     private void saveEntity(ServerPlayerEntity player, Entity entity, NbtCompound villagerData) {
         if (entity instanceof ServerPlayerEntity serverPlayer) {
-            PlayerSaveData data = PlayerSaveData.get(serverPlayer.getWorld(), uuid);
+            PlayerSaveData data = PlayerSaveData.get(serverPlayer);
             data.setEntityData(villagerData);
             data.setEntityDataSet(true);
             syncFamilyTree(player, entity, villagerData);

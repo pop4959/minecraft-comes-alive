@@ -417,7 +417,7 @@ public class Village implements Iterable<Building> {
                 .filter(villager -> world.random.nextFloat() < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
                 .ifPresent(villager ->
-                        villager.getRelationships().getSpouse().ifPresent(spouse -> {
+                        villager.getRelationships().getPartner().ifPresent(spouse -> {
                                     // tell everyone about it
                                     if (Config.getInstance().villagerBirthNotification && spouse instanceof VillagerEntityMCA spouseVillager) {
                                         broadCastMessage(world, "events.baby", villager, spouseVillager);
@@ -517,7 +517,7 @@ public class Village implements Iterable<Building> {
     }
 
     private void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA suitor, VillagerEntityMCA mate) {
-        world.getPlayers().stream().filter(p -> PlayerSaveData.get(world, p.getUuid()).getLastSeenVillageId().orElse(-2) == getId()
+        world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId()
                         || suitor.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend
                         || mate.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
                 .forEach(player -> player.sendMessage(new TranslatableText(event, suitor.getName(), mate.getName()), true));

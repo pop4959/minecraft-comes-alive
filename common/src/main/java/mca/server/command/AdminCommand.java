@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -125,7 +126,7 @@ public class AdminCommand {
 
         //remove from player spouse
         ctx.getSource().getWorld().getPlayers().forEach(player -> {
-            PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
+            PlayerSaveData playerData = PlayerSaveData.get(player);
             if (playerData.getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid)) {
                 playerData.endRelationShip(RelationshipState.SINGLE);
             }
@@ -192,16 +193,16 @@ public class AdminCommand {
     }
 
     private static int resetPlayerData(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        PlayerEntity player = ctx.getSource().getPlayer();
-        PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+        PlayerSaveData playerData = PlayerSaveData.get(player);
         playerData.reset();
         success("Player data reset.", ctx);
         return 0;
     }
 
     private static int resetMarriage(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        PlayerEntity player = ctx.getSource().getPlayer();
-        PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+        PlayerSaveData playerData = PlayerSaveData.get(player);
         playerData.endRelationShip(RelationshipState.SINGLE);
         success("Marriage reset.", ctx);
         return 0;

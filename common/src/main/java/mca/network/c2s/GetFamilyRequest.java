@@ -20,7 +20,7 @@ public class GetFamilyRequest implements Message {
     public void receive(ServerPlayerEntity player) {
         NbtCompound familyData = new NbtCompound();
 
-        PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
+        PlayerSaveData playerData = PlayerSaveData.get(player);
 
         //fetches all members
         //de-loaded members are excluded as they can't teleport anyway

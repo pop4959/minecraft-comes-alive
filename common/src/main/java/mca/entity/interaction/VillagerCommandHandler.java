@@ -188,7 +188,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 }
                 entity.getVillagerBrain().modifyMoodValue(-5);
                 entity.getRelationships().endRelationShip(RelationshipState.SINGLE);
-                PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
+                PlayerSaveData playerData = PlayerSaveData.get(player);
                 playerData.endRelationShip(RelationshipState.SINGLE);
                 return true;
             }

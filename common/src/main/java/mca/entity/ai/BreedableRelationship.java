@@ -72,7 +72,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
             entity.world.sendEntityStatus(entity, Status.VILLAGER_HEARTS);
         } else {
             getFamilyTree().getOrCreate(entity);
-            getSpouse().ifPresent(spouse -> {
+            getPartner().ifPresent(spouse -> {
                 pregnancy.procreate(spouse);
 
                 entity.setTrackedValue(IS_PROCREATING, false);

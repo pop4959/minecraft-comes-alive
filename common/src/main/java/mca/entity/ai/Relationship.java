@@ -1,13 +1,14 @@
 package mca.entity.ai;
 
 import mca.TagsMCA;
-import mca.advancement.criterion.CriterionMCA;
 import mca.block.TombstoneBlock;
 import mca.entity.Status;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
-import mca.entity.ai.relationship.*;
-import mca.entity.ai.relationship.family.FamilyTree;
+import mca.entity.ai.relationship.CompassionateEntity;
+import mca.entity.ai.relationship.EntityRelationship;
+import mca.entity.ai.relationship.Gender;
+import mca.entity.ai.relationship.RelationshipType;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.entity.interaction.gifts.GiftSaturation;
 import mca.server.world.data.GraveyardManager;
@@ -23,20 +24,13 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiPredicate;
-import java.util.stream.Stream;
 
 /**
  * I know you, you know me, we're all a big happy family.
@@ -67,48 +61,19 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     }
 
     @Override
-    public Optional<Text> getPartnerName() {
-        return getFamilyTree().getOrEmpty(getFamilyEntry().partner()).map(FamilyTreeNode::getName).map(LiteralText::new);
+    public ServerWorld getWorld() {
+        return (ServerWorld)entity.world;
     }
 
     @Override
-    public Optional<Entity> getSpouse() {
-        return Optional.ofNullable(((ServerWorld)entity.world).getEntity(getFamilyEntry().partner()));
-    }
-
-    @Override
-    public FamilyTree getFamilyTree() {
-        return FamilyTree.get((ServerWorld)entity.world);
+    public UUID getUUID() {
+        return entity.getUuid();
     }
 
     @NotNull
     @Override
     public FamilyTreeNode getFamilyEntry() {
         return getFamilyTree().getOrCreate(entity);
-    }
-
-    @Override
-    public Stream<Entity> getFamily(int parents, int children) {
-        return getFamilyEntry()
-                .getRelatives(parents, children)
-                .map(id -> ((ServerWorld)entity.world).getEntity(id))
-                .filter(Objects::nonNull)
-                .filter(e -> !e.equals(entity));
-    }
-
-    @Override
-    public Stream<Entity> getParents() {
-        return getFamilyEntry().streamParents().map(((ServerWorld)entity.world)::getEntity).filter(Objects::nonNull);
-    }
-
-    @Override
-    public Stream<Entity> getSiblings() {
-        return getFamilyEntry()
-                .siblings()
-                .stream()
-                .map(id -> ((ServerWorld)entity.world).getEntity(id))
-                .filter(Objects::nonNull)
-                .filter(e -> !e.equals(entity)); // we exclude ourselves from the list of siblings
     }
 
     public void onDeath(DamageSource cause) {
@@ -161,37 +126,6 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
         }
 
         EntityRelationship.super.onTragedy(cause, burialSite, type, with);
-    }
-
-    @Override
-    public RelationshipState getRelationshipState() {
-        return getFamilyEntry().getRelationshipState();
-    }
-
-    @Override
-    public Optional<UUID> getPartnerUUID() {
-        UUID spouse = getFamilyEntry().partner();
-        if (spouse.equals(Util.NIL_UUID)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(spouse);
-        }
-    }
-
-    @Override
-    public void marry(Entity spouse) {
-        RelationshipState state = spouse instanceof PlayerEntity ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
-
-        if (spouse instanceof ServerPlayerEntity) {
-            CriterionMCA.GENERIC_EVENT_CRITERION.trigger((ServerPlayerEntity)spouse, "marriage");
-        }
-
-        getFamilyEntry().updateSpouse(spouse, state);
-    }
-
-    @Override
-    public void endRelationShip(RelationshipState newState) {
-        getFamilyEntry().updateSpouse(null, newState);
     }
 
     public GiftSaturation getGiftSaturation() {

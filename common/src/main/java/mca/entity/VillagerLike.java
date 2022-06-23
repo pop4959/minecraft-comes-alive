@@ -28,6 +28,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -312,8 +313,8 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     static VillagerLike<?> toVillager(Entity entity) {
         if (entity instanceof VillagerLike<?>) {
             return (VillagerLike<?>)entity;
-        } else if (entity instanceof PlayerEntity) {
-            NbtCompound villagerData = PlayerSaveData.get((ServerWorld)entity.world, entity.getUuid()).getEntityData();
+        } else if (entity instanceof ServerPlayerEntity playerEntity) {
+            NbtCompound villagerData = PlayerSaveData.get(playerEntity).getEntityData();
             VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(entity.world);
             assert villager != null;
             villager.readCustomDataFromNbt(villagerData);
