@@ -21,7 +21,7 @@ public class BabySmeltedCriterion extends AbstractCriterion<BabySmeltedCriterion
 
     @Override
     public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
-        NumberRange.IntRange c = NumberRange.IntRange.fromJson(json.get("count"));
+        NumberRange.IntRange c = NumberRange.IntRange.atLeast(json.get("count").getAsInt());
         return new Conditions(player, c);
     }
 

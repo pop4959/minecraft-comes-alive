@@ -7,7 +7,7 @@
       "translate": "advancement.mca.baby_sirben_smelted.description"
     },
     "icon": {
-      "item": "minecraft:fire"
+      "item": "minecraft:fire_charge"
     },
     "frame": "challenge",
     "show_toast": true,
@@ -25,7 +25,7 @@
     "baby_smelted": {
       "trigger": "mca:baby_sirben_smelted",
       "conditions": {
-        "count": 10
+        "count": 7
       }
     }
   }
