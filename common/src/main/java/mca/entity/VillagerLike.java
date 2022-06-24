@@ -25,11 +25,12 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
@@ -44,14 +45,16 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     CDataParameter<String> CUSTOM_SKIN = CParameter.create("custom_skin", "");
     CDataParameter<String> CLOTHES = CParameter.create("clothes", "");
     CDataParameter<String> HAIR = CParameter.create("hair", "");
-    CEnumParameter<DyeColor> HAIR_COLOR = CParameter.create("hairColor", DyeColor.class);
+    CDataParameter<Float> HAIR_COLOR_RED = CParameter.create("hair_color_red", -1.0f);
+    CDataParameter<Float> HAIR_COLOR_GREEN = CParameter.create("hair_color_green", -1.0f);
+    CDataParameter<Float> HAIR_COLOR_BLUE = CParameter.create("hair_color_blue", -1.0f);
     CEnumParameter<AgeState> AGE_STATE = CParameter.create("ageState", AgeState.UNASSIGNED);
 
     UUID SPEED_ID = UUID.fromString("1eaf83ff-7207-5596-c37a-d7a07b3ec4ce");
 
     static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return new CDataManager.Builder<>(type)
-                .addAll(VILLAGER_NAME, CUSTOM_SKIN, CLOTHES, HAIR, HAIR_COLOR, AGE_STATE)
+                .addAll(VILLAGER_NAME, CUSTOM_SKIN, CLOTHES, HAIR, HAIR_COLOR_RED, HAIR_COLOR_GREEN, HAIR_COLOR_BLUE, AGE_STATE)
                 .add(Genetics::createTrackedData)
                 .add(Traits::createTrackedData)
                 .add(VillagerBrain::createTrackedData);
@@ -160,15 +163,32 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default void setHairDye(DyeColor color) {
-        setTrackedValue(HAIR_COLOR, color);
+        float[] components = color.getColorComponents().clone();
+
+        float[] dye = getHairDye();
+        if (dye[0] >= 0.0f) {
+            components[0] = components[0] * 0.5f + dye[0] * 0.5f;
+            components[1] = components[1] * 0.5f + dye[1] * 0.5f;
+            components[2] = components[2] * 0.5f + dye[2] * 0.5f;
+        }
+
+        setTrackedValue(HAIR_COLOR_RED, components[0]);
+        setTrackedValue(HAIR_COLOR_GREEN, components[1]);
+        setTrackedValue(HAIR_COLOR_BLUE, components[2]);
     }
 
     default void clearHairDye() {
-        setTrackedValue(HAIR_COLOR, null);
+        setTrackedValue(HAIR_COLOR_RED, -1.0f);
+        setTrackedValue(HAIR_COLOR_GREEN, -1.0f);
+        setTrackedValue(HAIR_COLOR_BLUE, -1.0f);
     }
 
-    default Optional<DyeColor> getHairDye() {
-        return Optional.ofNullable(getTrackedValue(HAIR_COLOR));
+    default float[] getHairDye() {
+        return new float[] {
+                getTrackedValue(HAIR_COLOR_RED),
+                getTrackedValue(HAIR_COLOR_GREEN),
+                getTrackedValue(HAIR_COLOR_BLUE)
+        };
     }
 
     default AgeState getAgeState() {
@@ -266,6 +286,21 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void randomizeHair() {
         setHair(HairList.getInstance().getPool(getGenetics().getGender()).pickOne());
+
+        //colored hair
+        MobEntity entity = asEntity();
+        if (entity.getRandom().nextFloat() < Config.getInstance().coloredHairChance) {
+            int n = entity.getRandom().nextInt(25);
+            int o = DyeColor.values().length;
+            int p = n % o;
+            int q = (n + 1) % o;
+            float r = entity.getRandom().nextFloat();
+            float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
+            float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
+            setTrackedValue(HAIR_COLOR_RED, fs[0] * (1.0f - r) + gs[0] * r);
+            setTrackedValue(HAIR_COLOR_GREEN, fs[1] * (1.0f - r) + gs[1] * r);
+            setTrackedValue(HAIR_COLOR_BLUE, fs[2] * (1.0f - r) + gs[2] * r);
+        }
     }
 
     default void validateClothes() {

@@ -224,6 +224,7 @@
   "trait.color_blind": "Color Blind",
   "trait.vegetarian": "Vegetarian",
   "trait.electrified": "Electrified",
+  "trait.rainbow": "Rainbow",
   "traitDescription.lactose_intolerance": "Intolerant to lactose.",
   "traitDescription.coeliac_disease": "Gets massive diarrhea on gluten.",
   "traitDescription.diabetes": "Sugar bad.",
@@ -234,6 +235,7 @@
   "traitDescription.color_blind": "The world is black and white.",
   "traitDescription.vegetarian": "Dislikes eating meat.",
   "traitDescription.electrified": "Struck by lightning.",
+  "traitDescription.rainbow": "Colored using Jebs secret source.",
 
   "sirben": "*random Sirben noises*",
 

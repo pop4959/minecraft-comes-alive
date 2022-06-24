@@ -325,5 +325,8 @@
     * Engaged villagers won't marry someone else
 * Gifting a bouquet prevents villagers from marrying other villagers
 * More config for inn spawning behavior
-* add father and mother for freshly spawned villagers
-* fix origins
+* Added (deceased) father and mother for all spawned villagers
+* Fixed compatibility issues with Origins mod
+* Added rainbow trait
+* Hair color now blends when color is gifted again
+* 2% of villagers dye their hair (configurable)

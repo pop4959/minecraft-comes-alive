@@ -103,7 +103,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
         model.applyVillagerDimensions(getVillager(player), player.isInSneakingPose());
 
-        layer.renderFinal(matrices, vertexConsumers, light, player);
+        layer.renderFinal(matrices, vertexConsumers, light, player, 0.0f);
 
         model.setVisible(true);
     }
