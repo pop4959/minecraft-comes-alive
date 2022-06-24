@@ -253,7 +253,6 @@ public class FamilyTreeScreen extends Screen {
         }
 
         public void render(MatrixStack matrices, int mouseX, int mouseY) {
-
             Bounds bounds = getBounds();
 
             boolean isFocused = id != null && bounds.contains(mouseX, mouseY);
@@ -339,18 +338,20 @@ public class FamilyTreeScreen extends Screen {
                 }
             }
 
-            if (spouse != null && (relationship == RelationshipState.MARRIED_TO_PLAYER ||
-                    relationship == RelationshipState.MARRIED_TO_VILLAGER ||
-                    relationship == RelationshipState.ENGAGED ||
-                    relationship == RelationshipState.PROMISED ||
-                    relationship == RelationshipState.WIDOW)) {
+            if (spouse != null) {
                 int x = bounds.left - SPOUSE_HORIZONTAL_SPACING;
                 int y = bounds.top + bounds.bottom / 2;
 
                 drawHorizontalLine(matrices, x, bounds.left - 1, y, 0xffffffff);
 
-                Icon icon = MCAScreens.getInstance().getIcon(relationship.getIcon());
-                drawTexture(matrices, bounds.left - SPOUSE_HORIZONTAL_SPACING / 2 - 8, y - 8, 0, icon.u(), icon.v(), 16, 16, 256, 256);
+                if (relationship == RelationshipState.MARRIED_TO_PLAYER ||
+                        relationship == RelationshipState.MARRIED_TO_VILLAGER ||
+                        relationship == RelationshipState.ENGAGED ||
+                        relationship == RelationshipState.PROMISED ||
+                        relationship == RelationshipState.WIDOW) {
+                    Icon icon = MCAScreens.getInstance().getIcon(relationship.getIcon());
+                    drawTexture(matrices, bounds.left - SPOUSE_HORIZONTAL_SPACING / 2 - 8, y - 8, 0, icon.u(), icon.v(), 16, 16, 256, 256);
+                }
 
                 y -= spouse.label.size() * textRenderer.fontHeight / 2;
                 x -= spouse.getWidth() / 2 - 6;

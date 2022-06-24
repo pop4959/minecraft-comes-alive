@@ -361,7 +361,7 @@ public final class FamilyTreeNode implements Serializable {
         markDirty();
     }
 
-    private static boolean isValid(@Nullable UUID uuid) {
+    public static boolean isValid(@Nullable UUID uuid) {
         return uuid != null && !Util.NIL_UUID.equals(uuid);
     }
 
