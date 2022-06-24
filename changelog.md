@@ -325,3 +325,5 @@
     * Engaged villagers won't marry someone else
 * Gifting a bouquet prevents villagers from marrying other villagers
 * More config for inn spawning behavior
+* todo add father and mother for freshly spawned villagers
+* fix origins

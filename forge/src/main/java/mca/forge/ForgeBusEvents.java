@@ -1,10 +1,12 @@
 package mca.forge;
 
 import mca.MCA;
+import mca.MCAClient;
 import mca.server.ServerInteractionManager;
 import mca.server.command.AdminCommand;
 import mca.server.command.Command;
 import mca.server.world.data.VillageManager;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,5 +56,10 @@ public class ForgeBusEvents {
         if (!event.getEntity().world.isClient) {
             ServerInteractionManager.getInstance().onPlayerJoin((ServerPlayerEntity)event.getPlayer());
         }
+    }
+
+    @SubscribeEvent
+    public static void onParticleFactoryRegistration(TickEvent.ClientTickEvent event) {
+        MCAClient.tickClient(MinecraftClient.getInstance());
     }
 }

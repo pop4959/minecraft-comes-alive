@@ -20,6 +20,7 @@ import mca.item.ItemsMCA;
 import mca.item.SirbenBabyItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -77,6 +78,8 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
         BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
 
         MCAClient.onInitializeClient();
+
+        ClientTickEvents.START_CLIENT_TICK.register(MCAClient::tickClient);
     }
 
     @Override
