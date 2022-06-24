@@ -324,3 +324,4 @@
 * Engagement rings now set the relationship to engaged
     * Engaged villagers won't marry someone else
 * Gifting a bouquet prevents villagers from marrying other villagers
+* More config for inn spawning behavior

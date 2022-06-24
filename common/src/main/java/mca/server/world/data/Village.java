@@ -491,20 +491,20 @@ public class Village implements Iterable<Building> {
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
         if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
             int i = world.random.nextInt(10);
-            if (i == 0) {
+            if (i == 0 && Config.getInstance().innSpawnsWanderingTraders) {
                 WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (trader != null) {
                     trader.setDespawnDelay(48000);
                     return true;
                 }
-            } else if (i == 1) {
+            } else if (i == 1 && Config.getInstance().innSpawnsCultists) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
                     adventurer.setProfession(ProfessionsMCA.CULTIST.get());
                     adventurer.setDespawnDelay(48000);
                     return true;
                 }
-            } else {
+            } else if (Config.getInstance().innSpawnsAdventurers) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
                     adventurer.setProfession(ProfessionsMCA.ADVENTURER.get());
