@@ -44,14 +44,16 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     CDataParameter<String> CUSTOM_SKIN = CParameter.create("custom_skin", "");
     CDataParameter<String> CLOTHES = CParameter.create("clothes", "");
     CDataParameter<String> HAIR = CParameter.create("hair", "");
-    CEnumParameter<DyeColor> HAIR_COLOR = CParameter.create("hairColor", DyeColor.class);
+    CDataParameter<Float> HAIR_COLOR_RED = CParameter.create("hair_color_red", -1.0f);
+    CDataParameter<Float> HAIR_COLOR_GREEN = CParameter.create("hair_color_green", -1.0f);
+    CDataParameter<Float> HAIR_COLOR_BLUE = CParameter.create("hair_color_blue", -1.0f);
     CEnumParameter<AgeState> AGE_STATE = CParameter.create("ageState", AgeState.UNASSIGNED);
 
     UUID SPEED_ID = UUID.fromString("1eaf83ff-7207-5596-c37a-d7a07b3ec4ce");
 
     static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return new CDataManager.Builder<>(type)
-                .addAll(VILLAGER_NAME, CUSTOM_SKIN, CLOTHES, HAIR, HAIR_COLOR, AGE_STATE)
+                .addAll(VILLAGER_NAME, CUSTOM_SKIN, CLOTHES, HAIR, HAIR_COLOR_RED, HAIR_COLOR_GREEN, HAIR_COLOR_BLUE, AGE_STATE)
                 .add(Genetics::createTrackedData)
                 .add(Traits::createTrackedData)
                 .add(VillagerBrain::createTrackedData);
@@ -160,15 +162,32 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default void setHairDye(DyeColor color) {
-        setTrackedValue(HAIR_COLOR, color);
+        float[] components = color.getColorComponents().clone();
+
+        float[] dye = getHairDye();
+        if (dye[0] >= 0.0f) {
+            components[0] = components[0] * 0.5f + dye[0] * 0.5f;
+            components[1] = components[1] * 0.5f + dye[1] * 0.5f;
+            components[2] = components[2] * 0.5f + dye[2] * 0.5f;
+        }
+
+        setTrackedValue(HAIR_COLOR_RED, components[0]);
+        setTrackedValue(HAIR_COLOR_GREEN, components[1]);
+        setTrackedValue(HAIR_COLOR_BLUE, components[2]);
     }
 
     default void clearHairDye() {
-        setTrackedValue(HAIR_COLOR, null);
+        setTrackedValue(HAIR_COLOR_RED, -1.0f);
+        setTrackedValue(HAIR_COLOR_GREEN, -1.0f);
+        setTrackedValue(HAIR_COLOR_BLUE, -1.0f);
     }
 
-    default Optional<DyeColor> getHairDye() {
-        return Optional.ofNullable(getTrackedValue(HAIR_COLOR));
+    default float[] getHairDye() {
+        return new float[] {
+                getTrackedValue(HAIR_COLOR_RED),
+                getTrackedValue(HAIR_COLOR_GREEN),
+                getTrackedValue(HAIR_COLOR_BLUE)
+        };
     }
 
     default AgeState getAgeState() {

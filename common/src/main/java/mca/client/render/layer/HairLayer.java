@@ -6,10 +6,7 @@ import mca.entity.ai.Traits;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-
-import java.util.Optional;
 
 import static mca.client.model.CommonVillagerModel.getVillager;
 
@@ -33,9 +30,9 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
 
     @Override
     protected float[] getColor(T villager) {
-        Optional<DyeColor> hairDye = getVillager(villager).getHairDye();
-        if (hairDye.isPresent()) {
-            return hairDye.get().getColorComponents();
+        float[] hairDye = getVillager(villager).getHairDye();
+        if (hairDye[0] >= 0.0f) {
+            return hairDye;
         }
 
         float albinism = getVillager(villager).getTraits().hasTrait(Traits.Trait.ALBINISM) ? 0.1f : 1.0f;
