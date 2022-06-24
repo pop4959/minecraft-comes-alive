@@ -52,7 +52,7 @@ public class Command {
     private static int destiny(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowDestinyCommandOnce) {
             ServerPlayerEntity player = ctx.getSource().getPlayer();
-            if (!PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).isEntityDataSet() || Config.getInstance().allowDestinyCommandMoreThanOnce) {
+            if (!PlayerSaveData.get(player).isEntityDataSet() || Config.getInstance().allowDestinyCommandMoreThanOnce) {
                 ServerInteractionManager.launchDestiny(player);
                 return 0;
             } else {
@@ -67,7 +67,7 @@ public class Command {
 
     private static int mail(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().getPlayer();
-        PlayerSaveData data = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
+        PlayerSaveData data = PlayerSaveData.get(player);
         while (data.hasMail()) {
             player.getInventory().offerOrDrop(data.getMail());
         }

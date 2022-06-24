@@ -19,7 +19,8 @@ public enum DialogueType {
     TODDLERP(CHILDP),
     SPOUSE(ADULT),
     TEEN(ADULT),
-    TEENP(TEEN);
+    TEENP(TEEN),
+    ENGAGED(ADULT);
 
     public final DialogueType fallback;
 

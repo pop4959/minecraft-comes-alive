@@ -44,6 +44,9 @@
   "item.mca.comb": "Comb",
   "item.mca.comb.tooltip": "Right-click to change your hairstyle.",
 
+  "item.mca.bouquet": "Bouquet",
+  "item.mca.bouquet.tooltip": "A nice gift to start a relationship.",
+
   "item.mca.baby_boy": "Unnamed Baby Boy",
   "item.mca.baby_boy.blanket": "Empty Blanket",
   "item.mca.baby_boy.named": "Little %s (Male)",
@@ -350,9 +353,12 @@
   "gui.blueprint.empty": "There is no village! Add the first building to start a new village!",
   "gui.blueprint.waiting": "loading...",
   "gui.blueprint.autoScan": "Auto scan",
+  "gui.blueprint.autoScan.tooltip": "Let villager add buildings automatically.",
   "gui.blueprint.addRoom": "Add Room",
+  "gui.blueprint.addRoom.tooltip": "Adds a single room instead of the whole building.",
   "gui.blueprint.advanced": "Advanced",
   "gui.blueprint.restrictAccess": "Restrict Access",
+  "gui.blueprint.restrictAccess.tooltip": "Prevent villager from moving in.",
   "gui.blueprint.renameVillage": "Rename Village",
   "gui.blueprint.rename": "rename",
   "gui.blueprint.cancel": "cancel",
@@ -468,6 +474,7 @@
 
   "gui.interact.label.married": "Married to %1$s",
   "gui.interact.label.engaged": "Engaged to %1$s",
+  "gui.interact.label.promised": "In love with %1$s",
   "gui.interact.label.notmarried": "Not married",
   "gui.interact.label.widow": "Widow",
   "gui.interact.label.parents": "Parents: %1$s and %2$s",
@@ -543,6 +550,7 @@
   "marriage.divorced": "Divorced",
   "marriage.engaged": "Engaged",
   "marriage.widow": "Widow",
+  "marriage.promised": "Promised",
 
   "server.noProposals": "You have no active proposals.",
   "server.proposals": "You have active proposals from:",

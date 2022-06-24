@@ -5,7 +5,7 @@ import os
 from cv2 import cv2
 from tqdm import tqdm
 
-path = "../common/src/main/resources/assets/mca/skins/clothing/"
+path = "../../common/src/main/resources/assets/mca/skins/clothing/"
 
 # we allow 10 seconds to check out to avoid considering clothes outdated because of a checkout
 checkout_time = 10

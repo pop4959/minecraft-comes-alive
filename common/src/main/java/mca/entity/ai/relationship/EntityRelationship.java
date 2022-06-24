@@ -1,17 +1,21 @@
 package mca.entity.ai.relationship;
 
+import mca.advancement.criterion.CriterionMCA;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -22,18 +26,41 @@ public interface EntityRelationship {
         return Gender.MALE;
     }
 
-    FamilyTree getFamilyTree();
+    default FamilyTree getFamilyTree() {
+        return FamilyTree.get(getWorld());
+    }
+
+    ServerWorld getWorld();
+
+    UUID getUUID();
 
     @NotNull
     FamilyTreeNode getFamilyEntry();
 
-    Stream<Entity> getFamily(int parents, int children);
+    default Stream<Entity> getFamily(int parents, int children) {
+        return getFamilyEntry()
+                .getRelatives(parents, children)
+                .map(getWorld()::getEntity)
+                .filter(Objects::nonNull)
+                .filter(e -> !e.getUuid().equals(getUUID()));
+    }
 
-    Stream<Entity> getParents();
+    default Stream<Entity> getParents() {
+        return getFamilyEntry().streamParents().map(getWorld()::getEntity).filter(Objects::nonNull);
+    }
 
-    Stream<Entity> getSiblings();
+    default Stream<Entity> getSiblings() {
+        return getFamilyEntry()
+                .siblings()
+                .stream()
+                .map(getWorld()::getEntity)
+                .filter(Objects::nonNull)
+                .filter(e -> !e.getUuid().equals(getUUID())); // we exclude ourselves from the list of siblings
+    }
 
-    Optional<Entity> getSpouse();
+    default Optional<Entity> getPartner() {
+        return Optional.ofNullable(getWorld().getEntity(getFamilyEntry().partner()));
+    }
 
     default void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity victim) {
         if (type == RelationshipType.STRANGER) {
@@ -52,40 +79,87 @@ public interface EntityRelationship {
                             r.onTragedy(cause, burialSite, RelationshipType.SIBLING, victim)
                     )
             );
-            getSpouse().flatMap(EntityRelationship::of).ifPresent(r ->
+            getPartner().flatMap(EntityRelationship::of).ifPresent(r ->
                     r.onTragedy(cause, burialSite, RelationshipType.SPOUSE, victim)
             );
         }
 
         // end the marriage for both the deceased one and the spouse
         if (type == RelationshipType.SPOUSE || type == RelationshipType.SELF) {
-            if (getMarriageState().isMarried()) {
-                endMarriage(MarriageState.WIDOW);
+            if (getRelationshipState().isMarried()) {
+                endRelationShip(RelationshipState.WIDOW);
+            } else {
+                endRelationShip(RelationshipState.SINGLE);
             }
         }
     }
 
-    void marry(Entity spouse);
+    default void marry(Entity spouse) {
+        RelationshipState state = spouse instanceof PlayerEntity ? RelationshipState.MARRIED_TO_PLAYER : RelationshipState.MARRIED_TO_VILLAGER;
+        if (spouse instanceof ServerPlayerEntity spouseEntity) {
+            CriterionMCA.GENERIC_EVENT_CRITERION.trigger(spouseEntity, "marriage");
+        }
+        getFamilyEntry().updatePartner(spouse, state);
+    }
 
-    void endMarriage(MarriageState newState);
+    default void engage(Entity spouse) {
+        if (spouse instanceof ServerPlayerEntity spouseEntity) {
+            CriterionMCA.GENERIC_EVENT_CRITERION.trigger(spouseEntity, "engage");
+        }
+        getFamilyEntry().updatePartner(spouse, RelationshipState.ENGAGED);
+    }
 
-    MarriageState getMarriageState();
+    default void promise(Entity spouse) {
+        if (spouse instanceof ServerPlayerEntity spouseEntity) {
+            CriterionMCA.GENERIC_EVENT_CRITERION.trigger(spouseEntity, "promise");
+        }
+        getFamilyEntry().updatePartner(spouse, RelationshipState.PROMISED);
+    }
 
-    Optional<UUID> getSpouseUuid();
+    default void endRelationShip(RelationshipState newState) {
+        getFamilyEntry().updatePartner(null, newState);
+    }
 
-    Optional<Text> getSpouseName();
+    default RelationshipState getRelationshipState() {
+        return getFamilyEntry().getRelationshipState();
+    }
+
+    default Optional<UUID> getPartnerUUID() {
+        UUID spouse = getFamilyEntry().partner();
+        if (spouse.equals(Util.NIL_UUID)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(spouse);
+        }
+    }
+
+    default Optional<Text> getPartnerName() {
+        return getFamilyTree().getOrEmpty(getFamilyEntry().partner()).map(FamilyTreeNode::getName).map(Text::literal);
+    }
 
     default boolean isMarried() {
-        return !getSpouseUuid().orElse(Util.NIL_UUID).equals(Util.NIL_UUID);
+        return getRelationshipState() == RelationshipState.MARRIED_TO_PLAYER || getRelationshipState() == RelationshipState.MARRIED_TO_VILLAGER;
+    }
+
+    default boolean isEngaged() {
+        return getRelationshipState() == RelationshipState.ENGAGED;
+    }
+
+    default boolean isPromised() {
+        return getRelationshipState() == RelationshipState.PROMISED;
     }
 
     default boolean isMarriedTo(UUID uuid) {
-        return getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid);
+        return getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid) && isMarried();
+    }
+
+    default boolean isEngagedWith(UUID uuid) {
+        return getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid) && isEngaged();
     }
 
     static Optional<EntityRelationship> of(Entity entity) {
         if (entity instanceof ServerPlayerEntity player) {
-            return Optional.ofNullable(PlayerSaveData.get(player.getWorld(), entity.getUuid()));
+            return Optional.ofNullable(PlayerSaveData.get(player));
         }
 
         if (entity instanceof CompassionateEntity<?> compassionateEntity) {

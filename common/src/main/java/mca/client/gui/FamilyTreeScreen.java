@@ -1,8 +1,9 @@
 package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.client.resources.Icon;
 import mca.cobalt.network.NetworkHandler;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.network.c2s.GetFamilyTreeRequest;
 import net.minecraft.client.MinecraftClient;
@@ -33,8 +34,6 @@ public class FamilyTreeScreen extends Screen {
     private UUID focusedEntityId;
 
     private final Map<UUID, FamilyTreeNode> family = new HashMap<>();
-
-    private final Map<UUID, TreeNode> nodes = new HashMap<>();
 
     private final TreeNode emptyNode = new TreeNode();
 
@@ -84,6 +83,7 @@ public class FamilyTreeScreen extends Screen {
 
     @Override
     public void close() {
+        assert client != null;
         client.setScreen(parent);
     }
 
@@ -156,7 +156,6 @@ public class FamilyTreeScreen extends Screen {
         // garbage collect
         focused = null;
         tree = emptyNode;
-        nodes.clear();
 
         if (focusedNode != null) {
             tree = insertParents(new TreeNode(focusedNode, true), focusedNode, 2);
@@ -201,15 +200,14 @@ public class FamilyTreeScreen extends Screen {
         final UUID id;
 
         final boolean deceased;
-
-        @Nullable
-        private TreeNode previous;
+        private final RelationshipState relationship;
 
         private final String defaultNodeName = "???";
 
         private TreeNode() {
             this.id = null;
             this.deceased = false;
+            this.relationship = RelationshipState.SINGLE;
             this.label.add(Text.literal(defaultNodeName));
         }
 
@@ -218,9 +216,9 @@ public class FamilyTreeScreen extends Screen {
         }
 
         public TreeNode(FamilyTreeNode node, Set<UUID> parsed, boolean recurse) {
-            nodes.put(node.id(), this);
             this.id = node.id();
             this.deceased = node.isDeceased();
+            this.relationship = node.getRelationshipState();
             final MutableText text = Text.literal(node.getName().isEmpty() ? defaultNodeName : node.getName());
             this.label.add(text.setStyle(text.getStyle().withColor(node.gender().getColor())));
             this.label.add(Text.translatable("entity.minecraft.villager." + node.getProfessionName()).formatted(Formatting.GRAY));
@@ -231,8 +229,8 @@ public class FamilyTreeScreen extends Screen {
                 this.label.add(Text.translatable("gui.family_tree.label.orphan").formatted(Formatting.GRAY));
             }
 
-            if (node.getMarriageState() != MarriageState.SINGLE) {
-                this.label.add(Text.translatable("marriage." + node.getMarriageState().base().getIcon()));
+            if (node.getRelationshipState() != RelationshipState.SINGLE) {
+                this.label.add(Text.translatable("marriage." + node.getRelationshipState().base().getIcon()));
             }
 
             if (recurse) {
@@ -243,7 +241,7 @@ public class FamilyTreeScreen extends Screen {
                     }
                 });
 
-                FamilyTreeNode spouse = family.get(node.spouse());
+                FamilyTreeNode spouse = family.get(node.partner());
 
                 if (spouse != null) {
                     this.spouse = new TreeNode(spouse, parsed, false);
@@ -254,7 +252,6 @@ public class FamilyTreeScreen extends Screen {
         }
 
         public void render(MatrixStack matrices, int mouseX, int mouseY) {
-
             Bounds bounds = getBounds();
 
             boolean isFocused = id != null && bounds.contains(mouseX, mouseY);
@@ -329,7 +326,8 @@ public class FamilyTreeScreen extends Screen {
             RenderSystem.setShaderTexture(0, InteractScreen.ICON_TEXTURES);
 
             if (deceased) {
-                drawTexture(matrices, bounds.left + 6, bounds.top + 6, 0, 16, 16, 16, 16, 256, 256);
+                Icon icon = MCAScreens.getInstance().getIcon("deceased");
+                drawTexture(matrices, bounds.left + 6, bounds.top + 6, 0, icon.u(), icon.v(), 16, 16, 256, 256);
 
                 if (isFocused && mouseX <= bounds.left + 20) {
                     matrices.push();
@@ -345,7 +343,14 @@ public class FamilyTreeScreen extends Screen {
 
                 drawHorizontalLine(matrices, x, bounds.left - 1, y, 0xffffffff);
 
-                drawTexture(matrices, bounds.left - SPOUSE_HORIZONTAL_SPACING / 2 - 8, y - 8, 0, 0, 0, 16, 16, 256, 256);
+                if (relationship == RelationshipState.MARRIED_TO_PLAYER ||
+                        relationship == RelationshipState.MARRIED_TO_VILLAGER ||
+                        relationship == RelationshipState.ENGAGED ||
+                        relationship == RelationshipState.PROMISED ||
+                        relationship == RelationshipState.WIDOW) {
+                    Icon icon = MCAScreens.getInstance().getIcon(relationship.getIcon());
+                    drawTexture(matrices, bounds.left - SPOUSE_HORIZONTAL_SPACING / 2 - 8, y - 8, 0, icon.u(), icon.v(), 16, 16, 256, 256);
+                }
 
                 y -= spouse.label.size() * textRenderer.fontHeight / 2;
                 x -= spouse.getWidth() / 2 - 6;
@@ -416,9 +421,9 @@ public class FamilyTreeScreen extends Screen {
 
         public boolean contains(int mouseX, int mouseY) {
             return mouseX >= left
-                && mouseY >= top
-                && mouseX <= right
-                && mouseY <= bottom;
+                    && mouseY >= top
+                    && mouseX <= right
+                    && mouseY <= bottom;
         }
     }
 }

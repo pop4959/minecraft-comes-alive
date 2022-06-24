@@ -122,7 +122,7 @@ public class Pregnancy {
     }
 
     private Optional<VillagerEntityMCA> getFather() {
-        return mother.getRelationships().getSpouse()
+        return mother.getRelationships().getPartner()
                 .filter(father -> father instanceof VillagerEntityMCA)
                 .map(VillagerEntityMCA.class::cast);
     }

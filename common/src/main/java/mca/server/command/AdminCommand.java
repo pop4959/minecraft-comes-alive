@@ -10,7 +10,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import mca.Config;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.BabyItem;
@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -121,13 +122,13 @@ public class AdminCommand {
         //remove spouse too
         FamilyTree tree = FamilyTree.get(ctx.getSource().getWorld());
         Optional<FamilyTreeNode> node = tree.getOrEmpty(uuid);
-        node.filter(n -> n.spouse() != null).ifPresent(n -> n.updateMarriage(null, MarriageState.WIDOW));
+        node.filter(n -> n.partner() != null).ifPresent(n -> n.updatePartner(null, RelationshipState.WIDOW));
 
         //remove from player spouse
         ctx.getSource().getWorld().getPlayers().forEach(player -> {
-            PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
-            if (playerData.getSpouseUuid().orElse(Util.NIL_UUID).equals(uuid)) {
-                playerData.endMarriage(MarriageState.SINGLE);
+            PlayerSaveData playerData = PlayerSaveData.get(player);
+            if (playerData.getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid)) {
+                playerData.endRelationShip(RelationshipState.SINGLE);
             }
         });
     }
@@ -192,17 +193,17 @@ public class AdminCommand {
     }
 
     private static int resetPlayerData(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        PlayerEntity player = ctx.getSource().getPlayer();
-        PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+        PlayerSaveData playerData = PlayerSaveData.get(player);
         playerData.reset();
         success("Player data reset.", ctx);
         return 0;
     }
 
     private static int resetMarriage(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        PlayerEntity player = ctx.getSource().getPlayer();
-        PlayerSaveData playerData = PlayerSaveData.get(ctx.getSource().getWorld(), player.getUuid());
-        playerData.endMarriage(MarriageState.SINGLE);
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+        PlayerSaveData playerData = PlayerSaveData.get(player);
+        playerData.endRelationShip(RelationshipState.SINGLE);
         success("Marriage reset.", ctx);
         return 0;
     }

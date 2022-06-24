@@ -318,3 +318,12 @@
 # 7.3.3
 
 * Parents with same gender are now properly registered
+
+# 7.3.4
+
+* Engagement rings now set the relationship to engaged
+    * Engaged villagers won't marry someone else
+* Gifting a bouquet prevents villagers from marrying other villagers
+* More config for inn spawning behavior
+* add father and mother for freshly spawned villagers
+* fix origins

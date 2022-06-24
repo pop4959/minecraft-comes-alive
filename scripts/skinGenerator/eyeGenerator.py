@@ -5,7 +5,7 @@ from cv2 import cv2
 from scipy.ndimage import gaussian_filter
 from tqdm import tqdm
 
-path = "../common/src/main/resources/assets/mca/skins/face/"
+path = "../../common/src/main/resources/assets/mca/skins/face/"
 
 
 def img_load(img_file):

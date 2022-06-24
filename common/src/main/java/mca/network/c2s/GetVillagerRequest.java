@@ -51,7 +51,7 @@ public class GetVillagerRequest implements Message {
         NbtCompound data;
 
         if (e instanceof ServerPlayerEntity serverPlayer) {
-            data = PlayerSaveData.get(serverPlayer.getWorld(), e.getUuid()).getEntityData();
+            data = PlayerSaveData.get(serverPlayer).getEntityData();
         } else if (e instanceof LivingEntity) {
             data = new NbtCompound();
             ((MobEntity)e).writeCustomDataToNbt(data);
@@ -62,7 +62,7 @@ public class GetVillagerRequest implements Message {
         FamilyTree tree = FamilyTree.get((ServerWorld)e.world);
         FamilyTreeNode entry = tree.getOrCreate(e);
 
-        storeNode(data, tree.getOrEmpty(entry.spouse()), "spouse");
+        storeNode(data, tree.getOrEmpty(entry.partner()), "spouse");
         storeNode(data, tree.getOrEmpty(entry.father()), "father");
         storeNode(data, tree.getOrEmpty(entry.mother()), "mother");
 

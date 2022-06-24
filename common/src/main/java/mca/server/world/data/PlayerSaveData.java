@@ -6,9 +6,8 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.EntityRelationship;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.RelationshipType;
-import mca.entity.ai.relationship.family.FamilyTree;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.item.ItemsMCA;
 import mca.network.s2c.ShowToastRequest;
@@ -35,20 +34,14 @@ import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
-    private final UUID playerId;
-
-    private Optional<UUID> spouseUUID = Optional.empty();
-
-    private Optional<Text> spouseName = Optional.empty();
-
-    private MarriageState marriageState;
-
-    private final ServerWorld world;
+    private final ServerPlayerEntity player;
 
     private Optional<Integer> lastSeenVillage = Optional.empty();
 
@@ -57,30 +50,21 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     private final List<NbtCompound> inbox = new LinkedList<>();
 
-    public static PlayerSaveData get(ServerWorld world, @NotNull UUID uuid) {
-        return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new PlayerSaveData(world, nbt, uuid), w -> new PlayerSaveData(w, uuid), "mca_player_" + uuid);
+    public static PlayerSaveData get(ServerPlayerEntity player) {
+        return WorldUtils.loadData(player.getWorld().getServer().getOverworld(), nbt -> new PlayerSaveData(player, nbt), w -> new PlayerSaveData(player), "mca_player_" + player.getUuid());
     }
 
-    PlayerSaveData(ServerWorld world, UUID playerId) {
-        this.world = world;
-        this.playerId = playerId;
-        this.marriageState = MarriageState.SINGLE;
+    PlayerSaveData(ServerPlayerEntity player) {
+        this.player = player;
 
-        tryToCreateFamilyNode();
         resetEntityData();
     }
 
-    PlayerSaveData(ServerWorld world, NbtCompound nbt, UUID playerId) {
-        this.world = world;
-        this.playerId = playerId;
+    PlayerSaveData(ServerPlayerEntity player, NbtCompound nbt) {
+        this.player = player;
 
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
-        spouseUUID = nbt.contains("spouseUUID") ? Optional.of(nbt.getUuid("spouseUUID")) : Optional.empty();
-        spouseName = nbt.contains("spouseName") ? Optional.of(Text.literal(nbt.getString("spouseName"))) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
-        marriageState = MarriageState.byId(nbt.getInt("marriageState"));
-
-        tryToCreateFamilyNode();
 
         if (nbt.contains("entityData")) {
             entityData = nbt.getCompound("entityData");
@@ -97,18 +81,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
-    private void tryToCreateFamilyNode() {
-        // an attempt to fix the reoccurring getFamilyEntry errors
-        Entity entity = world.getEntity(playerId);
-        if (entity != null) {
-            getFamilyTree().getOrCreate(entity);
-        }
-    }
-
     private void resetEntityData() {
         entityData = new NbtCompound();
 
-        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(world);
+        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(player.getWorld());
         assert villager != null;
         villager.initializeSkin();
         villager.getGenetics().randomize();
@@ -138,8 +114,9 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         EntityRelationship.super.onTragedy(cause, burialSite, type, victim);
 
         // send letter of condolence
+        // todo does not work when offline
         if (victim instanceof VillagerEntityMCA victimVillager) {
-            sendLetterOfCondolence((ServerPlayerEntity)world.getEntity(playerId),
+            sendLetterOfCondolence(player,
                     victimVillager.getName().getString(),
                     victimVillager.getResidency().getHomeVillage().map(Village::getName).orElse(API.getVillagePool().pickVillageName("village")));
         }
@@ -192,96 +169,47 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         if (Config.getInstance().enterVillageNotification) {
             self.sendMessage(Text.translatable("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
         }
-        village.deliverTaxes(world);
-    }
-
-    @Override
-    public Optional<UUID> getSpouseUuid() {
-        return spouseUUID;
+        village.deliverTaxes(player.getWorld());
     }
 
     @Override
     public void marry(Entity spouse) {
-        MarriageState marriageState = spouse instanceof PlayerEntity ? MarriageState.MARRIED_TO_PLAYER : MarriageState.MARRIED_TO_VILLAGER;
-        this.spouseUUID = Optional.of(spouse.getUuid());
-        this.spouseName = Optional.of(spouse.getName());
-        this.marriageState = marriageState;
-        getFamilyEntry().updateMarriage(spouse, marriageState);
+        EntityRelationship.super.marry(spouse);
         markDirty();
     }
 
     @Override
-    public void endMarriage(MarriageState newState) {
-        spouseUUID = Optional.empty();
-        spouseName = Optional.empty();
-        marriageState = newState;
-        getFamilyEntry().setMarriageState(newState);
+    public void endRelationShip(RelationshipState newState) {
+        EntityRelationship.super.endRelationShip(newState);
         markDirty();
     }
 
     @Override
-    public MarriageState getMarriageState() {
-        return marriageState;
+    public ServerWorld getWorld() {
+        return player.getWorld();
     }
 
     @Override
-    public Optional<Text> getSpouseName() {
-        return isMarried() ? spouseName : Optional.empty();
-    }
-
-    @Override
-    public FamilyTree getFamilyTree() {
-        return FamilyTree.get(world);
-    }
-
-    @Override
-    public Stream<Entity> getFamily(int parents, int children) {
-        return getFamilyEntry()
-                .getRelatives(parents, children)
-                .map(world::getEntity)
-                .filter(Objects::nonNull)
-                .filter(e -> !e.getUuid().equals(playerId));
+    public UUID getUUID() {
+        return player.getUuid();
     }
 
     @Override
     public @NotNull FamilyTreeNode getFamilyEntry() {
-        return getFamilyTree().getOrCreate(Objects.requireNonNull(world.getEntity(playerId)));
-    }
-
-    @Override
-    public Stream<Entity> getParents() {
-        return getFamilyEntry().streamParents().map(world::getEntity).filter(Objects::nonNull);
-    }
-
-    @Override
-    public Stream<Entity> getSiblings() {
-        return getFamilyEntry()
-                .siblings()
-                .stream()
-                .map(world::getEntity)
-                .filter(Objects::nonNull)
-                .filter(e -> !e.getUuid().equals(playerId)); // we exclude ourselves from the list of siblings
-    }
-
-    @Override
-    public Optional<Entity> getSpouse() {
-        return spouseUUID.map(world::getEntity);
+        return getFamilyTree().getOrCreate(player);
     }
 
     public void reset() {
-        endMarriage(MarriageState.SINGLE);
+        endRelationShip(RelationshipState.SINGLE);
         markDirty();
     }
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
-        spouseUUID.ifPresent(id -> nbt.putUuid("spouseUUID", id));
         lastSeenVillage.ifPresent(id -> nbt.putInt("lastSeenVillage", id));
-        spouseName.ifPresent(n -> nbt.putString("spouseName", n.getString()));
         nbt.put("entityData", entityData);
         nbt.putBoolean("entityDataSet", entityDataSet);
         nbt.put("inbox", NbtHelper.fromList(inbox, v -> v));
-        nbt.putInt("marriageState", marriageState.ordinal());
         return nbt;
     }
 
@@ -305,10 +233,25 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
+    public void sendAngryEngagedLetter(ServerPlayerEntity player, String name) {
+        sendLetter(player, List.of(
+                String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",
+                        getFamilyEntry().getName(), name)
+        ));
+    }
+
     public void sendLetterOfCondolence(ServerPlayerEntity player, String name, String village) {
+        sendLetter(player, List.of(
+                String.format("{ \"translate\": \"mca.letter.condolence\", \"with\": [\"%s\", \"%s\", \"%s\"] }",
+                        getFamilyEntry().getName(), name, village)
+        ));
+    }
+
+    public void sendLetter(ServerPlayerEntity player, List<String> lines) {
         NbtList l = new NbtList();
-        l.add(0, NbtString.of(String.format("{ \"translate\": \"mca.letter.condolence\", \"with\": [\"%s\", \"%s\", \"%s\"] }",
-                getFamilyEntry().getName(), name, village)));
+        for (String line : lines) {
+            l.add(0, NbtString.of(line));
+        }
         NbtCompound nbt = new NbtCompound();
         nbt.put("pages", l);
         sendMail(nbt);

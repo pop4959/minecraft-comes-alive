@@ -10,10 +10,7 @@ import mca.entity.ai.Genetics;
 import mca.entity.ai.Messenger;
 import mca.entity.ai.Traits;
 import mca.entity.ai.brain.VillagerBrain;
-import mca.entity.ai.relationship.AgeState;
-import mca.entity.ai.relationship.EntityRelationship;
-import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.VillagerDimensions;
+import mca.entity.ai.relationship.*;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.entity.interaction.EntityCommandHandler;
 import mca.resources.ClothingList;
@@ -31,6 +28,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -240,8 +238,10 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                 Optional<EntityRelationship> r = EntityRelationship.of(asEntity());
                 if (r.isPresent()) {
                     FamilyTreeNode relationship = r.get().getFamilyEntry();
-                    if (relationship.spouse().equals(receiver.getUuid())) {
+                    if (r.get().isMarriedTo(receiver.getUuid())) {
                         return DialogueType.SPOUSE;
+                    } else if (r.get().isEngagedWith(receiver.getUuid())) {
+                        return DialogueType.ENGAGED;
                     } else if (relationship.isParent(receiver.getUuid())) {
                         return type.toChild();
                     }
@@ -313,8 +313,8 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     static VillagerLike<?> toVillager(Entity entity) {
         if (entity instanceof VillagerLike<?>) {
             return (VillagerLike<?>)entity;
-        } else if (entity instanceof PlayerEntity) {
-            NbtCompound villagerData = PlayerSaveData.get((ServerWorld)entity.world, entity.getUuid()).getEntityData();
+        } else if (entity instanceof ServerPlayerEntity playerEntity) {
+            NbtCompound villagerData = PlayerSaveData.get(playerEntity).getEntityData();
             VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(entity.world);
             assert villager != null;
             villager.readCustomDataFromNbt(villagerData);

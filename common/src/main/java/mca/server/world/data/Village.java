@@ -6,6 +6,7 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.ProfessionsMCA;
 import mca.entity.ai.relationship.Gender;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.resources.API;
 import mca.resources.PoolUtil;
@@ -415,7 +416,7 @@ public class Village implements Iterable<Building> {
                 .filter(villager -> world.random.nextFloat() < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
                 .ifPresent(villager ->
-                        villager.getRelationships().getSpouse().ifPresent(spouse -> {
+                        villager.getRelationships().getPartner().ifPresent(spouse -> {
                                     // tell everyone about it
                                     if (Config.getInstance().villagerBirthNotification && spouse instanceof VillagerEntityMCA spouseVillager) {
                                         broadCastMessage(world, "events.baby", villager, spouseVillager);
@@ -434,7 +435,9 @@ public class Village implements Iterable<Building> {
         //list all and lonely villagers
         List<VillagerEntityMCA> allVillagers = getResidents(world);
         List<VillagerEntityMCA> availableVillagers = allVillagers.stream()
-                .filter(v -> !v.getRelationships().isMarried() && !v.isBaby())
+                .filter(v -> !v.isBaby())
+                .filter(v -> !v.getRelationships().isMarried())
+                .filter(v -> !v.getRelationships().getRelationshipState().equals(RelationshipState.ENGAGED))
                 .collect(Collectors.toList());
 
         if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * getMarriageThreshold() / 100f) {
@@ -487,20 +490,20 @@ public class Village implements Iterable<Building> {
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
         if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
             int i = world.random.nextInt(10);
-            if (i == 0) {
+            if (i == 0 && Config.getInstance().innSpawnsWanderingTraders) {
                 WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (trader != null) {
                     trader.setDespawnDelay(48000);
                     return true;
                 }
-            } else if (i == 1) {
+            } else if (i == 1 && Config.getInstance().innSpawnsCultists) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
                     adventurer.setProfession(ProfessionsMCA.CULTIST.get());
                     adventurer.setDespawnDelay(48000);
                     return true;
                 }
-            } else {
+            } else if (Config.getInstance().innSpawnsAdventurers) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
                     adventurer.setProfession(ProfessionsMCA.ADVENTURER.get());
@@ -513,7 +516,7 @@ public class Village implements Iterable<Building> {
     }
 
     private void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA suitor, VillagerEntityMCA mate) {
-        world.getPlayers().stream().filter(p -> PlayerSaveData.get(world, p.getUuid()).getLastSeenVillageId().orElse(-2) == getId()
+        world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId()
                         || suitor.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend
                         || mate.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
                 .forEach(player -> player.sendMessage(Text.translatable(event, suitor.getName(), mate.getName()), true));

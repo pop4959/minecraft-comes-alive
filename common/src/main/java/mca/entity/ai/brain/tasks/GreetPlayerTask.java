@@ -12,6 +12,7 @@ import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.Optional;
@@ -96,13 +97,13 @@ public class GreetPlayerTask extends Task<VillagerEntityMCA> {
     }
 
     private static Optional<? extends PlayerEntity> getPlayer(VillagerEntityMCA villager) {
-        return villager.world.getPlayers().stream()
+        return ((ServerWorld)villager.world).getPlayers().stream()
                 .filter(p -> shouldGreet(villager, p))
                 .findFirst();
     }
 
-    private static boolean shouldGreet(VillagerEntityMCA villager, PlayerEntity player) {
-        Optional<Integer> id = PlayerSaveData.get((ServerWorld)player.world, player.getUuid()).getLastSeenVillageId();
+    private static boolean shouldGreet(VillagerEntityMCA villager, ServerPlayerEntity player) {
+        Optional<Integer> id = PlayerSaveData.get(player).getLastSeenVillageId();
         Optional<Village> village = villager.getResidency().getHomeVillage();
         if (id.isPresent() && village.isPresent() && id.get() == village.get().getId()) {
             Memories memories = villager.getVillagerBrain().getMemoriesForPlayer(player);

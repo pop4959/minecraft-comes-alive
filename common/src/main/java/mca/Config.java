@@ -42,6 +42,8 @@ public final class Config implements Serializable {
     //villager behavior
     public int chanceToHaveTwins = 2;
     public float marriageHeartsRequirement = 100;
+    public float engagementHeartsRequirement = 50;
+    public float bouquetHeartsRequirement = 10;
     public int babyItemGrowUpTime = 24000;
     public int villagerMaxAgeTime = 192000;
     public int villagerMaxHealth = 20;
@@ -79,6 +81,9 @@ public final class Config implements Serializable {
     public int childrenChance = 5;
     public int bountyHunterInterval = 24000;
     public int bountyHunterThreshold = -5;
+    public boolean innSpawnsAdventurers = true;
+    public boolean innSpawnsCultists = true;
+    public boolean innSpawnsWanderingTraders = true;
 
     //gifts
     public int giftDesaturationQueueLength = 16;

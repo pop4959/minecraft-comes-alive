@@ -38,3 +38,4 @@ forge*changelog.txt
 
 .vscode/
 *.kra
+/scripts/translated/

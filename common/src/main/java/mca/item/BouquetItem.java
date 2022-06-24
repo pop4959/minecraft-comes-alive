@@ -6,14 +6,14 @@ import mca.server.world.data.PlayerSaveData;
 import net.minecraft.item.Item;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class WeddingRingItem extends RelationshipItem {
-    public WeddingRingItem(Item.Settings properties) {
+public class BouquetItem extends RelationshipItem {
+    public BouquetItem(Item.Settings properties) {
         super(properties);
     }
 
-     @Override
+    @Override
     protected float getHeartsRequired() {
-        return Config.getInstance().marriageHeartsRequirement;
+        return Config.getInstance().bouquetHeartsRequirement;
     }
 
     @Override
@@ -24,10 +24,10 @@ public class WeddingRingItem extends RelationshipItem {
         if (super.handle(player, villager)) {
             return false;
         } else {
-            response = "interaction.marry.success";
-            playerData.marry(villager);
-            villager.getRelationships().marry(player);
-            villager.getVillagerBrain().modifyMoodValue(15);
+            response = "interaction.promise.success";
+            playerData.promise(villager);
+            villager.getRelationships().promise(player);
+            villager.getVillagerBrain().modifyMoodValue(5);
         }
 
         villager.sendChatMessage(player, response);

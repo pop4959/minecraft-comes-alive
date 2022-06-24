@@ -111,7 +111,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
 
     private void saveEntity(ServerPlayerEntity player, Entity entity, NbtCompound villagerData) {
         if (entity instanceof ServerPlayerEntity serverPlayer) {
-            PlayerSaveData data = PlayerSaveData.get(serverPlayer.getWorld(), uuid);
+            PlayerSaveData data = PlayerSaveData.get(serverPlayer);
             data.setEntityData(villagerData);
             data.setEntityDataSet(true);
             syncFamilyTree(player, entity, villagerData);
@@ -188,12 +188,12 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
         if (villagerData.contains("tree_spouse_new")) {
             String name = villagerData.getString("tree_spouse_new");
             if (name.isEmpty()) {
-                Optional.of(entry.spouse()).flatMap(tree::getOrEmpty).ifPresent(node -> node.updateMarriage(null, null));
-                entry.updateMarriage(null, null);
+                Optional.of(entry.partner()).flatMap(tree::getOrEmpty).ifPresent(node -> node.updatePartner(null, null));
+                entry.updatePartner(null, null);
             } else {
                 getFamilyNode(player, tree, name, entry.gender().opposite()).ifPresent(node -> {
-                    entry.updateMarriage(node);
-                    node.updateMarriage(entry);
+                    entry.updatePartner(node);
+                    node.updatePartner(entry);
                 });
             }
         }

@@ -9,7 +9,7 @@ import mca.entity.ai.Memories;
 import mca.entity.ai.Traits;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.relationship.CompassionateEntity;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.network.c2s.*;
 import mca.resources.data.analysis.Analysis;
 import mca.resources.data.dialogue.Question;
@@ -36,7 +36,7 @@ public class InteractScreen extends AbstractDynamicScreen {
     private String father;
     private String mother;
 
-    private MarriageState marriageState;
+    private RelationshipState marriageState;
     private Text spouse;
 
     private List<String> dialogAnswers;
@@ -56,7 +56,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         this.mother = mother;
     }
 
-    public void setSpouse(MarriageState marriageState, String spouse) {
+    public void setSpouse(RelationshipState marriageState, String spouse) {
         this.marriageState = marriageState;
         this.spouse = spouse == null ? Text.translatable("gui.interact.label.parentUnknown") : Text.literal(spouse);
     }
@@ -79,9 +79,7 @@ public class InteractScreen extends AbstractDynamicScreen {
 
     @Override
     public void tick() {
-        if (timeSinceLastClick < 100) {
-            timeSinceLastClick++;
-        }
+        timeSinceLastClick++;
     }
 
     @Override

@@ -9,9 +9,12 @@ import mca.entity.ai.*;
 import mca.entity.ai.brain.VillagerBrain;
 import mca.entity.ai.brain.VillagerTasksMCA;
 import mca.entity.ai.relationship.*;
+import mca.entity.ai.relationship.family.FamilyTree;
+import mca.entity.ai.relationship.family.FamilyTreeNode;
 import mca.entity.interaction.VillagerCommandHandler;
 import mca.item.ItemsMCA;
 import mca.network.c2s.InteractionVillagerMessage;
+import mca.resources.Names;
 import mca.resources.Rank;
 import mca.resources.Tasks;
 import mca.server.world.data.Village;
@@ -240,6 +243,17 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         initialize(spawnReason);
 
         setAgeState(AgeState.byCurrentAge(getBreedingAge()));
+
+        FamilyTreeNode entry = getRelationships().getFamilyEntry();
+        if (!FamilyTreeNode.isValid(entry.father()) && !FamilyTreeNode.isValid(entry.mother())) {
+            FamilyTree tree = FamilyTree.get(world.toServerWorld());
+            FamilyTreeNode father = tree.getOrCreate(UUID.randomUUID(), Names.pickCitizenName(Gender.MALE), Gender.MALE);
+            FamilyTreeNode mother = tree.getOrCreate(UUID.randomUUID(), Names.pickCitizenName(Gender.FEMALE), Gender.FEMALE);
+            father.setDeceased(true);
+            mother.setDeceased(true);
+            entry.setFather(father);
+            entry.setMother(mother);
+        }
 
         return data;
     }

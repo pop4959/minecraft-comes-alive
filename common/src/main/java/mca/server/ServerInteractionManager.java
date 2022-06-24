@@ -5,7 +5,7 @@ import mca.Config;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
-import mca.entity.ai.relationship.MarriageState;
+import mca.entity.ai.relationship.RelationshipState;
 import mca.network.s2c.OpenDestinyGuiRequest;
 import mca.network.s2c.ShowToastRequest;
 import mca.server.world.data.BabyTracker;
@@ -55,7 +55,7 @@ public class ServerInteractionManager {
     }
 
     public void onPlayerJoin(ServerPlayerEntity player) {
-        PlayerSaveData playerData = PlayerSaveData.get(player.getWorld(), player.getUuid());
+        PlayerSaveData playerData = PlayerSaveData.get(player);
         if (!playerData.isEntityDataSet()) {
             if (Config.getInstance().launchIntoDestiny) {
                 launchDestiny(player);
@@ -153,7 +153,7 @@ public class ServerInteractionManager {
         }
 
         // Ensure the sender isn't already married.
-        if (PlayerSaveData.get(sender.getWorld(), sender.getUuid()).isMarried()) {
+        if (PlayerSaveData.get(sender).isMarried()) {
             failMessage(sender, Text.translatable("server.alreadyMarried"));
             return;
         }
@@ -212,8 +212,8 @@ public class ServerInteractionManager {
             successMessage(receiver, Text.translatable("server.proposalAccepted", sender.getDisplayName()));
 
             // Set both player data as married.
-            PlayerSaveData.get(sender.getWorld(), sender.getUuid()).marry(receiver);
-            PlayerSaveData.get(receiver.getWorld(), receiver.getUuid()).marry(sender);
+            PlayerSaveData.get(sender).marry(receiver);
+            PlayerSaveData.get(receiver).marry(sender);
 
             // Send success messages.
             successMessage(sender, Text.translatable("server.married", receiver.getDisplayName()));
@@ -239,23 +239,23 @@ public class ServerInteractionManager {
             }
 
             // Lookup the spouse, if it's a villager, we can't continue
-            if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
+            if (senderData.getRelationshipState() != RelationshipState.MARRIED_TO_PLAYER) {
                 failMessage(sender, Text.translatable("server.marriedToVillager"));
                 return;
             }
 
             // Notify the sender of the success and end both marriages.
-            senderData.getSpouseName().ifPresent(name ->
+            senderData.getPartnerName().ifPresent(name ->
                     successMessage(sender, Text.translatable("server.endMarriage", name.getString()))
             );
-            senderData.getSpouse().ifPresent(spouse -> {
+            senderData.getPartner().ifPresent(spouse -> {
                 if (spouse instanceof PlayerEntity player) {
                     // Notify the ex if they are online.
                     failMessage(player, Text.translatable("server.marriageEnded", sender.getEntityName()));
                 }
             });
-            senderData.endMarriage(MarriageState.SINGLE);
-            senderData.getSpouseUuid().map(id -> PlayerSaveData.get(sender.getWorld(), id)).ifPresent(r -> r.endMarriage(MarriageState.SINGLE));
+            senderData.endRelationShip(RelationshipState.SINGLE);
+            senderData.getPartnerUUID().map(id -> PlayerSaveData.get(sender)).ifPresent(r -> r.endRelationShip(RelationshipState.SINGLE));
         });
     }
 
@@ -266,22 +266,22 @@ public class ServerInteractionManager {
      */
     public void procreate(ServerPlayerEntity sender) {
         // Ensure the sender is married.
-        PlayerSaveData senderData = PlayerSaveData.get(sender.getWorld(), sender.getUuid());
+        PlayerSaveData senderData = PlayerSaveData.get(sender);
         if (!senderData.isMarried()) {
             failMessage(sender, Text.translatable("server.notMarried"));
             return;
         }
 
         // Ensure the spouse is a player
-        if (senderData.getMarriageState() != MarriageState.MARRIED_TO_PLAYER) {
+        if (senderData.getRelationshipState() != RelationshipState.MARRIED_TO_PLAYER) {
             failMessage(sender, Text.translatable("server.marriedToVillager"));
             return;
         }
 
         // Ensure we don't already have a baby
         BabyTracker tracker = BabyTracker.get(sender.getWorld());
-        BabyTracker.Pairing pairing = tracker.getPairing(sender.getUuid(), senderData.getSpouseUuid().orElse(null));
-        if (tracker.hasActiveBaby(sender.getUuid(), senderData.getSpouseUuid().orElse(null))) {
+        BabyTracker.Pairing pairing = tracker.getPairing(sender.getUuid(), senderData.getPartnerUUID().orElse(null));
+        if (tracker.hasActiveBaby(sender.getUuid(), senderData.getPartnerUUID().orElse(null))) {
             if (pairing.locateBaby(sender).getRight().wasFound()) {
                 failMessage(sender, Text.translatable("server.babyPresent"));
             } else {
@@ -292,7 +292,7 @@ public class ServerInteractionManager {
         }
 
         // Ensure the spouse is online.
-        senderData.getSpouse().filter(e -> e instanceof PlayerEntity).map(PlayerEntity.class::cast).ifPresentOrElse(spouse -> {
+        senderData.getPartner().filter(e -> e instanceof PlayerEntity).map(PlayerEntity.class::cast).ifPresentOrElse(spouse -> {
             // If the spouse is online and has previously sent a procreation request that hasn't expired, we can continue.
             // Otherwise, we notify the spouse that they must also enter the command.
             if (!procreateMap.containsKey(spouse.getUuid())) {

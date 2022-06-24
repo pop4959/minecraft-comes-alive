@@ -3,6 +3,7 @@ package mca.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import mca.MCA;
 import mca.client.gui.widget.RectangleWidget;
+import mca.client.gui.widget.TooltipButtonWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.c2s.GetVillageRequest;
 import mca.network.c2s.RenameVillageMessage;
@@ -173,7 +174,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 } else {
                     text.formatted(Formatting.GRAY).formatted(Formatting.STRIKETHROUGH);
                 }
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, text, (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.AUTO_SCAN));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     village.toggleAutoScan();
@@ -182,14 +183,14 @@ public class BlueprintScreen extends ExtendedScreen {
                 by += 22;
 
                 //restrict access
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.restrictAccess"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.restrictAccess"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FORCE_TYPE, "blocked"));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
                 //add room
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.addRoom"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addRoom", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
