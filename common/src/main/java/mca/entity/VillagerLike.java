@@ -25,11 +25,12 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.VillagerDataContainer;
@@ -285,6 +286,21 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void randomizeHair() {
         setHair(HairList.getInstance().getPool(getGenetics().getGender()).pickOne());
+
+        //colored hair
+        MobEntity entity = asEntity();
+        if (entity.getRandom().nextFloat() < Config.getInstance().coloredHairChance) {
+            int n = entity.getRandom().nextInt(25);
+            int o = DyeColor.values().length;
+            int p = n % o;
+            int q = (n + 1) % o;
+            float r = entity.getRandom().nextFloat();
+            float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
+            float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
+            setTrackedValue(HAIR_COLOR_RED, fs[0] * (1.0f - r) + gs[0] * r);
+            setTrackedValue(HAIR_COLOR_GREEN, fs[1] * (1.0f - r) + gs[1] * r);
+            setTrackedValue(HAIR_COLOR_BLUE, fs[2] * (1.0f - r) + gs[2] * r);
+        }
     }
 
     default void validateClothes() {

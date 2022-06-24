@@ -45,7 +45,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         return null;
     }
 
-    protected float[] getColor(T villager) {
+    protected float[] getColor(T villager, float tickDelta) {
         return DEFAULT_COLOR;
     }
 
@@ -66,15 +66,15 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         //copy the animation to this layers model
         getContextModel().setAttributes(model);
 
-        renderFinal(transform, provider, light, villager);
+        renderFinal(transform, provider, light, villager, tickDelta);
     }
 
-    public void renderFinal(MatrixStack transform, VertexConsumerProvider provider, int light, T villager) {
+    public void renderFinal(MatrixStack transform, VertexConsumerProvider provider, int light, T villager, float tickDelta) {
         int tint = LivingEntityRenderer.getOverlay(villager, 0);
 
         Identifier skin = getSkin(villager);
         if (canUse(skin)) {
-            float[] color = getColor(villager);
+            float[] color = getColor(villager, tickDelta);
             renderModel(transform, provider, light, model, color[0], color[1], color[2], skin, tint);
         }
 

@@ -1,11 +1,14 @@
 package mca.client.render.layer;
 
 import mca.client.resources.ColorPalette;
+import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Traits;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
 import static mca.client.model.CommonVillagerModel.getVillager;
@@ -28,8 +31,27 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
         return cached(getVillager(villager).getHair().replace(".png", "_overlay.png"), Identifier::new);
     }
 
+    private float[] getRainbow(LivingEntity entity, float tickDelta) {
+        int n = entity.age / 25 + entity.getId();
+        int o = DyeColor.values().length;
+        int p = n % o;
+        int q = (n + 1) % o;
+        float r = ((float)(entity.age % 25) + tickDelta) / 25.0f;
+        float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
+        float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
+        return new float[] {
+                fs[0] * (1.0f - r) + gs[0] * r,
+                fs[1] * (1.0f - r) + gs[1] * r,
+                fs[2] * (1.0f - r) + gs[2] * r
+        };
+    }
+
     @Override
-    protected float[] getColor(T villager) {
+    protected float[] getColor(T villager, float tickDelta) {
+        if (villager instanceof VillagerLike<?> villagerLike && villagerLike.getTraits().hasTrait(Traits.Trait.RAINBOW)) {
+            return getRainbow(villager, tickDelta);
+        }
+
         float[] hairDye = getVillager(villager).getHairDye();
         if (hairDye[0] >= 0.0f) {
             return hairDye;

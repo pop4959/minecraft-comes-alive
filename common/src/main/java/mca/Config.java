@@ -71,6 +71,7 @@ public final class Config implements Serializable {
     public boolean useSquidwardModels = false;
     public boolean enableBoobs = true;
     public int burnedClothingTickLength = 3600;
+    public float coloredHairChance = 0.02f;
 
     //village behavior
     public int guardSpawnRate = 6;
