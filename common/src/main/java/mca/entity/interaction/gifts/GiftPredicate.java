@@ -38,7 +38,7 @@ public class GiftPredicate {
                         / (json.has("dividend") ? json.get("dividend").getAsFloat() : 1.0f)
                         + (json.has("add") ? json.get("add").getAsFloat() : 0.0f),
                 0.0f,
-                json.has("max") ? json.get("max").getAsInt() : 1.0f
+                json.has("max") ? json.get("max").getAsFloat() : 1.0f
         );
     }
 
