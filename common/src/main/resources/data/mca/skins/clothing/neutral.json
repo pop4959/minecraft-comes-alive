@@ -1,8 +1,8 @@
 {
   "mca:skins/clothing/normal/neutral/none/%d.png": {
-    "count": 42,
+    "count": 13,
     "profession": "minecraft:none",
-    "chance": 0.15
+    "chance": 0.5
   },
   "mca:skins/clothing/normal/neutral/armorer/%d.png": {
     "count": 3,
