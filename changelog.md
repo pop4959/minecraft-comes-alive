@@ -330,3 +330,7 @@
 * Added rainbow trait
 * Hair color now blends when color is gifted again
 * 2% of villagers dye their hair (configurable)
+
+# 7.3.5
+* Removed duplicate jobless skins
+* fixed promised villager marrying
