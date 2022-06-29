@@ -134,8 +134,9 @@
   "analysis.hearts_min": "hearts",
   "analysis.hearts_max": "hearts",
   "analysis.hearts": "hearts",
-  "analysis.advancement": "Advancement",
-  "analysis.memory": "Memory",
+  "analysis.advancement": "advancement",
+  "analysis.memory": "memory",
+  "analysis.trait": "trait",
 
   "item.mca.blueprint": "Blueprint",
   "item.mca.blueprint.tooltip": "Right-click to manage the village you are currently in",
