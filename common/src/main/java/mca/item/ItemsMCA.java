@@ -55,6 +55,9 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> BOUQUET = register("bouquet", () -> new BouquetItem(baseProps()));
 
+    RegistrySupplier<Item> POTION_OF_FEMINITY = register("potion_of_feminity", () -> new PotionOfMetamorphosisItem(baseProps().maxCount(1), Gender.FEMALE));
+    RegistrySupplier<Item> POTION_OF_MASCULINITY = register("potion_of_masculinity", () -> new PotionOfMetamorphosisItem(baseProps().maxCount(1), Gender.MALE));
+
     RegistrySupplier<Item> NEEDLE_AND_THREAD = register("needle_and_thread", () -> new NeedleAndThreadItem(baseProps().maxDamage(8)));
     RegistrySupplier<Item> COMB = register("comb", () -> new CombItem(baseProps().maxDamage(8)));
 
