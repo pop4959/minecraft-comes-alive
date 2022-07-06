@@ -18,7 +18,7 @@
             },
             {
               "chance": -100,
-              "profession": "adventurer"
+              "profession": "mca:adventurer"
             }
           ],
           "actions": {

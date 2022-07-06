@@ -103,7 +103,7 @@ public class Residency {
             return;
         }
 
-        if (entity.age % 600 == 0) {
+        if (entity.age % 600 == 0 && !ProfessionsMCA.needsNoHome.contains(entity.getProfession())) {
             if (getHomeVillage().filter(v -> !v.isAutoScan()).isEmpty()) {
                 reportBuildings();
             }

@@ -337,3 +337,6 @@
 * Fixed promised villager marrying
 * Fixed black hair issue
 * Removed duplicate jobless skins
+* Adventurers no longer claim beds
+* Adventurers no longer complain about too crowded places
+* Adventurers now actually charge you when hiring them

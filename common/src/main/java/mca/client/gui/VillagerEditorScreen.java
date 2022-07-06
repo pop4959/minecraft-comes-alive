@@ -336,6 +336,8 @@ public class VillagerEditorScreen extends Screen {
                         ProfessionsMCA.GUARD.get(),
                         ProfessionsMCA.ARCHER.get(),
                         ProfessionsMCA.OUTLAW.get(),
+                        ProfessionsMCA.ADVENTURER.get(),
+                        ProfessionsMCA.CULTIST.get(),
                 }) {
                     TranslatableText text = new TranslatableText("entity.minecraft.villager." + p);
                     ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + (right ? DATA_WIDTH / 2 : 0), y, DATA_WIDTH / 2, 20, text, b -> {
