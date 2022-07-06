@@ -332,5 +332,25 @@
 * 2% of villagers dye their hair (configurable)
 
 # 7.3.5
+
 * Removed duplicate jobless skins
 * fixed promised villager marrying
+
+# TODO
+
+* reloading datapacks should resend skins data
+* divorce paper warning is confusing when you have papers
+* Adventurers won't actually charge you
+    * oh and crowded goes brrt
+* Adventurers claim beds, tho this might no longer be a problem in newer versions?
+* improve destiny mode
+* weaken bounty hunters
+    * fix them, debug output
+* Hint ad mca editor
+* Adventurer hall with bounty board!
+
+# TODO - 1.19
+
+* Professions
+* Skin selection seems to fail
+* Talk fails
