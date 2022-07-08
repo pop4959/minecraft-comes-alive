@@ -53,7 +53,7 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
         }
 
         float[] hairDye = getVillager(villager).getHairDye();
-        if (hairDye[0] >= 0.0f) {
+        if (hairDye[0] > 0.0f) {
             return hairDye;
         }
 
