@@ -28,6 +28,7 @@ public final class Config implements Serializable {
     //mod features
     public boolean overwriteOriginalVillagers = true;
     public boolean overwriteOriginalZombieVillagers = true;
+    public float babyZombieChance = 0.25f;
     public boolean villagerTagsHacks = true;
     public boolean enableInfection = true;
     public int infectionChance = 5;

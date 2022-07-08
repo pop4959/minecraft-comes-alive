@@ -344,4 +344,5 @@
 * Added fully vanilla mode to player model selection
 * Added a hint to the limited `/mca editor`
 * Reduced which villagers are converted to support mods (Easy Villagers)
-  * E.g. Igloo will have vanilla villagers now, for technical reasons
+    * E.g. Igloo will have vanilla villagers now, for technical reasons
+* Less mca baby zombie villagers
