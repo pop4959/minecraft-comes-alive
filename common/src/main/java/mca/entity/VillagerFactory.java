@@ -106,6 +106,7 @@ public class VillagerFactory {
     public VillagerEntityMCA build() {
         Gender gender = this.gender.orElseGet(Gender::getRandom);
         VillagerEntityMCA villager = gender.getVillagerType().create(world);
+        assert villager != null;
         villager.getGenetics().setGender(gender);
         villager.setBreedingAge(age.orElseGet(() -> villager.getRandom().nextInt(AgeState.getMaxAge() * 3) - AgeState.getMaxAge()));
         position.ifPresent(pos -> villager.updatePosition(pos.getX(), pos.getY(), pos.getZ()));
