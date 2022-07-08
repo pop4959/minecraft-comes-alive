@@ -59,7 +59,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
             return;
         }
 
-        if (villager instanceof PlayerEntity && !MCAClient.useMCAModel(villager.getUuid()))  {
+        if (villager instanceof PlayerEntity && !MCAClient.useVillagerRenderer(villager.getUuid()))  {
             return;
         }
 

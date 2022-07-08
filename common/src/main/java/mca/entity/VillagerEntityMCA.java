@@ -103,14 +103,15 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private static final CDataParameter<Integer> GROWTH_AMOUNT = CParameter.create("growthAmount", -AgeState.getMaxAge());
 
     private static final CDataManager<VillagerEntityMCA> DATA = createTrackedData(VillagerEntityMCA.class).build();
-    private boolean usePlayerSkin;
+
+    private PlayerModel playerModel;
 
     private int despawnDelay;
     private int burned;
 
     @Override
-    public boolean usePlayerSkin() {
-        return usePlayerSkin;
+    public PlayerModel getPlayerModel() {
+        return playerModel;
     }
 
     @Override
@@ -781,7 +782,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             // todo currently only client side
             if (isClient()) {
-                if (MCAClient.useMCARenderer(vehicle.getUuid())) {
+                if (MCAClient.useGeneticsRenderer(vehicle.getUuid())) {
                     float height = getVillager(vehicle).getRawScaleFactor();
                     offset = offset.multiply(1.0f, height, 1.0f);
                     offset = offset.add(0.0f, vehicle.getMountedHeightOffset() * height - vehicle.getMountedHeightOffset(), 0.0f);
@@ -1223,7 +1224,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         relations.readFromNbt(nbt);
         longTermMemory.readFromNbt(nbt);
 
-        usePlayerSkin = nbt.contains("usePlayerSkin");
+        playerModel = PlayerModel.VALUES[nbt.getInt("playerModel")];
 
         updateSpeed();
 

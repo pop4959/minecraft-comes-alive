@@ -363,8 +363,8 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return false;
     }
 
-    default boolean usePlayerSkin() {
-        return false;
+    default PlayerModel getPlayerModel() {
+        return PlayerModel.VILLAGER;
     }
 
     boolean isBurned();
@@ -377,5 +377,13 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
             double f = random.nextGaussian() * 0.02;
             asEntity().world.addParticle(ParticleTypes.SMOKE, asEntity().getParticleX(1.0), asEntity().getRandomBodyY() + 1.0, asEntity().getParticleZ(1.0), d, e, f);
         }
+    }
+
+    enum PlayerModel {
+        VILLAGER,
+        PLAYER,
+        VANILLA;
+
+        static final PlayerModel[] VALUES = values();
     }
 }

@@ -27,6 +27,9 @@ import static mca.client.model.CommonVillagerModel.getVillager;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+    private PlayerEntityModel<AbstractClientPlayerEntity> villagerModel;
+    private PlayerEntityModel<AbstractClientPlayerEntity> originalModel;
+
     @Shadow protected abstract void setModelPose(AbstractClientPlayerEntity player);
 
     SkinLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> skinLayer;
@@ -39,11 +42,13 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     @Inject(method = "<init>(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;Z)V", at = @At("TAIL"))
     private void init(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
         if (Config.getInstance().enableVillagerPlayerModel) {
-            model = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F), slim));
+            villagerModel = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F), slim));
+            originalModel = model;
 
             skinLayer = new SkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));
             addFeature(skinLayer);
             addFeature(new FaceLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.01F))), "normal"));
+
             clothingLayer = new ClothingLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0625F))), "normal");
             addFeature(clothingLayer);
             addFeature(new HairLayer<>(this, createModel(VillagerEntityModelMCA.hairData(new Dilation(0.125F)))));
@@ -56,7 +61,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "scale(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;F)V", at = @At("TAIL"), cancellable = true)
     private void injectScale(AbstractClientPlayerEntity villager, MatrixStack matrices, float f, CallbackInfo ci) {
-        if (MCAClient.useMCARenderer(villager.getUuid())) {
+        if (MCAClient.useGeneticsRenderer(villager.getUuid())) {
             float height = getVillager(villager).getRawScaleFactor();
             float width = getVillager(villager).getHorizontalScaleFactor();
             matrices.scale(width, height, width);
@@ -64,12 +69,15 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 matrices.translate(0, 0.6F, 0);
             }
             ci.cancel();
+            model = villagerModel;
+        } else {
+            model = originalModel;
         }
     }
 
     @Inject(method = "renderRightArm(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
     public void injectRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (MCAClient.useMCAModel(player.getUuid())) {
+        if (MCAClient.useVillagerRenderer(player.getUuid())) {
             renderCustomArm(matrices, vertexConsumers, light, player, skinLayer.model.rightArm, skinLayer.model.rightSleeve, skinLayer);
             renderCustomArm(matrices, vertexConsumers, light, player, clothingLayer.model.rightArm, clothingLayer.model.rightSleeve, clothingLayer);
             ci.cancel();
@@ -78,7 +86,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "renderLeftArm(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
     public void injectRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (MCAClient.useMCAModel(player.getUuid())) {
+        if (MCAClient.useVillagerRenderer(player.getUuid())) {
             renderCustomArm(matrices, vertexConsumers, light, player, skinLayer.model.leftArm, skinLayer.model.leftSleeve, skinLayer);
             renderCustomArm(matrices, vertexConsumers, light, player, clothingLayer.model.leftArm, clothingLayer.model.leftSleeve, clothingLayer);
             ci.cancel();

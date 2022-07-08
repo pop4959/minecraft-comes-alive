@@ -534,7 +534,10 @@
   "gui.villager_editor.villager_skin": "Villager",
   "gui.villager_editor.villager_skin.tooltip": "Use the villager model",
   "gui.villager_editor.player_skin": "Player",
-  "gui.villager_editor.player_skin.tooltip": "Use the vanilla player model and use this customization only for inheritance",
+  "gui.villager_editor.player_skin.tooltip": "Use the vanilla skin, but apply genetics where possible",
+  "gui.villager_editor.vanilla_skin": "Vanilla",
+  "gui.villager_editor.vanilla_skin.tooltip": "Use the vanilla player model and use this customization only for inheritance",
+  "gui.villager_editor.customization_hint": "Use the comb, needle and thread and the potion of metamorphosis to customize.",
 
   "command.no_permission": "This command is disabled for users.",
   "command.only_one_destiny": "You already decided your destiny.",
