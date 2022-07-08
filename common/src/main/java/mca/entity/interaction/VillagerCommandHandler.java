@@ -257,8 +257,8 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             case "apologize" -> {
                 Vec3d pos = entity.getPos();
                 entity.world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
-                    if (entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
-                        v.getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
+                    if ( entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
+                        v.pardonPlayers(99);
                     }
                 });
             }

@@ -346,3 +346,4 @@
 * Reduced which villagers are converted to support mods (Easy Villagers)
     * E.g. Igloo will have vanilla villagers now, for technical reasons
 * Less mca baby zombie villagers
+* Fixed apologizing to villagers after hit

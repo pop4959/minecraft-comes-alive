@@ -79,15 +79,14 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntit
     VILLAGE_HAS_SPACE("village_has_space", (villager, player) -> PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isPresent()),
     NOT_VILLAGE_HAS_SPACE("!village_has_space", (villager, player) -> PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isEmpty()),
 
-    //todo triggers for all villagers in range
-    SMALL_BOUNTY("small_bounty", (villager, player) -> {
+    HIT_BY("hit_by", (villager, player) -> {
         if (villager instanceof VillagerEntityMCA v) {
-            return v.getSmallBounty() > 0;
+            return v.isHitBy(player);
         } else {
             return false;
         }
     }),
-    NOT_SMALL_BOUNTY("not_small_bounty", (villager, player) -> !SMALL_BOUNTY.test(villager, player));
+    NOT_HIT_BY("!hit_by", (villager, player) -> !HIT_BY.test(villager, player));
 
     private static boolean isRankAtLeast(VillagerLike<?> villager, ServerPlayerEntity player, Rank rank) {
         return player != null && villager instanceof VillagerEntityMCA && ((VillagerEntityMCA)villager).getResidency().getHomeVillage()
