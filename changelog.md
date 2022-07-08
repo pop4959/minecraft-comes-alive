@@ -347,3 +347,4 @@
     * E.g. Igloo will have vanilla villagers now, for technical reasons
 * Less mca baby zombie villagers
 * Fixed apologizing to villagers after hit
+* Made interactions easier, except for stories if you are lying
