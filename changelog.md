@@ -342,3 +342,4 @@
 * Adventurers now actually charge you when hiring them
 * Hopefully fixed Stuck-in-spectator mode bugs
 * Added fully vanilla mode to player model selection
+* Added a hint to the limited `/mca editor`
