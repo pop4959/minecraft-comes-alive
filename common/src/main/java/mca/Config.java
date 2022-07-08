@@ -81,8 +81,8 @@ public final class Config implements Serializable {
     public int marriageChance = 5;
     public int adventurerAtInnChance = 5;
     public int childrenChance = 5;
-    public int bountyHunterInterval = 24000;
-    public int bountyHunterThreshold = -5;
+    public int bountyHunterInterval = 48000;
+    public int bountyHunterThreshold = -15;
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;

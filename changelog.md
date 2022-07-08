@@ -348,3 +348,4 @@
 * Less mca baby zombie villagers
 * Fixed apologizing to villagers after hit
 * Made interactions easier, except for stories if you are lying
+* Made bounty hunters more rare
