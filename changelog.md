@@ -2,6 +2,8 @@
 
 * Children now grow up in 16 days instead of 8 (configurable)
 * Babies no longer greet you
+* Added rose gold dust recipe and therefore a way to obtain rose gold
+    * Removed rose gold ore
 
 # 7.3.5
 

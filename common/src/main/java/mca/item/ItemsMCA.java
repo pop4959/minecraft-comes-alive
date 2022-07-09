@@ -130,7 +130,6 @@ public interface ItemsMCA {
     RegistrySupplier<Item> DIVORCE_PAPERS = register("divorce_papers", () -> new TooltippedItem(baseProps()));
 
     RegistrySupplier<Item> ROSE_GOLD_BLOCK = register("rose_gold_block", () -> new BlockItem(BlocksMCA.ROSE_GOLD_BLOCK.get(), baseProps()));
-    RegistrySupplier<Item> ROSE_GOLD_ORE = register("rose_gold_ore", () -> new BlockItem(BlocksMCA.ROSE_GOLD_ORE.get(), baseProps()));
 
     RegistrySupplier<Item> JEWELER_WORKBENCH = register("jeweler_workbench", () -> new BlockItem(BlocksMCA.JEWELER_WORKBENCH.get(), baseProps()));
 
