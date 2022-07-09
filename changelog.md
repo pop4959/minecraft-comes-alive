@@ -1,3 +1,8 @@
+# 7.3.6
+
+* Children now grow up in 16 days instead of 8 (configurable)
+* Babies no longer greet you
+
 # 7.3.5
 
 * Added potion of feminity/masculinity
