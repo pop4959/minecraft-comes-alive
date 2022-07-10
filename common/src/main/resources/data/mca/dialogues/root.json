@@ -18,7 +18,15 @@
             },
             {
               "chance": -100,
-              "profession": "adventurer"
+              "profession": "mca:adventurer"
+            },
+            {
+              "chance": -100,
+              "constraints": "baby"
+            },
+            {
+              "chance": -100,
+              "constraints": "toddler"
             }
           ],
           "actions": {

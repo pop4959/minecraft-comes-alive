@@ -101,14 +101,15 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private static final CDataParameter<Integer> GROWTH_AMOUNT = CParameter.create("growthAmount", -AgeState.getMaxAge());
 
     private static final CDataManager<VillagerEntityMCA> DATA = createTrackedData(VillagerEntityMCA.class).build();
-    private boolean usePlayerSkin;
+
+    private PlayerModel playerModel;
 
     private int despawnDelay;
     private int burned;
 
     @Override
-    public boolean usePlayerSkin() {
-        return usePlayerSkin;
+    public PlayerModel getPlayerModel() {
+        return playerModel;
     }
 
     @Override
@@ -395,12 +396,17 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
      * decrease the personal bounty counter by one
      */
     private void pardonPlayers() {
+        pardonPlayers(1);
+    }
+
+    public void pardonPlayers(int amount) {
         int bounty = getSmallBounty();
-        if (bounty <= 1) {
+        if (bounty <= amount) {
             getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
             getBrain().forget(MemoryModuleType.ATTACK_TARGET);
+            getBrain().forget(MemoryModuleTypeMCA.HIT_BY_PLAYER.get());
         } else {
-            getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty - 1);
+            getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty - amount);
         }
     }
 
@@ -413,7 +419,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public boolean canInteractWithItemStackInHand(ItemStack stack) {
-        return stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get() && stack.getItem() != ItemsMCA.NEEDLE_AND_THREAD.get() && stack.getItem() != ItemsMCA.COMB.get();
+        return stack.getItem() != ItemsMCA.VILLAGER_EDITOR.get()
+                && stack.getItem() != ItemsMCA.NEEDLE_AND_THREAD.get()
+                && stack.getItem() != ItemsMCA.COMB.get()
+                && stack.getItem() != ItemsMCA.POTION_OF_FEMINITY.get()
+                && stack.getItem() != ItemsMCA.POTION_OF_MASCULINITY.get();
     }
 
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
@@ -524,6 +534,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         // Notify the surrounding guards when a villager is attacked. Yoinks!
         if (attacker instanceof LivingEntity livingEntity && !isHostile() && !isFriend(attacker.getType())) {
+            // remember the specific attacker
+            getBrain().remember(MemoryModuleTypeMCA.HIT_BY_PLAYER.get(), Optional.of(livingEntity));
+            getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), getSmallBounty() + 1);
+
             Vec3d pos = getPos();
             world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
                 if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
@@ -538,8 +552,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                                 // just a warning
                                 v.sendChatMessage(player, "villager.warning");
                             }
+                            v.getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty + 1);
                         }
-                        v.getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), bounty + 1);
                     } else if (v.isGuard()) {
                         // non players get attacked straight away
                         v.getBrain().remember(MemoryModuleType.ATTACK_TARGET, livingEntity);
@@ -576,6 +590,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public int getSmallBounty() {
         return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY.get()).orElse(0);
+    }
+
+    public boolean isHitBy(ServerPlayerEntity player) {
+        return getBrain().getOptionalMemory(MemoryModuleTypeMCA.HIT_BY_PLAYER.get()).filter(v -> v == player).isPresent();
     }
 
     private int getMaxWarnings(PlayerEntity attacker) {
@@ -775,7 +793,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             // todo currently only client side
             if (isClient()) {
-                if (MCAClient.useMCARenderer(vehicle.getUuid())) {
+                if (MCAClient.useGeneticsRenderer(vehicle.getUuid())) {
                     float height = getVillager(vehicle).getRawScaleFactor();
                     offset = offset.multiply(1.0f, height, 1.0f);
                     offset = offset.add(0.0f, vehicle.getMountedHeightOffset() * height - vehicle.getMountedHeightOffset(), 0.0f);
@@ -1217,7 +1235,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         relations.readFromNbt(nbt);
         longTermMemory.readFromNbt(nbt);
 
-        usePlayerSkin = nbt.contains("usePlayerSkin");
+        playerModel = PlayerModel.VALUES[nbt.getInt("playerModel")];
 
         updateSpeed();
 

@@ -155,10 +155,11 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         }
 
         //send bounty hunters
-        if (world.getTimeOfDay() % Config.getInstance().bountyHunterInterval / 10 == 0 && world.getDifficulty() != Difficulty.PEACEFUL) {
+        if (world.getTimeOfDay() % (Config.getInstance().bountyHunterInterval / 10) == 0 && world.getDifficulty() != Difficulty.PEACEFUL) {
             world.getPlayers().forEach(player -> {
                 if (world.random.nextInt(10) == 0 && !isWithinHorizontalBoundaries(player.getBlockPos()) && !player.isCreative()) {
                     villages.values().stream()
+                            .filter(v -> v.getPopulation() >= 3)
                             .filter(v -> v.getReputation(player) < Config.getInstance().bountyHunterThreshold)
                             .min(Comparator.comparingInt(v -> v.getReputation(player)))
                             .ifPresent(buildings -> startBountyHunterWave(player, buildings));
@@ -182,7 +183,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     }
 
     private void startBountyHunterWave(ServerPlayerEntity player, Village sender) {
-        int count = Math.min(30, -sender.getReputation(player) / 5 + 3);
+        int count = Math.min(30, -sender.getReputation(player) / 6 + 3);
 
         if (sender.getPopulation() == 0) {
             //the village has been wiped out, lets send one last wave
@@ -192,7 +193,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             count *= 2;
         } else {
             //slightly increase your reputation
-            sender.pushHearts(player, sender.getPopulation() * count);
+            sender.pushHearts(player, sender.getPopulation() * count * 2);
         }
 
         //trigger advancement

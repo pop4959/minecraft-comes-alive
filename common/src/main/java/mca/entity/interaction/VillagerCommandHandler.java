@@ -17,7 +17,9 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.EntityPassengersSetS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -201,11 +203,13 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 return true;
             }
             case "stay_in_village" -> {
+                payEmeralds(player, 5);
                 entity.setProfession(VillagerProfession.NONE);
                 entity.setDespawnDelay(0);
                 return true;
             }
             case "hire_short" -> {
+                payEmeralds(player, 10);
                 entity.makeMercenary(player);
                 entity.setDespawnDelay(24000 * 3);
                 return true;
@@ -253,8 +257,8 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             case "apologize" -> {
                 Vec3d pos = entity.getPos();
                 entity.world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
-                    if (entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
-                        v.getBrain().forget(MemoryModuleTypeMCA.SMALL_BOUNTY.get());
+                    if ( entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
+                        v.pardonPlayers(99);
                     }
                 });
             }
@@ -279,6 +283,21 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
         }
 
         return super.handle(player, command);
+    }
+
+    private void payEmeralds(ServerPlayerEntity player, int emeralds) {
+        PlayerInventory inventory = player.getInventory();
+        for (int j = 0; j < inventory.size(); ++j) {
+            ItemStack itemStack = inventory.getStack(j);
+            if (itemStack.getItem().equals(Items.EMERALD)) {
+                int c = Math.min(itemStack.getCount(), emeralds);
+                itemStack.decrement(c);
+                emeralds -= c;
+                if (emeralds <= 0) {
+                    return;
+                }
+            }
+        }
     }
 
     public void prepareOffersFor(PlayerEntity player) {

@@ -3,6 +3,7 @@ package mca.entity.interaction.gifts;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import mca.client.gui.Constraint;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Chore;
 import mca.entity.ai.LongTermMemory;
@@ -38,7 +39,7 @@ public class GiftPredicate {
                         / (json.has("dividend") ? json.get("dividend").getAsFloat() : 1.0f)
                         + (json.has("add") ? json.get("add").getAsFloat() : 0.0f),
                 0.0f,
-                json.has("max") ? json.get("max").getAsInt() : 1.0f
+                json.has("max") ? json.get("max").getAsFloat() : 1.0f
         );
     }
 
@@ -152,7 +153,7 @@ public class GiftPredicate {
             long ticks = villager.getLongTermMemory().getMemory(id);
             return divideAndAdd(json, ticks);
         });
-        register("emeralds", JsonHelper::asInt, amount -> (villager, stack, player) -> player.getInventory().count(Items.EMERALD) >= amount ? 1.0f : 0.0f);
+        register("emeralds", JsonHelper::asInt, amount -> (villager, stack, player) -> (player != null && player.getInventory().count(Items.EMERALD) >= amount) ? 1.0f : 0.0f);
         register("village_has_building", JsonHelper::asString, name ->
                 (villager, stack, player) ->
                         villager.getResidency().getHomeVillage().filter(v -> v.hasBuilding(name)).isPresent() ? 1.0f : 0.0f
@@ -175,6 +176,10 @@ public class GiftPredicate {
             assert player != null;
             Advancement advancement = Objects.requireNonNull(player.getServer()).getAdvancementLoader().get(id);
             return player.getAdvancementTracker().getProgress(advancement).isDone() ? 1.0f : 0.0f;
+        });
+        register("constraints", (json, name) -> Constraint.fromStringList(JsonHelper.asString(json, name)), constraints -> (villager, stack, player) -> {
+            Set<Constraint> c = Constraint.allMatching(villager, player);
+            return c.containsAll(constraints) ? 1.0f : 0.0f;
         });
     }
 

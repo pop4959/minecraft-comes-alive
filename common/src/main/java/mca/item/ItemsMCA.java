@@ -55,6 +55,9 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> BOUQUET = register("bouquet", () -> new BouquetItem(baseProps()));
 
+    RegistrySupplier<Item> POTION_OF_FEMINITY = register("potion_of_feminity", () -> new PotionOfMetamorphosisItem(baseProps().maxCount(1), Gender.FEMALE));
+    RegistrySupplier<Item> POTION_OF_MASCULINITY = register("potion_of_masculinity", () -> new PotionOfMetamorphosisItem(baseProps().maxCount(1), Gender.MALE));
+
     RegistrySupplier<Item> NEEDLE_AND_THREAD = register("needle_and_thread", () -> new NeedleAndThreadItem(baseProps().maxDamage(8)));
     RegistrySupplier<Item> COMB = register("comb", () -> new CombItem(baseProps().maxDamage(8)));
 
@@ -127,7 +130,6 @@ public interface ItemsMCA {
     RegistrySupplier<Item> DIVORCE_PAPERS = register("divorce_papers", () -> new TooltippedItem(baseProps()));
 
     RegistrySupplier<Item> ROSE_GOLD_BLOCK = register("rose_gold_block", () -> new BlockItem(BlocksMCA.ROSE_GOLD_BLOCK.get(), baseProps()));
-    RegistrySupplier<Item> ROSE_GOLD_ORE = register("rose_gold_ore", () -> new BlockItem(BlocksMCA.ROSE_GOLD_ORE.get(), baseProps()));
 
     RegistrySupplier<Item> JEWELER_WORKBENCH = register("jeweler_workbench", () -> new BlockItem(BlocksMCA.JEWELER_WORKBENCH.get(), baseProps()));
 

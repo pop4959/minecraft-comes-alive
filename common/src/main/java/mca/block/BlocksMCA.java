@@ -18,7 +18,6 @@ public interface BlocksMCA {
     DeferredRegister<Block> BLOCKS = DeferredRegister.create(MCA.MOD_ID, Registry.BLOCK_KEY);
 
     RegistrySupplier<Block> ROSE_GOLD_BLOCK = register("rose_gold_block", () -> new Block(Block.Settings.copy(Blocks.GOLD_BLOCK)));
-    RegistrySupplier<Block> ROSE_GOLD_ORE = register("rose_gold_ore", () -> new OreBlock(Block.Settings.copy(Blocks.GOLD_ORE)));
 
     RegistrySupplier<Block> JEWELER_WORKBENCH = register("jeweler_workbench", () -> new JewelerWorkbench(Block.Settings.copy(Blocks.OAK_WOOD).nonOpaque()));
     RegistrySupplier<Block> INFERNAL_FLAME = register("infernal_flame", () -> new InfernalFlameBlock(Block.Settings.copy(Blocks.SOUL_FIRE)));

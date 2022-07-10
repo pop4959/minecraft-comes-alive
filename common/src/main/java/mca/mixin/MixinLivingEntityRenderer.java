@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinLivingEntityRenderer<T extends LivingEntity, M extends EntityModel<T>> {
     @Inject(method = "getRenderLayer(Lnet/minecraft/entity/LivingEntity;ZZZ)Lnet/minecraft/client/render/RenderLayer;", at = @At("HEAD"), cancellable = true)
     public void injectGetRenderLayer(T entity, boolean showBody, boolean translucent, boolean showOutline, CallbackInfoReturnable<@Nullable RenderLayer> cir) {
-        if (entity instanceof PlayerEntity && MCAClient.useMCAModel(entity.getUuid())) {
+        if (entity instanceof PlayerEntity && MCAClient.useVillagerRenderer(entity.getUuid())) {
+            //disable original model when villager renderer is active
             cir.setReturnValue(null);
         }
     }

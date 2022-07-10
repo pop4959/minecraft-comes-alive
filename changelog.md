@@ -1,68 +1,258 @@
-# 7.0.0
+# 7.3.6
 
-* Giant initial update. This list may have missing parts.
-* Added mca villager and zombie villager
-* Added genetics, personality, traits and mood
-* Added dialogue engine
-    * Ported classic interactions
-    * Added adoption
-    * Added divorce and divorce papers
-* Added enhanced gifting
-    * Has a saturation Queue
-    * Respects villagers specific needs
-* Added wedding ring and engagement ring
-* Added Grim Reaper
-* Added graves, resurrection, Staff of Life and the Scythe
-* Added guards and archers
-* Added blueprint
-    * Added village management
-    * Added automatic building and village recognition
-    * Added initial building types to extend village functions
-    * Added rank, task system
-* Added taxes
-* Added chores
-* Added book with enhanced visuals
-* Added Advancements
-* Added Architecture to support Fabric and Forge
-* Added voice acting
-* Added initial translations
+* Children now grow up in 16 days instead of 8 (configurable)
+* Babies no longer greet you
+* Added rose gold dust recipe and therefore a way to obtain rose gold
+    * Removed rose gold ore
 
-# 7.0.1
+# 7.3.5
 
-* Fixed traits syncing issues and chance math
-* Fixed translation keys
+* Added potion of feminity/masculinity
+* Fixed promised villager marrying
+* Fixed black hair issue
+* Removed duplicate jobless skins
+* Adventurers no longer claim beds
+* Adventurers no longer complain about too crowded places
+* Adventurers now actually charge you when hiring them
+* Hopefully fixed Stuck-in-spectator mode bugs
+* Added fully vanilla mode to player model selection
+* Added a hint to the limited `/mca editor`
+* Reduced which villagers are converted to support mods (Easy Villagers)
+    * E.g. Igloo will have vanilla villagers now, for technical reasons
+* Less mca baby zombie villagers
+* Fixed apologizing to villagers after hit
+* Made interactions easier, except for stories if you are lying
+* Made bounty hunters more rare
 
-# 7.0.2
+# 7.3.4
 
-* Fixed Server crash
-* Fixed crash when setting clothes or haircut when playing on a server
-* Added config flag to disable voice acting
-* Fixed scythe loosing its charge on non-tombstones
-* Fixed staff of life charges
-* You can no longer adopt adults
-* Fixed grown-up message appearing after world join
-* Fixed building detection on certain coordinates
-* Fixed tall villagers being too tall to live
-* Fixed phrases not being translated on dedicated servers
-* Synced Translations
+* Engagement rings now set the relationship to engaged
+    * Engaged villagers won't marry someone else
+* Gifting a bouquet prevents villagers from marrying other villagers
+* More config for inn spawning behavior
+* Added (deceased) father and mother for all spawned villagers
+* Fixed compatibility issues with Origins mod
+* Added rainbow trait
+* Hair color now blends when color is gifted again
+* 2% of villagers dye their hair (configurable)
 
-# 7.0.3
+# 7.3.3
 
-* Attempting to talk to a zombie won't prevent you from performing an action
-* Fixed interaction fatigue reset
-* Added Interaction and gift analysis
-* Overhauled gift desaturation.
-    * Hearts reward will decrease, but won't drop below 0.
-    * Desaturation uses a configurable exponential curve, slightly favoring awesome stuff.
-    * Once a day by default, the villager forgets about the latest gift in the queue
-* Fixed "datapack" crash
-* Building tasks are now required to advance in ranks
-* Removed bed reserving, beds are searched on demand
-* Fixed villager-keep-following-you problem
-* Fixed greeting AI
-* Increase percentage of adult villagers
-* Fixed changing clothes of unemployed villagers
-* Increased frequency of marriage, births and guard spawns
+* Parents with same gender are now properly registered
+
+# 7.3.2
+
+* Added support for 1.19
+* Added support for advancements tied to fate
+* Added Adventurers
+    * Spawn twice a day at inns
+    * Despawn after 2 days
+    * Can trade, be hired and asked to stay
+* Villager now chooses the best equipment
+* Added more eye variants
+* Fixed zombies not always using zombie clothing
+* Villager on fire will now burn their clothes
+* The Sirben cult appeared
+* Added 50.000 names from 55 different countries
+    * Config option available to use modern USA names only
+* Destiny now sets spawn location
+* The /mca editor has been replaced by a limited version (configurable) to prefer comb and needle and string items
+* You can now start a village without villagers using the blueprint
+
+# 7.3.1
+
+* Traders now spawn in Inns
+* Added comb to modify the hairstyle of villagers and players
+* Added needle and thread to modify clothes of villagers and players
+* Fixed advancements and book rewards
+* Improved name distribution
+* Marriage and Birth notifications are now only printed within the village boundaries, or when being friends
+* Added config flag to disable boobs
+* Added support for Immersive Weathering
+* Fixed a few crashes
+* Taxes are now once a week
+* Fixed performance issue
+* Fixed persistent zombie villagers despawning
+
+# 7.3.0
+
+* Updated translations
+* Fixed crash on dedicated server when picking up children
+* Cleaned up config, added link to config wiki
+* Villager can no longer plant modded plants to remove a crash
+* Fixed a few crashes
+
+# 7.3.0 alpha 3
+
+* Switched to an injected based player model to hopefully improve mod support
+* Using the Player model now makes use of size and gender
+* Females are now in average 5% shorter than males
+* You can now choose between player and villager model in the destiny screen
+* Fixed modded profession being naked
+* Fixed massive family crashing whistle
+* Fixed root advancement
+* Fixed Gifting advancements
+* Fixed missing riding phrase
+* Fixed duplication issue when villager use bonemeal
+* Fixed chore animations
+* Added wandering around when no tasks have been found
+* Fixed young villagers not holding tools correctly
+
+# 7.3.0 alpha 2
+
+* Fixed Destiny partly working on dedicated servers
+* Fixed mod conflicts
+* Added clothing and hair selection
+* Bounty hunter no longer attack while in creative
+* Gifting a golden apple to a child now properly reduces the stack
+* Fixed a few wrong buttons
+* Added a few more config flags to control destiny, teleportation and editor access
+* Sneaking no longer breaks the model
+* Editor offers a button to select player or villager skin
+* Fixed issues with resizing window while in editor
+
+# 7.3.0 alpha 1
+
+* Added destiny
+    * You are asked to customize the player
+    * Then you can choose from a set of spawn location to start your journey
+* Massive dialogue overhaul with over 300 new phrases
+    * Added Rumor dialogue
+    * Added Time specific dialogues
+* Grumpy, Gloomy and Shy personalities
+
+# 7.2.0
+
+* Ported to 1.18.2
+* Modded Villager professions now display properly in all mca interfaces
+* Fixed incompatibility with eldritch mobs
+* Villager get 5 extra hearts per level
+* Added config flag to use squidward models
+* Fixed sleeping
+* Adjusted villager teleportation to be more configurable
+* Different ages will now move at different speed
+* Genes now affect speed
+* Converted villagers will now retain custom nbt data and age
+* Fixed inventory disappearing on convert
+* Fixed marriage and family tree loss on convert
+* Maximum building size and radius are now configurable
+* Fixed UI Scaling issues with interaction buttons
+* Fixed issues of bounty hunters spawning within villages if your y value is below its bounds
+* Added Village Merging
+* Fixed villagers struck by lighting
+* Added electrified trait
+* Increased button widths to better support different languages
+* Decrease revenge aggression based on the guards' relation to you
+* Added guard target list to config
+* Added aborting children by unconventional means
+* Updated the Blueprint Interface to appear more cohesive
+* Added `/mca-admin forceBuildingType <type>` to force a building's type
+* Fixed issues with Chores not working in 1.18.x
+* Added modded support to `ChoppingTask` as well as several optimizations
+* Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)
+* Fixed potential crashes when villagers perform Harvesting chores (Planting seeds throwing a NPE)
+* Fixed player marriage not saving
+* Sneaking before interacting with a villager will now open trading
+
+# 7.1.0
+
+* Ported to 1.18 (And 1.18.1)
+* Fixed missing chest tag
+* Added baby clothes
+* Fixed villagers not fully moving out of the old building
+
+# 7.0.8
+
+* Readded blacksmith functionality
+* Fixed scaling-flickering with iguana tweaks
+* Added text when trying to assign to invalid buildings
+* Improved interaction layout
+* Staff of Life can no longer be enchanted
+* Fixed chores phrase names
+* Command kill no longer counts as murder
+* Added config flag to disable name tags
+* Fixed log spam regarding invalid bounding boxes
+* Fixed issues when assigning family in editor
+* Buildings now support modded chests
+* Villagers will now use your editor name
+* Fixed letter author and creative mode usage
+* Strengthened Grim Reaper
+* Added mod support for atmospheric, autumity, berry good, buzzier bees, environmental, neopolitan, and upgrade aquatic
+* Villager now recognize and estimate the value of every (modded) armor, tool, sword, bow and food as a gift (accuracy not guaranteed)
+
+# 7.0.7
+
+* Experienced villagers no longer become guards
+* The king can assign archers and guards at will
+* Fixed king rank
+* Can no longer pickup teens
+* Fixed curing zombie villagers
+* Added missing translations
+* Added book of supporter
+* Fixed gift desaturation not working
+* Improved teleportation, especially when following the player
+* Fixed the pixel gap of headstones
+* Fixed sleeping villagers not waking up when moved around
+* Added letter of condolence
+* Fixed dimension issues with player and villager data
+* Added mail system, used to notify the player about the death of family members
+* Glass roofs are now supported
+* Added more jobless skins
+* Updated translations and fixed wrong variable syntax
+* Added some admin commands
+* Temporary disabled baby tracker
+* You can now trade with family
+* Fixed inventory duplication bug
+* Fixed deadlock in relation with reaper spawner
+* Villager marriages now respect player hearts
+* Fixed gifting golden apple not reducing by 1
+* Fixed crash when hovering over unmarried villagers marriage-symbol
+* Villagers will also update baby time
+* Fixed datapack crash on some system locales
+* Hopefully fixed stuck-at-sleeping issues after loading world
+* Adding a building will also look for graveyards to decrease player confusion
+
+# 7.0.6
+
+* Fixed guards aggression towards mobs
+* Fixed profession change not always switching clothes
+* Added Family Tree item to search
+* Fixed crash
+* Fixed reaper summoning on some server
+
+# 7.0.5
+
+* Fixed issue with natural breeding
+* Blueprint will now better display vertically stacked buildings
+* Villager preview in the editor is now animated
+* Fixed wasting charges on already reviving villagers
+* Fixed a crash
+* Fixed opposite gender bug
+* Fixed villager marrying relatives
+* Guards now attack mca zombie villagers
+* No more sliding baby zombie villagers
+* Slightly enhanced village boundary determination
+* Fixed uninitialized zombie villager babies
+* Fixed flower pots with flowers not being recognized
+* Lost babies can now be retrieved by the spouse
+* Fixed crash on dedicated server when using randomized baby name
+* Village will now interact with each other
+* Iron golems will now slap the villager when hit accidentally and then chill
+* Guards will now support their citizen and have a custom dialogue when the player is the attacker
+* Improved archer AI
+* Fixed villager getting stuck in doors
+* Guards no longer panic when a raid happens
+* A wiped-out village will only send a last, bigger bounty hunter wave
+* Added all items to recipe book
+* Reworked female villager model
+* Fixed a bunch of marriage issues caused on death
+* Spouse and parents can now be modified in the villager editor
+* Fixed guard spam
+* Rank Mayor can now make villagers guards or archers manually
+* If the Grim Reaper summoning fails, feedback on why is given
+* Villager are now silent by default, configurable
+* Villages can now be renamed
+* Unlocked King rank
 
 # 7.0.4
 
@@ -101,232 +291,68 @@
 * Fixed guards on duty randomly looking into the sky when talking to
 * Fixed at least one teleporting-away-while-following bug
 
-# 7.0.5
+# 7.0.3
 
-* Fixed issue with natural breeding
-* Blueprint will now better display vertically stacked buildings
-* Villager preview in the editor is now animated
-* Fixed wasting charges on already reviving villagers
-* Fixed a crash
-* Fixed opposite gender bug
-* Fixed villager marrying relatives
-* Guards now attack mca zombie villagers
-* No more sliding baby zombie villagers
-* Slightly enhanced village boundary determination
-* Fixed uninitialized zombie villager babies
-* Fixed flower pots with flowers not being recognized
-* Lost babies can now be retrieved by the spouse
-* Fixed crash on dedicated server when using randomized baby name
-* Village will now interact with each other
-* Iron golems will now slap the villager when hit accidentally and then chill
-* Guards will now support their citizen and have a custom dialogue when the player is the attacker
-* Improved archer AI
-* Fixed villager getting stuck in doors
-* Guards no longer panic when a raid happens
-* A wiped-out village will only send a last, bigger bounty hunter wave
-* Added all items to recipe book
-* Reworked female villager model
-* Fixed a bunch of marriage issues caused on death
-* Spouse and parents can now be modified in the villager editor
-* Fixed guard spam
-* Rank Mayor can now make villagers guards or archers manually
-* If the Grim Reaper summoning fails, feedback on why is given
-* Villager are now silent by default, configurable
-* Villages can now be renamed
-* Unlocked King rank
+* Attempting to talk to a zombie won't prevent you from performing an action
+* Fixed interaction fatigue reset
+* Added Interaction and gift analysis
+* Overhauled gift desaturation.
+    * Hearts reward will decrease, but won't drop below 0.
+    * Desaturation uses a configurable exponential curve, slightly favoring awesome stuff.
+    * Once a day by default, the villager forgets about the latest gift in the queue
+* Fixed "datapack" crash
+* Building tasks are now required to advance in ranks
+* Removed bed reserving, beds are searched on demand
+* Fixed villager-keep-following-you problem
+* Fixed greeting AI
+* Increase percentage of adult villagers
+* Fixed changing clothes of unemployed villagers
+* Increased frequency of marriage, births and guard spawns
 
-# 7.0.6
+# 7.0.2
 
-* Fixed guards aggression towards mobs
-* Fixed profession change not always switching clothes
-* Added Family Tree item to search
-* Fixed crash
-* Fixed reaper summoning on some server
+* Fixed Server crash
+* Fixed crash when setting clothes or haircut when playing on a server
+* Added config flag to disable voice acting
+* Fixed scythe loosing its charge on non-tombstones
+* Fixed staff of life charges
+* You can no longer adopt adults
+* Fixed grown-up message appearing after world join
+* Fixed building detection on certain coordinates
+* Fixed tall villagers being too tall to live
+* Fixed phrases not being translated on dedicated servers
+* Synced Translations
 
-# 7.0.7
+# 7.0.1
 
-* Experienced villagers no longer become guards
-* The king can assign archers and guards at will
-* Fixed king rank
-* Can no longer pickup teens
-* Fixed curing zombie villagers
-* Added missing translations
-* Added book of supporter
-* Fixed gift desaturation not working
-* Improved teleportation, especially when following the player
-* Fixed the pixel gap of headstones
-* Fixed sleeping villagers not waking up when moved around
-* Added letter of condolence
-* Fixed dimension issues with player and villager data
-* Added mail system, used to notify the player about the death of family members
-* Glass roofs are now supported
-* Added more jobless skins
-* Updated translations and fixed wrong variable syntax
-* Added some admin commands
-* Temporary disabled baby tracker
-* You can now trade with family
-* Fixed inventory duplication bug
-* Fixed deadlock in relation with reaper spawner
-* Villager marriages now respect player hearts
-* Fixed gifting golden apple not reducing by 1
-* Fixed crash when hovering over unmarried villagers marriage-symbol
-* Villagers will also update baby time
-* Fixed datapack crash on some system locales
-* Hopefully fixed stuck-at-sleeping issues after loading world
-* Adding a building will also look for graveyards to decrease player confusion
+* Fixed traits syncing issues and chance math
+* Fixed translation keys
 
-# 7.0.8
+# 7.0.0
 
-* Readded blacksmith functionality
-* Fixed scaling-flickering with iguana tweaks
-* Added text when trying to assign to invalid buildings
-* Improved interaction layout
-* Staff of Life can no longer be enchanted
-* Fixed chores phrase names
-* Command kill no longer counts as murder
-* Added config flag to disable name tags
-* Fixed log spam regarding invalid bounding boxes
-* Fixed issues when assigning family in editor
-* Buildings now support modded chests
-* Villagers will now use your editor name
-* Fixed letter author and creative mode usage
-* Strengthened Grim Reaper
-* Added mod support for atmospheric, autumity, berry good, buzzier bees, environmental, neopolitan, and upgrade aquatic
-* Villager now recognize and estimate the value of every (modded) armor, tool, sword, bow and food as a gift (accuracy not guaranteed)
-
-# 7.1.0
-
-* Ported to 1.18 (And 1.18.1)
-* Fixed missing chest tag
-* Added baby clothes
-* Fixed villagers not fully moving out of the old building
-
-# 7.2.0
-
-* Ported to 1.18.2
-* Modded Villager professions now display properly in all mca interfaces
-* Fixed incompatibility with eldritch mobs
-* Villager get 5 extra hearts per level
-* Added config flag to use squidward models
-* Fixed sleeping
-* Adjusted villager teleportation to be more configurable
-* Different ages will now move at different speed
-* Genes now affect speed
-* Converted villagers will now retain custom nbt data and age
-* Fixed inventory disappearing on convert
-* Fixed marriage and family tree loss on convert
-* Maximum building size and radius are now configurable
-* Fixed UI Scaling issues with interaction buttons
-* Fixed issues of bounty hunters spawning within villages if your y value is below its bounds
-* Added Village Merging
-* Fixed villagers struck by lighting
-* Added electrified trait
-* Increased button widths to better support different languages
-* Decrease revenge aggression based on the guards' relation to you
-* Added guard target list to config
-* Added aborting children by unconventional means
-* Updated the Blueprint Interface to appear more cohesive
-* Added `/mca-admin forceBuildingType <type>` to force a building's type
-* Fixed issues with Chores not working in 1.18.x
-* Added modded support to `ChoppingTask` as well as several optimizations
-* Mining Speed Multipliers can now effect `ChoppingTask` speed (The original 7 seconds is also configurable)
-* Fixed potential crashes when villagers perform Harvesting chores (Planting seeds throwing a NPE)
-* Fixed player marriage not saving
-* Sneaking before interacting with a villager will now open trading
-
-# 7.3.0 alpha 1
-
-* Added destiny
-    * You are asked to customize the player
-    * Then you can choose from a set of spawn location to start your journey
-* Massive dialogue overhaul with over 300 new phrases
-    * Added Rumor dialogue
-    * Added Time specific dialogues
-* Grumpy, Gloomy and Shy personalities
-
-# 7.3.0 alpha 2
-
-* Fixed Destiny partly working on dedicated servers
-* Fixed mod conflicts
-* Added clothing and hair selection
-* Bounty hunter no longer attack while in creative
-* Gifting a golden apple to a child now properly reduces the stack
-* Fixed a few wrong buttons
-* Added a few more config flags to control destiny, teleportation and editor access
-* Sneaking no longer breaks the model
-* Editor offers a button to select player or villager skin
-* Fixed issues with resizing window while in editor
-
-# 7.3.0 alpha 3
-
-* Switched to an injected based player model to hopefully improve mod support
-* Using the Player model now makes use of size and gender
-* Females are now in average 5% shorter than males
-* You can now choose between player and villager model in the destiny screen
-* Fixed modded profession being naked
-* Fixed massive family crashing whistle
-* Fixed root advancement
-* Fixed Gifting advancements
-* Fixed missing riding phrase
-* Fixed duplication issue when villager use bonemeal
-* Fixed chore animations
-* Added wandering around when no tasks have been found
-* Fixed young villagers not holding tools correctly
-
-# 7.3.0
-
-* Updated translations
-* Fixed crash on dedicated server when picking up children
-* Cleaned up config, added link to config wiki
-* Villager can no longer plant modded plants to remove a crash
-* Fixed a few crashes
-
-# 7.3.1
-
-* Traders now spawn in Inns
-* Added comb to modify the hairstyle of villagers and players
-* Added needle and thread to modify clothes of villagers and players
-* Fixed advancements and book rewards
-* Improved name distribution
-* Marriage and Birth notifications are now only printed within the village boundaries, or when being friends
-* Added config flag to disable boobs
-* Added support for Immersive Weathering
-* Fixed a few crashes
-* Taxes are now once a week
-* Fixed performance issue
-* Fixed persistent zombie villagers despawning
-
-# 7.3.2
-
-* Added support for 1.19
-* Added support for advancements tied to fate
-* Added Adventurers
-    * Spawn twice a day at inns
-    * Despawn after 2 days
-    * Can trade, be hired and asked to stay
-* Villager now chooses the best equipment
-* Added more eye variants
-* Fixed zombies not always using zombie clothing
-* Villager on fire will now burn their clothes
-* The Sirben cult appeared
-* Added 50.000 names from 55 different countries
-    * Config option available to use modern USA names only
-* Destiny now sets spawn location
-* The /mca editor has been replaced by a limited version (configurable) to prefer comb and needle and string items
-* You can now start a village without villagers using the blueprint
-
-# 7.3.3
-
-* Parents with same gender are now properly registered
-
-# 7.3.4
-
-* Engagement rings now set the relationship to engaged
-    * Engaged villagers won't marry someone else
-* Gifting a bouquet prevents villagers from marrying other villagers
-* More config for inn spawning behavior
-* Added (deceased) father and mother for all spawned villagers
-* Fixed compatibility issues with Origins mod
-* Added rainbow trait
-* Hair color now blends when color is gifted again
-* 2% of villagers dye their hair (configurable)
+* Giant initial update. This list may have missing parts.
+* Added mca villager and zombie villager
+* Added genetics, personality, traits and mood
+* Added dialogue engine
+    * Ported classic interactions
+    * Added adoption
+    * Added divorce and divorce papers
+* Added enhanced gifting
+    * Has a saturation Queue
+    * Respects villagers specific needs
+* Added wedding ring and engagement ring
+* Added Grim Reaper
+* Added graves, resurrection, Staff of Life and the Scythe
+* Added guards and archers
+* Added blueprint
+    * Added village management
+    * Added automatic building and village recognition
+    * Added initial building types to extend village functions
+    * Added rank, task system
+* Added taxes
+* Added chores
+* Added book with enhanced visuals
+* Added Advancements
+* Added Architecture to support Fabric and Forge
+* Added voice acting
+* Added initial translations´

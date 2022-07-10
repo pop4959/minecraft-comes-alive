@@ -437,7 +437,8 @@ public class Village implements Iterable<Building> {
         List<VillagerEntityMCA> availableVillagers = allVillagers.stream()
                 .filter(v -> !v.isBaby())
                 .filter(v -> !v.getRelationships().isMarried())
-                .filter(v -> !v.getRelationships().getRelationshipState().equals(RelationshipState.ENGAGED))
+                .filter(v -> !v.getRelationships().isEngaged())
+                .filter(v -> !v.getRelationships().isPromised())
                 .collect(Collectors.toList());
 
         if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * getMarriageThreshold() / 100f) {

@@ -6,7 +6,7 @@
       "name": "creative",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 4,
           "conditions": [
             {
               "chance": 5,
@@ -35,7 +35,7 @@
           }
         },
         {
-          "baseChance": 3,
+          "baseChance": 2,
           "applyFatigue": true,
           "conditions": [
           ],
@@ -50,7 +50,7 @@
       "name": "animal",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 4,
           "conditions": [
             {
               "chance": 5,
@@ -91,7 +91,7 @@
           }
         },
         {
-          "baseChance": 3,
+          "baseChance": 2,
           "applyFatigue": true,
           "conditions": [
           ],
@@ -106,7 +106,7 @@
       "name": "monster",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 4,
           "conditions": [
             {
               "chance": 5,
@@ -151,7 +151,7 @@
           }
         },
         {
-          "baseChance": 3,
+          "baseChance": 2,
           "applyFatigue": true,
           "conditions": [
           ],

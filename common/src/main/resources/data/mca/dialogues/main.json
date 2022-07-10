@@ -54,8 +54,13 @@
           }
         },
         {
-          "baseChance": 100000,
-          "constraints": "!village_has_space",
+          "baseChance": 0,
+          "conditions": [
+            {
+              "chance": 100000,
+              "constraints": "!village_has_space"
+            }
+          ],
           "actions": {
             "next": "stay.no_space"
           }
@@ -64,7 +69,7 @@
     },
     {
       "name": "apologize",
-      "constraints": "small_bounty",
+      "constraints": "hit_by",
       "results": [
         {
           "actions": {

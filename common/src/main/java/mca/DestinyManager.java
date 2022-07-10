@@ -11,8 +11,6 @@ public class DestinyManager {
 
     public void tick(MinecraftClient client) {
         if (openDestiny && client.currentScreen == null) {
-            openDestiny = false;
-
             assert client.player != null;
             client.setScreen(new DestinyScreen(client.player.getUuid(), allowTeleportation, allowPlayerModel, allowVillagerModel));
         }
@@ -23,5 +21,9 @@ public class DestinyManager {
         this.allowTeleportation = allowTeleportation;
         this.allowPlayerModel = allowPlayerModel;
         this.allowVillagerModel = allowVillagerModel;
+    }
+
+    public void allowClosing() {
+        this.openDestiny = false;
     }
 }

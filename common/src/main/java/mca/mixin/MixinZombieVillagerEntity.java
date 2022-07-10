@@ -24,7 +24,7 @@ abstract class MixinZombieVillagerEntity implements IVillagerEntity {
 
     @Override
     public SpawnReason getSpawnReason() {
-        return reason == null ? SpawnReason.NATURAL : reason;
+        return reason == null ? SpawnReason.SPAWN_EGG : reason;
     }
 
     @Inject(method = "initialize", at = @At("HEAD"))

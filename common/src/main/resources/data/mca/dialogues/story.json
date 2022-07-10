@@ -31,18 +31,18 @@
       "name": "generic",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 4,
           "actions": {
             "next": "story.success",
             "positive": 5
           }
         },
         {
-          "baseChance": 3,
+          "baseChance": 2,
           "applyFatigue": true,
           "actions": {
             "next": "story.fail",
-            "negative": 3
+            "negative": 2
           }
         }
       ]
@@ -51,7 +51,7 @@
       "name": "exploring",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 1,
           "conditions": [
             {
               "chance": 5,
@@ -119,18 +119,18 @@
       "name": "nether",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 1,
           "conditions": [
             {
-              "chance": 5,
+              "chance": 8,
               "advancement": "minecraft:nether/root"
             },
             {
-              "chance": 5,
+              "chance": 8,
               "advancement": "minecraft:nether/find_fortress"
             },
             {
-              "chance": 10,
+              "chance": 15,
               "advancement": "minecraft:nether/explore_nether"
             }
           ],
@@ -145,7 +145,7 @@
           }
         },
         {
-          "baseChance": 3,
+          "baseChance": 5,
           "applyFatigue": true,
           "conditions": [
             {
@@ -172,10 +172,10 @@
       "name": "enderdragon",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 1,
           "conditions": [
             {
-              "chance": 10,
+              "chance": 100,
               "advancement": "minecraft:end/kill_dragon"
             }
           ],
@@ -190,7 +190,7 @@
           }
         },
         {
-          "baseChance": 3,
+          "baseChance": 6,
           "applyFatigue": true,
           "conditions": [
             {
@@ -217,10 +217,10 @@
       "name": "wither",
       "results": [
         {
-          "baseChance": 3,
+          "baseChance": 1,
           "conditions": [
             {
-              "chance": 10,
+              "chance": 100,
               "advancement": "minecraft:nether/summon_wither"
             }
           ],

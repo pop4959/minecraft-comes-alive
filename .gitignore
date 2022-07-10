@@ -39,3 +39,4 @@ forge*changelog.txt
 .vscode/
 *.kra
 /scripts/translated/
+/todo.md

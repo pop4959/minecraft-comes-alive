@@ -24,16 +24,17 @@ import java.util.function.Predicate;
 public interface ProfessionsMCA {
     DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(MCA.MOD_ID, Registry.VILLAGER_PROFESSION_KEY);
 
-    RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
-    RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
-    RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
-    RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
-    RegistrySupplier<VillagerProfession> MERCENARY = register("mercenary", false, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
-    RegistrySupplier<VillagerProfession> CULTIST = register("cultist", true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
+    RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, false, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
+    RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, true, false, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> MERCENARY = register("mercenary", false, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> CULTIST = register("cultist", true, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     // VillagerProfession JEWELER = register("jeweler", PointOfInterestTypeMCA.JEWELER, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
 
     Set<VillagerProfession> canNotTrade = new HashSet<>();
     Set<VillagerProfession> isImportant = new HashSet<>();
+    Set<VillagerProfession> needsNoHome = new HashSet<>();
 
     static void bootstrap() {
         PROFESSIONS.register();
@@ -43,27 +44,27 @@ public interface ProfessionsMCA {
         canNotTrade.add(VillagerProfession.NITWIT);
     }
 
-    private static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, RegistryKey<PointOfInterestType> heldWorkstation, @Nullable SoundEvent workSound) {
-        return register(name, canTradeWith, important, (entry) -> {
+    private static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, boolean needsNoHome, RegistryKey<PointOfInterestType> heldWorkstation, @Nullable SoundEvent workSound) {
+        return register(name, canTradeWith, important, needsNoHome, (entry) -> {
             return entry.matchesKey(heldWorkstation);
         }, (entry) -> {
             return entry.matchesKey(heldWorkstation);
         }, workSound);
     }
 
-    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, Predicate<RegistryEntry<PointOfInterestType>> heldWorkstation, Predicate<RegistryEntry<PointOfInterestType>> acquirableWorkstation, @Nullable SoundEvent workSound) {
-        return register(name, canTradeWith, important, heldWorkstation, acquirableWorkstation, ImmutableSet.of(), ImmutableSet.of(), workSound);
+    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, boolean needsNoHome, Predicate<RegistryEntry<PointOfInterestType>> heldWorkstation, Predicate<RegistryEntry<PointOfInterestType>> acquirableWorkstation, @Nullable SoundEvent workSound) {
+        return register(name, canTradeWith, important, needsNoHome, heldWorkstation, acquirableWorkstation, ImmutableSet.of(), ImmutableSet.of(), workSound);
     }
 
-    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, RegistryKey<PointOfInterestType> heldWorkstation, ImmutableSet<Item> gatherableItems, ImmutableSet<Block> secondaryJobSites, @Nullable SoundEvent workSound) {
-        return register(name, canTradeWith, important, (entry) -> {
+    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, boolean needsNoHome, RegistryKey<PointOfInterestType> heldWorkstation, ImmutableSet<Item> gatherableItems, ImmutableSet<Block> secondaryJobSites, @Nullable SoundEvent workSound) {
+        return register(name, canTradeWith, important, needsNoHome, (entry) -> {
             return entry.matchesKey(heldWorkstation);
         }, (entry) -> {
             return entry.matchesKey(heldWorkstation);
         }, gatherableItems, secondaryJobSites, workSound);
     }
 
-    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, Predicate<RegistryEntry<PointOfInterestType>> heldWorkstation, Predicate<RegistryEntry<PointOfInterestType>> acquirableWorkstation, ImmutableSet<Item> gatherableItems, ImmutableSet<Block> secondaryJobSites, @Nullable SoundEvent workSound) {
+    static RegistrySupplier<VillagerProfession> register(String name, boolean canTradeWith, boolean important, boolean needsNoHome, Predicate<RegistryEntry<PointOfInterestType>> heldWorkstation, Predicate<RegistryEntry<PointOfInterestType>> acquirableWorkstation, ImmutableSet<Item> gatherableItems, ImmutableSet<Block> secondaryJobSites, @Nullable SoundEvent workSound) {
         Identifier id = new Identifier(MCA.MOD_ID, name);
         return PROFESSIONS.register(id, () -> {
             VillagerProfession result = MixinVillagerProfession.init(
@@ -74,6 +75,9 @@ public interface ProfessionsMCA {
             }
             if (important) {
                 isImportant.add(result);
+            }
+            if (needsNoHome) {
+                ProfessionsMCA.needsNoHome.add(result);
             }
             return result;
         });

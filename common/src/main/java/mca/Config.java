@@ -28,6 +28,7 @@ public final class Config implements Serializable {
     //mod features
     public boolean overwriteOriginalVillagers = true;
     public boolean overwriteOriginalZombieVillagers = true;
+    public float babyZombieChance = 0.25f;
     public boolean villagerTagsHacks = true;
     public boolean enableInfection = true;
     public int infectionChance = 5;
@@ -45,7 +46,7 @@ public final class Config implements Serializable {
     public float engagementHeartsRequirement = 50;
     public float bouquetHeartsRequirement = 10;
     public int babyItemGrowUpTime = 24000;
-    public int villagerMaxAgeTime = 192000;
+    public int villagerMaxAgeTime = 384000;
     public int villagerMaxHealth = 20;
     public boolean allowVillagerTeleporting = false;
     public double villagerMinTeleportationDistance = 144.0D;
@@ -80,8 +81,8 @@ public final class Config implements Serializable {
     public int marriageChance = 5;
     public int adventurerAtInnChance = 5;
     public int childrenChance = 5;
-    public int bountyHunterInterval = 24000;
-    public int bountyHunterThreshold = -5;
+    public int bountyHunterInterval = 48000;
+    public int bountyHunterThreshold = -15;
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;

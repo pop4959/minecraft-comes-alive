@@ -29,7 +29,7 @@
           }
         },
         {
-          "baseChance": 2,
+          "baseChance": 1,
           "applyFatigue": true,
           "conditions": [
             {
@@ -47,7 +47,7 @@
           ],
           "actions": {
             "next": "chat.fail",
-            "negative": 2
+            "negative": 1
           }
         }
       ]

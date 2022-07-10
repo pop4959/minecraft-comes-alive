@@ -163,6 +163,19 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
         EntityData data = super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
 
+        if (getAgeState() == AgeState.UNASSIGNED) {
+            if (random.nextFloat() < Config.getInstance().babyZombieChance) {
+                setAgeState(isBaby() ? AgeState.BABY : AgeState.random());
+            } else {
+                setAgeState(AgeState.ADULT);
+            }
+        }
+
+        if (getAgeState() == AgeState.BABY) {
+            // baby zombie villager just cause weird bugs, so we skip that stage
+            setAgeState(AgeState.TODDLER);
+        }
+
         initialize(spawnReason);
 
         return data;
@@ -178,23 +191,6 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         }
         if (burned > 0) {
             spawnBurntParticles();
-        }
-
-        if (!world.isClient) {
-            // Natural regeneration every 10 seconds
-            if (getAgeState() == AgeState.UNASSIGNED) {
-                setAgeState(isBaby() ? AgeState.BABY : AgeState.random());
-            } else if (getAgeState() == AgeState.BABY) {
-                // baby zombie villager just cause weird bugs, so we skip that stage
-                setAgeState(AgeState.TODDLER);
-            }
-
-            //an unassigned gender can happen if initialize() has been skipped
-            //due the way how SpawnEggs on villagers work, initialize() would never be called
-            //and since we have no proper isInitialized() I just check for missing clothes
-            if (getClothes().isEmpty() && getHair().isEmpty()) {
-                initialize(SpawnReason.TRIGGERED);
-            }
         }
     }
 

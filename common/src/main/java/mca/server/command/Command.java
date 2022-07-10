@@ -20,7 +20,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 
 public class Command {
-
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal("mca")
                 .then(register("help", Command::displayHelp))

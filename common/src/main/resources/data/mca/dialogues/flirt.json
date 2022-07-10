@@ -9,15 +9,15 @@
           "positive": true,
           "conditions": [
             {
-              "chance": 10,
+              "chance": 12,
               "personality": "flirty"
             },
             {
-              "chance": 5,
+              "chance": 6,
               "mood": "silly"
             },
             {
-              "chance": 4,
+              "chance": 5,
               "mood": "giggly"
             }
           ],
@@ -27,7 +27,7 @@
           }
         },
         {
-          "baseChance": 5,
+          "baseChance": 3,
           "applyFatigue": true,
           "conditions": [
             {
@@ -49,13 +49,13 @@
               "personality": "odd"
             },
             {
-              "chance": 5,
+              "chance": 20,
               "hearts_max": 0
             }
           ],
           "actions": {
             "next": "flirt.slap",
-            "negative": 8,
+            "negative": 5,
             "command": "slap"
           }
         }

@@ -1,6 +1,7 @@
 package mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import mca.MCAClient;
 import mca.cobalt.network.NetworkHandler;
 import mca.network.c2s.DestinyMessage;
 import mca.util.localization.FlowingText;
@@ -102,6 +103,7 @@ public class DestinyScreen extends VillagerEditorScreen {
     protected void setPage(String page) {
         if (page.equals("destiny") && !allowTeleportation) {
             NetworkHandler.sendToServer(new DestinyMessage(null));
+            MCAClient.getDestinyManager().allowClosing();
             super.close();
             return;
         }
@@ -148,6 +150,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                 //we teleport early here to avoid initial flickering
                 if (!teleported) {
                     NetworkHandler.sendToServer(new DestinyMessage(location));
+                    MCAClient.getDestinyManager().allowClosing();
                     teleported = true;
                 }
                 if (story.size() > 1) {

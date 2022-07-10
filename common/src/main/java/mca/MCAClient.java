@@ -23,19 +23,19 @@ public class MCAClient {
 
     }
 
-    public static boolean useMCARenderer(UUID uuid) {
+    public static boolean useGeneticsRenderer(UUID uuid) {
         if (Config.getInstance().enableVillagerPlayerModel) {
             if (!MCAClient.playerDataRequests.contains(uuid)) {
                 MCAClient.playerDataRequests.add(uuid);
                 NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
             }
-            return MCAClient.playerData.containsKey(uuid);
+            return MCAClient.playerData.containsKey(uuid) && MCAClient.playerData.get(uuid).getPlayerModel() != VillagerLike.PlayerModel.VANILLA;
         }
         return false;
     }
 
-    public static boolean useMCAModel(UUID uuid) {
-        return useMCARenderer(uuid) && !MCAClient.playerData.get(uuid).usePlayerSkin();
+    public static boolean useVillagerRenderer(UUID uuid) {
+        return useGeneticsRenderer(uuid) && MCAClient.playerData.get(uuid).getPlayerModel() == VillagerLike.PlayerModel.VILLAGER;
     }
 
     public static void tickClient(MinecraftClient client) {
