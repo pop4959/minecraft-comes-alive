@@ -8,7 +8,6 @@ import mca.entity.ai.relationship.VillagerDimensions;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 
@@ -26,7 +25,7 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity & VillagerLike<T>
     }
 
     public static ModelData getModelData(Dilation dilation) {
-        ModelData modelData = PlayerEntityModel.getTexturedModelData(dilation, false);
+        ModelData modelData = BipedEntityModel.getModelData(dilation, 0.0f);
         ModelPartData data = modelData.getRoot();
 
         data.addChild(BREASTS, newBreasts(dilation, 0), ModelTransform.NONE);
