@@ -1,6 +1,8 @@
 package mca.fabric;
 
-import mca.*;
+import mca.ParticleTypesMCA;
+import mca.SoundsMCA;
+import mca.TradeOffersMCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.block.BlocksMCA;
 import mca.entity.EntitiesMCA;
@@ -13,7 +15,6 @@ import mca.server.command.AdminCommand;
 import mca.server.command.Command;
 import mca.server.world.data.VillageManager;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -55,10 +56,6 @@ public final class MCAFabric implements ModInitializer {
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 ServerInteractionManager.getInstance().onPlayerJoin(handler.player)
-        );
-
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                MCAClient.onLogin()
         );
 
         CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {

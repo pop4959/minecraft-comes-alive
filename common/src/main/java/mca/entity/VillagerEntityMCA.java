@@ -924,7 +924,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public SoundEvent getDeathSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_SCREAM.get() : SoundsMCA.VILLAGER_FEMALE_SCREAM.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getDeathSound();
@@ -934,7 +934,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public SoundEvent getSurprisedSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_SURPRISE.get() : SoundsMCA.VILLAGER_FEMALE_SURPRISE.get();
         } else {
             return SoundsMCA.SILENT.get();
@@ -944,7 +944,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Nullable
     @Override
     protected final SoundEvent getAmbientSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             //baby sounds
             if (getAgeState() == AgeState.BABY) {
                 return SoundsMCA.VILLAGER_BABY_LAUGH.get();
@@ -963,6 +963,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             //coughing
             if (isInfected() && random.nextBoolean()) {
                 return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_COUGH.get() : SoundsMCA.VILLAGER_FEMALE_COUGH.get();
+            }
+
+            //sirben
+            if (random.nextBoolean() && getTraits().hasTrait(Traits.Trait.SIRBEN)) {
+                return SoundsMCA.SIRBEN.get();
             }
 
             //generic mood sounds
@@ -986,24 +991,28 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     protected final SoundEvent getHurtSound(DamageSource cause) {
-        return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_HURT.get() : SoundsMCA.VILLAGER_FEMALE_HURT.get();
+        if (Config.getInstance().useMCAVoices) {
+            return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_HURT.get() : SoundsMCA.VILLAGER_FEMALE_HURT.get();
+        } else {
+            return super.getHurtSound(cause);
+        }
     }
 
     public final void playWelcomeSound() {
-        if (Config.getInstance().useMcaVoices && !getVillagerBrain().isPanicking() && getAgeState() != AgeState.BABY) {
+        if (Config.getInstance().useMCAVoices && !getVillagerBrain().isPanicking() && getAgeState() != AgeState.BABY) {
             playSound(getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_GREET.get() : SoundsMCA.VILLAGER_FEMALE_GREET.get(), getSoundVolume(), getSoundPitch());
         }
     }
 
     public final void playSurprisedSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             playSound(getSurprisedSound(), getSoundVolume(), getSoundPitch());
         }
     }
 
     @Override
     public SoundEvent getYesSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_YES.get() : SoundsMCA.VILLAGER_FEMALE_YES.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getYesSound();
@@ -1013,7 +1022,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public SoundEvent getNoSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_NO.get() : SoundsMCA.VILLAGER_FEMALE_NO.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return SoundEvents.ENTITY_VILLAGER_NO;
@@ -1024,7 +1033,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     protected SoundEvent getTradingSound(boolean sold) {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return sold ? getYesSound() : getNoSound();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getTradingSound(sold);
@@ -1035,7 +1044,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void playCelebrateSound() {
-        if (Config.getInstance().useMcaVoices) {
+        if (Config.getInstance().useMCAVoices) {
             //todo
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();

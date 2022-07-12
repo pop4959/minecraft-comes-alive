@@ -218,6 +218,15 @@
       "mca:villager/female/hurt/hurt5"
     ]
   },
+  "villager.sirben": {
+    "sounds": [
+      "mca:villager/sirben/sirben1",
+      "mca:villager/sirben/sirben2",
+      "mca:villager/sirben/sirben3",
+      "mca:villager/sirben/sirben4",
+      "mca:villager/sirben/sirben5"
+    ]
+  },
   "silent": {
     "sounds": [
       "mca:silent"

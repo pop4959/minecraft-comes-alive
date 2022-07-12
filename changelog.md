@@ -1,3 +1,10 @@
+# 7.3.7
+
+* Fixed server crashing
+* Fixed some sounds not triggering
+* Enabled voices by default
+* Gave sirben more personality
+
 # 7.3.6
 
 * Finished sounds
