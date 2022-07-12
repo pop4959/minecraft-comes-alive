@@ -59,7 +59,7 @@ public final class Config implements Serializable {
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;
-    public float maleVillagerHeight = 0.9f;
+    public float maleVillagerHeightFactor = 0.9f;
     public float femaleVillagerHeightFactor = 0.85f;
     public float maleVillagerWidthFactor = 1.0f;
     public float femaleVillagerWidthFactor = 0.95f;
