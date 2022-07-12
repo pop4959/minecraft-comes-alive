@@ -702,5 +702,7 @@
   "subtitle.mca.villager.laughing": "Laughing",
   "subtitle.mca.villager.greeting": "Greeting",
   "subtitle.mca.villager.yes": "Agreeing",
-  "subtitle.mca.villager.no": "Disagreeing"
+  "subtitle.mca.villager.no": "Disagreeing",
+  "subtitle.mca.villager.snoring": "Snoring",
+  "subtitle.mca.villager.hurt": "Villager Hurt"
 }

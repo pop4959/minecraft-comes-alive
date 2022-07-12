@@ -1,5 +1,9 @@
 # 7.3.6
 
+* Finished sounds
+    * Normalized and denoised existing ones
+    * Added trading, hurt, snoring and coughing
+    * Added sounds for females
 * Children now grow up in 16 days instead of 8 (configurable)
 * Babies no longer greet you
 * Added rose gold dust recipe and therefore a way to obtain rose gold
