@@ -522,7 +522,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (source.getSource() instanceof ZombieEntity
                     && getProfession() != ProfessionsMCA.GUARD.get()
                     && Config.getInstance().enableInfection
-                    && random.nextFloat() < Config.getInstance().infectionChance / 100.0) {
+                    && random.nextFloat() < Config.getInstance().infectionChance / 100.0
+                    && random.nextFloat() > (getVillagerData().getLevel() - 1) * Config.getInstance().infectionChanceDecreasePerLevel) {
                 if (getResidency().getHomeVillage().filter(v -> v.hasBuilding("infirmary")).isEmpty() || random.nextBoolean()) {
                     setInfected(true);
                     sendChatToAllAround("villager.bitten");

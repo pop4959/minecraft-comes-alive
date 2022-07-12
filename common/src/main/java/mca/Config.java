@@ -33,6 +33,7 @@ public final class Config implements Serializable {
     public boolean villagerTagsHacks = true;
     public boolean enableInfection = true;
     public int infectionChance = 5;
+    public float infectionChanceDecreasePerLevel = 0.25f;
     public boolean allowGrimReaper = true;
     public String villagerChatPrefix = "";
     public boolean canHurtBabies = true;
