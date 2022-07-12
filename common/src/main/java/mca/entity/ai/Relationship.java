@@ -39,6 +39,7 @@ import java.util.function.BiPredicate;
 public class Relationship<T extends MobEntity & VillagerLike<T>> implements EntityRelationship {
     public static final Predicate IS_MARRIED = (villager, player) -> villager.getRelationships().isMarriedTo(player);
     public static final Predicate IS_ENGAGED = (villager, player) -> villager.getRelationships().isEngagedWith(player);
+    public static final Predicate IS_PROMISED = (villager, player) -> villager.getRelationships().isPromisedTo(player);
     public static final Predicate IS_RELATIVE = (villager, player) -> villager.getRelationships().getFamilyEntry().isRelative(player);
     public static final Predicate IS_FAMILY = IS_MARRIED.or(IS_RELATIVE);
     public static final Predicate IS_PARENT = (villager, player) -> villager.getRelationships().getFamilyEntry().isParent(player);

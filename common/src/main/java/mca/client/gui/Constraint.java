@@ -40,6 +40,12 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntit
     SPOUSE("spouse", Relationship.IS_MARRIED.asConstraint()),
     NOT_SPOUSE("!spouse", Relationship.IS_MARRIED.negate().asConstraint()),
 
+    ENGAGED("engaged", Relationship.IS_ENGAGED.asConstraint()),
+    NOT_ENGAGED("!engaged", Relationship.IS_ENGAGED.negate().asConstraint()),
+
+    PROMISED("promised", Relationship.IS_PROMISED.asConstraint()),
+    NOT_PROMISED("!promised", Relationship.IS_PROMISED.negate().asConstraint()),
+
     KIDS("kids", Relationship.IS_PARENT.asConstraint()),
     NOT_KIDS("!kids", Relationship.IS_PARENT.negate().asConstraint()),
 
