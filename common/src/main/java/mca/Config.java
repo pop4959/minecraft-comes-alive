@@ -22,7 +22,7 @@ public final class Config implements Serializable {
     public static final int VERSION = 1;
 
     @SuppressWarnings("unused")
-    public String README = "https://minecraft-comes-alive-reborn.fandom.com/wiki/Config";
+    public String README = "https://github.com/Luke100000/minecraft-comes-alive/wiki";
 
     public int version = 0;
 
