@@ -687,5 +687,20 @@
   "notify.child.grownup": "%1$s has grown into an adult!",
   "notify.revival.disabled": "Revivals have been disabled by the server administrator.",
   "notify.trading.disabled": "Trading is disabled by the server administrator.",
-  "notify.playerMarriage.disabled": "Player marriage is disabled by the server administrator."
+  "notify.playerMarriage.disabled": "Player marriage is disabled by the server administrator.",
+
+  "subtitle.mca.reaper.scythe_out": "Drawing scythe",
+  "subtitle.mca.reaper.scythe_swing": "Swinging scythe",
+  "subtitle.mca.reaper.idle": "Evil laughter",
+  "subtitle.mca.reaper.death": "Reaper dying",
+  "subtitle.mca.reaper.block": "Blocked attack",
+  "subtitle.mca.reaper.summon": "Evil laughter",
+
+  "subtitle.mca.villager.crying": "Crying",
+  "subtitle.mca.villager.scream": "Scream",
+  "subtitle.mca.villager.surprised": "Surprised",
+  "subtitle.mca.villager.laughing": "Laughing",
+  "subtitle.mca.villager.greeting": "Greeting",
+  "subtitle.mca.villager.yes": "Agreeing",
+  "subtitle.mca.villager.no": "Disagreeing"
 }

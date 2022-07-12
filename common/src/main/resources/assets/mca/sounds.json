@@ -1,77 +1,77 @@
 {
   "reaper.scythe_out": {
-    "subtitle": "Draws scythe",
+    "subtitle": "subtitle.mca.reaper.scythe_out",
     "sounds": [
       "mca:reaper/scythe_out"
     ]
   },
   "reaper.scythe_swing": {
-    "subtitle": "Swings scythe",
+    "subtitle": "subtitle.mca.reaper.scythe_swing",
     "sounds": [
       "mca:reaper/scythe_swing"
     ]
   },
   "reaper.idle": {
-    "subtitle": "Evil laughter",
+    "subtitle": "subtitle.mca.reaper.idle",
     "sounds": [
       "mca:reaper/idle"
     ]
   },
   "reaper.death": {
-    "subtitle": "Reaper death",
+    "subtitle": "subtitle.mca.reaper.death",
     "sounds": [
       "mca:reaper/death"
     ]
   },
   "reaper.block": {
-    "subtitle": "Blocked attack",
+    "subtitle": "subtitle.mca.reaper.block",
     "sounds": [
       "mca:reaper/block"
     ]
   },
   "reaper.summon": {
-    "subtitle": "Evil laughter",
+    "subtitle": "subtitle.mca.reaper.summon",
     "sounds": [
       "mca:reaper/summon"
     ]
   },
-  "villager_male_greet": {
+  "villager.male.greet": {
     "subtitle": "subtitle.mca.villager.greeting",
     "sounds": [
       "mca:male_villager/greet/greet1"
     ]
   },
-  "villager_female_greet": {
+  "villager.female.greet": {
     "subtitle": "subtitle.mca.villager.greeting",
     "sounds": [
       "mca:female_villager/greet/greet1"
     ]
   },
-  "villager_male_laugh": {
+  "villager.male.laugh": {
     "subtitle": "subtitle.mca.villager.laughing",
     "sounds": [
       "mca:male_villager/laugh/laugh1"
     ]
   },
-  "villager_female_laugh": {
+  "villager.female.laugh": {
     "subtitle": "subtitle.mca.villager.laughing",
     "sounds": [
       "mca:female_villager/laugh/laugh1"
     ]
   },
-  "villager_male_surprise": {
+  "villager.male.surprise": {
     "subtitle": "subtitle.mca.villager.surprised",
     "sounds": [
       "mca:male_villager/surprise/surprise1"
     ]
   },
-  "villager_female_surprise": {
+  "villager.female.surprise": {
     "subtitle": "subtitle.mca.villager.surprised",
     "sounds": [
       "mca:female_villager/surprise/surprise1"
     ]
   },
-  "villager_male_scream": {
+  "villager.male.scream": {
     "subtitle": "subtitle.mca.villager.scream",
     "sounds": [
       "mca:male_villager/scream/scream1",
@@ -79,14 +79,14 @@
       "mca:male_villager/scream/scream3"
     ]
   },
-  "villager_female_scream": {
+  "villager.female.scream": {
     "subtitle": "subtitle.mca.villager.scream",
     "sounds": [
       "mca:female_villager/scream/scream1",
       "mca:female_villager/scream/scream2"
     ]
   },
-  "villager_male_cry": {
+  "villager.male.cry": {
     "subtitle": "subtitle.mca.villager.crying",
     "sounds": [
       "mca:male_villager/cry/cry1",
@@ -96,14 +96,37 @@
       "mca:male_villager/cry/cry5"
     ]
   },
-  "villager_female_cry": {
+  "villager.female.cry": {
     "subtitle": "subtitle.mca.villager.crying",
     "sounds": [
       "mca:female_villager/cry/cry1"
     ]
   },
+  "villager.male.yes": {
+    "subtitle": "subtitle.mca.villager.yes",
+    "sounds": [
+      "mca:male_villager/yes/yes1"
+    ]
+  },
+  "villager.female.yes": {
+    "subtitle": "subtitle.mca.villager.yes",
+    "sounds": [
+      "mca:female_villager/yes/yes1"
+    ]
+  },
+  "villager.male.no": {
+    "subtitle": "subtitle.mca.villager.no",
+    "sounds": [
+      "mca:male_villager/no/no1"
+    ]
+  },
+  "villager.female.no": {
+    "subtitle": "subtitle.mca.villager.no",
+    "sounds": [
+      "mca:female_villager/no/no1"
+    ]
+  },
   "silent": {
-    "subtitle": "subtitle.mca.villager.silent",
     "sounds": [
       "mca:silent"
     ]

@@ -249,7 +249,7 @@ public class ReaperSpawner {
             if (ticks == 0) {
                 GrimReaperEntity reaper = EntitiesMCA.GRIM_REAPER.get().spawn(world, null, null, null, position.spawnPosition, SpawnReason.TRIGGERED, false, false);
                 if (reaper != null) {
-                    reaper.playSound(SoundsMCA.reaper_summon.get(), 1.0F, 1.0F);
+                    reaper.playSound(SoundsMCA.REAPER_SUMMON.get(), 1.0F, 1.0F);
                 }
 
                 return true;

@@ -997,10 +997,19 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public SoundEvent getYesSound() {
         if (Config.getInstance().useVoices) {
-            //todo
-            return SoundsMCA.SILENT.get();
+            return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_YES.get() : SoundsMCA.VILLAGER_FEMALE_YES.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getYesSound();
+        } else {
+            return SoundsMCA.SILENT.get();
+        }
+    }
+
+    public SoundEvent getNoSound() {
+        if (Config.getInstance().useVoices) {
+            return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_NO.get() : SoundsMCA.VILLAGER_FEMALE_NO.get();
+        } else if (Config.getInstance().useVanillaVoices) {
+            return SoundEvents.ENTITY_VILLAGER_NO;
         } else {
             return SoundsMCA.SILENT.get();
         }
@@ -1009,8 +1018,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     protected SoundEvent getTradingSound(boolean sold) {
         if (Config.getInstance().useVoices) {
-            //todo
-            return SoundsMCA.SILENT.get();
+            return sold ? getYesSound() : getNoSound();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getTradingSound(sold);
         } else {
