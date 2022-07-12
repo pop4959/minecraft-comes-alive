@@ -146,6 +146,7 @@
   "analysis.advancement": "advancement",
   "analysis.memory": "memory",
   "analysis.trait": "trait",
+  "analysis.constraints": "constraints",
 
   "tag.mca:town_center": "Bell",
   "tag.mca:tombstones": "Tombstone",
