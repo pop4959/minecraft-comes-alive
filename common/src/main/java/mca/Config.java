@@ -3,6 +3,7 @@ package mca;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
 import java.util.List;
@@ -180,6 +181,15 @@ public final class Config implements Serializable {
             }
             config.save();
             return config;
+        } catch (JsonSyntaxException e) {
+            MCA.LOGGER.error("");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
+            MCA.LOGGER.error("Fix errors, or delete file to reset");
+            e.printStackTrace();
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("");
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }
