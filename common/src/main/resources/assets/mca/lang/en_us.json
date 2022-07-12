@@ -304,7 +304,7 @@
   "buildingType.infirmary": "Infirmary",
   "buildingType.infirmary.description": "Reduces the chance of infection by 50%! Sick villagers tend to gather here.",
 
-  "task.reputation": "Reach %1$s average hearts",
+  "task.reputation": "Reach %1$s total hearts",
   "task.population": "Reach a population of %1$s",
   "task.build": "Build a %1$s",
   "task.grimReaper": "Kill the Grim Reaper",
@@ -342,7 +342,7 @@
   "gui.blueprint.guards": "Guards",
   "gui.blueprint.rankTooLow": "You need a higher rank.",
   "gui.blueprint.currentRank": "Rank: %1$s",
-  "gui.blueprint.reputation": "Reputation: %1$s",
+  "gui.blueprint.reputation": "Hearts: %1$s",
   "gui.blueprint.size": "size: %1$s blocks",
   "gui.blueprint.anySize": "size: any",
   "gui.blueprint.buildings": "Buildings: %1$s",
