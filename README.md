@@ -35,7 +35,7 @@ Any contributions to are welcome. Simply clone into your workspace, set it up, m
 
 Alternatively you can help translating MCA into your language on [Crowdin](https://crowdin.com/project/minecraft-comes-alive-2)!
 
-Or you can Join the [Discord Community](https://discord.gg/MDcv8kmYHP) for questions, suggestions or social interactions.
+Or you can Join the [Discord Community](https://discord.com/invite/EjYwZUJbpf) for questions, suggestions or social interactions.
 
 ## Credits
 These individuals made substantial contributions to (vanilla) MCA - without them, continued progress may have been impossible.
