@@ -165,7 +165,7 @@
     },
     {
       "name": "divorcePapers",
-      "constraints": "cleric,!spouse",
+      "constraints": "cleric,!spouse,adult",
       "results": [
         {
           "actions": {
