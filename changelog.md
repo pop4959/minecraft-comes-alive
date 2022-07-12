@@ -15,6 +15,7 @@
 * Being in a relationship helps for some interactions
 * A higher villager levels decreases infection rate
 * Fixed a few minor bugs
+* If you hit a villager, it will no longer follow you
 
 # 7.3.5
 
