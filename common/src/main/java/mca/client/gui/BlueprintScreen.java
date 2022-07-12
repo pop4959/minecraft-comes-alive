@@ -39,6 +39,7 @@ public class BlueprintScreen extends ExtendedScreen {
     private final int positionMarriage = 40;
     private Village village;
     private int reputation;
+    private boolean isVillage;
     private Rank rank;
     private Set<String> completedTasks;
     private String page;
@@ -198,9 +199,11 @@ public class BlueprintScreen extends ExtendedScreen {
                 by += 22 * 3;
 
                 //rename village
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.renameVillage"), (b) -> {
-                    setPage("rename");
-                }));
+                if (isVillage) {
+                    addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.renameVillage"), (b) -> {
+                        setPage("rename");
+                    }));
+                }
                 by += 22;
             case "map":
                 //add building
@@ -351,7 +354,11 @@ public class BlueprintScreen extends ExtendedScreen {
         //name
         transform.push();
         transform.scale(2.0f, 2.0f, 2.0f);
-        drawCenteredText(transform, textRenderer, village.getName(), width / 4, height / 4 - 48, 0xffffffff);
+        if (isVillage) {
+            drawCenteredText(transform, textRenderer, village.getName(), width / 4, height / 4 - 48, 0xffffffff);
+        } else {
+            drawCenteredText(transform, textRenderer, new TranslatableText("gui.blueprint.settlement"), width / 4, height / 4 - 48, 0xffffffff);
+        }
         transform.pop();
     }
 
@@ -631,9 +638,10 @@ public class BlueprintScreen extends ExtendedScreen {
         }
     }
 
-    public void setRank(Rank rank, int reputation, Set<String> completedTasks, Map<Rank, List<Task>> tasks, Map<String, BuildingType> buildingTypes) {
+    public void setRank(Rank rank, int reputation, boolean isVillage, Set<String> completedTasks, Map<Rank, List<Task>> tasks, Map<String, BuildingType> buildingTypes) {
         this.rank = rank;
         this.reputation = reputation;
+        this.isVillage = isVillage;
         this.completedTasks = completedTasks;
         this.tasks = tasks;
         this.buildingTypes = buildingTypes;

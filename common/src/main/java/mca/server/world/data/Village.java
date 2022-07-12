@@ -699,4 +699,8 @@ public class Village implements Iterable<Building> {
         unspentMood += village.unspentMood;
         calculateDimensions();
     }
+
+    public boolean isVillage() {
+        return getBuildings().size() >= Config.getInstance().minimumBuildingsToBeConsideredAVillage;
+    }
 }

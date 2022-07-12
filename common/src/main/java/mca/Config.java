@@ -86,6 +86,7 @@ public final class Config implements Serializable {
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
+    public int minimumBuildingsToBeConsideredAVillage = 3;
 
     //gifts
     public int giftDesaturationQueueLength = 16;

@@ -374,6 +374,7 @@
   "gui.blueprint.tooltip.taxes": "Tax your villagers! The higher percentage, the more they will deliver into the storage at the cost of reputation.",
   "gui.blueprint.tooltip.births": "Control the percentage of occupied beds, 0% prevents births completely.",
   "gui.blueprint.tooltip.marriage": "Control the percentage of married people, 0% prevents marriages completely.",
+  "gui.blueprint.settlement": "Small Settlement",
 
   "gui.nameBaby.title": "Name Baby",
 

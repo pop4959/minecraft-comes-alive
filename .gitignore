@@ -40,3 +40,4 @@ forge*changelog.txt
 *.kra
 /scripts/translated/
 /todo.md
+*.kate-swp
