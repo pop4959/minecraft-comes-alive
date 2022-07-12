@@ -12,6 +12,9 @@
 * Babies no longer greet you
 * Added rose gold dust recipe and therefore a way to obtain rose gold
     * Removed rose gold ore
+* Being in a relationship helps for some interactions
+* A higher villager levels decreases infection rate
+* Fixed a few minor bugs
 
 # 7.3.5
 
