@@ -35,35 +35,6 @@
       "mca:reaper/summon"
     ]
   },
-  "working.anvil": {
-    "subtitle": "Anvil",
-    "sounds": [
-      "mca:working/anvil1",
-      "mca:working/anvil2",
-      "mca:working/anvil3"
-    ]
-  },
-  "working.page": {
-    "subtitle": "Pages",
-    "sounds": [
-      "mca:working/page1",
-      "mca:working/page2",
-      "mca:working/page3",
-      "mca:working/page4"
-    ]
-  },
-  "working.saw": {
-    "subtitle": "Saw",
-    "sounds": [
-      "mca:working/saw"
-    ]
-  },
-  "working.sharpen": {
-    "subtitle": "Sharpen",
-    "sounds": [
-      "mca:working/sharpen"
-    ]
-  },
   "villager_male_greet": {
     "subtitle": "subtitle.mca.villager.greeting",
     "sounds": [
@@ -129,6 +100,12 @@
     "subtitle": "subtitle.mca.villager.crying",
     "sounds": [
       "mca:female_villager/cry/cry1"
+    ]
+  },
+  "silent": {
+    "subtitle": "subtitle.mca.villager.silent",
+    "sounds": [
+      "mca:silent"
     ]
   }
 }

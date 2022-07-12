@@ -994,16 +994,15 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
     }
 
-    // TODO: Use these methods when useVoices is ready to be implemented
-    /*@Override
+    @Override
     public SoundEvent getYesSound() {
         if (Config.getInstance().useVoices) {
             //todo
-            return null;
+            return SoundsMCA.SILENT.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getYesSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1011,11 +1010,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     protected SoundEvent getTradingSound(boolean sold) {
         if (Config.getInstance().useVoices) {
             //todo
-            return null;
+            return SoundsMCA.SILENT.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getTradingSound(sold);
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1026,7 +1025,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();
         }
-    }*/
+    }
 
     @Override
     public final Text getDisplayName() {

@@ -37,6 +37,8 @@ public interface SoundsMCA {
     RegistrySupplier<SoundEvent> VILLAGER_MALE_SURPRISE = register("villager_male_surprise");
     RegistrySupplier<SoundEvent> VILLAGER_FEMALE_SURPRISE = register("villager_female_surprise"); //TODO: 7.3.0
 
+    RegistrySupplier<SoundEvent> SILENT = register("silent");
+
     static void bootstrap() {
         SOUNDS.register();
     }
