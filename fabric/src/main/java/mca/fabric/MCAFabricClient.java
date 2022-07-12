@@ -77,8 +77,6 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
 
         BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
 
-        MCAClient.onInitializeClient();
-
         ClientTickEvents.START_CLIENT_TICK.register(MCAClient::tickClient);
     }
 

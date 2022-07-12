@@ -81,8 +81,6 @@ public final class MCAForgeClient {
         );
 
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
-
-        MCAClient.onInitializeClient();
     }
 
     @SubscribeEvent

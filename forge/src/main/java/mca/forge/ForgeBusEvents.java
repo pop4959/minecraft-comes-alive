@@ -12,6 +12,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -52,10 +53,15 @@ public class ForgeBusEvents {
     }
 
     @SubscribeEvent
-    public static void onPlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        if (!event.getEntity().world.isClient) {
-            ServerInteractionManager.getInstance().onPlayerJoin((ServerPlayerEntity)event.getPlayer());
+    public static void OnEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+        if (MinecraftClient.getInstance().player == null || event.getEntity().getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+            MCAClient.onLogin();
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
+        ServerInteractionManager.getInstance().onPlayerJoin((ServerPlayerEntity)event.getPlayer());
     }
 
     @SubscribeEvent

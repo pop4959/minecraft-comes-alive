@@ -19,8 +19,8 @@ public class MCAClient {
         return destinyManager;
     }
 
-    public static void onInitializeClient() {
-
+    public static void onLogin() {
+        playerDataRequests.clear();
     }
 
     public static boolean useGeneticsRenderer(UUID uuid) {
