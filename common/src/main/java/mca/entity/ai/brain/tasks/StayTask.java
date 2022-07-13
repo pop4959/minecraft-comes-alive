@@ -8,14 +8,13 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
 public class StayTask extends Task<VillagerEntityMCA> {
-
     public StayTask() {
         super(ImmutableMap.of());
     }
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA villager) {
-        return villager.getMCABrain().getOptionalMemory(MemoryModuleTypeMCA.STAYING.get()).isPresent();
+        return villager.getMCABrain().getOptionalMemory(MemoryModuleTypeMCA.STAYING.get()).isPresent() && !villager.getVillagerBrain().isPanicking();
     }
 
     @Override
@@ -31,8 +30,6 @@ public class StayTask extends Task<VillagerEntityMCA> {
     @Override
     protected void keepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
         villager.getNavigation().stop();
-        villager.getBrain().forget(MemoryModuleType.LOOK_TARGET);
         villager.getBrain().forget(MemoryModuleType.WALK_TARGET);
-
     }
 }

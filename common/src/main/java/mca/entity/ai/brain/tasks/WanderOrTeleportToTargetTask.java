@@ -2,11 +2,9 @@ package mca.entity.ai.brain.tasks;
 
 import com.google.gson.JsonSyntaxException;
 import mca.Config;
-import mca.entity.ai.MemoryModuleTypeMCA;
 import mca.util.RegistryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.ai.brain.task.WanderAroundTask;
@@ -25,14 +23,9 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
     public WanderOrTeleportToTargetTask() {
     }
 
-    public WanderOrTeleportToTargetTask(int minRunTime, int maxRunTime) {
-        super(minRunTime, maxRunTime);
-    }
-
     @Override
     protected boolean shouldRun(ServerWorld serverWorld, MobEntity mobEntity) {
-        return super.shouldRun(serverWorld, mobEntity)
-                && mobEntity.getBrain().isMemoryInState(MemoryModuleTypeMCA.STAYING.get(), MemoryModuleState.VALUE_ABSENT);
+        return super.shouldRun(serverWorld, mobEntity);
     }
 
     @Override

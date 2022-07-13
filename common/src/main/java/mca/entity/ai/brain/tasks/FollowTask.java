@@ -29,10 +29,10 @@ public class FollowTask extends Task<VillagerEntityMCA> {
     @Override
     protected void keepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
         villager.getBrain().getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get()).ifPresent(playerToFollow -> {
-            if (villager.getBrain().getOptionalMemory(MemoryModuleType.HURT_BY_ENTITY).filter(livingEntity -> livingEntity == playerToFollow).isPresent()) {
+            if (villager.getVillagerBrain().isPanicking() && villager.getBrain().getOptionalMemory(MemoryModuleType.HURT_BY_ENTITY).filter(livingEntity -> livingEntity == playerToFollow).isPresent()) {
                 villager.getBrain().forget(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get());
             } else {
-                LookTargetUtil.walkTowards(villager, playerToFollow, villager.hasVehicle() ? 1.7f : 0.8f, 2);
+                LookTargetUtil.walkTowards(villager, playerToFollow, villager.hasVehicle() ? 1.7f : 0.8f, 3);
             }
         });
     }

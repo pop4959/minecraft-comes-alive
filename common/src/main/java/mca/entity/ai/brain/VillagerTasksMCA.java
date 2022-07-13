@@ -96,18 +96,30 @@ public class VillagerTasksMCA {
 
         boolean noDefault = false;
 
-        if (profession == ProfessionsMCA.ADVENTURER.get()) {
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(profession, 0.5F));
+        if (brain.getOptionalMemory(MemoryModuleTypeMCA.STAYING.get()).isPresent()) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getStayingPackage());
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5f));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
+            noDefault = true;
+        } else if (brain.getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get()).isPresent()) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getFollowingPackage());
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5f));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
+            noDefault = true;
+        } else if (profession == ProfessionsMCA.ADVENTURER.get()) {
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
-            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
             noDefault = true;
         } else if (profession == ProfessionsMCA.MERCENARY.get()) {
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(profession, 0.5F));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getMercenaryPackage(0.5f));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getGuardCorePackage(villager));
-            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
-            brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage(profession, 0.5F));
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
+            brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage());
             noDefault = true;
         } else if (age == AgeState.BABY) {
             brain.setSchedule(Schedule.VILLAGER_BABY);
@@ -116,13 +128,13 @@ public class VillagerTasksMCA {
         } else if (age != AgeState.ADULT) {
             brain.setSchedule(Schedule.VILLAGER_BABY);
             brain.setTaskList(Activity.PLAY, VillagerTasksMCA.getPlayPackage(0.5F));
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
         } else if (villager.isGuard()) {
             brain.setSchedule(villager.getRandom().nextBoolean() ? SchedulesMCA.GUARD : SchedulesMCA.GUARD_NIGHT);
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getGuardCorePackage(villager));
-            brain.setTaskList(Activity.WORK, VillagerTasksMCA.getGuardWorkPackage(villager));
+            brain.setTaskList(Activity.WORK, VillagerTasksMCA.getGuardWorkPackage());
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getGuardPanicPackage(0.5f));
-            brain.setTaskList(Activity.RAID, VillagerTasksMCA.getGuardWorkPackage(villager));
+            brain.setTaskList(Activity.RAID, VillagerTasksMCA.getGuardWorkPackage());
         } else if (profession == ProfessionsMCA.OUTLAW.get()) {
             brain.setSchedule(SchedulesMCA.DEFAULT);
             // todo how do villager behave when they are on death row?
@@ -130,20 +142,20 @@ public class VillagerTasksMCA {
             brain.setSchedule(SchedulesMCA.DEFAULT);
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getWorkingCorePackage(profession, 0.5F));
             brain.setTaskList(Activity.WORK, VillagerTasksMCA.getWorkPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryModuleState.VALUE_PRESENT)));
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage(profession, 0.5f));
-            brain.setTaskList(Activity.RAID, VillagerTasksMCA.getRaidPackage(profession, 0.5F));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
+            brain.setTaskList(Activity.RAID, VillagerTasksMCA.getRaidPackage(0.5F));
         }
 
         if (!noDefault) {
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(profession, 0.5F));
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getCorePackage(profession, 0.5F));
-            brain.setTaskList(Activity.MEET, VillagerTasksMCA.getMeetPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryModuleState.VALUE_PRESENT)));
-            brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(profession, 0.5F));
-            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getIdlePackage(profession, 0.5F));
-            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(profession, 0.5F));
-            brain.setTaskList(Activity.PRE_RAID, VillagerTasksMCA.getPreRaidPackage(profession, 0.5F));
-            brain.setTaskList(Activity.HIDE, VillagerTasksMCA.getHidePackage(profession, 0.5F));
-            brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage(profession, 0.5F));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getCorePackage(0.5F));
+            brain.setTaskList(Activity.MEET, VillagerTasksMCA.getMeetPackage(0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.MEETING_POINT, MemoryModuleState.VALUE_PRESENT)));
+            brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(0.5F));
+            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getIdlePackage(0.5F));
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
+            brain.setTaskList(Activity.PRE_RAID, VillagerTasksMCA.getPreRaidPackage(0.5F));
+            brain.setTaskList(Activity.HIDE, VillagerTasksMCA.getHidePackage(0.5F));
+            brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage());
             brain.setTaskList(ActivityMCA.GRIEVE.get(), VillagerTasksMCA.getGrievingPackage());
         }
 
@@ -155,10 +167,22 @@ public class VillagerTasksMCA {
         return brain;
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getImportantCorePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getStayingPackage() {
+        return ImmutableList.of(
+                Pair.of(0, new StayTask()),
+                getFullLookBehavior()
+        );
+    }
+
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getFollowingPackage() {
         return ImmutableList.of(
                 Pair.of(0, new FollowTask()),
-                Pair.of(0, new StayTask()),
+                getMinimalLookBehavior()
+        );
+    }
+
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getImportantCorePackage(float speedModifier) {
+        return ImmutableList.of(
                 Pair.of(0, new StayAboveWaterTask(0.8F)),
                 Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
@@ -167,7 +191,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getCorePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getCorePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new GreetPlayerTask()),
                 Pair.of(0, new WakeUpTask()),
@@ -192,7 +216,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getSelfDefencePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getSelfDefencePackage() {
         return ImmutableList.of(
                 Pair.of(0, new PanicTask()),
                 Pair.of(1, new EquipmentTask(VillagerTasksMCA::isInDanger, v -> EquipmentSet.NAKED)),
@@ -229,7 +253,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getGuardWorkPackage(VillagerEntityMCA villager) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getGuardWorkPackage() {
         return ImmutableList.of(
                 Pair.of(10, new PatrolVillageTask(4, 0.4f)),
                 Pair.of(99, new ScheduleActivityTask())
@@ -343,7 +367,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(3, new ExtendedSleepTask(speedModifier)),
                 Pair.of(5, new RandomTask<>( //behavior when they are homeless
@@ -359,7 +383,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getMeetPackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getMeetPackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(2, new RandomTask<>(ImmutableList.of(
                         Pair.of(new GoToIfNearbyTask(MemoryModuleType.MEETING_POINT, 0.4F, 40), 2),
@@ -382,7 +406,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getIdlePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getIdlePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(1, new EnterFavoredBuildingTask(0.5f)),
                 Pair.of(2, new RandomTask<>(ImmutableList.of(
@@ -404,20 +428,12 @@ public class VillagerTasksMCA {
                         ImmutableList.of(
                                 Pair.of(new GatherItemsVillagerTask(), 1))
                 )),
-                /*
-                Pair.of(3, new CompositeTask<>(ImmutableMap.of(),
-                        ImmutableSet.of(MemoryModuleType.BREED_TARGET),
-                        CompositeTask.Order.ORDERED,
-                        CompositeTask.RunMode.RUN_ONE,
-                        ImmutableList.of(Pair.of(new VillagerBreedTask(), 1))
-                )),
-                */
                 getFullLookBehavior(),
                 Pair.of(99, new ScheduleActivityTask())
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getPanicPackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getPanicPackage(float speedModifier) {
         float f = speedModifier * 1.5F;
         return ImmutableList.of(
                 Pair.of(0, new StopPanickingTask()),
@@ -428,7 +444,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getPreRaidPackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getPreRaidPackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new RingBellTask()),
                 Pair.of(0, new RandomTask<>(ImmutableList.of(
@@ -440,7 +456,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRaidPackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRaidPackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new RandomTask<>(ImmutableList.of(
                         Pair.of(new SeekSkyAfterRaidWinTask(speedModifier), 5),
@@ -453,7 +469,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getHidePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getHidePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new ForgetBellRingTask(15, 3)),
                 Pair.of(1, new HideInHomeTask(32, speedModifier * 1.25F, 2)),
@@ -461,7 +477,7 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getChorePackage(VillagerProfession profession, float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getChorePackage() {
         return ImmutableList.of(
                 Pair.of(0, new ChoppingTask()),
                 Pair.of(0, new FishingTask()),

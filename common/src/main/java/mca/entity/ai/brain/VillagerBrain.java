@@ -3,6 +3,7 @@ package mca.entity.ai.brain;
 import mca.Config;
 import mca.advancement.criterion.CriterionMCA;
 import mca.entity.Status;
+import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.*;
 import mca.entity.ai.relationship.Personality;
@@ -16,6 +17,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -188,6 +190,10 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
             entity.getBrain().remember(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get(), leader);
             entity.getBrain().forget(MemoryModuleTypeMCA.STAYING.get());
             abandonJob();
+        }
+
+        if (entity.asEntity() instanceof VillagerEntityMCA villager) {
+            villager.reinitializeBrain((ServerWorld)villager.getWorld());
         }
     }
 
