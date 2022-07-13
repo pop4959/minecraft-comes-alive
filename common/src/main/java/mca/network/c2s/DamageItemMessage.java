@@ -8,9 +8,13 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.io.Serial;
 import java.util.Arrays;
 
 public class DamageItemMessage implements Message {
+    @Serial
+    private static final long serialVersionUID = -8975978126445189429L;
+
     private final String itemIdentifier;
 
     public DamageItemMessage(Identifier identifier) {

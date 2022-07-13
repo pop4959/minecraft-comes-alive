@@ -8,9 +8,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.io.Serial;
 import java.util.UUID;
 
 public class PlayerDataRequest implements Message {
+    @Serial
+    private static final long serialVersionUID = -1869959282406697226L;
+
     private final UUID uuid;
 
     public PlayerDataRequest(UUID uuid) {

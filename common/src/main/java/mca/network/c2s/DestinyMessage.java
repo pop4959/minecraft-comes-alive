@@ -12,9 +12,13 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 
+import java.io.Serial;
 import java.util.EnumSet;
 
 public class DestinyMessage implements Message {
+    @Serial
+    private static final long serialVersionUID = -782119062565197963L;
+
     private final String location;
 
     public DestinyMessage(String location) {

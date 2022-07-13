@@ -6,7 +6,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import java.io.*;
 
 public interface Message extends Serializable {
-
     static Message decode(PacketByteBuf b) {
         byte[] data = new byte[b.readableBytes()];
         b.readBytes(data);

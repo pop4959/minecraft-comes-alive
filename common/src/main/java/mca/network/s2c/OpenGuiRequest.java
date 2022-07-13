@@ -10,7 +10,7 @@ public class OpenGuiRequest implements Message {
     @Serial
     private static final long serialVersionUID = -2371116419166251497L;
 
-    public final Type gui;
+    public final int gui;
 
     public final int villager;
 
@@ -19,7 +19,7 @@ public class OpenGuiRequest implements Message {
     }
 
     public OpenGuiRequest(OpenGuiRequest.Type gui, int villager) {
-        this.gui = gui;
+        this.gui = gui.ordinal();
         this.villager = villager;
     }
 
@@ -30,6 +30,10 @@ public class OpenGuiRequest implements Message {
     @Override
     public void receive() {
         ClientProxy.getNetworkHandler().handleGuiRequest(this);
+    }
+
+    public Type getGui() {
+        return Type.values()[gui];
     }
 
     public enum Type {

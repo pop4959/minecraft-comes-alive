@@ -28,7 +28,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         Entity entity;
         assert client.world != null;
         assert MinecraftClient.getInstance().player != null;
-        switch (message.gui) {
+        switch (message.getGui()) {
             case WHISTLE:
                 client.setScreen(new WhistleScreen());
                 break;
