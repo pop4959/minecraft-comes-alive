@@ -54,8 +54,10 @@ public class ForgeBusEvents {
 
     @SubscribeEvent
     public static void OnEntityJoinWorldEvent(EntityJoinWorldEvent event) {
-        if (MinecraftClient.getInstance().player == null || event.getEntity().getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
-            MCAClient.onLogin();
+        if (event.getEntity().world.isClient) {
+            if (MinecraftClient.getInstance().player == null || event.getEntity().getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
+                MCAClient.onLogin();
+            }
         }
     }
 

@@ -1,5 +1,9 @@
 # 7.3.7
 
+* Fixed forge server
+
+# 7.3.7
+
 * Fixed server crashing
 * Fixed some sounds not triggering
 * Enabled voices by default
