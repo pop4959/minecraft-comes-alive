@@ -976,11 +976,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 return getGenetics().getGender() == Gender.MALE ? mood.getSoundMale() : mood.getSoundFemale();
             }
 
-            //customer sounds
-            if (hasCustomer()) {
-                return getSurprisedSound();
-            }
-
             return null;
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getAmbientSound();

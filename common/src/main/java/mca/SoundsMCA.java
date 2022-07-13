@@ -30,8 +30,8 @@ public interface SoundsMCA {
     RegistrySupplier<SoundEvent> VILLAGER_MALE_CRY = register("villager.male.cry");
     RegistrySupplier<SoundEvent> VILLAGER_FEMALE_CRY = register("villager.female.cry");
 
-    RegistrySupplier<SoundEvent> VILLAGER_MALE_ANGRY = register("villager.male.angry");
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_ANGRY = register("villager.female.angry");
+    RegistrySupplier<SoundEvent> VILLAGER_MALE_ANGRY = register("villager.male.angry"); // todo
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_ANGRY = register("villager.female.angry"); // todo
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_GREET = register("villager.male.greet");
     RegistrySupplier<SoundEvent> VILLAGER_FEMALE_GREET = register("villager.female.greet");

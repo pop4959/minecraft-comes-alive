@@ -1,6 +1,7 @@
 # 7.3.7
 
 * Fixed forge server
+* Villager no longer make surprise sounds while trading
 
 # 7.3.7
 
