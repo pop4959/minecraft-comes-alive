@@ -5,7 +5,7 @@
 * Fixed staying and following commands causing high CPU usage
     * Panicking staying villagers will now run
         * They will not return to original point yet, will be fixed in guards-update
-* fixed issues when server and client have different java versions
+* Fixed issues when server and client have different java versions
 
 # 7.3.7
 
