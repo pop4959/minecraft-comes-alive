@@ -23,7 +23,7 @@ public interface ProfessionsMCA {
 
     RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
     RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
-    RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, true, false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> ARCHER = register("archer", false, true, false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     RegistrySupplier<VillagerProfession> MERCENARY = register("mercenary", false, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     RegistrySupplier<VillagerProfession> CULTIST = register("cultist", true, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);

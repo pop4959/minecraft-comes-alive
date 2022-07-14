@@ -1,3 +1,7 @@
+# 7.3.9
+
+* You can no longer trade with archers
+
 # 7.3.8
 
 * Fixed forge server
