@@ -18,12 +18,11 @@ public class TradeOffersMCA {
     public static void bootstrap() {
         TradeOffers.PROFESSION_TO_LEVELED_TRADE.put(ProfessionsMCA.ADVENTURER.get(), new Int2ObjectOpenHashMap<>(
                 ImmutableMap.of(1, new TradeOffers.Factory[] {
-                                new SellItemFactory(Items.ENCHANTED_BOOK, 10, 16, 2),
                                 new SellItemFactory(Items.SLIME_BALL, 1, 10, 16, 1),
                                 new SellItemFactory(Items.LEATHER_HORSE_ARMOR, 3, 16, 10),
                                 new SellItemFactory(Items.SADDLE, 4, 1, 3, 5),
                                 new SellItemFactory(Items.IRON_HORSE_ARMOR, 5, 2, 20),
-                                new SellItemFactory(Items.DIAMOND, 4, 5, 20),
+                                new SellItemFactory(Items.DIAMOND, 16, 1, 20),
                                 new SellItemFactory(Items.GOLDEN_HORSE_ARMOR, 10, 1, 3, 30),
                                 new SellItemFactory(Items.GOLDEN_APPLE, 3, 1, 8, 30),
                                 new SellItemFactory(Items.DIAMOND_HORSE_ARMOR, 15, 1, 1, 30),
