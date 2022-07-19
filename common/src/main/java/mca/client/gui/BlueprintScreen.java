@@ -60,6 +60,10 @@ public class BlueprintScreen extends ExtendedScreen {
     private Map<Rank, List<Task>> tasks;
     private Map<String, BuildingType> buildingTypes;
 
+    private BuildingType getBuildingType(String type) {
+        return buildingTypes.containsKey(type) ? buildingTypes.get(type) : new BuildingType();
+    }
+
     public BlueprintScreen() {
         super(new LiteralText("Blueprint"));
     }
@@ -403,7 +407,7 @@ public class BlueprintScreen extends ExtendedScreen {
         //buildings
         List<Building> hoverBuildings = new LinkedList<>();
         for (Building building : village.getBuildings().values()) {
-            BuildingType bt = buildingTypes.get(building.getType());
+            BuildingType bt = getBuildingType(building.getType());
 
             if (bt.isIcon()) {
                 BlockPos c = building.getCenter();
@@ -462,7 +466,7 @@ public class BlueprintScreen extends ExtendedScreen {
         List<Text> lines = new LinkedList<>();
 
         //name
-        BuildingType bt = buildingTypes.get(hoverBuilding.getType());
+        BuildingType bt = getBuildingType(hoverBuilding.getType());
         lines.add(new TranslatableText("buildingType." + bt.name()));
 
         //size
