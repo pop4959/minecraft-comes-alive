@@ -6,6 +6,8 @@
 * Fixed villagers not working when previously told to stay
 * Fixed harvesting tasks not always harvesting
 * Added phrases for working
+* Villager no longer work when panicking
+* Villager can heal faster when eating
 
 # 7.3.8
 

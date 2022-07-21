@@ -769,7 +769,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public ItemStack eatFood(World world, ItemStack stack) {
         if (stack.isFood()) {
             //noinspection ConstantConditions
-            heal(stack.getItem().getFoodComponent().getHunger() / 4F);
+            heal(stack.getItem().getFoodComponent().getHunger());
         }
         return super.eatFood(world, stack);
     }

@@ -42,9 +42,10 @@ public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
             return false;
         }
 
-        long time = world.getTimeOfDay() % 24000;
+        //long time = world.getTimeOfDay() % 24000;
+        //return time > 2000 && time < 12000;
 
-        return time > 2000 && time < 12000;
+        return villager == null || !villager.getVillagerBrain().isPanicking();
     }
 
     @Override
