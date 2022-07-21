@@ -12,7 +12,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -32,9 +32,9 @@ public class ForgeBusEvents {
     }
 
     @SubscribeEvent
-    public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (!event.world.isClient && event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
-            VillageManager.get((ServerWorld)event.world).tick();
+    public static void onWorldTick(TickEvent.LevelTickEvent event) {
+        if (!event.level.isClient && event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
+            VillageManager.get((ServerWorld)event.level).tick();
         }
     }
 
@@ -48,12 +48,12 @@ public class ForgeBusEvents {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (!event.getEntity().world.isClient) {
-            VillageManager.get((ServerWorld)event.getEntity().world).getBabies().pop(event.getPlayer());
+            VillageManager.get((ServerWorld)event.getEntity().world).getBabies().pop(event.getEntity());
         }
     }
 
     @SubscribeEvent
-    public static void OnEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+    public static void OnEntityJoinWorldEvent(EntityJoinLevelEvent event) {
         if (event.getEntity().world.isClient) {
             if (MinecraftClient.getInstance().player == null || event.getEntity().getUuid().equals(MinecraftClient.getInstance().player.getUuid())) {
                 MCAClient.onLogin();
@@ -63,7 +63,7 @@ public class ForgeBusEvents {
 
     @SubscribeEvent
     public static void onPlayerLoggedInEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        ServerInteractionManager.getInstance().onPlayerJoin((ServerPlayerEntity)event.getPlayer());
+        ServerInteractionManager.getInstance().onPlayerJoin((ServerPlayerEntity)event.getEntity());
     }
 
     @SubscribeEvent

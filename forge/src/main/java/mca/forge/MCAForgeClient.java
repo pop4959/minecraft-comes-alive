@@ -28,7 +28,7 @@ import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -84,7 +84,7 @@ public final class MCAForgeClient {
     }
 
     @SubscribeEvent
-    public static void onParticleFactoryRegistration(ParticleFactoryRegisterEvent event) {
+    public static void onParticleFactoryRegistration(RegisterParticleProvidersEvent event) {
         MinecraftClient mc = MinecraftClient.getInstance();
         mc.particleManager.registerFactory(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
         mc.particleManager.registerFactory(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);

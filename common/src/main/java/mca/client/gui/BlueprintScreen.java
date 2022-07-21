@@ -360,7 +360,7 @@ public class BlueprintScreen extends ExtendedScreen {
         if (isVillage) {
             drawCenteredText(transform, textRenderer, village.getName(), width / 4, height / 4 - 48, 0xffffffff);
         } else {
-            drawCenteredText(transform, textRenderer, new TranslatableText("gui.blueprint.settlement"), width / 4, height / 4 - 48, 0xffffffff);
+            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.settlement"), width / 4, height / 4 - 48, 0xffffffff);
         }
         transform.pop();
     }

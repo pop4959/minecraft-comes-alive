@@ -206,10 +206,10 @@ public class VillagerTasksMCA {
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getWorkingCorePackage(VillagerProfession profession, float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.heldWorkstation(), MemoryModuleType.JOB_SITE)),
-                Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.heldWorkstation(), MemoryModuleType.POTENTIAL_JOB_SITE)),
+                Pair.of(0, new ForgetCompletedPointOfInterestTask(profession.acquirableWorkstation(), MemoryModuleType.POTENTIAL_JOB_SITE)),
                 Pair.of(2, new WorkStationCompetitionTask(profession)),
                 Pair.of(3, new FollowCustomerTask(speedModifier)),
-                Pair.of(6, new FindPointOfInterestTask(profession.heldWorkstation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
+                Pair.of(6, new FindPointOfInterestTask(profession.acquirableWorkstation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
                 Pair.of(7, new WalkTowardJobSiteTask(speedModifier)),
                 Pair.of(8, new TakeJobSiteTask(speedModifier)),
                 Pair.of(10, new GoToWorkTask()),
