@@ -137,6 +137,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 return true;
             }
             case "trade" -> {
+                entity.getInteractions().stopInteracting();
                 prepareOffersFor(player);
                 return false;
             }
