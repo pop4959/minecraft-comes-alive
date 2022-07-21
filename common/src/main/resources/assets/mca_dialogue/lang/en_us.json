@@ -114,6 +114,12 @@
   "adult.chore.hunting.nosword": "I lost my sword! Do you have another?",
   "adult.chore.harvesting.nohoe": "I don't have a hoe to harvest with.",
 
+  "adult.chore.success/1": "Sure thing!",
+  "adult.chore.success/2": "Alright!",
+  "adult.chore.success/3": "Okay, but don't forget me here!",
+  "adult.chore.success.night/1": "Tomorrow I will start!",
+  "adult.chore.success.night/2": "In the night it's too dangerous to work, but I will start the next day!",
+
   "interaction.relationship.fail.isbaby/1": "Wut? I'm too young!",
   "teen.interaction.relationship.fail.isbaby/2": "That is inappropriate!",
   "interaction.relationship.fail.marriedtogiver/1": "It's a pretty ring, but I am already married to you, silly.",
