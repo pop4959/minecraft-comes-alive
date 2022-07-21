@@ -100,6 +100,8 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
         entity.getBrain().doExclusively(Activity.IDLE);
         entity.setTrackedValue(ACTIVE_CHORE, Chore.NONE);
         entity.setTrackedValue(CHORE_ASSIGNING_PLAYER, Optional.empty());
+
+        resetsBrain();
     }
 
     /**
@@ -111,6 +113,8 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
         entity.setTrackedValue(CHORE_ASSIGNING_PLAYER, Optional.of(player.getUuid()));
         entity.getBrain().forget(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get());
         entity.getBrain().forget(MemoryModuleTypeMCA.STAYING.get());
+
+        resetsBrain();
     }
 
     public void randomize() {
@@ -192,6 +196,10 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
             abandonJob();
         }
 
+        resetsBrain();
+    }
+
+    private void resetsBrain() {
         if (entity.asEntity() instanceof VillagerEntityMCA villager) {
             villager.reinitializeBrain((ServerWorld)villager.getWorld());
         }

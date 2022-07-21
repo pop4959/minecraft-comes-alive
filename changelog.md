@@ -3,6 +3,7 @@
 * You can no longer trade with archers
 * Fixed crash in blueprint
 * Fixed villager following you after trade
+* Fixed villagers not working when previously told to stay
 
 # 7.3.8
 
