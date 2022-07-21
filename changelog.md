@@ -4,6 +4,8 @@
 * Fixed crash in blueprint
 * Fixed villager following you after trade
 * Fixed villagers not working when previously told to stay
+* Fixed harvesting tasks not always harvesting
+* Added phrases for working
 
 # 7.3.8
 
