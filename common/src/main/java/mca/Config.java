@@ -3,6 +3,7 @@ package mca;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
 import java.util.List;
@@ -21,7 +22,7 @@ public final class Config implements Serializable {
     public static final int VERSION = 1;
 
     @SuppressWarnings("unused")
-    public String README = "https://minecraft-comes-alive-reborn.fandom.com/wiki/Config";
+    public String README = "https://github.com/Luke100000/minecraft-comes-alive/wiki";
 
     public int version = 0;
 
@@ -32,6 +33,7 @@ public final class Config implements Serializable {
     public boolean villagerTagsHacks = true;
     public boolean enableInfection = true;
     public int infectionChance = 5;
+    public float infectionChanceDecreasePerLevel = 0.25f;
     public boolean allowGrimReaper = true;
     public String villagerChatPrefix = "";
     public boolean canHurtBabies = true;
@@ -59,12 +61,12 @@ public final class Config implements Serializable {
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;
-    public float maleVillagerHeight = 0.9f;
+    public float maleVillagerHeightFactor = 0.9f;
     public float femaleVillagerHeightFactor = 0.85f;
     public float maleVillagerWidthFactor = 1.0f;
     public float femaleVillagerWidthFactor = 0.95f;
     public boolean showNameTags = true;
-    public boolean useVoices = false;
+    public boolean useMCAVoices = true;
     public boolean useVanillaVoices = false;
     public float interactionChanceFatigue = 1.0f;
     public int interactionFatigueCooldown = 4800;
@@ -82,10 +84,11 @@ public final class Config implements Serializable {
     public int adventurerAtInnChance = 5;
     public int childrenChance = 5;
     public int bountyHunterInterval = 48000;
-    public int bountyHunterThreshold = -15;
+    public int bountyHunterHeartsInterval = -150;
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
+    public int minimumBuildingsToBeConsideredAVillage = 3;
 
     //gifts
     public int giftDesaturationQueueLength = 16;
@@ -179,6 +182,15 @@ public final class Config implements Serializable {
             }
             config.save();
             return config;
+        } catch (JsonSyntaxException e) {
+            MCA.LOGGER.error("");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
+            MCA.LOGGER.error("Fix errors, or delete file to reset");
+            e.printStackTrace();
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("");
+            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }

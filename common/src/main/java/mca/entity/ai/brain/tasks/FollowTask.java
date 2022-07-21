@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.MemoryModuleTypeMCA;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
@@ -27,6 +28,12 @@ public class FollowTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected void keepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        villager.getBrain().getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get()).ifPresent(playerToFollow -> LookTargetUtil.walkTowards(villager, playerToFollow, villager.hasVehicle() ? 1.7f : 0.8f, 2));
+        villager.getBrain().getOptionalMemory(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get()).ifPresent(playerToFollow -> {
+            if (villager.getVillagerBrain().isPanicking() && villager.getBrain().getOptionalMemory(MemoryModuleType.HURT_BY_ENTITY).filter(livingEntity -> livingEntity == playerToFollow).isPresent()) {
+                villager.getBrain().forget(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get());
+            } else {
+                LookTargetUtil.walkTowards(villager, playerToFollow, villager.hasVehicle() ? 1.7f : 0.8f, 3);
+            }
+        });
     }
 }

@@ -21,7 +21,7 @@ abstract class MixinVillagerEntity implements IVillagerEntity {
 
     @Override
     public SpawnReason getSpawnReason() {
-        return reason == null ? SpawnReason.SPAWN_EGG : reason;
+        return reason == null ? SpawnReason.NATURAL : reason;
     }
 
     @Inject(method = "initialize", at = @At("HEAD"))

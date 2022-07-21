@@ -583,10 +583,8 @@ public class Village implements Iterable<Building> {
     }
 
     public int getReputation(PlayerEntity player) {
-        int hearts = reputation.getOrDefault(player.getUuid(), Collections.emptyMap()).values().stream().mapToInt(i -> i).sum()
+        return reputation.getOrDefault(player.getUuid(), Collections.emptyMap()).values().stream().mapToInt(i -> i).sum()
                 + unspentHearts.getOrDefault(player.getUuid(), 0);
-        int residents = getPopulation() + 5; //we slightly favor bigger villages
-        return hearts / residents;
     }
 
     public void resetHearts(PlayerEntity player) {
@@ -699,5 +697,9 @@ public class Village implements Iterable<Building> {
         buildings.putAll(village.buildings);
         unspentMood += village.unspentMood;
         calculateDimensions();
+    }
+
+    public boolean isVillage() {
+        return getBuildings().size() >= Config.getInstance().minimumBuildingsToBeConsideredAVillage;
     }
 }

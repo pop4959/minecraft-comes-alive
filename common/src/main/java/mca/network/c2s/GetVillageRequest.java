@@ -22,9 +22,10 @@ public class GetVillageRequest implements Message {
         Optional<Village> village = Village.findNearest(player);
         if (village.isPresent() && !village.get().getBuildings().isEmpty()) {
             int reputation = village.get().getReputation(player);
+            boolean isVillage = village.get().isVillage();
             Rank rank = Tasks.getRank(village.get(), player);
             Set<String> ids = Tasks.getCompletedIds(village.get(), player);
-            NetworkHandler.sendToPlayer(new GetVillageResponse(village.get(), rank, reputation, ids), player);
+            NetworkHandler.sendToPlayer(new GetVillageResponse(village.get(), rank, reputation, isVillage, ids), player);
         } else {
             NetworkHandler.sendToPlayer(new GetVillageFailedResponse(), player);
         }

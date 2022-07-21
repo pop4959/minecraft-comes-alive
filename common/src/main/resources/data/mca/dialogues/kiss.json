@@ -17,6 +17,18 @@
               "mood": "giggly"
             },
             {
+              "chance": 5,
+              "constraints": "promised"
+            },
+            {
+              "chance": 6,
+              "constraints": "engaged"
+            },
+            {
+              "chance": 6,
+              "constraints": "spouse"
+            },
+            {
               "chance": 15,
               "hearts": {
                 "add": -0.1,

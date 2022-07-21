@@ -102,8 +102,8 @@ public enum Gender {
 
     public float getScaleFactor() {
         return this == Gender.FEMALE ? Config.getInstance().femaleVillagerHeightFactor :
-                this == Gender.MALE ? Config.getInstance().maleVillagerHeight :
-                        (Config.getInstance().femaleVillagerHeightFactor + Config.getInstance().maleVillagerHeight) * 0.5f;
+                this == Gender.MALE ? Config.getInstance().maleVillagerHeightFactor :
+                        (Config.getInstance().femaleVillagerHeightFactor + Config.getInstance().maleVillagerHeightFactor) * 0.5f;
     }
 }
 

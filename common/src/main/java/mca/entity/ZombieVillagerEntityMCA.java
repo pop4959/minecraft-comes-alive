@@ -247,6 +247,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         if (mob instanceof VillagerEntityMCA villager) {
             villager.setUuid(getUuid());
             villager.setInventory(inventory);
+            villager.setBreedingAge(getAgeState().toAge());
         }
 
         return mob;

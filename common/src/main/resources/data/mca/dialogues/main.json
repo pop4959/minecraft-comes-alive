@@ -35,9 +35,19 @@
         },
         {
           "baseChance": 10,
+          "actions": {
+            "next": "stay.fail",
+            "remember": {
+              "id": "asked_to_stay",
+              "var": "player"
+            }
+          }
+        },
+        {
+          "baseChance": 0,
           "conditions": [
             {
-              "chance": 10000,
+              "chance": 100000,
               "memory": {
                 "id": "asked_to_stay",
                 "var": "player",
@@ -46,7 +56,7 @@
             }
           ],
           "actions": {
-            "next": "stay.fail",
+            "next": "stay.repeat",
             "remember": {
               "id": "asked_to_stay",
               "var": "player"
@@ -165,7 +175,7 @@
     },
     {
       "name": "divorcePapers",
-      "constraints": "cleric,!spouse",
+      "constraints": "cleric,!spouse,adult",
       "results": [
         {
           "actions": {

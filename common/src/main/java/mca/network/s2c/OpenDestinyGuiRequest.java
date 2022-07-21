@@ -5,7 +5,12 @@ import mca.Config;
 import mca.cobalt.network.Message;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.io.Serial;
+
 public class OpenDestinyGuiRequest implements Message {
+    @Serial
+    private static final long serialVersionUID = -8912548616237596312L;
+
     public final int player;
     public boolean allowTeleportation;
     public boolean allowPlayerModel;

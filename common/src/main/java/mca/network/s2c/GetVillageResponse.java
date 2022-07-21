@@ -20,14 +20,16 @@ public class GetVillageResponse extends NbtDataMessage {
 
     public final Rank rank;
     public final int reputation;
+    public final boolean isVillage;
     public final Set<String> ids;
     public final Map<Rank, List<Task>> tasks;
     public final Map<String, BuildingType> buildingTypes;
 
-    public GetVillageResponse(Village data, Rank rank, int reputation, Set<String> ids) {
+    public GetVillageResponse(Village data, Rank rank, int reputation, boolean isVillage, Set<String> ids) {
         super(data.save());
         this.rank = rank;
         this.reputation = reputation;
+        this.isVillage = isVillage;
         this.ids = ids;
         this.tasks = Tasks.getInstance().tasks;
         this.buildingTypes = API.getVillagePool().getBuildingTypes();

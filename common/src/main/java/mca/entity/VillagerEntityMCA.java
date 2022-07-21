@@ -520,7 +520,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (source.getSource() instanceof ZombieEntity
                     && getProfession() != ProfessionsMCA.GUARD.get()
                     && Config.getInstance().enableInfection
-                    && random.nextFloat() < Config.getInstance().infectionChance / 100.0) {
+                    && random.nextFloat() < Config.getInstance().infectionChance / 100.0
+                    && random.nextFloat() > (getVillagerData().getLevel() - 1) * Config.getInstance().infectionChanceDecreasePerLevel) {
                 if (getResidency().getHomeVillage().filter(v -> v.hasBuilding("infirmary")).isEmpty() || random.nextBoolean()) {
                     setInfected(true);
                     sendChatToAllAround("villager.bitten");
@@ -921,7 +922,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public SoundEvent getDeathSound() {
-        if (Config.getInstance().useVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_SCREAM.get() : SoundsMCA.VILLAGER_FEMALE_SCREAM.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getDeathSound();
@@ -931,36 +932,46 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public SoundEvent getSurprisedSound() {
-        if (Config.getInstance().useVoices) {
+        if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_SURPRISE.get() : SoundsMCA.VILLAGER_FEMALE_SURPRISE.get();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
     @Nullable
     @Override
     protected final SoundEvent getAmbientSound() {
-        if (Config.getInstance().useVoices) {
-            if (isSleeping()) {
-                return null; // TODO: snoring?
-            }
-
+        if (Config.getInstance().useMCAVoices) {
+            //baby sounds
             if (getAgeState() == AgeState.BABY) {
                 return SoundsMCA.VILLAGER_BABY_LAUGH.get();
             }
 
+            //snoring
+            if (isSleeping()) {
+                return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_SNORE.get() : SoundsMCA.VILLAGER_FEMALE_SNORE.get();
+            }
+
+            //scream in terror and pain
             if (getVillagerBrain().isPanicking()) {
                 return getDeathSound();
             }
 
+            //coughing
+            if (isInfected() && random.nextBoolean()) {
+                return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_COUGH.get() : SoundsMCA.VILLAGER_FEMALE_COUGH.get();
+            }
+
+            //sirben
+            if (random.nextBoolean() && getTraits().hasTrait(Traits.Trait.SIRBEN)) {
+                return SoundsMCA.SIRBEN.get();
+            }
+
+            //generic mood sounds
             Mood mood = getVillagerBrain().getMood();
             if (mood.getSoundInterval() > 0 && age % mood.getSoundInterval() == 0) {
                 return getGenetics().getGender() == Gender.MALE ? mood.getSoundMale() : mood.getSoundFemale();
-            }
-
-            if (hasCustomer()) {
-                return getSurprisedSound();
             }
 
             return null;
@@ -973,58 +984,65 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     protected final SoundEvent getHurtSound(DamageSource cause) {
-        if (getProfession() == ProfessionsMCA.GUARD.get()) {
-            return null;
+        if (Config.getInstance().useMCAVoices) {
+            return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_HURT.get() : SoundsMCA.VILLAGER_FEMALE_HURT.get();
         } else {
-            return getDeathSound();
+            return super.getHurtSound(cause);
         }
     }
 
     public final void playWelcomeSound() {
-        if (Config.getInstance().useVoices && !getVillagerBrain().isPanicking() && getAgeState() != AgeState.BABY) {
+        if (Config.getInstance().useMCAVoices && !getVillagerBrain().isPanicking() && getAgeState() != AgeState.BABY) {
             playSound(getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_GREET.get() : SoundsMCA.VILLAGER_FEMALE_GREET.get(), getSoundVolume(), getSoundPitch());
         }
     }
 
     public final void playSurprisedSound() {
-        if (Config.getInstance().useVoices) {
+        if (Config.getInstance().useMCAVoices) {
             playSound(getSurprisedSound(), getSoundVolume(), getSoundPitch());
         }
     }
 
-    // TODO: Use these methods when useVoices is ready to be implemented
-    /*@Override
+    @Override
     public SoundEvent getYesSound() {
-        if (Config.getInstance().useVoices) {
-            //todo
-            return null;
+        if (Config.getInstance().useMCAVoices) {
+            return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_YES.get() : SoundsMCA.VILLAGER_FEMALE_YES.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getYesSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
+        }
+    }
+
+    public SoundEvent getNoSound() {
+        if (Config.getInstance().useMCAVoices) {
+            return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_NO.get() : SoundsMCA.VILLAGER_FEMALE_NO.get();
+        } else if (Config.getInstance().useVanillaVoices) {
+            return SoundEvents.ENTITY_VILLAGER_NO;
+        } else {
+            return SoundsMCA.SILENT.get();
         }
     }
 
     @Override
     protected SoundEvent getTradingSound(boolean sold) {
-        if (Config.getInstance().useVoices) {
-            //todo
-            return null;
+        if (Config.getInstance().useMCAVoices) {
+            return sold ? getYesSound() : getNoSound();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getTradingSound(sold);
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
     @Override
     public void playCelebrateSound() {
-        if (Config.getInstance().useVoices) {
+        if (Config.getInstance().useMCAVoices) {
             //todo
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();
         }
-    }*/
+    }
 
     @Override
     public final Text getDisplayName() {

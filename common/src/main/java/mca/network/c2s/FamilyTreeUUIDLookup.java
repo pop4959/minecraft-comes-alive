@@ -8,11 +8,15 @@ import mca.network.s2c.FamilyTreeUUIDResponse;
 import mca.resources.data.SerializablePair;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FamilyTreeUUIDLookup implements Message {
+    @Serial
+    private static final long serialVersionUID = 3458196476082270702L;
+
     private final String search;
 
     public FamilyTreeUUIDLookup(String search) {

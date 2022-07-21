@@ -12,6 +12,18 @@
               "personality": "friendly"
             },
             {
+              "chance": 3,
+              "constraints": "promised"
+            },
+            {
+              "chance": 5,
+              "constraints": "engaged"
+            },
+            {
+              "chance": 8,
+              "constraints": "spouse"
+            },
+            {
               "chance": 20,
               "hearts": {
                 "add": -0.1,

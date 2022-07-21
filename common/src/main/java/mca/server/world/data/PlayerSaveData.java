@@ -160,13 +160,13 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     protected void onLeave(PlayerEntity self, Village village) {
-        if (Config.getInstance().enterVillageNotification) {
+        if (Config.getInstance().enterVillageNotification && village.isVillage()) {
             self.sendMessage(Text.translatable("gui.village.left", village.getName()).formatted(Formatting.GOLD), true);
         }
     }
 
     protected void onEnter(PlayerEntity self, Village village) {
-        if (Config.getInstance().enterVillageNotification) {
+        if (Config.getInstance().enterVillageNotification && village.isVillage()) {
             self.sendMessage(Text.translatable("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
         }
         village.deliverTaxes(player.getWorld());
@@ -233,6 +233,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
+    //todo
     public void sendAngryEngagedLetter(ServerPlayerEntity player, String name) {
         sendLetter(player, List.of(
                 String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",

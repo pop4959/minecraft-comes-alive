@@ -28,7 +28,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         Entity entity;
         assert client.world != null;
         assert MinecraftClient.getInstance().player != null;
-        switch (message.gui) {
+        switch (message.getGui()) {
             case WHISTLE:
                 client.setScreen(new WhistleScreen());
                 break;
@@ -115,7 +115,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
             village.load(message.getData());
 
             gui.setVillage(village);
-            gui.setRank(message.rank, message.reputation, message.ids, message.tasks, message.buildingTypes);
+            gui.setRank(message.rank, message.reputation, message.isVillage, message.ids, message.tasks, message.buildingTypes);
         }
     }
 

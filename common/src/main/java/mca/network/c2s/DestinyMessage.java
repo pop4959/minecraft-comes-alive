@@ -12,9 +12,13 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 
+import java.io.Serial;
 import java.util.EnumSet;
 
 public class DestinyMessage implements Message {
+    @Serial
+    private static final long serialVersionUID = -782119062565197963L;
+
     private final String location;
 
     public DestinyMessage(String location) {
@@ -28,7 +32,7 @@ public class DestinyMessage implements Message {
         }
 
         if (Config.getInstance().allowDestinyTeleportation && location != null) {
-            WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 256).ifPresent(pos -> {
+            WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 128).ifPresent(pos -> {
                 player.getWorld().getWorldChunk(pos);
                 pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
                 pos = FuzzyPositionsCompat.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));

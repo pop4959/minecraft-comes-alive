@@ -1,9 +1,42 @@
+# 7.3.9
+
+* You can no longer trade with archers
+
+# 7.3.8
+
+* Fixed forge server
+* Villager no longer make surprise sounds while trading
+* Fixed staying and following commands causing high CPU usage
+    * Panicking staying villagers will now run
+        * They will not return to original point yet, will be fixed in guards-update
+* Fixed issues when server and client have different java versions
+
+# 7.3.7
+
+* Fixed server crashing
+* Fixed some sounds not triggering
+* Enabled voices by default
+* Gave sirben more personality
+
 # 7.3.6
 
+* Finished sounds
+    * Normalized and denoised existing ones
+    * Added trading, hurt, snoring and coughing
+    * Added sounds for females
+* Reputation is now the sum of all hearts
+    * Reputation has been renamed to hearts
+* Villages with less than 3 (configurable) buildings are now considered settlements
+    * They will not trigger the enter-village notification
 * Children now grow up in 16 days instead of 8 (configurable)
 * Babies no longer greet you
 * Added rose gold dust recipe and therefore a way to obtain rose gold
     * Removed rose gold ore
+* Being in a relationship helps for some interactions
+* A higher villager levels decreases infection rate
+* Fixed a few minor bugs
+* If you hit a villager, it will no longer follow you
+* Fixed armor texture on villagers
 
 # 7.3.5
 

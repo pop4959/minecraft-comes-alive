@@ -149,6 +149,10 @@ public interface EntityRelationship {
         return getRelationshipState() == RelationshipState.PROMISED;
     }
 
+    default boolean isPromisedTo(UUID uuid) {
+        return getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid) && isPromised();
+    }
+
     default boolean isMarriedTo(UUID uuid) {
         return getPartnerUUID().orElse(Util.NIL_UUID).equals(uuid) && isMarried();
     }

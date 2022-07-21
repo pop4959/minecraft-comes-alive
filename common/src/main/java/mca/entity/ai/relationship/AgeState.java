@@ -99,4 +99,8 @@ public enum AgeState implements VillagerDimensions {
     public static AgeState byCurrentAge(int age) {
         return byId(getId(age));
     }
+
+    public int toAge() {
+        return (ordinal() - 1) * getStageDuration() - getMaxAge();
+    }
 }

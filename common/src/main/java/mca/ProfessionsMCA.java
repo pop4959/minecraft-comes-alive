@@ -24,12 +24,12 @@ import java.util.function.Predicate;
 public interface ProfessionsMCA {
     DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(MCA.MOD_ID, Registry.VILLAGER_PROFESSION_KEY);
 
-    RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
-    RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, false, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
-    RegistrySupplier<VillagerProfession> ARCHER = register("archer", true, true, false, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
-    RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
-    RegistrySupplier<VillagerProfession> MERCENARY = register("mercenary", false, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
-    RegistrySupplier<VillagerProfession> CULTIST = register("cultist", true, true, true, PointOfInterestType.NONE, PointOfInterestType.NONE, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
+    RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
+    RegistrySupplier<VillagerProfession> ARCHER = register("archer", false, true, false, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> ADVENTURER = register("adventurer", true, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> MERCENARY = register("mercenary", false, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
+    RegistrySupplier<VillagerProfession> CULTIST = register("cultist", true, true, true, PointOfInterestType.UNEMPLOYED, SoundEvents.ENTITY_VILLAGER_WORK_FLETCHER);
     // VillagerProfession JEWELER = register("jeweler", PointOfInterestTypeMCA.JEWELER, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);
 
     Set<VillagerProfession> canNotTrade = new HashSet<>();
