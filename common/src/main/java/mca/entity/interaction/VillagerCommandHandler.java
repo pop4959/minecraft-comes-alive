@@ -23,6 +23,7 @@ import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.EntityPassengersSetS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -78,6 +79,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
         if (Chore.byCommand(command).filter(chore -> {
             entity.getVillagerBrain().assignJob(chore, player);
             CriterionMCA.GENERIC_EVENT_CRITERION.trigger(player, "chores");
+            entity.sendChatMessage(Text.translatable("adult.chore.success"), player);
             return true;
         }).isPresent()) {
             return true;
@@ -137,6 +139,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 return true;
             }
             case "trade" -> {
+                entity.getInteractions().stopInteracting();
                 prepareOffersFor(player);
                 return false;
             }

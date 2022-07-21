@@ -43,7 +43,7 @@ public class FishingTask extends AbstractChoreTask {
 
     @Override
     protected boolean shouldKeepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        return shouldRun(world, villager) && villager.getHealth() == villager.getMaxHealth();
+        return shouldRun(world, villager);
     }
 
     @Override

@@ -47,7 +47,6 @@ public class HarvestingTask extends AbstractChoreTask {
     private final List<BlockPos> harvestable = new ArrayList<>();
 
     private int lastCropScan = 0;
-    private int lastActionTicks = 0;
 
     public HarvestingTask() {
         super(ImmutableMap.of(
@@ -63,7 +62,7 @@ public class HarvestingTask extends AbstractChoreTask {
 
     @Override
     protected boolean shouldKeepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        return shouldRun(world, villager) && villager.getHealth() == villager.getMaxHealth();
+        return shouldRun(world, villager);
     }
 
     @Override
@@ -174,7 +173,7 @@ public class HarvestingTask extends AbstractChoreTask {
                     harvestCrops(world, crops);
                     plantSeeds(world, villager, crops);
                 } else {
-                    bonemealCrop(world, villager, state, crops);
+                    bonemealCrop(world, villager, crops);
                 }
             } else if (state.getBlock() instanceof GourdBlock) {
                 harvestCrops(world, crops);
@@ -186,12 +185,7 @@ public class HarvestingTask extends AbstractChoreTask {
      * Checks whether an action can be performed on this tick.
      */
     private boolean tickAction() {
-        if (lastActionTicks < TICKS_PER_TURN) {
-            lastActionTicks++;
-            return false;
-        }
-        lastActionTicks = 0;
-        return true;
+        return villager.world.getTime() % TICKS_PER_TURN == 0;
     }
 
     /**
@@ -257,7 +251,7 @@ public class HarvestingTask extends AbstractChoreTask {
         }
     }
 
-    private void bonemealCrop(ServerWorld world, VillagerEntityMCA villager, BlockState state, BlockPos pos) {
+    private void bonemealCrop(ServerWorld world, VillagerEntityMCA villager, BlockPos pos) {
         if (swapItem(stack -> stack.isOf(Items.BONE_MEAL)) == ITEM_READY && BoneMealItem.useOnFertilizable(villager.getMainHandStack(), world, pos)) {
             villager.swingHand(Hand.MAIN_HAND);
         }
