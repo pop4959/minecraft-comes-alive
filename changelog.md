@@ -1,3 +1,7 @@
+# 7.3.10
+
+* Fixed Villager Fate achievements (Happy hunting!)
+
 # 7.3.9
 
 * You can no longer trade with archers
