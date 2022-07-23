@@ -1,3 +1,8 @@
+# 7.3.10
+
+* Fixed Villager Fate achievements (Happy hunting!)
+* Added an achievement for dropping a baby? (There's more to this right?!)
+
 # 7.3.9
 
 * You can no longer trade with archers

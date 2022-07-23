@@ -42,7 +42,7 @@ public class VillagerFateCriterion extends AbstractCriterion<VillagerFateCriteri
         }
 
         public boolean test(Identifier cause, Rank userRelation) {
-            return this.cause == cause && userRelation.isAtLeast(this.userRelation);
+            return this.cause.toString().equals(cause.toString()) && userRelation.isAtLeast(this.userRelation);
         }
 
         @Override

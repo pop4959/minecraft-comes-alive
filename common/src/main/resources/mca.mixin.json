@@ -25,7 +25,6 @@
     "MixinHeldItemFeatureRenderer",
     "MixinLivingEntityRenderer",
     "MixinPlayerEntityRenderer",
-    "client.MixinClientPlayerEntity",
     "client.MixinTranslationStorage"
   ],
   "injectors": {

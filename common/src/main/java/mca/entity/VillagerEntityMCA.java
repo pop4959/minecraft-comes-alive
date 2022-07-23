@@ -870,18 +870,19 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (village.isPresent()) {
             ServerWorld servRef = (ServerWorld)world;
             Map<UUID, Memories> memories = mcaBrain.getMemories();
-            for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
-                village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
-                village.get().markDirty(servRef);
-            }
 
-            //send all player with rank mayor or above a notification
+            //iterate through all players for fate system
             if (cause.getAttacker() != null) {
                 servRef.getPlayers().forEach(player -> {
                     Rank relationToVillage = Tasks.getRank(village.get(), player);
                     Identifier causeId = EntityType.getId(cause.getAttacker().getType());
                     CriterionMCA.FATE.trigger(player, causeId, relationToVillage);
                 });
+            }
+
+            for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
+                village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
+                village.get().markDirty(servRef);
             }
         }
 
