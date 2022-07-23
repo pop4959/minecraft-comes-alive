@@ -70,10 +70,9 @@ public class BabyItem extends Item {
         return ActionResult.PASS;
     }
 
-    public boolean onDropped(ItemStack stack, PlayerEntity player) {
+    public boolean onDropped(ItemStack stack, World world, PlayerEntity player) {
         if (!hasBeenInvalidated(stack)) {
-            player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
-            return false;
+            BabyTracker.attemptDrop(stack, world, player);
         }
 
         return true;

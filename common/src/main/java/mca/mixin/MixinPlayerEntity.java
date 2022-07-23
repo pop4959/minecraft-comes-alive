@@ -1,5 +1,6 @@
 package mca.mixin;
 
+import mca.MCA;
 import mca.item.BabyItem;
 import mca.server.world.data.VillageManager;
 import net.minecraft.entity.ItemEntity;
@@ -29,7 +30,7 @@ abstract class MixinPlayerEntity extends LivingEntity {
             at = @At("HEAD"),
             cancellable = true)
     private void onDropItem(ItemStack stack, boolean throwRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemEntity> info) {
-        if (stack.getItem() instanceof BabyItem baby && !baby.onDropped(stack, (PlayerEntity)(Object)this)) {
+        if (stack.getItem() instanceof BabyItem baby && !baby.onDropped(stack, world, (PlayerEntity)(Object)this)) {
             info.setReturnValue(null);
         }
     }

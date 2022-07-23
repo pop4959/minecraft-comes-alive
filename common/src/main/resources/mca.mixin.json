@@ -12,7 +12,6 @@
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinPlayerEntity",
-    "MixinPlayerInventory",
     "MixinProtoChunk",
     "MixinSensorType",
     "MixinServerWorld",
@@ -25,7 +24,6 @@
     "MixinHeldItemFeatureRenderer",
     "MixinLivingEntityRenderer",
     "MixinPlayerEntityRenderer",
-    "client.MixinClientPlayerEntity",
     "client.MixinTranslationStorage"
   ],
   "injectors": {

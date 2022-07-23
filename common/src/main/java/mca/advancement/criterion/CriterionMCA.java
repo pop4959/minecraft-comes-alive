@@ -5,6 +5,7 @@ import net.minecraft.advancement.criterion.Criterion;
 
 public interface CriterionMCA {
     BabyCriterion BABY_CRITERION = register(new BabyCriterion());
+    BabyDroppedCriterion BABY_DROPPED_CRITERION = register(new BabyDroppedCriterion());
     BabySmeltedCriterion BABY_SMELTED_CRITERION = register(new BabySmeltedCriterion());
     BabySirbenSmeltedCriterion BABY_SIRBEN_SMELTED_CRITERION = register(new BabySirbenSmeltedCriterion());
     HeartsCriterion HEARTS_CRITERION = register(new HeartsCriterion());

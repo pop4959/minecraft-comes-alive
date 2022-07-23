@@ -1,5 +1,7 @@
 package mca.server.world.data;
 
+import mca.MCA;
+import mca.advancement.criterion.CriterionMCA;
 import mca.entity.ai.relationship.Gender;
 import mca.item.ItemsMCA;
 import mca.util.InventoryUtils;
@@ -14,7 +16,9 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.world.PersistentState;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -348,6 +352,20 @@ public class BabyTracker extends PersistentState {
                 && !stack.getNbt().getBoolean("invalidated")
                 && stack.getNbt().contains("childData", NbtElement.COMPOUND_TYPE)
                 && stack.getSubNbt("childData").containsUuid("id");
+    }
+
+    public static boolean attemptDrop(ItemStack stack, World world, PlayerEntity player) {
+        if (!world.isClient) {
+            int count = 0;
+            if (stack.getOrCreateNbt().contains("dropAttempts", NbtElement.INT_TYPE)) {
+                count = stack.getOrCreateNbt().getInt("dropAttempts") + 1;
+            }
+            stack.getOrCreateNbt().putInt("dropAttempts", count);
+            MCA.LOGGER.info("Drops now at " + count);
+            CriterionMCA.BABY_DROPPED_CRITERION.trigger((ServerPlayerEntity) player, count);
+            player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
+        }
+        return false;
     }
 
     public static void invalidate(ItemStack stack) {
