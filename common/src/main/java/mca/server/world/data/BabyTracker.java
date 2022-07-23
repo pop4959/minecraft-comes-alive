@@ -361,7 +361,6 @@ public class BabyTracker extends PersistentState {
                 count = stack.getOrCreateNbt().getInt("dropAttempts") + 1;
             }
             stack.getOrCreateNbt().putInt("dropAttempts", count);
-            MCA.LOGGER.info("Drops now at " + count);
             CriterionMCA.BABY_DROPPED_CRITERION.trigger((ServerPlayerEntity) player, count);
             player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
         }

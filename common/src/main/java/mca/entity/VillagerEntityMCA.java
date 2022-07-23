@@ -876,7 +876,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             //iterate through all players for fate system
             if (cause.getAttacker() != null) {
                 servRef.getPlayers().forEach(player -> {
-                    Rank relationToVillage = Rank.MAYOR;//Tasks.getRank(village.get(), player);
+                    Rank relationToVillage = Tasks.getRank(village.get(), player);
                     Identifier causeId = EntityType.getId(cause.getAttacker().getType());
                     CriterionMCA.FATE.trigger(player, causeId, relationToVillage);
                 });

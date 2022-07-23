@@ -72,7 +72,7 @@ public class BabyItem extends Item {
 
     public boolean onDropped(ItemStack stack, World world, PlayerEntity player) {
         if (!hasBeenInvalidated(stack)) {
-            BabyTracker.attemptDrop(stack, world, player);
+            return BabyTracker.attemptDrop(stack, world, player);
         }
 
         return true;
