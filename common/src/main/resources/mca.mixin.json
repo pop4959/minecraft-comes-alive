@@ -12,6 +12,7 @@
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinPlayerEntity",
+    "MixinPlayerInventory",
     "MixinProtoChunk",
     "MixinSensorType",
     "MixinServerWorld",

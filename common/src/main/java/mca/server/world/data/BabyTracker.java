@@ -354,19 +354,6 @@ public class BabyTracker extends PersistentState {
                 && stack.getSubNbt("childData").containsUuid("id");
     }
 
-    public static boolean attemptDrop(ItemStack stack, World world, PlayerEntity player) {
-        if (!world.isClient) {
-            int count = 0;
-            if (stack.getOrCreateNbt().contains("dropAttempts", NbtElement.INT_TYPE)) {
-                count = stack.getOrCreateNbt().getInt("dropAttempts") + 1;
-            }
-            stack.getOrCreateNbt().putInt("dropAttempts", count);
-            CriterionMCA.BABY_DROPPED_CRITERION.trigger((ServerPlayerEntity) player, count);
-            player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
-        }
-        return false;
-    }
-
     public static void invalidate(ItemStack stack) {
         stack.removeSubNbt("childData");
         stack.getOrCreateNbt().putBoolean("invalidated", true);

@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import mca.ClientProxy;
 import mca.Config;
+import mca.MCA;
 import mca.advancement.criterion.CriterionMCA;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.Status;
@@ -31,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -70,9 +72,18 @@ public class BabyItem extends Item {
         return ActionResult.PASS;
     }
 
-    public boolean onDropped(ItemStack stack, World world, PlayerEntity player) {
+    public boolean onDropped(ItemStack stack, PlayerEntity player) {
         if (!hasBeenInvalidated(stack)) {
-            return BabyTracker.attemptDrop(stack, world, player);
+            if (!player.getWorld().isClient) {
+                int count = 0;
+                if (stack.getOrCreateNbt().contains("dropAttempts", NbtElement.INT_TYPE)) {
+                    count = stack.getOrCreateNbt().getInt("dropAttempts") + 1;
+                }
+                stack.getOrCreateNbt().putInt("dropAttempts", count);
+                CriterionMCA.BABY_DROPPED_CRITERION.trigger((ServerPlayerEntity) player, count);
+                player.sendMessage(new TranslatableText("item.mca.baby.no_drop"), true);
+            }
+            return false;
         }
 
         return true;
