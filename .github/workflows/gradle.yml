@@ -39,7 +39,7 @@ jobs:
       - uses: jungwinter/split@v2
         id: split
         with:
-          separator: "-"
+          separator: "+"
           msg: ${{steps.tag.outputs.tag}}
       - name: "Upload Fabric to Modrinth"
         run: ./gradlew :fabric:modrinth
