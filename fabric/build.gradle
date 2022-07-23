@@ -77,7 +77,7 @@ modrinth {
     projectId = "1W98a849"
     versionNumber = version.toString() + "_fabric"
     versionName = "[Fabric 1.19] MCA Reborn - " + version
-    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()})/changelog.md"
+    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()}/changelog.md)"
     versionType = "release"
     uploadFile = remapJar
     gameVersions = ["1.19"]
