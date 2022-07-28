@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[35,)"
+loaderVersion = "[40,)"
 #issueTrackerURL = ""
 license = "GNU"
 
@@ -16,7 +16,7 @@ logoFile = "mca.png"
 [[dependencies.mca]]
     modId="forge"
     mandatory=true
-    versionRange="[38,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.mca]]
