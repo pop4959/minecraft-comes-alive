@@ -56,7 +56,7 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
 
     private void equipBestWeapon(VillagerEntityMCA villager, Item fallback) {
         ItemStack stack = new ItemStack(InventoryUtils.getBestSword(villager.getInventory()).map(Item.class::cast).orElse(fallback));
-        villager.equipStack(EquipmentSlot.MAINHAND, stack);
+        villager.equipStack(villager.getDominantSlot(), stack);
     }
 
     @Override
@@ -77,10 +77,10 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
         //weapon
         if (wear) {
             equipBestWeapon(villager, set.getMainHand());
-            villager.equipStack(EquipmentSlot.OFFHAND, new ItemStack(set.getGetOffHand()));
+            villager.equipStack(villager.getOpposingSlot(), new ItemStack(set.getGetOffHand()));
         } else {
-            villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
-            villager.setStackInHand(Hand.OFF_HAND, ItemStack.EMPTY);
+            villager.setStackInHand(villager.getDominantHand(), ItemStack.EMPTY);
+            villager.setStackInHand(villager.getOpposingHand(), ItemStack.EMPTY);
         }
 
         //armor

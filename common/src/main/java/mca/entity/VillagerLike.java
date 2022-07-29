@@ -21,6 +21,7 @@ import mca.util.network.datasync.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -32,6 +33,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.village.VillagerDataContainer;
@@ -126,6 +128,26 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         } else {
             return false;
         }
+    }
+
+    default Hand getDominantHand() {
+        return getTraits().hasTrait(Traits.Trait.LEFT_HANDED) ? Hand.OFF_HAND : Hand.MAIN_HAND;
+    }
+
+    default Hand getOpposingHand() {
+        return getDominantHand() == Hand.OFF_HAND ? Hand.MAIN_HAND : Hand.OFF_HAND;
+    }
+
+    default EquipmentSlot getSlotForHand(Hand hand) {
+        return hand == Hand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+    }
+
+    default EquipmentSlot getDominantSlot() {
+        return getSlotForHand(getDominantHand());
+    }
+
+    default EquipmentSlot getOpposingSlot() {
+        return getSlotForHand(getOpposingHand());
     }
 
     default Identifier getProfessionId() {

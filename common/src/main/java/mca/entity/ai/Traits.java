@@ -19,6 +19,7 @@ public class Traits {
     private static final CDataParameter<NbtCompound> TRAITS = CParameter.create("traits", new NbtCompound());
 
     public enum Trait {
+        LEFT_HANDED(1.0f, 0.5f),
         COLOR_BLIND(1.0f, 0.5f),
         HETEROCHROMIA(1.0f, 2.0f),
         LACTOSE_INTOLERANCE(1.0f, 1.0f),
