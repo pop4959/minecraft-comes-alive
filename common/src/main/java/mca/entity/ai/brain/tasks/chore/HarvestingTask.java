@@ -67,22 +67,22 @@ public class HarvestingTask extends AbstractChoreTask {
 
     @Override
     protected void finishRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        ItemStack stack = villager.getStackInHand(Hand.MAIN_HAND);
+        ItemStack stack = villager.getStackInHand(villager.getDominantHand());
         if (!stack.isEmpty()) {
-            villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+            villager.setStackInHand(villager.getDominantHand(), ItemStack.EMPTY);
         }
     }
 
     @Override
     protected void run(ServerWorld world, VillagerEntityMCA villager, long time) {
         super.run(world, villager, time);
-        if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        if (!villager.hasStackEquipped(villager.getDominantSlot())) {
             int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof HoeItem);
             if (i == -1) {
                 abandonJobWithMessage("chore.harvesting.nohoe");
             } else {
                 ItemStack stack = villager.getInventory().getStack(i);
-                villager.setStackInHand(Hand.MAIN_HAND, stack);
+                villager.setStackInHand(villager.getDominantHand(), stack);
             }
         }
     }
@@ -124,12 +124,12 @@ public class HarvestingTask extends AbstractChoreTask {
             this.villager = villager;
         }
 
-        if (!InventoryUtils.contains(villager.getInventory(), HoeItem.class) && !villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        if (!InventoryUtils.contains(villager.getInventory(), HoeItem.class) && !villager.hasStackEquipped(villager.getDominantSlot())) {
             abandonJobWithMessage("chore.harvesting.nohoe");
-        } else if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        } else if (!villager.hasStackEquipped(villager.getDominantSlot())) {
             int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof HoeItem);
             ItemStack stack = villager.getInventory().getStack(i);
-            villager.setStackInHand(Hand.MAIN_HAND, stack);
+            villager.setStackInHand(villager.getDominantHand(), stack);
         }
 
         BlockPos fertileFarmLand = searchUnusedFarmLand(16, 3);
@@ -202,7 +202,7 @@ public class HarvestingTask extends AbstractChoreTask {
         if (slot < 0) {
             return ITEM_MISSING;
         }
-        villager.setStackInHand(Hand.MAIN_HAND, inventory.getStack(slot));
+        villager.setStackInHand(villager.getDominantHand(), inventory.getStack(slot));
         return ITEM_FOUND;
     }
 
@@ -244,7 +244,7 @@ public class HarvestingTask extends AbstractChoreTask {
 
         if (result.isAccepted()) {
             if (result.shouldSwingHand()) {
-                villager.swingHand(Hand.MAIN_HAND);
+                villager.swingHand(villager.getDominantHand());
             }
         } else if (getAssigningPlayer().isPresent()) {
             villager.sendChatMessage(getAssigningPlayer().get(), "chore.harvesting.noseed");
@@ -253,7 +253,7 @@ public class HarvestingTask extends AbstractChoreTask {
 
     private void bonemealCrop(ServerWorld world, VillagerEntityMCA villager, BlockPos pos) {
         if (swapItem(stack -> stack.isOf(Items.BONE_MEAL)) == ITEM_READY && BoneMealItem.useOnFertilizable(villager.getMainHandStack(), world, pos)) {
-            villager.swingHand(Hand.MAIN_HAND);
+            villager.swingHand(villager.getDominantHand());
         }
     }
 

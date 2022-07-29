@@ -48,9 +48,9 @@ public class ChoppingTask extends AbstractChoreTask {
 
     @Override
     protected void finishRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        ItemStack stack = villager.getStackInHand(Hand.MAIN_HAND);
+        ItemStack stack = villager.getStackInHand(villager.getDominantHand());
         if (!stack.isEmpty()) {
-            villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+            villager.setStackInHand(villager.getDominantHand(), ItemStack.EMPTY);
         }
     }
 
@@ -58,12 +58,12 @@ public class ChoppingTask extends AbstractChoreTask {
     protected void run(ServerWorld world, VillagerEntityMCA villager, long time) {
         super.run(world, villager, time);
 
-        if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        if (!villager.hasStackEquipped(villager.getDominantSlot())) {
             int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof AxeItem);
             if (i == -1) {
                 abandonJobWithMessage("chore.chopping.noaxe");
             } else {
-                villager.setStackInHand(Hand.MAIN_HAND, villager.getInventory().getStack(i));
+                villager.setStackInHand(villager.getDominantHand(), villager.getInventory().getStack(i));
             }
         }
     }
@@ -72,12 +72,12 @@ public class ChoppingTask extends AbstractChoreTask {
     protected void keepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
         if (this.villager == null) this.villager = villager;
 
-        if (!InventoryUtils.contains(villager.getInventory(), AxeItem.class) && !villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        if (!InventoryUtils.contains(villager.getInventory(), AxeItem.class) && !villager.hasStackEquipped(villager.getDominantSlot())) {
             abandonJobWithMessage("chore.chopping.noaxe");
-        } else if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        } else if (!villager.hasStackEquipped(villager.getDominantSlot())) {
             int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof AxeItem);
             ItemStack stack = villager.getInventory().getStack(i);
-            villager.setStackInHand(Hand.MAIN_HAND, stack);
+            villager.setStackInHand(villager.getDominantHand(), stack);
         }
 
         if (targetTree == null) {
@@ -91,7 +91,7 @@ public class ChoppingTask extends AbstractChoreTask {
             targetTree = TaskUtils.getNearestPoint(villager.getBlockPos(), nearbyTrees);
 
             if (targetTree != null) {
-                ItemStack stack = villager.getStackInHand(Hand.MAIN_HAND);
+                ItemStack stack = villager.getStackInHand(villager.getDominantHand());
                 BlockPos pos = targetTree;
                 BlockState state;
                 while ((state = world.getBlockState(pos)).isIn(BlockTags.LOGS)) {
@@ -108,7 +108,7 @@ public class ChoppingTask extends AbstractChoreTask {
 
         BlockState state = world.getBlockState(targetTree);
         if (state.isIn(BlockTags.LOGS)) {
-            villager.swingHand(Hand.MAIN_HAND);
+            villager.swingHand(villager.getDominantHand());
             chopTicks++;
 
             // cut down a tree every few seconds, dependent on config + the mining speed multiplier
@@ -143,7 +143,7 @@ public class ChoppingTask extends AbstractChoreTask {
     }
 
     private void destroyTree(ServerWorld world, BlockPos origin) {
-        ItemStack stack = villager.getStackInHand(Hand.MAIN_HAND);
+        ItemStack stack = villager.getStackInHand(villager.getDominantHand());
         BlockPos pos = origin;
         BlockState state;
 
@@ -151,7 +151,7 @@ public class ChoppingTask extends AbstractChoreTask {
             world.breakBlock(pos, false, villager);
             pos = pos.add(0, 1, 0);
             villager.getInventory().addStack(new ItemStack(state.getBlock(), 1));
-            stack.damage(1, villager, player -> player.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+            stack.damage(1, villager, e -> e.sendEquipmentBreakStatus(e.getDominantSlot()));
         }
     }
 

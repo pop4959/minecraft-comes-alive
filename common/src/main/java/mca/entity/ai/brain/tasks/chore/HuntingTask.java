@@ -39,9 +39,9 @@ public class HuntingTask extends AbstractChoreTask {
 
     @Override
     protected void finishRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        ItemStack stack = villager.getStackInHand(Hand.MAIN_HAND);
+        ItemStack stack = villager.getStackInHand(villager.getDominantHand());
         if (!stack.isEmpty()) {
-            villager.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+            villager.setStackInHand(villager.getDominantHand(), ItemStack.EMPTY);
         }
     }
 
@@ -49,13 +49,13 @@ public class HuntingTask extends AbstractChoreTask {
     protected void run(ServerWorld world, VillagerEntityMCA villager, long time) {
         super.run(world, villager, time);
 
-        if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        if (!villager.hasStackEquipped(villager.getDominantSlot())) {
             int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof SwordItem);
             if (i == -1) {
                 abandonJobWithMessage("chore.hunting.nosword");
             } else {
                 ItemStack stack = villager.getInventory().getStack(i);
-                villager.setStackInHand(Hand.MAIN_HAND, stack);
+                villager.setStackInHand(villager.getDominantHand(), stack);
             }
         }
 
@@ -65,12 +65,12 @@ public class HuntingTask extends AbstractChoreTask {
     protected void keepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
         super.keepRunning(world, villager, time);
 
-        if (!InventoryUtils.contains(villager.getInventory(), SwordItem.class) && !villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        if (!InventoryUtils.contains(villager.getInventory(), SwordItem.class) && !villager.hasStackEquipped(villager.getDominantSlot())) {
             abandonJobWithMessage("chore.hunting.nosword");
-        } else if (!villager.hasStackEquipped(EquipmentSlot.MAINHAND)) {
+        } else if (!villager.hasStackEquipped(villager.getDominantSlot())) {
             int i = InventoryUtils.getFirstSlotContainingItem(villager.getInventory(), stack -> stack.getItem() instanceof SwordItem);
             ItemStack stack = villager.getInventory().getStack(i);
-            villager.setStackInHand(Hand.MAIN_HAND, stack);
+            villager.setStackInHand(villager.getDominantHand(), stack);
         }
 
         if (target == null) {
@@ -107,9 +107,9 @@ public class HuntingTask extends AbstractChoreTask {
                 target = null;
             } else if (villager.squaredDistanceTo(target) <= 12.25F) {
                 villager.moveTowards(target.getBlockPos());
-                villager.swingHand(Hand.MAIN_HAND);
+                villager.swingHand(villager.getDominantHand());
                 target.damage(DamageSource.mob(villager), 6.0F);
-                villager.getMainHandStack().damage(1, villager, player -> player.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+                villager.getMainHandStack().damage(1, villager, e -> e.sendEquipmentBreakStatus(e.getDominantSlot()));
             }
         }
     }

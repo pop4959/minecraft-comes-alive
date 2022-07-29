@@ -1,3 +1,13 @@
+# 7.3.13
+
+* Added Support for 1.19.1
+* Sneaking + Interacting with a villager with the editor item will now open their inventory!
+* Added Left-Handed Trait as a possible chance to spawn with
+  * This trait can be inherited from past/to future generations
+  * Having this trait will change their dominant hand in most tasks to be their left hand (Known to the player as the off-hand slot)
+  * Some examples of this include Work Tasks, EquipmentSet's, and Melee Attacks (For Equipment, if a preset already uses both hands, it'll remain unchanged.)
+  * Given Minecraft was never intended to support this type of gameplay, further tuning may be required in a future update.
+
 # 7.3.11/7.3.12
 
 * Misc. Patches for 1.18.2 and 1.19 Dependencies (1.18.2 officially identifies as LTS now!)
