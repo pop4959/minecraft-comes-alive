@@ -29,7 +29,7 @@ public class ColorPaletteLoader extends SinglePreparationResourceReloader<Map<Id
                     img.getHeight(),
                     img.makePixelArray()
             );
-        } catch (IOException e) {
+        } catch (Exception e) {
             MCA.LOGGER.error("Failed to load color palette from `{}`", id, e);
         }
         return ColorPalette.EMPTY;
