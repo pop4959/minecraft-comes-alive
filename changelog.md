@@ -1,3 +1,8 @@
+# 7.3.13
+
+* Added Support for 1.19.1
+* Sneaking + Interacting with a villager with the editor item will now open their inventory!
+
 # 7.3.11/7.3.12
 
 * Misc. Patches for 1.18.2 and 1.19 Dependencies (1.18.2 officially identifies as LTS now!)
