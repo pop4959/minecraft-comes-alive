@@ -36,6 +36,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
@@ -563,16 +564,16 @@ public class Village implements Iterable<Building> {
         buildings.values().forEach(b -> b.getResidents().remove(uuid));
     }
 
-    public EquipmentSet getGuardEquipment(VillagerProfession profession) {
+    public EquipmentSet getGuardEquipment(VillagerProfession profession, Hand dominantHand) {
         if (profession == ProfessionsMCA.ARCHER.get()) {
             if (hasBuilding("armory")) {
                 if (hasBuilding("blacksmith")) {
-                    return EquipmentSet.ARCHER_2;
+                    return getEquipmentFor(dominantHand, EquipmentSet.ARCHER_2, EquipmentSet.ARCHER_2_LEFT);
                 } else {
-                    return EquipmentSet.ARCHER_1;
+                    return getEquipmentFor(dominantHand, EquipmentSet.ARCHER_1, EquipmentSet.ARCHER_1_LEFT);
                 }
             } else {
-                return EquipmentSet.ARCHER_0;
+                return getEquipmentFor(dominantHand, EquipmentSet.ARCHER_0, EquipmentSet.ARCHER_0_LEFT);
             }
         } else {
             if (hasBuilding("armory")) {
@@ -582,9 +583,13 @@ public class Village implements Iterable<Building> {
                     return EquipmentSet.GUARD_1;
                 }
             } else {
-                return EquipmentSet.GUARD_0;
+                return getEquipmentFor(dominantHand, EquipmentSet.GUARD_0, EquipmentSet.GUARD_0_LEFT);
             }
         }
+    }
+
+    public static EquipmentSet getEquipmentFor(Hand dominantHand, EquipmentSet rightSet, EquipmentSet leftSet) {
+        return dominantHand == Hand.OFF_HAND && leftSet != null ? leftSet : rightSet;
     }
 
     // removes all villagers no longer living here

@@ -664,7 +664,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             ItemStack replacement = getInventory().getStack(slot).split(1);
 
             if (!replacement.isEmpty()) {
-                setStackInHand(Hand.MAIN_HAND, replacement);
+                setStackInHand(getDominantHand(), replacement);
                 return true;
             }
         }
