@@ -230,6 +230,7 @@
   "trait.heterochromia": "Heterochromia",
   "trait.color_blind": "Color Blind",
   "trait.vegetarian": "Vegetarian",
+  "trait.bisexual": "Bisexual",
   "trait.electrified": "Electrified",
   "trait.rainbow": "Rainbow",
   "traitDescription.lactose_intolerance": "Intolerant to lactose.",
@@ -241,6 +242,7 @@
   "traitDescription.heterochromia": "Two different eye colors.",
   "traitDescription.color_blind": "The world is black and white.",
   "traitDescription.vegetarian": "Dislikes eating meat.",
+  "traitDescription.bisexual": "Can have attraction to more then one gender.",
   "traitDescription.electrified": "Struck by lightning.",
   "traitDescription.rainbow": "Colored using Jebs secret source.",
 
@@ -607,6 +609,7 @@
 
   "events.marry": "%1$s and %2$s are now married!",
   "events.baby": "%1$s and %2$s have born a baby!",
+  "events.arrival.inn": "%1$s has arrived at the inn!",
   "events.bountyHunters": "%1$s sent bounty hunters after you!",
   "events.bountyHuntersFinal": "%1$s has been wiped out, a large group of bounty hunters try to avenge it!",
 

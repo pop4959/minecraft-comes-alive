@@ -131,16 +131,15 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.PLAY, VillagerTasksMCA.getPlayPackage(0.5F));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
         } else if (villager.isGuard()) {
-            brain.setSchedule(villager.getRandom().nextBoolean() ? SchedulesMCA.GUARD : SchedulesMCA.GUARD_NIGHT);
+            brain.setSchedule(SchedulesMCA.getTypeSchedule(villager, SchedulesMCA.GUARD, SchedulesMCA.GUARD_NIGHT));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getGuardCorePackage(villager));
             brain.setTaskList(Activity.WORK, VillagerTasksMCA.getGuardWorkPackage());
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getGuardPanicPackage(0.5f));
             brain.setTaskList(Activity.RAID, VillagerTasksMCA.getGuardWorkPackage());
-        } else if (profession == ProfessionsMCA.OUTLAW.get()) {
-            brain.setSchedule(SchedulesMCA.DEFAULT);
-            // todo how do villager behave when they are on death row?
+        } else if (profession == ProfessionsMCA.OUTLAW.get() || profession == ProfessionsMCA.CULTIST.get()) {
+            brain.setSchedule(SchedulesMCA.getTypeSchedule(villager, true));
         } else {
-            brain.setSchedule(SchedulesMCA.DEFAULT);
+            brain.setSchedule(SchedulesMCA.getTypeSchedule(villager));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getWorkingCorePackage(profession, 0.5F));
             brain.setTaskList(Activity.WORK, VillagerTasksMCA.getWorkPackage(profession, 0.5F), ImmutableSet.of(Pair.of(MemoryModuleType.JOB_SITE, MemoryModuleState.VALUE_PRESENT)));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());

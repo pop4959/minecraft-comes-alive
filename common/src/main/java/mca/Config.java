@@ -40,6 +40,7 @@ public final class Config implements Serializable {
     public boolean enterVillageNotification = true;
     public boolean villagerMarriageNotification = true;
     public boolean villagerBirthNotification = true;
+    public boolean innArrivalNotification = true;
     public int heartsToBeConsideredAsFriend = 40;
 
     //villager behavior
@@ -58,6 +59,8 @@ public final class Config implements Serializable {
     public int immigrantChance = 20;
     public float traitChance = 0.25f;
     public float traitInheritChance = 0.5f;
+    public float nightOwlChance = 0.5f;
+    public boolean allowAnyNightOwl = false;
     public int heartsForPardonHit = 30;
     public int pardonPlayerTicks = 1200;
     public boolean guardsTargetMonsters = false;

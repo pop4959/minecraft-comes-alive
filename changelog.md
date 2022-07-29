@@ -1,3 +1,15 @@
+# 7.3.11/7.3.12
+
+* Misc. Patches for 1.18.2 and 1.19 Dependencies (1.18.2 officially identifies as LTS now!)
+* Added `innArrivalNotification` config setting, for notifying players in the village that a new traveller has arrived!
+* Added a Night Owl schedule, in which Cultist's and Outlaws have a chance to use, based on the `nightOwlChance` config setting (Default: 50% Chance)
+  * Enable `allowAnyNightOwl` to be able to apply this same chance to other professions
+  * Guard's will also now use `nightOwlChance` instead of using a random boolean to determine their schedule (Meaning if you want more guards at night, increase `nightOwlChance`)
+* Added a Bisexuality Trait as a possible chance to spawn with
+  * This trait cannot be inherited from past/to future generations
+  * Having this trait will bypass gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
+  * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
+
 # 7.3.10
 
 * Fixed Villager Fate achievements (Happy hunting!)
