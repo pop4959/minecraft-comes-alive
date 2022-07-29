@@ -28,6 +28,7 @@ public class Traits {
         DWARFISM(1.0f, 1.0f),
         ALBINISM(1.0f, 1.0f),
         VEGETARIAN(1.0f, 0.0f),
+        BISEXUAL(1.0f, 0.0f),
         ELECTRIFIED(0.0f, 0.0f),
         SIRBEN(0.025f, 1.0f),
         RAINBOW(0.05f, 0.0f);
@@ -70,8 +71,16 @@ public class Traits {
         return getTraits().stream().filter(t -> t.inherit * Config.getInstance().traitInheritChance < random.nextFloat()).collect(Collectors.toSet());
     }
 
+    public boolean hasTrait(VillagerLike<?> target, Trait trait) {
+        return target.getTrackedValue(TRAITS).contains(trait.name());
+    }
+
     public boolean hasTrait(Trait trait) {
-        return entity.getTrackedValue(TRAITS).contains(trait.name());
+        return hasTrait(entity, trait);
+    }
+
+    public boolean hasSameTrait(Trait trait, VillagerLike<?> other) {
+        return hasTrait(entity, trait) && hasTrait(other, trait);
     }
 
     public void addTrait(Trait trait) {

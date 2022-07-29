@@ -3,6 +3,7 @@ package mca.item;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.entity.ai.Relationship;
+import mca.entity.ai.Traits;
 import mca.server.world.data.PlayerSaveData;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -33,6 +34,8 @@ public abstract class RelationshipItem extends TooltippedItem implements Special
             response = "interaction.relationship.fail.playermarried";
         } else if (memory.getHearts() < getHeartsRequired()) {
             response = "interaction.relationship.fail.lowhearts";
+        } else if (!villager.getTraits().hasTrait(Traits.Trait.BISEXUAL) && !villager.getGenetics().getGender().isMutuallyAttracted(playerData.getGender())) {
+            response = "interaction.relationship.fail.incompatible";
         } else {
             return false;
         }

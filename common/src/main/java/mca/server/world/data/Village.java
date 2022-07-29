@@ -5,6 +5,7 @@ import mca.entity.EquipmentSet;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
 import mca.ProfessionsMCA;
+import mca.entity.ai.Traits;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.family.FamilyTree;
@@ -454,7 +455,7 @@ public class Village implements Iterable<Building> {
 
         // Find a potential mate
         availableVillagers.stream()
-                .filter(i -> suitor.getGenetics().getGender().isMutuallyAttracted(i.getGenetics().getGender()))
+                .filter(i -> suitor.getTraits().hasSameTrait(Traits.Trait.BISEXUAL, i) || suitor.getGenetics().getGender().isMutuallyAttracted(i.getGenetics().getGender()))
                 .filter(i -> !suitor.getRelationships().getFamilyEntry().isRelative(i.getUuid()))
                 .findFirst().ifPresent(mate -> {
                     suitor.getRelationships().marry(mate);
@@ -490,28 +491,36 @@ public class Village implements Iterable<Building> {
     }
 
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
+        String name = null;
         if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
             int i = world.random.nextInt(10);
             if (i == 0 && Config.getInstance().innSpawnsWanderingTraders) {
                 WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (trader != null) {
+                    name = trader.getName().getString();
                     trader.setDespawnDelay(48000);
-                    return true;
                 }
             } else if (i == 1 && Config.getInstance().innSpawnsCultists) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
+                    name = adventurer.getName().getString();
                     adventurer.setProfession(ProfessionsMCA.CULTIST.get());
                     adventurer.setDespawnDelay(48000);
-                    return true;
                 }
             } else if (Config.getInstance().innSpawnsAdventurers) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
+                    name = adventurer.getName().getString();
                     adventurer.setProfession(ProfessionsMCA.ADVENTURER.get());
                     adventurer.setDespawnDelay(48000);
-                    return true;
                 }
+            }
+
+            if (name != null) {
+                if (Config.getInstance().innArrivalNotification) {
+                    broadCastMessage(world, "events.arrival.inn", name);
+                }
+                return true;
             }
         }
         return false;
@@ -522,6 +531,17 @@ public class Village implements Iterable<Building> {
                         || suitor.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend
                         || mate.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
                 .forEach(player -> player.sendMessage(new TranslatableText(event, suitor.getName(), mate.getName()), true));
+    }
+
+    private void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA target) {
+        world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId()
+                        || target.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
+                .forEach(player -> player.sendMessage(Text.translatable(event, target.getName()), true));
+    }
+
+    private void broadCastMessage(ServerWorld world, String event, String targetName) {
+        world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId())
+                .forEach(player -> player.sendMessage(Text.translatable(event, targetName), true));
     }
 
     public void markDirty(ServerWorld world) {

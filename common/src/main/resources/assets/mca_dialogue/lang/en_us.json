@@ -142,6 +142,8 @@
   "interaction.relationship.fail.playermarried/2": "Just what are you trying to do? You're already married!",
   "interaction.relationship.fail.playermarried/3": "What? Really? I think you're married to someone else, aren't you?",
   "interaction.relationship.fail.playermarried/4": "I'm appalled! You already have a spouse.",
+  "interaction.relationship.fail.incompatible/1": "I'm sorry, but I just don't think we are right for each other.",
+  "interaction.relationship.fail.incompatible/2": "It's not you, it's me! Or...maybe it's us...",
 
   "spouse.interaction.marry.success/1": "It's a dream come true! I'll love you forever!",
   "spouse.interaction.marry.success/2": "We're finally married! Now what?",
