@@ -19,7 +19,9 @@
 
   "entity.mca.grim_reaper": "Grim Reaper",
   "entity.mca.male_villager": "Male Villager",
+  "entity.mca.male_villager.none": "§kMissingno",
   "entity.mca.female_villager": "Female Villager",
+  "entity.mca.female_villager.none": "§kMissingno",
   "entity.mca.male_zombie_villager": "Male Zombie Villager",
   "entity.mca.female_zombie_villager": "Female Zombie Villager",
 

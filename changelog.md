@@ -1,3 +1,8 @@
+# 7.3.14
+
+* Fixed a crash that can occur when leaving a villager's name in the editor empty when switching tabs
+* Modified a failing villager state into something more...magical ;)
+
 # 7.3.13
 
 * Added Support for 1.19.1
