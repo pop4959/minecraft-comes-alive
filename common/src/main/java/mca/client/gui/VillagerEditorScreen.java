@@ -23,6 +23,7 @@ import mca.network.c2s.VillagerEditorSyncRequest;
 import mca.network.c2s.VillagerNameRequest;
 import mca.resources.ClothingList;
 import mca.resources.HairList;
+import mca.resources.Names;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -477,8 +478,10 @@ public class VillagerEditorScreen extends Screen {
                 assert client != null;
                 assert client.player != null;
                 villagerName = client.player.getName();
-                villager.setTrackedValue(VILLAGER_NAME, villagerName.asString());
+            } else {
+                villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
             }
+            villager.setTrackedValue(VILLAGER_NAME, villagerName.asString());
         }
         villagerNameField = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH / 3 * 2, 18, new TranslatableText("structure_block.structure_name")));
         villagerNameField.setMaxLength(32);
