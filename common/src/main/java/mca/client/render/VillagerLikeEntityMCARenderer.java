@@ -53,19 +53,29 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
             //custom skin
             MinecraftClient minecraftClient = MinecraftClient.getInstance();
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraftClient.getSkinProvider().getTextures(entity.getGameProfile());
-            return map.containsKey(MinecraftProfileTexture.Type.SKIN) ? RenderLayer.getEntityTranslucent(minecraftClient.getSkinProvider().loadSkin(map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN)) : RenderLayer.getEntityCutoutNoCull(DefaultSkinHelper.getTexture(PlayerEntity.getUuidFromProfile(entity.getGameProfile())));
+            return map.containsKey(MinecraftProfileTexture.Type.SKIN) ?
+                    RenderLayer.getEntityTranslucent(
+                            minecraftClient.getSkinProvider().loadSkin(
+                                    map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN
+                            )) :
+                    RenderLayer.getEntityCutoutNoCull(
+                            DefaultSkinHelper.getTexture(
+                                    PlayerEntity.getUuidFromProfile(entity.getGameProfile())
+                            )
+                    );
         }
 
         //setting the type to null prevents it from rendering
         //we need a skin layer anyway because of the color
-        return null;
+        return super.getRenderLayer(entity, showBody, translucent, showOutlines);
     }
 
     @Override
     protected boolean hasLabel(T villager) {
-        return MinecraftClient.getInstance().player != null
-                && MinecraftClient.getInstance().player.squaredDistanceTo(villager) < 25
-                && Config.getInstance().showNameTags;
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        return player != null
+                && player.squaredDistanceTo(villager) < 25
+                && Config.getInstance().showNameTags && !villager.isInvisibleTo(player);
     }
 
     @Override
