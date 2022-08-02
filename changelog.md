@@ -1,3 +1,8 @@
+# 7.3.15
+
+* Fixed multiple rendering issues that were causing invisibility to not work on Villagers
+  * Also applies to players using the custom villager model
+
 # 7.3.14
 
 * Fixed a crash that can occur when leaving a villager's name in the editor empty when switching tabs

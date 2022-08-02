@@ -55,6 +55,10 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     @Override
     public void render(MatrixStack transform, VertexConsumerProvider provider, int light, T villager, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+        if (villager.isInvisible()) {
+            return;
+        }
+
         if (getVillager(villager).hasCustomSkin()) {
             return;
         }
