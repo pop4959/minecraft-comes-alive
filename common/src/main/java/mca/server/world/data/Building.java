@@ -383,7 +383,7 @@ public class Building implements Serializable, Iterable<UUID> {
                 Block block = blockState.getBlock();
                 if (blockTypes.contains(Registry.BLOCK.getId(block))) {
                     if (block instanceof BedBlock) {
-                        // TODO: look for better solution for 7.3.0
+                        // TODO: look for better solution for 7.4.0
                         if (blockState.get(BedBlock.PART) == BedPart.HEAD) {
                             addBlock(block, p);
                         }

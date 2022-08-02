@@ -50,7 +50,7 @@ public class Residency {
         entity.sendChatMessage(player, "interaction.setworkplace.success");
         entity.getBrain().forget(MemoryModuleType.JOB_SITE);
         entity.getBrain().forget(MemoryModuleType.POTENTIAL_JOB_SITE);
-        //todo
+        //todo: Implement proper logic for this in 7.4.0
     }
 
     public BlockPos getHangout() {

@@ -160,7 +160,7 @@ public final class FamilyTreeNode implements Serializable {
             getRoot().getOrEmpty(this.partner).ifPresent(n -> {
                 if (n.relationshipState == RelationshipState.ENGAGED) {
                     if (isPlayer) {
-                        //todo letter
+                        //todo PlayerSaveData#sendLetterOfEngagement (Likely refactor to a new event, onEngagement, in 7.4.0)
                     }
                 }
                 n.partner = Util.NIL_UUID;

@@ -1054,7 +1054,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void playCelebrateSound() {
         if (Config.getInstance().useMCAVoices) {
-            //todo
+            playSound(getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_CELEBRATE.get() : SoundsMCA.VILLAGER_FEMALE_CELEBRATE.get(), getSoundVolume(), getSoundPitch());
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();
         }

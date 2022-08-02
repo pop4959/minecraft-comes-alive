@@ -24,8 +24,8 @@ public enum Personality {
     PEACEFUL(22, MoodGroup.GENERAL),      //Will not fight when on full health.
     FLIRTY(23, MoodGroup.PLAYFUL),        //likes to chat, flirt and kiss
     WITTY(24, MoodGroup.PLAYFUL),         //likes jokes.
-    SHY(25, MoodGroup.GENERAL),           //TODO
-    GLOOMY(26, MoodGroup.GENERAL),        //TODO
+    SHY(25, MoodGroup.GENERAL),           //TODO: 7.4.0
+    GLOOMY(26, MoodGroup.GENERAL),        //Always assuming the worst -- TODO: 7.4.0
 
     //Negative
     SENSITIVE(41, MoodGroup.GENERAL),     //Double heart penalty
@@ -35,7 +35,7 @@ public enum Personality {
     SLEEPY(45, MoodGroup.GENERAL),        //20% slower
     FRAGILE(46, MoodGroup.GENERAL),       //Less defence
     WEAK(47, MoodGroup.GENERAL),          //Less damage
-    GRUMPY(48, MoodGroup.SERIOUS);        //TODO
+    GRUMPY(48, MoodGroup.SERIOUS);        //Hard to talk to -- TODO: 7.4.0
 
     private final int id;
     private final MoodGroup moodGroup;

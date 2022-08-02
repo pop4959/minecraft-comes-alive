@@ -126,10 +126,11 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
             float satisfaction = sword.getAttackDamage();
             satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
             return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate("swords")));
-        } else if (stack.getItem() instanceof RangedWeaponItem) {
+        } else if (stack.getItem() instanceof RangedWeaponItem ranged) {
             //ranged weapons
-            // TODO: Make satisfaction ratio for ranged items
-            return Optional.of(new GiftType(stack.getItem(), 15, MCA.locate("archery")));
+            float satisfaction = ranged.getRange();
+            satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
+            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate("archery")));
         } else if (stack.getItem() instanceof ToolItem tool) {
             //tools
             float satisfaction = tool.getMaterial().getMiningSpeedMultiplier();

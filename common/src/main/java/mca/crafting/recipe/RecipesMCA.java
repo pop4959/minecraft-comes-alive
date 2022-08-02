@@ -15,6 +15,8 @@ public interface RecipesMCA {
 
     DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(MCA.MOD_ID, Registry.RECIPE_SERIALIZER_KEY);
 
+   // TODO: See 55a267864e93b0a37a86506a85993953735b8979
+   // - This 110% needs to be reimplemented, commit id is for the prior 1.17- version
    // RecipeType<PressingRecipe> PRESSING = type("pressing");
    // RegistrySupplier<RecipeSerializer<PressingRecipe>> PRESSING_SERIALIZER = serializer("pressing", PressingRecipe.Serializer::new);
 
