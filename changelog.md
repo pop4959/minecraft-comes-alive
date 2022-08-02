@@ -1,9 +1,9 @@
 # 7.3.15
 
 * Fixed multiple rendering issues that were causing invisibility to not work on Villagers
-  * Also applies to players using the custom villager model
+    * Also applies to players using the custom villager model
 * Added a `villagerRestockNotification` config option
-  * If enabled, will notify anyone in a villager's home village when a trade restock occurs
+    * If enabled, will notify anyone in a villager's home village when a trade restock occurs
 * Undo the magical edit made to the failing villager state (ERR_EASTER_EGG_FLUKE)
 * Modified the Gift Satisfaction for ranged weapons to based off the range instead of a static `15`
 * Added the Angry and Celebratory Voice Lines for Villagers when using MCA voices
@@ -11,6 +11,8 @@
   * If true, the normal action bar notifications will instead show in chat.
 * Added preliminary/supplementary data for 7.4.0 content
 * Misc. Build Pipeline cleanups
+* Fixed mail notification
+* Fixed offline players not receiving letter of condolence
 
 # 7.3.14
 
@@ -22,22 +24,22 @@
 * Added Support for 1.19.1
 * Sneaking + Interacting with a villager with the editor item will now open their inventory!
 * Added Left-Handed Trait as a possible chance to spawn with
-  * This trait can be inherited from past/to future generations
-  * Having this trait will change their dominant hand in most tasks to be their left hand (Known to the player as the off-hand slot)
-  * Some examples of this include Work Tasks, EquipmentSet's, and Melee Attacks (For Equipment, if a preset already uses both hands, it'll remain unchanged.)
-  * Given Minecraft was never intended to support this type of gameplay, further tuning may be required in a future update.
+    * This trait can be inherited from past/to future generations
+    * Having this trait will change their dominant hand in most tasks to be their left hand (Known to the player as the off-hand slot)
+    * Some examples of this include Work Tasks, EquipmentSet's, and Melee Attacks (For Equipment, if a preset already uses both hands, it'll remain unchanged.)
+    * Given Minecraft was never intended to support this type of gameplay, further tuning may be required in a future update.
 
 # 7.3.11/7.3.12
 
 * Misc. Patches for 1.18.2 and 1.19 Dependencies (1.18.2 officially identifies as LTS now!)
 * Added `innArrivalNotification` config setting, for notifying players in the village that a new traveller has arrived!
 * Added a Night Owl schedule, in which Cultist's and Outlaws have a chance to use, based on the `nightOwlChance` config setting (Default: 50% Chance)
-  * Enable `allowAnyNightOwl` to be able to apply this same chance to other professions
-  * Guard's will also now use `nightOwlChance` instead of using a random boolean to determine their schedule (Meaning if you want more guards at night, increase `nightOwlChance`)
+    * Enable `allowAnyNightOwl` to be able to apply this same chance to other professions
+    * Guard's will also now use `nightOwlChance` instead of using a random boolean to determine their schedule (Meaning if you want more guards at night, increase `nightOwlChance`)
 * Added a Bisexuality Trait as a possible chance to spawn with
-  * This trait cannot be inherited from past/to future generations
-  * Having this trait will bypass gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
-  * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
+    * This trait cannot be inherited from past/to future generations
+    * Having this trait will bypass gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
+    * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
 
 # 7.3.10
 

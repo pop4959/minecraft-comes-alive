@@ -548,6 +548,7 @@
 
   "command.no_permission": "This command is disabled for users.",
   "command.only_one_destiny": "You already decided your destiny.",
+  "command.no_mail": "You have no mails.",
 
   "blueprint.noBuilding": "You need to stand within a building",
   "blueprint.refreshed": "Buildings refreshed!",

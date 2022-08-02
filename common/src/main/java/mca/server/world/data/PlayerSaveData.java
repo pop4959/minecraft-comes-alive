@@ -6,6 +6,7 @@ import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.relationship.EntityRelationship;
+import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.RelationshipState;
 import mca.entity.ai.relationship.RelationshipType;
 import mca.entity.ai.relationship.family.FamilyTreeNode;
@@ -41,7 +42,8 @@ import java.util.UUID;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerSaveData extends PersistentState implements EntityRelationship {
-    private final ServerPlayerEntity player;
+    private final ServerWorld world;
+    private final UUID uuid;
 
     private Optional<Integer> lastSeenVillage = Optional.empty();
 
@@ -51,17 +53,27 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     private final List<NbtCompound> inbox = new LinkedList<>();
 
     public static PlayerSaveData get(ServerPlayerEntity player) {
-        return WorldUtils.loadData(player.getWorld().getServer().getOverworld(), nbt -> new PlayerSaveData(player, nbt), w -> new PlayerSaveData(player), "mca_player_" + player.getUuid());
+        return get(player.getWorld(), player.getUuid());
     }
 
-    PlayerSaveData(ServerPlayerEntity player) {
-        this.player = player;
+    public static PlayerSaveData get(ServerWorld world, UUID uuid) {
+        return WorldUtils.loadData(world.getServer().getOverworld(), nbt -> new PlayerSaveData(world, uuid, nbt), w -> new PlayerSaveData(world, uuid), "mca_player_" + uuid);
+    }
+
+    public static Optional<PlayerSaveData> getIfPresent(ServerWorld world, UUID uuid) {
+        return Optional.ofNullable(world.getPersistentStateManager().get(nbt -> new PlayerSaveData(world, uuid, nbt), "mca_player_" + uuid));
+    }
+
+    PlayerSaveData(ServerWorld world, UUID uuid) {
+        this.world = world;
+        this.uuid = uuid;
 
         resetEntityData();
     }
 
-    PlayerSaveData(ServerPlayerEntity player, NbtCompound nbt) {
-        this.player = player;
+    PlayerSaveData(ServerWorld world, UUID uuid, NbtCompound nbt) {
+        this.world = world;
+        this.uuid = uuid;
 
         lastSeenVillage = nbt.contains("lastSeenVillage", NbtElement.INT_TYPE) ? Optional.of(nbt.getInt("lastSeenVillage")) : Optional.empty();
         entityDataSet = nbt.contains("entityDataSet") && nbt.getBoolean("entityDataSet");
@@ -84,7 +96,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     private void resetEntityData() {
         entityData = new NbtCompound();
 
-        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(player.getWorld());
+        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(world);
         assert villager != null;
         villager.initializeSkin();
         villager.getGenetics().randomize();
@@ -114,10 +126,8 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         EntityRelationship.super.onTragedy(cause, burialSite, type, victim);
 
         // send letter of condolence
-        // todo does not work when offline
         if (victim instanceof VillagerEntityMCA victimVillager) {
-            sendLetterOfCondolence(player,
-                    victimVillager.getName().getString(),
+            sendLetterOfCondolence(victimVillager.getName().getString(),
                     victimVillager.getResidency().getHomeVillage().map(Village::getName).orElse(API.getVillagePool().pickVillageName("village")));
         }
     }
@@ -169,7 +179,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         if (Config.getInstance().enterVillageNotification && village.isVillage()) {
             self.sendMessage(new TranslatableText("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
         }
-        village.deliverTaxes(player.getWorld());
+        village.deliverTaxes(world);
     }
 
     @Override
@@ -186,17 +196,20 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
     @Override
     public ServerWorld getWorld() {
-        return player.getWorld();
+        return world;
     }
 
     @Override
     public UUID getUUID() {
-        return player.getUuid();
+        return uuid;
     }
 
     @Override
     public @NotNull FamilyTreeNode getFamilyEntry() {
-        return getFamilyTree().getOrCreate(player);
+        return getFamilyTree().getOrEmpty(uuid).orElseGet(() -> {
+            String name = Optional.ofNullable(world.getPlayerByUuid(uuid)).map(p -> p.getName().getString()).orElse("Unnamed Adventurer");
+            return getFamilyTree().getOrCreate(uuid, name, Gender.MALE, true);
+        });
     }
 
     public void reset() {
@@ -234,21 +247,21 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     // todo: Implement for 7.4.0
-    public void sendEngagementLetter(ServerPlayerEntity player, String name) {
-        sendLetter(player, List.of(
+    public void sendEngagementLetter(String name) {
+        sendLetter(List.of(
                 String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",
                         getFamilyEntry().getName(), name)
         ));
     }
 
-    public void sendLetterOfCondolence(ServerPlayerEntity player, String name, String village) {
-        sendLetter(player, List.of(
+    public void sendLetterOfCondolence(String name, String village) {
+        sendLetter(List.of(
                 String.format("{ \"translate\": \"mca.letter.condolence\", \"with\": [\"%s\", \"%s\", \"%s\"] }",
                         getFamilyEntry().getName(), name, village)
         ));
     }
 
-    public void sendLetter(ServerPlayerEntity player, List<String> lines) {
+    public void sendLetter(List<String> lines) {
         NbtList l = new NbtList();
         for (String line : lines) {
             l.add(0, NbtString.of(line));
@@ -257,12 +270,10 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         nbt.put("pages", l);
         sendMail(nbt);
 
-        if (player != null) {
-            showMailNotification(player);
-        }
+        Optional.ofNullable(world.getPlayerByUuid(uuid)).ifPresent(p -> showMailNotification((ServerPlayerEntity)p));
     }
 
-    public void showMailNotification(ServerPlayerEntity player) {
+    public static void showMailNotification(ServerPlayerEntity player) {
         NetworkHandler.sendToPlayer(new ShowToastRequest(
                 "server.mail.title",
                 "server.mail.description"

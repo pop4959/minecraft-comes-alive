@@ -67,8 +67,12 @@ public class Command {
     private static int mail(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         ServerPlayerEntity player = ctx.getSource().getPlayer();
         PlayerSaveData data = PlayerSaveData.get(player);
-        while (data.hasMail()) {
-            player.getInventory().offerOrDrop(data.getMail());
+        if (data.hasMail()) {
+            while (data.hasMail()) {
+                player.getInventory().offerOrDrop(data.getMail());
+            }
+        } else {
+            ctx.getSource().getPlayer().sendSystemMessage(new TranslatableText("command.no_mail"), Util.NIL_UUID);
         }
         return 0;
     }
