@@ -42,6 +42,7 @@ public final class Config implements Serializable {
     public boolean villagerBirthNotification = true;
     public boolean innArrivalNotification = true;
     public boolean villagerRestockNotification = true;
+    public boolean showNotificationsAsChat = false;
     public int heartsToBeConsideredAsFriend = 40;
 
     //villager behavior

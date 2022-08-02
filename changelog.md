@@ -6,6 +6,9 @@
   * If enabled, will notify anyone in a villager's home village when a trade restock occurs
 * Undo the magical edit made to the failing villager state (ERR_EASTER_EGG_FLUKE)
 * Modified the Gift Satisfaction for ranged weapons to based off the range instead of a static `15`
+* Added the Angry and Celebratory Voice Lines for Villagers when using MCA voices
+* Added a `showNotificationsAsChat` config option to toggle villager notification style
+  * If true, the normal action bar notifications will instead show in chat.
 * Added preliminary/supplementary data for 7.4.0 content
 * Misc. Build Pipeline cleanups
 
