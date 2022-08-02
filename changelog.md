@@ -5,6 +5,9 @@
 * Added a `villagerRestockNotification` config option
   * If enabled, will notify anyone in a villager's home village when a trade restock occurs
 * Undo the magical edit made to the failing villager state (ERR_EASTER_EGG_FLUKE)
+* Modified the Gift Satisfaction for ranged weapons to based off the range instead of a static `15`
+* Added preliminary/supplementary data for 7.4.0 content
+* Misc. Build Pipeline cleanups
 
 # 7.3.14
 

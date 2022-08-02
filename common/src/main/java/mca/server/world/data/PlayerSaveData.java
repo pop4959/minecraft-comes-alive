@@ -233,8 +233,8 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
-    //todo
-    public void sendAngryEngagedLetter(ServerPlayerEntity player, String name) {
+    // todo: Implement for 7.4.0
+    public void sendEngagementLetter(ServerPlayerEntity player, String name) {
         sendLetter(player, List.of(
                 String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",
                         getFamilyEntry().getName(), name)
