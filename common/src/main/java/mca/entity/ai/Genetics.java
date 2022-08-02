@@ -27,6 +27,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
     public static final GeneType PHEOMELANIN = new GeneType("gene_pheomelanin");
     public static final GeneType SKIN = new GeneType("gene_skin");
     public static final GeneType FACE = new GeneType("gene_face");
+    public static final GeneType VOICE = new GeneType("gene_voice");
 
     private static final CEnumParameter<Gender> GENDER = CParameter.create("gender", Gender.UNASSIGNED);
 
@@ -179,7 +180,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
 
         GeneType(String key) {
             this.key = key;
-            parameter = CParameter.create(key, 0F);
+            parameter = CParameter.create(key, 0.5f);
             GENOMES.add(this);
         }
 

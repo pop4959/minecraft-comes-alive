@@ -129,7 +129,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (!world.isClient) {
             Optional<Village> village = residency.getHomeVillage();
             if (village.isPresent() && Config.getInstance().villagerRestockNotification) {
-                village.get().broadCastMessage((ServerWorld) world, "events.restock", getName().getString());
+                village.get().broadCastMessage((ServerWorld)world, "events.restock", getName().getString());
             }
         }
     }
@@ -1060,6 +1060,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();
         }
+    }
+
+    public float getSoundPitch() {
+        float r = (random.nextFloat() - 0.5f) * 0.05f;
+        float g = (genetics.getGene(Genetics.VOICE) - 0.5f) * 0.3f;
+        float base = this.isBaby() && (!Config.getInstance().useMCAVoices) ? 1.5f : 1.0f;
+        return base + r + g;
     }
 
     @Override
