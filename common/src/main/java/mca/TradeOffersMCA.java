@@ -13,9 +13,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class TradeOffersMCA {
     public static void bootstrap() {
         TradeOffers.PROFESSION_TO_LEVELED_TRADE.put(ProfessionsMCA.ADVENTURER.get(), new Int2ObjectOpenHashMap<>(

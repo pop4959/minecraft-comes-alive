@@ -5,7 +5,9 @@ import mca.resources.data.BuildingType;
 import mca.resources.data.NameSet;
 import net.minecraft.util.math.random.Random;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class VillageComponents implements Iterable<BuildingType> {
     private final Map<String, BuildingType> buildingTypes = new HashMap<>();

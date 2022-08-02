@@ -1,7 +1,7 @@
 package mca.entity.ai.brain.tasks;
 
-import mca.entity.VillagerEntityMCA;
 import mca.ProfessionsMCA;
+import mca.entity.VillagerEntityMCA;
 import mca.server.world.data.Building;
 import net.minecraft.util.math.BlockPos;
 

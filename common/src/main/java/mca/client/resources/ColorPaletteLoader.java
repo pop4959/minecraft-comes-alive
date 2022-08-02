@@ -7,7 +7,6 @@ import net.minecraft.resource.SinglePreparationResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
