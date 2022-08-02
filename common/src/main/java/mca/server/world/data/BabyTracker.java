@@ -45,7 +45,7 @@ public class BabyTracker extends PersistentState {
     }
 
     public boolean hasActiveBaby(UUID mother, UUID father) {
-        // TODO: temporary disabled until 7.3.0
+        // TODO: temporary disabled until 7.4.0
         return false;
         //Key key = new Key(mother, father);
         //return pairings.containsKey(key) && getPairing(key).getChildCount() > 0;

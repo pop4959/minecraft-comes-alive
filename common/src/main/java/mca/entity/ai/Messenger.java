@@ -38,7 +38,7 @@ public interface Messenger extends EntityWrapper {
     default MutableText getTranslatable(PlayerEntity target, String phraseId, Object... params) {
         String targetName;
         if (target.world instanceof ServerWorld world) {
-            //todo won't work on the few client side use cases
+            //todo won't work on a few client side use cases
             targetName = FamilyTree.get(world)
                     .getOrEmpty(target.getUuid())
                     .map(FamilyTreeNode::getName)
