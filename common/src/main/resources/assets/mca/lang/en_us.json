@@ -19,9 +19,7 @@
 
   "entity.mca.grim_reaper": "Grim Reaper",
   "entity.mca.male_villager": "Male Villager",
-  "entity.mca.male_villager.none": "§kMissingno",
   "entity.mca.female_villager": "Female Villager",
-  "entity.mca.female_villager.none": "§kMissingno",
   "entity.mca.male_zombie_villager": "Male Zombie Villager",
   "entity.mca.female_zombie_villager": "Female Zombie Villager",
 
@@ -615,6 +613,7 @@
 
   "events.marry": "%1$s and %2$s are now married!",
   "events.baby": "%1$s and %2$s have born a baby!",
+  "events.restock": "%1$s has restocked their offers!",
   "events.arrival.inn": "%1$s has arrived at the inn!",
   "events.bountyHunters": "%1$s sent bounty hunters after you!",
   "events.bountyHuntersFinal": "%1$s has been wiped out, a large group of bounty hunters try to avenge it!",

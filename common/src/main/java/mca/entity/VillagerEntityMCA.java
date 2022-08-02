@@ -117,6 +117,18 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return burned > 0;
     }
 
+    @Override
+    public void restock() {
+        super.restock();
+
+        if (!world.isClient) {
+            Optional<Village> village = residency.getHomeVillage();
+            if (village.isPresent() && Config.getInstance().villagerRestockNotification) {
+                village.get().broadCastMessage((ServerWorld) world, "events.restock", getName().getString());
+            }
+        }
+    }
+
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
                 .add(Residency::createTrackedData)
