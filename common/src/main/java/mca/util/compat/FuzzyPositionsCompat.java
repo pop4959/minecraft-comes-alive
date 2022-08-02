@@ -1,10 +1,10 @@
 package mca.util.compat;
 
+import com.google.common.annotations.VisibleForTesting;
+import net.minecraft.util.math.BlockPos;
+
 import java.util.Random;
 import java.util.function.Predicate;
-import com.google.common.annotations.VisibleForTesting;
-
-import net.minecraft.util.math.BlockPos;
 
 public class FuzzyPositionsCompat {
     /**

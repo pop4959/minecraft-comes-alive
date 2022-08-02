@@ -1,7 +1,5 @@
 package mca.server.world.data;
 
-import mca.MCA;
-import mca.advancement.criterion.CriterionMCA;
 import mca.entity.ai.relationship.Gender;
 import mca.item.ItemsMCA;
 import mca.util.InventoryUtils;
@@ -16,9 +14,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.world.PersistentState;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;

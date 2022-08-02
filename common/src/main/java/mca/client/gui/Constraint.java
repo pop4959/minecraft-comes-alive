@@ -1,9 +1,9 @@
 package mca.client.gui;
 
+import mca.ProfessionsMCA;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.MoveState;
-import mca.ProfessionsMCA;
 import mca.entity.ai.Relationship;
 import mca.entity.ai.relationship.AgeState;
 import mca.resources.Rank;

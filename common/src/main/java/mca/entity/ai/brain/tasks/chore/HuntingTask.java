@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Chore;
 import mca.util.InventoryUtils;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -14,7 +13,6 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 
 import java.util.Comparator;
 
