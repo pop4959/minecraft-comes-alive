@@ -2,6 +2,9 @@
 
 * Fixed multiple rendering issues that were causing invisibility to not work on Villagers
   * Also applies to players using the custom villager model
+* Added a `villagerRestockNotification` config option
+  * If enabled, will notify anyone in a villager's home village when a trade restock occurs
+* Undo the magical edit made to the failing villager state (ERR_EASTER_EGG_FLUKE)
 
 # 7.3.14
 
