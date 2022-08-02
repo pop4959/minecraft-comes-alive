@@ -1,6 +1,7 @@
 package mca.client.gui;
 
 import mca.MCA;
+import mca.ProfessionsMCA;
 import mca.client.gui.widget.ColorPickerWidget;
 import mca.client.gui.widget.GeneSliderWidget;
 import mca.client.gui.widget.NamedTextFieldWidget;
@@ -12,7 +13,6 @@ import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Memories;
-import mca.ProfessionsMCA;
 import mca.entity.ai.Traits;
 import mca.entity.ai.relationship.AgeState;
 import mca.entity.ai.relationship.Gender;

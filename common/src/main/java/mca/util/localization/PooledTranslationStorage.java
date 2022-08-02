@@ -1,9 +1,9 @@
 package mca.util.localization;
 
 import mca.resources.PoolUtil;
+import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.math.random.Random;
 
 import java.util.*;
 import java.util.function.Predicate;
