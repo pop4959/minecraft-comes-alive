@@ -72,19 +72,17 @@ public interface InventoryUtils {
         return best;
     }
 
-    static Optional<ArmorItem> getBestArmor(Inventory inv, EquipmentSlot slot) {
+    static Optional<ItemStack> getBestArmor(Inventory inv, EquipmentSlot slot) {
         return stream(inv)
                 .filter(s -> s.getItem() instanceof ArmorItem)
-                .map(s -> (ArmorItem)s.getItem())
-                .filter(a -> a.getSlotType() == slot)
-                .max(Comparator.comparingDouble(ArmorItem::getProtection));
+                .filter(s -> ((ArmorItem)s.getItem()).getSlotType() == slot)
+                .max(Comparator.comparingDouble(s -> ((ArmorItem)s.getItem()).getProtection()));
     }
 
-    static Optional<SwordItem> getBestSword(Inventory inv) {
+    static Optional<ItemStack> getBestSword(Inventory inv) {
         return stream(inv)
                 .filter(s -> s.getItem() instanceof SwordItem)
-                .map(s -> (SwordItem)s.getItem())
-                .max(Comparator.comparingDouble(SwordItem::getAttackDamage));
+                .max(Comparator.comparingDouble(s -> ((SwordItem)s.getItem()).getAttackDamage()));
     }
 
     static void dropAllItems(Entity entity, Inventory inv) {
