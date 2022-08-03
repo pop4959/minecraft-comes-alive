@@ -19,6 +19,7 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
     );
     private int id = 0;
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Message> void registerMessage(Class<T> msg) {
         channel.registerMessage(id++, msg,
