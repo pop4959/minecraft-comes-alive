@@ -12,11 +12,11 @@ import java.util.UUID;
 
 public interface CParameter<T, TrackedType> {
     static CDataParameter<Integer> create(String id, int def) {
-        return new CDataParameter<>(id, TrackedDataHandlerRegistry.INTEGER, def, NbtCompound::getInt, NbtCompound::putInt);
+        return new CDataParameter<>(id, TrackedDataHandlerRegistry.INTEGER, def, (nbt, key) -> NbtCompoundDefaultGetters.getInt(nbt, key, def), NbtCompound::putInt);
     }
 
     static CDataParameter<Float> create(String id, float def) {
-        return new CDataParameter<>(id, TrackedDataHandlerRegistry.FLOAT, def, NbtCompound::getFloat, NbtCompound::putFloat);
+        return new CDataParameter<>(id, TrackedDataHandlerRegistry.FLOAT, def, (nbt, key) -> NbtCompoundDefaultGetters.getFloat(nbt, key, def), NbtCompound::putFloat);
     }
 
     static CDataParameter<Boolean> create(String id, boolean def) {
@@ -24,11 +24,11 @@ public interface CParameter<T, TrackedType> {
     }
 
     static CDataParameter<String> create(String id, String def) {
-        return new CDataParameter<>(id, TrackedDataHandlerRegistry.STRING, def, NbtCompound::getString, NbtCompound::putString);
+        return new CDataParameter<>(id, TrackedDataHandlerRegistry.STRING, def, (nbt, key) -> NbtCompoundDefaultGetters.getString(nbt, key, def), NbtCompound::putString);
     }
 
     static CDataParameter<NbtCompound> create(String id, NbtCompound def) {
-        return new CDataParameter<>(id, TrackedDataHandlerRegistry.NBT_COMPOUND, def, NbtCompound::getCompound, NbtCompound::put);
+        return new CDataParameter<>(id, TrackedDataHandlerRegistry.NBT_COMPOUND, def, (nbt, key) -> NbtCompoundDefaultGetters.getCompound(nbt, key, def), NbtCompound::put);
     }
 
     static CDataParameter<BlockPos> create(String id, BlockPos def) {

@@ -49,17 +49,18 @@ public interface EntityRelationship {
         return getFamilyEntry().streamParents().map(getWorld()::getEntity).filter(Objects::nonNull);
     }
 
-    default Stream<Entity> getSiblings() {
-        return getFamilyEntry()
-                .siblings()
-                .stream()
-                .map(getWorld()::getEntity)
-                .filter(Objects::nonNull)
-                .filter(e -> !e.getUuid().equals(getUUID())); // we exclude ourselves from the list of siblings
-    }
-
     default Optional<Entity> getPartner() {
         return Optional.ofNullable(getWorld().getEntity(getFamilyEntry().partner()));
+    }
+
+    //try to load a PlayerSaveData before loading the entity
+    //that way, offline players are also considered
+    default Stream<EntityRelationship> getRelationshipStream(Stream<UUID> uuids) {
+        return uuids.map(uuid -> PlayerSaveData.getIfPresent(getWorld(), uuid)
+                        .map(p -> (EntityRelationship)p)
+                        .or(() -> EntityRelationship.of(getWorld().getEntity(uuid))))
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     default void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity victim) {
@@ -69,19 +70,14 @@ public interface EntityRelationship {
 
         // notify family
         if (type == RelationshipType.SELF) {
-            getParents().forEach(parent ->
-                    EntityRelationship.of(parent).ifPresent(r ->
-                            r.onTragedy(cause, burialSite, RelationshipType.CHILD, victim)
-                    )
-            );
-            getSiblings().forEach(sibling ->
-                    EntityRelationship.of(sibling).ifPresent(r ->
-                            r.onTragedy(cause, burialSite, RelationshipType.SIBLING, victim)
-                    )
-            );
-            getPartner().flatMap(EntityRelationship::of).ifPresent(r ->
-                    r.onTragedy(cause, burialSite, RelationshipType.SPOUSE, victim)
-            );
+            getRelationshipStream(getFamilyEntry().streamParents())
+                    .forEach(r -> r.onTragedy(cause, burialSite, RelationshipType.CHILD, victim));
+
+            getRelationshipStream(getFamilyEntry().siblings().stream())
+                    .forEach(r -> r.onTragedy(cause, burialSite, RelationshipType.SIBLING, victim));
+
+            getRelationshipStream(Stream.of(getFamilyEntry().partner()))
+                    .forEach(r -> r.onTragedy(cause, burialSite, RelationshipType.SPOUSE, victim));
         }
 
         // end the marriage for both the deceased one and the spouse

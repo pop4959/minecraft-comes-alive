@@ -504,6 +504,7 @@ public class VillagerTasksMCA {
         );
     }
 
+    // Reference: VillagerTaskListProvider#createFreeFollowTask
     private static Pair<Integer, Task<LivingEntity>> getFullLookBehavior() {
         return Pair.of(5, new RandomTask<>(ImmutableList.of(
                 Pair.of(new FollowMobTask(EntityType.CAT, 8.0F), 8),
@@ -517,6 +518,7 @@ public class VillagerTasksMCA {
         );
     }
 
+    // Reference: VillagerTaskListProvider#createBusyFollowTask
     private static Pair<Integer, Task<LivingEntity>> getMinimalLookBehavior() {
         return Pair.of(5, new RandomTask<>(ImmutableList.of(
                 Pair.of(new FollowMobTask(EntityType.VILLAGER, 8.0F), 2),

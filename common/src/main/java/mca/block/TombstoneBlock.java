@@ -152,7 +152,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
     private void updateTombstoneState(World world, BlockPos pos) {
         if (!world.isClient) {
-            GraveyardManager.get((ServerWorld) world).setTombstoneState(pos,
+            GraveyardManager.get((ServerWorld)world).setTombstoneState(pos,
                     hasEntity(world, pos) ? TombstoneState.FILLED : TombstoneState.EMPTY
             );
         }
@@ -164,7 +164,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         super.onStateReplaced(state, world, pos, newState, moved);
         if (!world.isClient && !state.isOf(newState.getBlock())) {
             updateNeighbors(state, world, pos);
-            GraveyardManager.get((ServerWorld) world).removeTombstoneState(pos);
+            GraveyardManager.get((ServerWorld)world).removeTombstoneState(pos);
         }
     }
 
@@ -374,9 +374,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                         }
 
                         if (entity instanceof Infectable infectable) {
-                            infectable.setInfectionProgress(cure
-                                    ? Infectable.MIN_INFECTION
-                                    : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), infectable.getInfectionProgress())
+                            infectable.setInfectionProgress(cure ? 0.0f : Math.max(MathHelper.lerp(world.random.nextFloat(), Infectable.FEVER_THRESHOLD, Infectable.BABBLING_THRESHOLD), infectable.getInfectionProgress())
                             );
                         }
 
@@ -409,10 +407,10 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                 world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_BELL_USE, SoundCategory.BLOCKS, 1, 1);
                 world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, pos, Block.getRawIdFromState(getCachedState()));
                 world.emitGameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Emitter.of(getCachedState()));
-                ((TombstoneBlock) getCachedState().getBlock()).updateNeighbors(getCachedState(), world, pos);
+                ((TombstoneBlock)getCachedState().getBlock()).updateNeighbors(getCachedState(), world, pos);
 
                 if (!world.isClient) {
-                    GraveyardManager.get((ServerWorld) world).setTombstoneState(pos,
+                    GraveyardManager.get((ServerWorld)world).setTombstoneState(pos,
                             hasEntity() ? GraveyardManager.TombstoneState.FILLED : GraveyardManager.TombstoneState.EMPTY
                     );
                     sync();
@@ -496,8 +494,8 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
                 data.writeNbt(stack.getOrCreateSubNbt("entityData"));
                 getEntityName().ifPresent(name -> {
                     NbtHelper.computeIfAbsent(
-                            stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY),
-                            ItemStack.LORE_KEY, NbtElement.LIST_TYPE, NbtList::new)
+                                    stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY),
+                                    ItemStack.LORE_KEY, NbtElement.LIST_TYPE, NbtList::new)
                             .add(0, NbtString.of(name.getString()));
                 });
             });

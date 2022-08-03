@@ -15,6 +15,7 @@ public interface SchedulesMCA {
             .withActivity(11000, Activity.IDLE)
             .withActivity(12500, Activity.REST)
             .build();
+
     // NIGHT DEFAULT (500 ticks longer awaken)
     Schedule NIGHT_OWL_DEFAULT = new ScheduleBuilder(new Schedule())
             .withActivity(10, Activity.REST)

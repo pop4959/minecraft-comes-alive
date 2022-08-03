@@ -300,7 +300,7 @@ public final class FamilyTreeNode implements Serializable {
     }
 
     public boolean assignParent(FamilyTreeNode parent) {
-        int parents = (isValid(father) ?  1 : 0) + (isValid(mother) ?  1 : 0);
+        int parents = (isValid(father) ? 1 : 0) + (isValid(mother) ? 1 : 0);
 
         if (parents == 1) {
             //fill up last slot, independent on gender
@@ -359,6 +359,22 @@ public final class FamilyTreeNode implements Serializable {
     public void setGender(Gender gender) {
         this.gender = gender;
         markDirty();
+    }
+
+    // entries with these conditions are usually generated
+    public boolean probablyGenerated() {
+        return mother.equals(Util.NIL_UUID) && father.equals(Util.NIL_UUID) && children.size() == 1 && deceased && !isPlayer();
+    }
+
+    // true if there is at least one non-generated relative
+    public boolean willBeRemembered() {
+        if (!children.isEmpty()) {
+            return true;
+        }
+        if (!partner.equals(Util.NIL_UUID)) {
+            return true;
+        }
+        return !getParents().allMatch(FamilyTreeNode::probablyGenerated);
     }
 
     public static boolean isValid(@Nullable UUID uuid) {
