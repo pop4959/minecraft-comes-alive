@@ -1384,9 +1384,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     private void tickDespawnDelay() {
-        //todo adventurers with 20+ hearts stay
         if (this.despawnDelay > 0 && !this.hasCustomer() && --this.despawnDelay == 0) {
-            this.discard();
+            if (getVillagerBrain().getMemories().values().stream().anyMatch(m -> random.nextInt(100) < m.getHearts())) {
+                setProfession(VillagerProfession.NONE);
+                setDespawnDelay(0);
+            } else {
+                this.discard();
+            }
         }
     }
 
