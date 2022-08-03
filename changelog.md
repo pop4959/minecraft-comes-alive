@@ -19,6 +19,7 @@
 * Infection now lasts longer
 * Adventurers with high hearts may stay without asking
 * Mood slowly change on its own, with slight tendency towards neutral
+* Fixed `getGender` checks for PlayerSaveData (Now should properly be reflected!)
 
 # 7.3.14
 

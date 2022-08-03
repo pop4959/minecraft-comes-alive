@@ -205,10 +205,15 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     @Override
+    public Gender getGender() {
+        return Gender.byId(getEntityData().getInt("gender"));
+    }
+
+    @Override
     public @NotNull FamilyTreeNode getFamilyEntry() {
         return getFamilyTree().getOrEmpty(uuid).orElseGet(() -> {
             String name = Optional.ofNullable(world.getPlayerByUuid(uuid)).map(p -> p.getName().getString()).orElse("Unnamed Adventurer");
-            return getFamilyTree().getOrCreate(uuid, name, Gender.MALE, true);
+            return getFamilyTree().getOrCreate(uuid, name, getGender(), true);
         });
     }
 
