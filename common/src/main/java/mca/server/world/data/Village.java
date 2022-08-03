@@ -455,7 +455,7 @@ public class Village implements Iterable<Building> {
 
         // Find a potential mate
         availableVillagers.stream()
-                .filter(i -> suitor.getTraits().hasSameTrait(Traits.Trait.BISEXUAL, i) || suitor.getGenetics().getGender().isMutuallyAttracted(i.getGenetics().getGender()))
+                .filter(suitor::canBeAttractedTo)
                 .filter(i -> !suitor.getRelationships().getFamilyEntry().isRelative(i.getUuid()))
                 .findFirst().ifPresent(mate -> {
                     suitor.getRelationships().marry(mate);
