@@ -1,6 +1,7 @@
 package mca.entity;
 
 import mca.Config;
+import mca.ProfessionsMCA;
 import mca.TagsMCA;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Relationship;
@@ -208,6 +209,11 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         if (!world.isClient && name != null) {
             setName(name.getString());
         }
+    }
+
+    @Override
+    public boolean isHostile() {
+        return true;
     }
 
     @Override

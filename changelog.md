@@ -8,11 +8,13 @@
 * Modified the Gift Satisfaction for ranged weapons to based off the range instead of a static `15`
 * Added the Angry and Celebratory Voice Lines for Villagers when using MCA voices
 * Added a `showNotificationsAsChat` config option to toggle villager notification style
-  * If true, the normal action bar notifications will instead show in chat.
+    * If true, the normal action bar notifications will instead show in chat.
 * Added preliminary/supplementary data for 7.4.0 content
 * Misc. Build Pipeline cleanups
 * Fixed mail notification
 * Fixed offline players not receiving letter of condolence
+* Villagers are no longer pissed when killing a Zombie Villager
+* Zombie Villagers without any family won't be buried
 
 # 7.3.14
 

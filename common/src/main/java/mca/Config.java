@@ -80,6 +80,7 @@ public final class Config implements Serializable {
     public boolean enableBoobs = true;
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
+    public int heartsRequiredToAutoSpawnGravestone = 10;
 
     //village behavior
     public int guardSpawnRate = 6;
