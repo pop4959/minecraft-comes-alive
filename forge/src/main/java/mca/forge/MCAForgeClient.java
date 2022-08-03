@@ -78,13 +78,15 @@ public final class MCAForgeClient {
                 SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
         );
 
+        // TODO: Forge has made this deprecated in 1.19 and we're meant to use `render_type` in the model json
+        // - remove and replace at a later date instead, since Fabric still uses the older method afaik.
+        //noinspection removal
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
     }
 
     @SubscribeEvent
     public static void onParticleFactoryRegistration(RegisterParticleProvidersEvent event) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        mc.particleManager.registerFactory(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
-        mc.particleManager.registerFactory(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);
+        event.register(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
+        event.register(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);
     }
 }
