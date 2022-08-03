@@ -529,18 +529,18 @@ public class Village implements Iterable<Building> {
         world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId()
                         || suitor.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend
                         || mate.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
-                .forEach(player -> player.sendMessage(Text.translatable(event, suitor.getName(), mate.getName()), true));
+                .forEach(player -> player.sendMessage(Text.translatable(event, suitor.getName(), mate.getName()), !Config.getInstance().showNotificationsAsChat));
     }
 
     public void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA target) {
         world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId()
                         || target.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
-                .forEach(player -> player.sendMessage(Text.translatable(event, target.getName()), true));
+                .forEach(player -> player.sendMessage(Text.translatable(event, target.getName()), !Config.getInstance().showNotificationsAsChat));
     }
 
     public void broadCastMessage(ServerWorld world, String event, String targetName) {
         world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId())
-                .forEach(player -> player.sendMessage(Text.translatable(event, targetName), true));
+                .forEach(player -> player.sendMessage(Text.translatable(event, targetName), !Config.getInstance().showNotificationsAsChat));
     }
 
     public void markDirty(ServerWorld world) {

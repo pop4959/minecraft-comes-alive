@@ -58,9 +58,19 @@ public class FamilyTree extends PersistentState {
                 entity instanceof PlayerEntity));
     }
 
+    public void remove(UUID id) {
+        entries.remove(id);
+        markDirty();
+    }
+
     @NotNull
     public FamilyTreeNode getOrCreate(UUID id, String name, Gender gender) {
-        return entries.computeIfAbsent(id, uuid -> createEntry(uuid, name, gender, false));
+        return getOrCreate(id, name, gender, false);
+    }
+
+    @NotNull
+    public FamilyTreeNode getOrCreate(UUID id, String name, Gender gender, boolean isPlayer) {
+        return entries.computeIfAbsent(id, uuid -> createEntry(uuid, name, gender, isPlayer));
     }
 
     private FamilyTreeNode createEntry(UUID uuid, String name, Gender gender, boolean isPlayer) {

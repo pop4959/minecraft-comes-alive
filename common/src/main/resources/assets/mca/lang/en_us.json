@@ -548,6 +548,7 @@
 
   "command.no_permission": "This command is disabled for users.",
   "command.only_one_destiny": "You already decided your destiny.",
+  "command.no_mail": "You have no mails.",
 
   "blueprint.noBuilding": "You need to stand within a building",
   "blueprint.refreshed": "Buildings refreshed!",
@@ -609,6 +610,7 @@
   "gene.pheomelanin": "Pheomelanin",
   "gene.skin": "Skin",
   "gene.face": "Face",
+  "gene.voice": "Voice",
   "gene.tooltip": "%s: %d%%",
 
   "events.marry": "%1$s and %2$s are now married!",
@@ -720,5 +722,7 @@
   "subtitle.mca.villager.yes": "Agreeing",
   "subtitle.mca.villager.no": "Disagreeing",
   "subtitle.mca.villager.snoring": "Snoring",
-  "subtitle.mca.villager.hurt": "Villager Hurt"
+  "subtitle.mca.villager.hurt": "Villager Hurt",
+  "subtitle.mca.villager.angry": "Villager Angry",
+  "subtitle.mca.villager.celebrating": "Villager Celebrating"
 }

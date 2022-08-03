@@ -98,7 +98,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
     @Override
     public float getInfectionProgress() {
-        return MAX_INFECTION;
+        return 1.0f;
     }
 
     @Override
@@ -207,6 +207,11 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
         if (!world.isClient && name != null) {
             setName(name.getString());
         }
+    }
+
+    @Override
+    public boolean isHostile() {
+        return true;
     }
 
     @Override

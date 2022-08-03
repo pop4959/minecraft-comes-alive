@@ -218,6 +218,23 @@
       "mca:villager/female/hurt/hurt5"
     ]
   },
+  "villager.male.angry": {
+    "subtitle": "subtitle.mca.villager.angry",
+    "sounds": [
+      "mca:villager/male/angry/angry1",
+      "mca:villager/male/angry/angry2",
+      "mca:villager/male/angry/angry3"
+    ]
+  },
+  "villager.female.angry": {
+    "subtitle": "subtitle.mca.villager.angry",
+    "sounds": [
+      "mca:villager/female/angry/angry1",
+      "mca:villager/female/angry/angry2",
+      "mca:villager/female/angry/angry3",
+      "mca:villager/female/angry/angry4"
+    ]
+  },
   "villager.sirben": {
     "sounds": [
       "mca:villager/sirben/sirben1",

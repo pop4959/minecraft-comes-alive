@@ -1,5 +1,6 @@
 package mca.entity.ai;
 
+import mca.Config;
 import mca.TagsMCA;
 import mca.block.TombstoneBlock;
 import mca.entity.Status;
@@ -79,22 +80,39 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     }
 
     public void onDeath(DamageSource cause) {
-        getFamilyEntry().setDeceased(true);
+        boolean beRemembered = getFamilyEntry().willBeRemembered();
+        boolean beLoved = entity.getVillagerBrain().getMemories().values().stream().anyMatch(m -> m.getHearts() > Config.getInstance().heartsRequiredToAutoSpawnGravestone);
 
-        GraveyardManager.get((ServerWorld)entity.world)
-                .findNearest(entity.getBlockPos(), TombstoneState.EMPTY, 10)
-                .ifPresentOrElse(pos -> {
-                    if (entity.world.getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
-                        BlockEntity be = entity.world.getBlockEntity(pos);
-                        if (be instanceof TombstoneBlock.Data) {
-                            onTragedy(cause, pos);
-                            ((TombstoneBlock.Data)be).setEntity(entity);
+        if (beRemembered || beLoved || !entity.isHostile()) {
+            getFamilyEntry().setDeceased(true);
+
+            //look for a gravestone
+            //todo place one for villagers being remembered or loved
+            GraveyardManager.get((ServerWorld)entity.world)
+                    .findNearest(entity.getBlockPos(), TombstoneState.EMPTY, 10)
+                    .ifPresentOrElse(pos -> {
+                        if (entity.world.getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
+                            BlockEntity be = entity.world.getBlockEntity(pos);
+                            if (be instanceof TombstoneBlock.Data) {
+                                onTragedy(cause, pos);
+                                ((TombstoneBlock.Data)be).setEntity(entity);
+                            }
                         }
-                    }
-                    onTragedy(cause, null);
-                }, () -> {
-                    onTragedy(cause, null);
-                });
+                        onTragedy(cause, null);
+                    }, () -> {
+                        onTragedy(cause, null);
+                    });
+        } else {
+            onTragedy(cause, null);
+        }
+
+        // the family is too small to be remembered
+        if (!beRemembered) {
+            getFamilyEntry().streamParents().forEach(uuid -> {
+                getFamilyTree().remove(uuid);
+            });
+            getFamilyTree().remove(entity.getUuid());
+        }
     }
 
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite) {

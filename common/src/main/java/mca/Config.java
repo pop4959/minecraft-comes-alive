@@ -32,8 +32,6 @@ public final class Config implements Serializable {
     public float babyZombieChance = 0.25f;
     public boolean villagerTagsHacks = true;
     public boolean enableInfection = true;
-    public int infectionChance = 5;
-    public float infectionChanceDecreasePerLevel = 0.25f;
     public boolean allowGrimReaper = true;
     public String villagerChatPrefix = "";
     public boolean canHurtBabies = true;
@@ -42,7 +40,12 @@ public final class Config implements Serializable {
     public boolean villagerBirthNotification = true;
     public boolean innArrivalNotification = true;
     public boolean villagerRestockNotification = true;
+    public boolean showNotificationsAsChat = false;
     public int heartsToBeConsideredAsFriend = 40;
+
+    public int infectionChance = 5;
+    public float infectionChanceDecreasePerLevel = 0.25f;
+    public int infectionTime = 72000;
 
     //villager behavior
     public int chanceToHaveTwins = 2;
@@ -79,6 +82,7 @@ public final class Config implements Serializable {
     public boolean enableBoobs = true;
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
+    public int heartsRequiredToAutoSpawnGravestone = 10;
 
     //village behavior
     public int guardSpawnRate = 6;
