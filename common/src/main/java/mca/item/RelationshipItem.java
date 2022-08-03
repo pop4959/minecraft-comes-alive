@@ -34,7 +34,7 @@ public abstract class RelationshipItem extends TooltippedItem implements Special
             response = "interaction.relationship.fail.playermarried";
         } else if (memory.getHearts() < getHeartsRequired()) {
             response = "interaction.relationship.fail.lowhearts";
-        } else if (!villager.getTraits().hasTrait(Traits.Trait.BISEXUAL) && !villager.getGenetics().getGender().isMutuallyAttracted(playerData.getGender())) {
+        } else if (!villager.canBeAttractedTo(playerData)) {
             response = "interaction.relationship.fail.incompatible";
         } else {
             return false;
