@@ -1,7 +1,6 @@
 package mca.entity;
 
 import mca.Config;
-import mca.ProfessionsMCA;
 import mca.TagsMCA;
 import mca.entity.ai.Genetics;
 import mca.entity.ai.Relationship;
@@ -100,7 +99,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
     @Override
     public float getInfectionProgress() {
-        return MAX_INFECTION;
+        return 1.0f;
     }
 
     @Override

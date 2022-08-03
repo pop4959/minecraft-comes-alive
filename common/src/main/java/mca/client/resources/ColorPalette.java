@@ -14,7 +14,7 @@ public class ColorPalette {
     public static final ColorPalette SKIN = new ColorPalette(new Identifier(MCA.MOD_ID, "textures/colormap/villager_skin.png"));
     public static final ColorPalette HAIR = new ColorPalette(new Identifier(MCA.MOD_ID, "textures/colormap/villager_hair.png"));
 
-    static final Data EMPTY = new Data(1, 1, new int[] { 0xFFFFFF });
+    static final Data EMPTY = new Data(1, 1, new int[] {0xFFFFFF});
 
     private final Identifier id;
 
@@ -42,7 +42,7 @@ public class ColorPalette {
         };
 
         if (greenShift > 0) {
-            applyGreenShift(result, greenShift / 255F);
+            applyGreenShift(result, greenShift);
         }
 
         return result;

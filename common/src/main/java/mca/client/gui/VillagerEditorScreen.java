@@ -8,7 +8,6 @@ import mca.client.gui.widget.NamedTextFieldWidget;
 import mca.client.gui.widget.TooltipButtonWidget;
 import mca.cobalt.network.NetworkHandler;
 import mca.entity.EntitiesMCA;
-import mca.entity.Infectable;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.VillagerLike;
 import mca.entity.ai.Genetics;
@@ -362,9 +361,9 @@ public class VillagerEditorScreen extends Screen {
                 y += 4;
 
                 //infection
-                addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.infection"), villager.getInfectionProgress() / Infectable.MAX_INFECTION, b -> {
+                addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.infection"), villager.getInfectionProgress(), b -> {
                     villager.setInfected(b > 0);
-                    villager.setInfectionProgress(b.floatValue() * Infectable.MAX_INFECTION);
+                    villager.setInfectionProgress(b.floatValue());
                 }));
                 y += 22;
 
@@ -485,7 +484,6 @@ public class VillagerEditorScreen extends Screen {
         }
         villagerNameField = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH / 3 * 2, 18, new TranslatableText("structure_block.structure_name")));
         villagerNameField.setMaxLength(32);
-        assert villagerName != null;
         villagerNameField.setText(villagerName.asString());
         villagerNameField.setChangedListener(name -> villager.setTrackedValue(VILLAGER_NAME, name));
         addDrawableChild(new ButtonWidget(x + DATA_WIDTH / 3 * 2 + 1, y - 1, DATA_WIDTH / 3 - 2, 20, new TranslatableText("gui.button.random"), (b) ->

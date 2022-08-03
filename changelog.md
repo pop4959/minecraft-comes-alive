@@ -15,6 +15,8 @@
 * Fixed offline players not receiving letter of condolence
 * Villagers are no longer pissed when killing a Zombie Villager
 * Zombie Villagers without any family won't be buried
+* Infected villagers being killed by a zombie no longer duplicate their inventory
+* Infection now lasts longer
 
 # 7.3.14
 

@@ -101,7 +101,7 @@ import java.util.function.Predicate;
 import static mca.client.model.CommonVillagerModel.getVillager;
 
 public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<VillagerEntityMCA>, NamedScreenHandlerFactory, CompassionateEntity<BreedableRelationship>, CrossbowUser {
-    private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", MIN_INFECTION);
+    private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", 0.0f);
 
     private static final CDataParameter<Integer> GROWTH_AMOUNT = CParameter.create("growthAmount", -AgeState.getMaxAge());
 
@@ -156,7 +156,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.UNASSIGNED);
 
-    private float prevInfectionProgress;
     private int prevGrowthAmount;
 
     public VillagerEntityMCA(EntityType<VillagerEntityMCA> type, World w, Gender gender) {
@@ -714,16 +713,15 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else {
             // infection
             float infection = getInfectionProgress();
-            if (infection > 0) {
-                if (this.age % 120 == 0 && infection > FEVER_THRESHOLD && world.random.nextInt(200) > 150) {
+            if (infection > 0 && this.age % 20 == 0) {
+                if (infection > FEVER_THRESHOLD && world.random.nextInt(25) == 0) {
                     sendChatToAllAround("villager.sickness");
                 }
 
-                prevInfectionProgress = infection;
-                infection += 0.02F;
+                infection += 1.0f / Config.getInstance().infectionTime;
                 setInfectionProgress(infection);
 
-                if (!world.isClient && infection >= POINT_OF_NO_RETURN && world.random.nextInt(2000) < infection) {
+                if (infection > 1.0f) {
                     convertTo(EntityType.ZOMBIE_VILLAGER, false);
                     discard();
                 }
@@ -867,9 +865,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             return;
         }
 
-        InventoryUtils.dropAllItems(this, inventory);
-
-        if (!(cause.getAttacker() instanceof ZombieEntity) && !(cause.getAttacker() instanceof ZombieVillagerEntity)) {
+        if (cause.getAttacker() instanceof ZombieEntity || cause.getAttacker() instanceof ZombieVillagerEntity) {
             if (getInfectionProgress() >= BABBLING_THRESHOLD) {
                 RemovalReason reason = getRemovalReason();
                 unsetRemoved();
@@ -878,6 +874,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 return;
             }
         }
+
+        InventoryUtils.dropAllItems(this, inventory);
 
         relations.onDeath(cause);
 
@@ -1102,11 +1100,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public float getInfectionProgress() {
         return getTrackedValue(INFECTION_PROGRESS);
-    }
-
-    @Override
-    public float getPrevInfectionProgress() {
-        return prevInfectionProgress;
     }
 
     @Override

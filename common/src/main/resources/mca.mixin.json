@@ -16,7 +16,6 @@
     "MixinProtoChunk",
     "MixinSensorType",
     "MixinServerWorld",
-    "MixinTargetPredicate",
     "MixinVillagerEntity",
     "MixinVillagerProfession",
     "MixinZombieVillagerEntity"
