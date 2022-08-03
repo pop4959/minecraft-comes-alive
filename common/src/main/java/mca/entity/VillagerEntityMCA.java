@@ -744,6 +744,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 instance.removeModifier(EXTRA_HEALTH_EFFECT_ID);
                 instance.addTemporaryModifier(new EntityAttributeModifier(EXTRA_HEALTH_EFFECT_ID, "level health boost", Config.getInstance().villagerHealthBonusPerLevel * level, EntityAttributeModifier.Operation.ADDITION));
             }
+
+            //twice a day, randomize the mood a bit
+            if (this.age % 12000 == 0) {
+                int base = Math.round(mcaBrain.getMoodValue() / 12.0f);
+                int value = random.nextInt(7) - 3;
+                mcaBrain.modifyMoodValue(value - base);
+            }
         }
     }
 

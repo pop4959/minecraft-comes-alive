@@ -18,6 +18,7 @@
 * Infected villagers being killed by a zombie no longer duplicate their inventory
 * Infection now lasts longer
 * Adventurers with high hearts may stay without asking
+* Mood slowly change on its own, with slight tendency towards neutral
 
 # 7.3.14
 
