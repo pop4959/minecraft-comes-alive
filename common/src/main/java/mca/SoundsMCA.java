@@ -33,8 +33,8 @@ public interface SoundsMCA {
     RegistrySupplier<SoundEvent> VILLAGER_MALE_ANGRY = register("villager.male.angry");
     RegistrySupplier<SoundEvent> VILLAGER_FEMALE_ANGRY = register("villager.female.angry");
 
-    RegistrySupplier<SoundEvent> VILLAGER_MALE_CELEBRATE = register("villager.male.celebrate"); // todo: 7.4.0
-    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_CELEBRATE = register("villager.female.celebrate"); // todo: 7.4.0
+    RegistrySupplier<SoundEvent> VILLAGER_MALE_CELEBRATE = register("villager.male.celebrate");
+    RegistrySupplier<SoundEvent> VILLAGER_FEMALE_CELEBRATE = register("villager.female.celebrate");
 
     RegistrySupplier<SoundEvent> VILLAGER_MALE_GREET = register("villager.male.greet");
     RegistrySupplier<SoundEvent> VILLAGER_FEMALE_GREET = register("villager.female.greet");

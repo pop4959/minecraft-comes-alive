@@ -235,6 +235,23 @@
       "mca:villager/female/angry/angry4"
     ]
   },
+  "villager.male.celebrate": {
+    "subtitle": "subtitle.mca.villager.celebrate",
+    "sounds": [
+      "mca:villager/male/laugh/laugh1",
+      "mca:villager/male/laugh/laugh2",
+      "mca:villager/male/laugh/laugh3"
+    ]
+  },
+  "villager.female.celebrate": {
+    "subtitle": "subtitle.mca.villager.celebrate",
+    "sounds": [
+      "mca:villager/female/laugh/laugh1",
+      "mca:villager/female/laugh/laugh2",
+      "mca:villager/female/laugh/laugh3",
+      "mca:villager/female/laugh/laugh4"
+    ]
+  },
   "villager.sirben": {
     "sounds": [
       "mca:villager/sirben/sirben1",
