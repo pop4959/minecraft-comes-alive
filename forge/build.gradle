@@ -76,11 +76,11 @@ modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "1W98a849"
     versionNumber = version.toString() + "_forge"
-    versionName = "[Forge 1.19.1] MCA Reborn - " + version
+    versionName = "[Forge 1.19.2] MCA Reborn - " + version
     changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()}/changelog.md)"
     versionType = "release"
     uploadFile = remapJar
-    gameVersions = ["1.19.1"]
+    gameVersions = ["1.19.2"]
     loaders = ["forge"]
     dependencies = []
 }
