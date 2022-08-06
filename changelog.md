@@ -1,3 +1,10 @@
+# 7.3.16
+
+* Fixed wrong pitch for babies
+* Pitch slowly increases with age
+* Fixed another case of incest
+* Fixed enchantments glint on villagers
+
 # 7.3.15
 
 * Fixed multiple rendering issues that were causing invisibility to not work on Villagers
@@ -19,8 +26,8 @@
 * Infection now lasts longer
 * Adventurers with high hearts may stay without asking
 * Mood slowly change on its own, with slight tendency towards neutral
-* Fixed enchantments glint on villagers
 * Fixed `getGender` checks for PlayerSaveData (Now should properly be reflected!)
+* Villagers have a voice pitch gene
 
 # 7.3.14
 
