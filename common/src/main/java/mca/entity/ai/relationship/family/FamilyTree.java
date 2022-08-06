@@ -1,6 +1,6 @@
 package mca.entity.ai.relationship.family;
 
-import mca.entity.VillagerEntityMCA;
+import mca.entity.ai.relationship.EntityRelationship;
 import mca.entity.ai.relationship.Gender;
 import mca.util.NbtHelper;
 import mca.util.WorldUtils;
@@ -54,7 +54,7 @@ public class FamilyTree extends PersistentState {
         return entries.computeIfAbsent(entity.getUuid(), uuid -> createEntry(
                 entity.getUuid(),
                 entity.getName().getString(),
-                entity instanceof VillagerEntityMCA ? ((VillagerEntityMCA)entity).getGenetics().getGender() : Gender.MALE,
+                EntityRelationship.of(entity).map(EntityRelationship::getGender).orElse(Gender.MALE),
                 entity instanceof PlayerEntity));
     }
 
