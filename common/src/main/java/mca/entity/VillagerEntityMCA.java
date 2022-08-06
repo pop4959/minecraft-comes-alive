@@ -1070,8 +1070,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public float getSoundPitch() {
         float r = (random.nextFloat() - 0.5f) * 0.05f;
         float g = (genetics.getGene(Genetics.VOICE) - 0.5f) * 0.3f;
-        float base = getAgeState().getPitch();
-        return base + r + g;
+        float a = MathHelper.lerp(AgeState.getDelta(age), getAgeState().getPitch(), getAgeState().getNext().getPitch());
+        return a + r + g;
     }
 
     @Override
