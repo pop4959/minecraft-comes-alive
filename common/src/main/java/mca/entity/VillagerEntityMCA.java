@@ -337,7 +337,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             AgeState next = current.getNext();
             if (current != next) {
-                dimensions.interpolate(current, getAgeState(), AgeState.getDelta(age));
+                dimensions.interpolate(current, next, AgeState.getDelta(age));
             } else {
                 dimensions.set(current);
             }
@@ -1068,8 +1068,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public float getSoundPitch() {
         float r = (random.nextFloat() - 0.5f) * 0.05f;
         float g = (genetics.getGene(Genetics.VOICE) - 0.5f) * 0.3f;
-        float base = this.isBaby() && (!Config.getInstance().useMCAVoices) ? 1.5f : 1.0f;
-        return base + r + g;
+        float a = MathHelper.lerp(AgeState.getDelta(age), getAgeState().getPitch(), getAgeState().getNext().getPitch());
+        return a + r + g;
     }
 
     @Override
