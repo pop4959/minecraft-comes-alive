@@ -5,7 +5,6 @@ import mca.ProfessionsMCA;
 import mca.entity.EquipmentSet;
 import mca.entity.VillagerEntityMCA;
 import mca.entity.ai.Memories;
-import mca.entity.ai.Traits;
 import mca.entity.ai.relationship.Gender;
 import mca.entity.ai.relationship.family.FamilyTree;
 import mca.resources.API;
