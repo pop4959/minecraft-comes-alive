@@ -30,10 +30,11 @@ public class MatchmakersRingItem extends Item implements SpecialCaseGift {
         }
 
         // look for partner
-        Optional<VillagerEntityMCA> target = WorldUtils.getCloseEntities(villager.world, villager, 3.0).stream()
+        Optional<VillagerEntityMCA> target = WorldUtils.getCloseEntities(villager.world, villager, 5.0).stream()
                 .filter(v -> v != villager && v instanceof VillagerEntityMCA)
                 .map(VillagerEntityMCA.class::cast)
                 .filter(v -> !v.isBaby() && !v.getRelationships().isMarried())
+                .filter(v -> !v.getRelationships().getFamilyEntry().isRelative(villager.getUuid()))
                 .min(Comparator.comparingDouble(villager::distanceTo));
 
         // ensure we found a nearby villager
@@ -42,7 +43,7 @@ public class MatchmakersRingItem extends Item implements SpecialCaseGift {
             return false;
         }
 
-        // setup the marriage by assigning spouse UUIDs
+        // set up the marriage by assigning spouse UUIDs
         VillagerEntityMCA spouse = target.get();
         villager.getRelationships().marry(spouse);
         spouse.getRelationships().marry(villager);
