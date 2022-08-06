@@ -339,7 +339,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             AgeState next = current.getNext();
             if (current != next) {
-                dimensions.interpolate(current, getAgeState(), AgeState.getDelta(age));
+                dimensions.interpolate(current, next, AgeState.getDelta(age));
             } else {
                 dimensions.set(current);
             }
