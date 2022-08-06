@@ -35,6 +35,7 @@ public class MatchmakersRingItem extends Item implements SpecialCaseGift {
                 .map(VillagerEntityMCA.class::cast)
                 .filter(v -> !v.isBaby() && !v.getRelationships().isMarried())
                 .filter(v -> !v.getRelationships().getFamilyEntry().isRelative(villager.getUuid()))
+                .filter(villager::canBeAttractedTo)
                 .min(Comparator.comparingDouble(villager::distanceTo));
 
         // ensure we found a nearby villager

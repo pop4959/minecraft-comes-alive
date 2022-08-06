@@ -2,7 +2,9 @@
 
 * Fixed wrong pitch for babies
 * Pitch slowly increases with age
-* Fixed another case of incest
+* Fixed inconsistencies in relationship data with the Matchmaker's Ring
+  * Resolves cases of incest + Added `canBeAttractedTo` check support
+* Fixed a missing `getGender` check in creating a player's Family Tree entry
 * Fixed enchantments glint on villagers
 
 # 7.3.15
