@@ -40,6 +40,8 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -70,6 +72,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -82,6 +85,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
@@ -92,10 +96,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static mca.client.model.CommonVillagerModel.getVillager;
@@ -446,8 +447,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         ItemStack stack = player.getStackInHand(hand);
         if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && canInteractWithItemStackInHand(stack)) {
             if (!getVillagerBrain().isPanicking()) {
-                playWelcomeSound();
-
                 //make sure dialogueType is synced in case the client needs it
                 getDialogueType(player);
 
@@ -456,6 +455,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                         NetworkHandler.sendToPlayer(new InteractionVillagerMessage("trade", uuid), e);
                     }
                 } else {
+                    playWelcomeSound();
                     return interactions.interactAt(player, pos, hand);
                 }
             }
@@ -466,17 +466,67 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (canInteractWithItemStackInHand(stack) && !getVillagerBrain().isPanicking()) {
-            return super.interactMob(player, hand);
-        } else {
-            return ActionResult.PASS;
+        if (!stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && isAlive() && !hasCustomer() && !isSleeping()) {
+            if (canInteractWithItemStackInHand(stack) && !getVillagerBrain().isPanicking()) {
+                if (isBaby()) {
+                    sayNo();
+                } else {
+                    boolean hasOffers = !getOffers().isEmpty();
+                    if (hand == Hand.MAIN_HAND) {
+                        if (!hasOffers && !world.isClient) {
+                            sayNo();
+                        }
+
+                        player.incrementStat(Stats.TALKED_TO_VILLAGER);
+                    }
+
+                    if (hasOffers && !world.isClient) {
+                        beginTradeWith(player);
+                    }
+                }
+                return ActionResult.success(world.isClient);
+            }
+        }
+        return ActionResult.PASS;
+    }
+
+    private void sayNo() {
+        this.setHeadRollingTimeLeft(40);
+        if (!this.world.isClient()) {
+            this.playSound(this.getNoSound(), this.getSoundVolume(), this.getSoundPitch());
+        }
+    }
+
+    private void beginTradeWith(PlayerEntity customer) {
+        this.prepareOffersFor(customer);
+        this.setCustomer(customer);
+        this.sendOffers(customer, this.getDisplayName(), this.getVillagerData().getLevel());
+    }
+
+    private void prepareOffersFor(PlayerEntity player) {
+        int reputation = this.getReputation(player);
+        if (reputation != 0) {
+            for (TradeOffer tradeOffer : this.getOffers()) {
+                tradeOffer.increaseSpecialPrice(-MathHelper.floor((float) reputation * tradeOffer.getPriceMultiplier()));
+            }
+        }
+
+        if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
+            StatusEffectInstance statusEffect = player.getStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE);
+            int amplifier = statusEffect.getAmplifier();
+
+            for (TradeOffer tradeOffer2 : this.getOffers()) {
+                double d = 0.3 + 0.0625 * (double) amplifier;
+                int k = (int) Math.floor(d * (double) tradeOffer2.getOriginalFirstBuyItem().getCount());
+                tradeOffer2.increaseSpecialPrice(-Math.max(k, 1));
+            }
         }
     }
 
     @Override
     public VillagerEntityMCA createChild(ServerWorld world, PassiveEntity partner) {
-        VillagerEntityMCA child = partner instanceof VillagerEntityMCA
-                ? relations.getPregnancy().createChild(Gender.getRandom(), (VillagerEntityMCA)partner)
+        VillagerEntityMCA child = partner instanceof VillagerEntityMCA partnerVillager
+                ? relations.getPregnancy().createChild(Gender.getRandom(), partnerVillager)
                 : relations.getPregnancy().createChild(Gender.getRandom());
 
         child.setVillagerData(child.getVillagerData().withType(getRandomType(partner)));
@@ -1064,6 +1114,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             playSound(getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_CELEBRATE.get() : SoundsMCA.VILLAGER_FEMALE_CELEBRATE.get(), getSoundVolume(), getSoundPitch());
         } else if (Config.getInstance().useVanillaVoices) {
             super.playCelebrateSound();
+        } else {
+            playSound(SoundsMCA.SILENT.get(), getSoundVolume(), getSoundPitch());
         }
     }
 
