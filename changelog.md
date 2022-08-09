@@ -6,6 +6,11 @@
   * Resolves cases of incest + Added `canBeAttractedTo` check support
 * Fixed a missing `getGender` check in creating a player's Family Tree entry
 * Fixed enchantments glint on villagers
+* Fixed using mca villager spawn eggs on mca villagers
+* Fixed Sneak-Interactions with mca villagers
+  * Should now open trades on applicable villagers
+  * Villagers that are Jobless will disagree with the proper sound effect
+* Fixed silent sound effect compatibility with Celebrate Sounds
 
 # 7.3.15
 
