@@ -278,6 +278,7 @@ public class Building implements Serializable, Iterable<UUID> {
         done.add(center);
 
         //const
+        final int minSize = Config.getInstance().minBuildingSize;
         final int maxSize = Config.getInstance().maxBuildingSize;
         final int maxRadius = Config.getInstance().maxBuildingRadius;
 
@@ -348,10 +349,10 @@ public class Building implements Serializable, Iterable<UUID> {
             scanSize++;
         }
 
-        // min size is 32, which equals an 8 block big cube with 6 times 4 sides
+        // min size is 32 by default, which equals an 8 block big cube with 6 times 4 sides
         if (!queue.isEmpty()) {
             return validationResult.BLOCK_LIMIT;
-        } else if (done.size() <= 32) {
+        } else if (done.size() <= minSize) {
             return validationResult.TOO_SMALL;
         } else if (!hasDoor) {
             return validationResult.NO_DOOR;
