@@ -1,8 +1,9 @@
 plugins {
     id 'java-library'
     id 'architectury-plugin' version '3.4-SNAPSHOT'
-    id 'dev.architectury.loom' version '0.11.0-SNAPSHOT' apply false
+    id 'dev.architectury.loom' version '0.12.0-SNAPSHOT' apply false
     id 'org.ajoberstar.reckon' version '0.13.1'
+    id "io.github.pacifistmc.forgix" version "1.2.5"
 }
 
 java {
@@ -26,6 +27,25 @@ subprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    }
+
+    build.finalizedBy(mergeJars)
+    assemble.finalizedBy(mergeJars)
+}
+
+forgix {
+    println "Testing as: build/libs/${rootProject.name}-${rootProject.version}-merged.jar"
+    group = rootProject.group
+    mergedJarName = "${rootProject.name}-${rootProject.version}-merged.jar"
+    outputDir = "build/libs"
+
+    forge {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-forge.jar"
+        mixin "mca.mixin.json"
+    }
+
+    fabric {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-fabric.jar"
     }
 }
 
