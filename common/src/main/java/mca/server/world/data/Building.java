@@ -33,9 +33,9 @@ import java.util.stream.Stream;
 import static net.minecraft.tag.BlockTags.LEAVES;
 
 public class Building implements Serializable, Iterable<UUID> {
-    public static final long SCAN_COOLDOWN = 4800;
     @Serial
     private static final long serialVersionUID = -1106627083469687307L;
+    public static final long SCAN_COOLDOWN = 4800;
     private static final Direction[] directions = {
             Direction.UP, Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
@@ -189,6 +189,12 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public void addResident(Entity e) {
         if (!residents.containsKey(e.getUuid())) {
+            residents.put(e.getUuid(), e.getName().getString());
+        }
+    }
+
+    public void updateResidentName(Entity e) {
+        if (residents.containsKey(e.getUuid())) {
             residents.put(e.getUuid(), e.getName().getString());
         }
     }

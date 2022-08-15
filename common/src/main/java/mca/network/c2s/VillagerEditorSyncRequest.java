@@ -122,6 +122,10 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
             ((LivingEntity)entity).readCustomDataFromNbt(villagerData);
             entity.calculateDimensions();
             syncFamilyTree(player, entity, villagerData);
+
+            if (entity instanceof VillagerEntityMCA villager) {
+                villager.getResidency().getHomeBuilding().ifPresent(b -> b.updateResidentName(villager));
+            }
         }
     }
 

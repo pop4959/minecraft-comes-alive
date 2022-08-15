@@ -1,6 +1,7 @@
 # 7.3.18
 
 * Fixed trait inheritance change
+* Fixed updating villager name not reflecting change in Blueprint
 
 # 7.3.17
 
