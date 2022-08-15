@@ -193,7 +193,7 @@ public class Building implements Serializable, Iterable<UUID> {
         }
     }
 
-    public void updateResidentName(Entity e) {
+    public void updateResident(Entity e) {
         if (residents.containsKey(e.getUuid())) {
             residents.put(e.getUuid(), e.getName().getString());
         }
