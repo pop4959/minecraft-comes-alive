@@ -1,3 +1,13 @@
+# 7.3.17
+
+* Fixed an issue with the Bone Meal Check in `HarvestingTask` not taking into account modded items
+* Fixed an issue relating to a mismatched slot checked when a villager is left-handed and `HarvestingTask#bonemealCrop` was ran
+* Rewritten `HarvestingTask#plantSeed` to allow modded plants to be properly planted, if specified in the `villager_plantable` tag and a valid `BlockItem`
+  * This also fixes pumpkin and melon seeds not properly planting, despite being in the tag
+* Added a `minBuildingSize` as a counterpart to the previously implemented `maxBuildingSize` config option
+  * I'm not sure why someone wanted this, but...ok.
+* Editor Screen Paperdoll models will now follow your mouse, just like how the Inventory Screen behaves
+
 # 7.3.16
 
 * Fixed wrong pitch for babies

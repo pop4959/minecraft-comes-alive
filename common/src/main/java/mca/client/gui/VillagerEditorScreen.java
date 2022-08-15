@@ -603,11 +603,13 @@ public class VillagerEditorScreen extends Screen {
         villager.age = (int)(System.currentTimeMillis() / 50L);
 
         if (shouldDrawEntity()) {
+            int x = width / 2 - DATA_WIDTH / 2;
+            int y = height / 2 + 70;
             if (villagerUUID.equals(playerUUID) && shouldUsePlayerModel()) {
                 assert MinecraftClient.getInstance().player != null;
-                InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, MinecraftClient.getInstance().player);
+                InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
             } else {
-                InventoryScreen.drawEntity(width / 2 - DATA_WIDTH / 2, height / 2 + 70, 60, 0, 0, villager);
+                InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, villager);
             }
         }
 
