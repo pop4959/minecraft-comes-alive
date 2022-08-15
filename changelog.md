@@ -6,6 +6,7 @@
   * This also fixes pumpkin and melon seeds not properly planting, despite being in the tag
 * Added a `minBuildingSize` as a counterpart to the previously implemented `maxBuildingSize` config option
   * I'm not sure why someone wanted this, but...ok.
+* Editor Screen Paperdoll models will now follow your mouse, just like how the Inventory Screen behaves
 
 # 7.3.16
 
