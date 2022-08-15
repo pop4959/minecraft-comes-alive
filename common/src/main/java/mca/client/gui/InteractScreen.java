@@ -175,7 +175,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         }
 
         //age or profession
-        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : new TranslatableText("entity.minecraft.villager." + villager.getProfessionName()), 10, 30 + h);
+        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : villager.getProfessionText(), 10, 30 + h);
 
         VillagerBrain<?> brain = villager.getVillagerBrain();
 

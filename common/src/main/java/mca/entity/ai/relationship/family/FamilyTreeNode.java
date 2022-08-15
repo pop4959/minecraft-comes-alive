@@ -7,6 +7,9 @@ import mca.util.NbtHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
@@ -125,6 +128,10 @@ public final class FamilyTreeNode implements Serializable {
         ).replace(":", ".");
 
         return professionName.isEmpty() ? "mca.none" : professionName;
+    }
+
+    public MutableText getProfessionText() {
+        return new TranslatableText("entity.minecraft.villager." + getProfessionName());
     }
 
     public boolean isPlayer() {

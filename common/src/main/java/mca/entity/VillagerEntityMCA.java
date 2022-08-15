@@ -258,8 +258,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     protected Text getDefaultName() {
-        Identifier profName = Registry.VILLAGER_PROFESSION.getId(getVillagerData().getProfession());
-        return new TranslatableText("entity.minecraft.villager." + profName.getPath());
+        return getProfessionText();
     }
 
     @Nullable

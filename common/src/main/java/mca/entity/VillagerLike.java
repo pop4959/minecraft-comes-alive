@@ -35,6 +35,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -173,6 +176,10 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         ).replace(":", ".");
 
         return professionName.isEmpty() ? "mca.none" : professionName;
+    }
+
+    default MutableText getProfessionText() {
+        return new TranslatableText("entity.minecraft.villager." + getProfessionName());
     }
 
     default String getClothes() {
