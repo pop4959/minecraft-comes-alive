@@ -111,6 +111,7 @@ public final class Config implements Serializable {
     public boolean allowPlayerMarriage = true;
 
     //structure settings
+    public int minBuildingSize = 32;
     public int maxBuildingSize = 8192;
     public int maxBuildingRadius = 320;
     public int minPillarHeight = 2;
