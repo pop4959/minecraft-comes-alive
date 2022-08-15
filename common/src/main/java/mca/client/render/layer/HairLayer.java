@@ -32,11 +32,11 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
     }
 
     private float[] getRainbow(LivingEntity entity, float tickDelta) {
-        int n = entity.age / 25 + entity.getId();
+        int n = Math.abs(entity.age) / 25 + entity.getId();
         int o = DyeColor.values().length;
         int p = n % o;
         int q = (n + 1) % o;
-        float r = ((float)(entity.age % 25) + tickDelta) / 25.0f;
+        float r = ((float)(Math.abs(entity.age) % 25) + tickDelta) / 25.0f;
         float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
         float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
         return new float[] {
@@ -48,7 +48,7 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
 
     @Override
     protected float[] getColor(T villager, float tickDelta) {
-        if (villager instanceof VillagerLike<?> villagerLike && villagerLike.getTraits().hasTrait(Traits.Trait.RAINBOW)) {
+        if (getVillager(villager).getTraits().hasTrait(Traits.Trait.RAINBOW)) {
             return getRainbow(villager, tickDelta);
         }
 
