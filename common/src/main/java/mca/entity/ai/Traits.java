@@ -69,7 +69,7 @@ public class Traits {
     }
 
     public Set<Trait> getInheritedTraits() {
-        return getTraits().stream().filter(t -> t.inherit * Config.getInstance().traitInheritChance < random.nextFloat()).collect(Collectors.toSet());
+        return getTraits().stream().filter(t -> random.nextFloat() < t.inherit * Config.getInstance().traitInheritChance).collect(Collectors.toSet());
     }
 
     public boolean hasTrait(VillagerLike<?> target, Trait trait) {
