@@ -96,7 +96,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static mca.client.model.CommonVillagerModel.getVillager;
@@ -251,6 +254,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public VillagerCommandHandler getInteractions() {
         return interactions;
+    }
+
+    @Override
+    protected Text getDefaultName() {
+        Identifier profName = Registry.VILLAGER_PROFESSION.getId(getVillagerData().getProfession());
+        return new TranslatableText("entity.minecraft.villager." + profName.getPath());
     }
 
     @Nullable
@@ -507,7 +516,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         int reputation = this.getReputation(player);
         if (reputation != 0) {
             for (TradeOffer tradeOffer : this.getOffers()) {
-                tradeOffer.increaseSpecialPrice(-MathHelper.floor((float) reputation * tradeOffer.getPriceMultiplier()));
+                tradeOffer.increaseSpecialPrice(-MathHelper.floor((float)reputation * tradeOffer.getPriceMultiplier()));
             }
         }
 
@@ -516,8 +525,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             int amplifier = statusEffect.getAmplifier();
 
             for (TradeOffer tradeOffer2 : this.getOffers()) {
-                double d = 0.3 + 0.0625 * (double) amplifier;
-                int k = (int) Math.floor(d * (double) tradeOffer2.getOriginalFirstBuyItem().getCount());
+                double d = 0.3 + 0.0625 * (double)amplifier;
+                int k = (int)Math.floor(d * (double)tradeOffer2.getOriginalFirstBuyItem().getCount());
                 tradeOffer2.increaseSpecialPrice(-Math.max(k, 1));
             }
         }
