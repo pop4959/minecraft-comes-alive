@@ -205,16 +205,9 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private boolean plantSeed(ItemStack itemStack, ServerWorld serverWorld, BlockPos currentTarget) {
-        if (itemStack.isOf(Items.WHEAT_SEEDS)) {
-            return serverWorld.setBlockState(currentTarget, Blocks.WHEAT.getDefaultState(), Block.NOTIFY_ALL);
-        } else if (itemStack.isOf(Items.POTATO)) {
-            return serverWorld.setBlockState(currentTarget, Blocks.POTATOES.getDefaultState(), Block.NOTIFY_ALL);
-        } else if (itemStack.isOf(Items.CARROT)) {
-            return serverWorld.setBlockState(currentTarget, Blocks.CARROTS.getDefaultState(), Block.NOTIFY_ALL);
-        } else if (itemStack.isOf(Items.BEETROOT_SEEDS)) {
-            return serverWorld.setBlockState(currentTarget, Blocks.BEETROOTS.getDefaultState(), Block.NOTIFY_ALL);
+        if (itemStack.getItem() instanceof BlockItem blockItem) {
+            return serverWorld.setBlockState(currentTarget, blockItem.getBlock().getDefaultState(), Block.NOTIFY_ALL);
         }
-        //todo add modded plants here
         return false;
     }
 
