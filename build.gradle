@@ -85,7 +85,7 @@ modrinth {
     gameVersions = ["1.19"]
     loaders = ["fabric","forge"]
     dependencies = [
-            new ModDependency('P7dR8mSH', 'required'),
-            new ModDependency('LhGA9TYQ', 'required')
+            new ModDependency('fabric-api', 'required'),
+            new ModDependency('architectury-api', 'required')
     ]
 }
