@@ -1,6 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.0"
-    id "com.modrinth.minotaur" version "2.+"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 architectury {
@@ -70,17 +69,4 @@ components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
     }
-}
-
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "1W98a849"
-    versionNumber = version.toString() + "_forge"
-    versionName = "[Forge 1.19] MCA Reborn - " + version
-    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()}/changelog.md)"
-    versionType = "release"
-    uploadFile = remapJar
-    gameVersions = ["1.19"]
-    loaders = ["forge"]
-    dependencies = []
 }

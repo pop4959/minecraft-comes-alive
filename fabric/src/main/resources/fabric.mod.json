@@ -22,10 +22,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "mca.fabric.MCAFabric"
+      "net.mca.fabric.MCAFabric"
     ],
     "client": [
-      "mca.fabric.MCAFabricClient"
+      "net.mca.fabric.MCAFabricClient"
     ]
   },
   "mixins": [
