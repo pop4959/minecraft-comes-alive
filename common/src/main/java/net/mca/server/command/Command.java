@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
@@ -21,7 +22,7 @@ import net.minecraft.util.Util;
 
 public class Command {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("net/mca")
+        dispatcher.register(CommandManager.literal(MCA.MOD_ID)
                 .then(register("help", Command::displayHelp))
                 .then(register("propose").then(CommandManager.argument("target", EntityArgumentType.player()).executes(Command::propose)))
                 .then(register("accept").then(CommandManager.argument("target", EntityArgumentType.player()).executes(Command::accept)))

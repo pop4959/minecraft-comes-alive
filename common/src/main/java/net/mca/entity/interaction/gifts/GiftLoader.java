@@ -32,9 +32,9 @@ public class GiftLoader extends JsonDataLoader {
 
         //extend from mca entries to avoid copy pasta commonly used stuff
         for (GiftType type : GiftType.REGISTRY) {
-            if (!type.getId().getNamespace().equals("net/mca") && type.getConditions().isEmpty()) {
+            if (!type.getId().getNamespace().equals(MCA.MOD_ID) && type.getConditions().isEmpty()) {
                 for (GiftType extendingType : GiftType.REGISTRY) {
-                    if (extendingType.getId().getNamespace().equals("net/mca") && extendingType.getId().getPath().equals(type.getId().getPath())) {
+                    if (extendingType.getId().getNamespace().equals(MCA.MOD_ID) && extendingType.getId().getPath().equals(type.getId().getPath())) {
                         type.extendFrom(extendingType);
                         break;
                     }

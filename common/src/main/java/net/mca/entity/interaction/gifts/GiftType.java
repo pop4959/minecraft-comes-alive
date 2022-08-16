@@ -3,6 +3,7 @@ package net.mca.entity.interaction.gifts;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import net.mca.MCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.resources.data.analysis.IntAnalysis;
 import net.minecraft.item.Item;
@@ -38,7 +39,7 @@ public class GiftType {
                 if (tag != null) {
                     tags.put(tag, satisfaction);
                 } else {
-                    if (identifier.getNamespace().equals("net/mca")) {
+                    if (identifier.getNamespace().equals(MCA.MOD_ID)) {
                         throw new JsonSyntaxException("Unknown item tag '" + identifier + "'");
                     }
                 }
@@ -47,7 +48,7 @@ public class GiftType {
                 Optional<Item> item = Registry.ITEM.getOrEmpty(identifier);
                 if (item.isPresent()) {
                     items.put(item.get(), satisfaction);
-                } else if (identifier.getNamespace().equals("net/mca")) {
+                } else if (identifier.getNamespace().equals(MCA.MOD_ID)) {
                     throw new JsonSyntaxException("Unknown item '" + identifier + "'");
                 }
             }
