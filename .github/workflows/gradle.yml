@@ -18,20 +18,13 @@ jobs:
           java-version: 17
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle - Forge
-        run: ./gradlew :forge:build
-      - name: Build with Gradle - Fabric
-        run: ./gradlew :fabric:build
-      - name: Upload Artifacts - Forge
+      - name: Build Artifacts with Gradle
+        run: ./gradlew build
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: forge_artifacts
-          path: ./forge/build/libs/
-      - name: Upload Artifacts - Fabric
-        uses: actions/upload-artifact@v2
-        with:
-          name: fabric_artifacts
-          path: ./fabric/build/libs/
+          name: artifacts
+          path: ./build/libs/
       - name: Get tag
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
         id: tag
@@ -41,33 +34,17 @@ jobs:
         with:
           separator: "+"
           msg: ${{steps.tag.outputs.tag}}
-      - name: "Upload Fabric to Modrinth"
-        run: ./gradlew :fabric:modrinth
-      - name: "Upload Forge to Modrinth"
-        run: ./gradlew :forge:modrinth
-      - name: "Upload Fabric to CurseForge"
+      - name: "Upload to Modrinth"
+        run: ./gradlew modrinth
+      - name: "Upload to CurseForge"
         uses: itsmeow/curseforge-upload@v3
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
         with:
-          file_path: "fabric/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-fabric.jar"
-          display_name: "[Fabric 1.19.1] MCA Reborn - ${{steps.split.outputs._0}}"
+          file_path: "build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-universal.jar"
+          display_name: "[Universal 1.19.1] MCA Reborn - ${{steps.split.outputs._0}}"
           game_endpoint: "minecraft"
           relations: "fabric-api:requiredDependency,architectury-api:requiredDependency"
-          game_versions: "Minecraft 1.19:1.19.1,Java 17,Fabric"
-          project_id: "535291"
-          token: "${{ secrets.CF_API_TOKEN }}"
-          changelog_type: "markdown"
-          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.19.1/changelog.md)"
-          release_type: "release"
-      - name: "Upload Forge to CurseForge"
-        uses: itsmeow/curseforge-upload@v3
-        if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
-        with:
-          file_path: "forge/build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-forge.jar"
-          display_name: "[Forge 1.19.1] MCA Reborn - ${{steps.split.outputs._0}}"
-          game_endpoint: "minecraft"
-          relations: "architectury-api:requiredDependency"
-          game_versions: "Minecraft 1.19:1.19.1,Java 17,Forge"
+          game_versions: "Minecraft 1.19:1.19.1,Java 17,Fabric,Forge"
           project_id: "535291"
           token: "${{ secrets.CF_API_TOKEN }}"
           changelog_type: "markdown"

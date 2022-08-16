@@ -1,11 +1,19 @@
+# 7.3.18
+
+* Fabric and Forge are now packaged as one universal jar file
+* Fixed trait inheritance change
+* Fixed updating villager name not reflecting change in Blueprint
+* Fixed profession name in Waila etc
+* Fixed outdated infection book
+
 # 7.3.17
 
 * Fixed an issue with the Bone Meal Check in `HarvestingTask` not taking into account modded items
 * Fixed an issue relating to a mismatched slot checked when a villager is left-handed and `HarvestingTask#bonemealCrop` was ran
 * Rewritten `HarvestingTask#plantSeed` to allow modded plants to be properly planted, if specified in the `villager_plantable` tag and a valid `BlockItem`
-  * This also fixes pumpkin and melon seeds not properly planting, despite being in the tag
+    * This also fixes pumpkin and melon seeds not properly planting, despite being in the tag
 * Added a `minBuildingSize` as a counterpart to the previously implemented `maxBuildingSize` config option
-  * I'm not sure why someone wanted this, but...ok.
+    * I'm not sure why someone wanted this, but...ok.
 * Editor Screen Paperdoll models will now follow your mouse, just like how the Inventory Screen behaves
 
 # 7.3.16
@@ -13,13 +21,13 @@
 * Fixed wrong pitch for babies
 * Pitch slowly increases with age
 * Fixed inconsistencies in relationship data with the Matchmaker's Ring
-  * Resolves cases of incest + Added `canBeAttractedTo` check support
+    * Resolves cases of incest + Added `canBeAttractedTo` check support
 * Fixed a missing `getGender` check in creating a player's Family Tree entry
 * Fixed enchantments glint on villagers
 * Fixed using mca villager spawn eggs on mca villagers
 * Fixed Sneak-Interactions with mca villagers
-  * Should now open trades on applicable villagers
-  * Villagers that are Jobless will disagree with the proper sound effect
+    * Should now open trades on applicable villagers
+    * Villagers that are Jobless will disagree with the proper sound effect
 * Fixed silent sound effect compatibility with Celebrate Sounds
 
 # 7.3.15
