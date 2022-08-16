@@ -1,8 +1,12 @@
+import com.modrinth.minotaur.dependencies.ModDependency
+
 plugins {
     id 'java-library'
     id 'architectury-plugin' version '3.4-SNAPSHOT'
-    id 'dev.architectury.loom' version '0.11.0-SNAPSHOT' apply false
+    id 'dev.architectury.loom' version '0.12.0-SNAPSHOT' apply false
     id 'org.ajoberstar.reckon' version '0.13.1'
+    id "io.github.pacifistmc.forgix" version "1.2.5"
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 java {
@@ -27,6 +31,24 @@ subprojects {
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     }
+
+    build.finalizedBy(mergeJars)
+    assemble.finalizedBy(mergeJars)
+}
+
+forgix {
+    group = rootProject.group
+    mergedJarName = "${rootProject.name}-${rootProject.version}-universal.jar"
+    outputDir = "build/libs"
+
+    forge {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-forge.jar"
+        mixin "mca.mixin.json"
+    }
+
+    fabric {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-fabric.jar"
+    }
 }
 
 allprojects {
@@ -50,4 +72,20 @@ allprojects {
     java {
         withSourcesJar()
     }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "1W98a849"
+    versionNumber = version.toString() + "_universal"
+    versionName = "[Universal 1.19.2] MCA Reborn - " + version
+    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()}/changelog.md)"
+    versionType = "release"
+    uploadFile = file("build/libs/${rootProject.name}-${rootProject.version}-merged.jar")
+    gameVersions = ["1.19.2"]
+    loaders = ["fabric","forge"]
+    dependencies = [
+            new ModDependency('P7dR8mSH', 'required'),
+            new ModDependency('LhGA9TYQ', 'required')
+    ]
 }

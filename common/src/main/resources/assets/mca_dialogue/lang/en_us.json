@@ -122,7 +122,7 @@
 
   "interaction.relationship.fail.isbaby/1": "Wut? I'm too young!",
   "teen.interaction.relationship.fail.isbaby/2": "That is inappropriate!",
-  "interaction.relationship.fail.marriedtogiver/1": "It's a pretty ring, but I am already married to you, silly.",
+  "interaction.relationship.fail.marriedtogiver/1": "I am already married to you, silly.",
   "interaction.relationship.fail.marriedtogiver/2": "We are already married. Did you forget?",
   "interaction.relationship.fail.married/1": "I'm sorry, no...I'm already married.",
   "interaction.relationship.fail.married/2": "Oh, I thought you knew...I'm already married to someone.",
