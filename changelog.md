@@ -1,5 +1,6 @@
 # 7.3.18
 
+* Fabric and Forge are now packaged as one universal jar file
 * Fixed trait inheritance change
 * Fixed updating villager name not reflecting change in Blueprint
 * Fixed profession name in Waila etc
