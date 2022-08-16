@@ -1,6 +1,6 @@
 # 7.3.19
 
-* Added `villagerDimensionBlacklist` and `allowedSpawnReasons` as new config options
+* Added `villagerDimensionBlacklist`, modded villager whitelists, and `allowedSpawnReasons` as new config options
   * Advanced Usage Only, tampering can lead to tears :(
 
 # 7.3.18
