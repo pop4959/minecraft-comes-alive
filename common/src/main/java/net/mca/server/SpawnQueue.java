@@ -67,7 +67,10 @@ public class SpawnQueue {
     }
 
     public boolean addVillager(Entity entity) {
-        if (entity instanceof IVillagerEntity && !handlesSpawnReason(((IVillagerEntity)entity).getSpawnReason())) {
+        if (entity instanceof IVillagerEntity villagerEntity && !handlesSpawnReason(villagerEntity.getSpawnReason())) {
+            return false;
+        }
+        if (Config.getInstance().villagerDimensionBlacklist.contains(entity.getEntityWorld().getRegistryKey().getValue().toString())) {
             return false;
         }
         if (Config.getInstance().overwriteOriginalVillagers
@@ -84,6 +87,6 @@ public class SpawnQueue {
     }
 
     private boolean handlesSpawnReason(SpawnReason reason) {
-        return reason == SpawnReason.NATURAL || reason == SpawnReason.STRUCTURE;
+        return Config.getInstance().allowedSpawnReasons.contains(reason.name().toLowerCase());
     }
 }

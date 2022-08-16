@@ -1,3 +1,8 @@
+# 7.3.19
+
+* Added `villagerDimensionBlacklist` and `allowedSpawnReasons` as new config options
+  * Advanced Usage Only, tampering can lead to tears :(
+
 # 7.3.18
 
 * Fabric and Forge are now packaged as one universal jar file
