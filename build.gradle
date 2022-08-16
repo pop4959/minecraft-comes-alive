@@ -78,12 +78,12 @@ modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "1W98a849"
     versionNumber = version.toString() + "_universal"
-    versionName = "[Universal 1.18.2] MCA Reborn - " + version
-    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()}/changelog.md)"
+    versionName = "[Universal ${rootProject.minecraft_version}] MCA Reborn - " + version
+    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${rootProject.minecraft_version}/changelog.md)"
     versionType = "release"
     uploadFile = file("build/libs/${rootProject.name}-${rootProject.version}-universal.jar")
-    gameVersions = ["1.18", "1.18.2"]
-    loaders = ["fabric","forge"]
+    gameVersions = [rootProject.minecraft_version]
+    loaders = [rootProject.enabled_platforms.split(",")]
     dependencies = [
             new ModDependency('fabric-api', 'required'),
             new ModDependency('architectury-api', 'required')
