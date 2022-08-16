@@ -81,7 +81,7 @@ modrinth {
     versionName = "[Universal 1.19.1] MCA Reborn - " + version
     changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${version.toString()}/changelog.md)"
     versionType = "release"
-    uploadFile = file("build/libs/${rootProject.name}-${rootProject.version}-merged.jar")
+    uploadFile = file("build/libs/${rootProject.name}-${rootProject.version}-universal.jar")
     gameVersions = ["1.19.1"]
     loaders = ["fabric","forge"]
     dependencies = [
