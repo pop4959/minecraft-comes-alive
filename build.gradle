@@ -1,12 +1,9 @@
-import com.modrinth.minotaur.dependencies.ModDependency
-
 plugins {
     id 'java-library'
     id 'architectury-plugin' version '3.4-SNAPSHOT'
     id 'dev.architectury.loom' version '0.12.0-SNAPSHOT' apply false
     id 'org.ajoberstar.reckon' version '0.13.1'
     id "io.github.pacifistmc.forgix" version "1.2.5"
-    id "com.modrinth.minotaur" version "2.+"
 }
 
 java {
@@ -72,20 +69,4 @@ allprojects {
     java {
         withSourcesJar()
     }
-}
-
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "1W98a849"
-    versionNumber = version.toString() + "_universal"
-    versionName = "[Universal ${rootProject.minecraft_version}] MCA Reborn - " + version
-    changelog = "[Changelog](https://github.com/Luke100000/minecraft-comes-alive/blob/${rootProject.minecraft_version}/changelog.md)"
-    versionType = "release"
-    uploadFile = file("build/libs/${rootProject.name}-${rootProject.version}-universal.jar")
-    gameVersions = [rootProject.minecraft_version]
-    loaders = [rootProject.enabled_platforms.split(",")]
-    dependencies = [
-            new ModDependency('fabric-api', 'required'),
-            new ModDependency('architectury-api', 'required')
-    ]
 }
