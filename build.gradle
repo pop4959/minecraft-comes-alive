@@ -28,9 +28,6 @@ subprojects {
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     }
-
-    build.finalizedBy(mergeJars)
-    assemble.finalizedBy(mergeJars)
 }
 
 forgix {
@@ -70,3 +67,6 @@ allprojects {
         withSourcesJar()
     }
 }
+
+build.finalizedBy(mergeJars)
+assemble.finalizedBy(mergeJars)
