@@ -57,5 +57,6 @@ jobs:
           java: |
             Java 17
           dependencies: |
-            fabric-api | depends | *
-            architectury-api | depends | *
+            fabric-api | recommends | *
+            architectury-api | recommends | *
+            qsl | recommends | *
