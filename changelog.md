@@ -1,5 +1,6 @@
 # 7.3.19
 
+* Official Support has been added for the Quilt ModLoader (Requires QSL + Quilted Fabric API)
 * Added `villagerDimensionBlacklist`, modded villager whitelists, and `allowedSpawnReasons` as new config options
   * Advanced Usage Only, tampering can lead to tears :(
 

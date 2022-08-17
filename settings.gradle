@@ -18,6 +18,7 @@ pluginManagement {
 
 include('common')
 include('fabric')
+include('quilt')
 include('forge')
 
 rootProject.name = 'minecraft-comes-alive'

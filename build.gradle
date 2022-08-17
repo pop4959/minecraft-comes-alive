@@ -43,6 +43,10 @@ forgix {
     fabric {
         jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-fabric.jar"
     }
+
+    quilt {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-quilt.jar"
+    }
 }
 
 allprojects {
