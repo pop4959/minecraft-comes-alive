@@ -28,6 +28,6 @@ logoFile = "mca.png"
 [[dependencies.mca]]
     modId="architectury"
     mandatory=true
-    versionRange="[6.0.34,)"
+    versionRange="[6.2.43,)"
     ordering="AFTER"
     side="BOTH"
