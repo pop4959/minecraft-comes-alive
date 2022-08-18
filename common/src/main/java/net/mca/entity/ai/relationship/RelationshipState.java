@@ -14,7 +14,7 @@ public enum RelationshipState {
      */
     ENGAGED("engaged"),
     /**
-     * Maried to another villager.
+     * Married to another villager.
      */
     MARRIED_TO_VILLAGER("married"),
     /**

@@ -2,6 +2,7 @@ package net.mca.entity.ai.relationship.family;
 
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
+import net.mca.entity.ai.relationship.RelationshipState;
 import net.mca.util.NbtHelper;
 import net.mca.util.WorldUtils;
 import net.minecraft.entity.Entity;
@@ -34,6 +35,30 @@ public class FamilyTree extends PersistentState {
 
     FamilyTree(NbtCompound nbt) {
         entries = NbtHelper.toMap(nbt, UUID::fromString, (id, element) -> new FamilyTreeNode(this, id, (NbtCompound)element));
+
+        // Fixing the shift in relationships introduces by the promised update
+        UUID uuid = UUID.fromString("12341234-1234-1234-1234-123412341234");
+        if (!entries.containsKey(uuid)) {
+            entries.put(uuid, createEntry(uuid, "debug", Gender.NEUTRAL, false));
+            markDirty();
+
+            entries.values().forEach(e -> {
+                FamilyTreeNode partner = entries.get(e.partner());
+                boolean partnerIsPlayer = partner != null && partner.isPlayer();
+                if (e.getRelationshipState() == RelationshipState.ENGAGED && partnerIsPlayer == e.isPlayer()) {
+                    //this is a villager-villager or player-player relationship. They do not have engagement
+                    e.setRelationshipState(RelationshipState.MARRIED_TO_VILLAGER);
+                }
+                if (e.getRelationshipState() == RelationshipState.MARRIED_TO_VILLAGER && partnerIsPlayer) {
+                    //The partner is not a villager
+                    e.setRelationshipState(RelationshipState.MARRIED_TO_PLAYER);
+                }
+                if (e.getRelationshipState() == RelationshipState.MARRIED_TO_PLAYER && !partnerIsPlayer) {
+                    //The partner is not a player
+                    e.setRelationshipState(RelationshipState.WIDOW);
+                }
+            });
+        }
     }
 
     @Override

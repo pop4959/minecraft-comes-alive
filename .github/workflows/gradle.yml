@@ -40,16 +40,15 @@ jobs:
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
         with:
           modrinth-id: 1W98a849
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-token: ${{ env.MODRINTH_TOKEN }}
           curseforge-id: 535291
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-token: ${{ env.CURSEFORGE_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
           name: "[Universal ${{steps.split.outputs._1}}] MCA Reborn - ${{steps.split.outputs._0}}"
           changelog-file: changelog.md
           version-type: release
-          files-primary: build/libs/*-@(universal).jar
-          files-secondary: build/libs/*-@(dev|sources).jar
+          files: build/libs/*-@(universal).jar
           loaders: |
             fabric
             forge
@@ -60,3 +59,7 @@ jobs:
             fabric-api | recommends | *
             architectury-api | recommends | *
             qsl | recommends | *
+
+          retry-attempts: 2
+          retry-delay: 10000
+          fail-mode: skip
