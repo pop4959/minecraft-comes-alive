@@ -16,7 +16,7 @@ logoFile = "mca.png"
 [[dependencies.mca]]
     modId="forge"
     mandatory=true
-    versionRange="[41.1.0,)"
+    versionRange="[41.0.94,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.mca]]
@@ -28,6 +28,6 @@ logoFile = "mca.png"
 [[dependencies.mca]]
     modId="architectury"
     mandatory=true
-    versionRange="[5.10.33,)"
+    versionRange="[5.12.42,)"
     ordering="AFTER"
     side="BOTH"
