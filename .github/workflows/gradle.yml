@@ -49,7 +49,6 @@ jobs:
           changelog-file: changelog.md
           version-type: release
           files-primary: build/libs/*-@(universal).jar
-          files-secondary: build/libs/*-@(dev|sources).jar
           loaders: |
             fabric
             forge
@@ -60,3 +59,7 @@ jobs:
             fabric-api | recommends | *
             architectury-api | recommends | *
             qsl | recommends | *
+
+          retry-attempts: 2
+          retry-delay: 10000
+          fail-mode: skip
