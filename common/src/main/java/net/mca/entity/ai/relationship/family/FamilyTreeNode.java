@@ -160,6 +160,11 @@ public final class FamilyTreeNode implements Serializable {
         return relationshipState;
     }
 
+    //debug usage only
+    public void setRelationshipState(RelationshipState relationshipState) {
+        this.relationshipState = relationshipState;
+    }
+
     public void updatePartner(@Nullable Entity newPartner, @Nullable RelationshipState state) {
         //cancel relationship with previous partner
         if (!this.partner.equals(Util.NIL_UUID) && (newPartner == null || !this.partner.equals(newPartner.getUuid()))) {
