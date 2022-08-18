@@ -45,8 +45,8 @@ public class FamilyTree extends PersistentState {
             entries.values().forEach(e -> {
                 FamilyTreeNode partner = entries.get(e.partner());
                 boolean partnerIsPlayer = partner != null && partner.isPlayer();
-                if (e.getRelationshipState() == RelationshipState.ENGAGED && !partnerIsPlayer && !e.isPlayer()) {
-                    //this is a villager-villager relationship. They do not have engagement
+                if (e.getRelationshipState() == RelationshipState.ENGAGED && partnerIsPlayer == e.isPlayer()) {
+                    //this is a villager-villager or player-player relationship. They do not have engagement
                     e.setRelationshipState(RelationshipState.MARRIED_TO_VILLAGER);
                 }
                 if (e.getRelationshipState() == RelationshipState.MARRIED_TO_VILLAGER && partnerIsPlayer) {
