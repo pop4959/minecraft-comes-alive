@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MODRINTH_TOKEN: ${{ secrets.MR_API_TOKEN }}
+      CURSEFORGE_TOKEN: ${{ secrets.CF_API_TOKEN }}
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout Commit
@@ -34,19 +35,28 @@ jobs:
         with:
           separator: "+"
           msg: ${{steps.tag.outputs.tag}}
-      - name: "Upload to Modrinth"
-        run: ./gradlew modrinth
-      - name: "Upload to CurseForge"
-        uses: itsmeow/curseforge-upload@v3
+      - name: "Upload to Distributors"
+        uses: Kir-Antipov/mc-publish@v3.1
         if: ${{ success() && startsWith(github.ref, 'refs/tags/') }}
         with:
-          file_path: "build/libs/minecraft-comes-alive-${{steps.tag.outputs.tag}}-universal.jar"
-          display_name: "[Universal 1.19.1] MCA Reborn - ${{steps.split.outputs._0}}"
-          game_endpoint: "minecraft"
-          relations: "fabric-api:requiredDependency,architectury-api:requiredDependency"
-          game_versions: "Minecraft 1.19:1.19.1,Java 17,Fabric,Forge"
-          project_id: "535291"
-          token: "${{ secrets.CF_API_TOKEN }}"
-          changelog_type: "markdown"
-          changelog: "Full changelog can be found in the [GitHub Repo](https://github.com/Luke100000/minecraft-comes-alive/blob/1.19.1/changelog.md)"
-          release_type: "release"
+          modrinth-id: 1W98a849
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 535291
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          name: "[Universal ${{steps.split.outputs._1}}] MCA Reborn - ${{steps.split.outputs._0}}"
+          changelog-file: changelog.md
+          version-type: release
+          files-primary: build/libs/*-@(universal).jar
+          files-secondary: build/libs/*-@(dev|sources).jar
+          loaders: |
+            fabric
+            forge
+            quilt
+          java: |
+            Java 17
+          dependencies: |
+            fabric-api | recommends | *
+            architectury-api | recommends | *
+            qsl | recommends | *
