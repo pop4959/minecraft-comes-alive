@@ -37,9 +37,9 @@ public class FamilyTree extends PersistentState {
         entries = NbtHelper.toMap(nbt, UUID::fromString, (id, element) -> new FamilyTreeNode(this, id, (NbtCompound)element));
 
         // Fixing the shift in relationships introduces by the promised update
-        UUID uuid = UUID.fromString("1234-1234-1234-1234");
+        UUID uuid = UUID.fromString("12341234-1234-1234-1234-123412341234");
         if (!entries.containsKey(uuid)) {
-            createEntry(uuid, "debug", Gender.NEUTRAL, false);
+            entries.put(uuid, createEntry(uuid, "debug", Gender.NEUTRAL, false));
             markDirty();
 
             entries.values().forEach(e -> {
