@@ -28,7 +28,9 @@ public final class Config implements Serializable {
 
     //mod features
     public boolean overwriteOriginalVillagers = true;
+    public List<String> moddedVillagerWhitelist = List.of();
     public boolean overwriteOriginalZombieVillagers = true;
+    public List<String> moddedZombieVillagerWhitelist = List.of();
     public float babyZombieChance = 0.25f;
     public boolean villagerTagsHacks = true;
     public boolean enableInfection = true;
@@ -97,6 +99,11 @@ public final class Config implements Serializable {
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
     public int minimumBuildingsToBeConsideredAVillage = 3;
+    public List<String> villagerDimensionBlacklist = List.of();
+    public List<String> allowedSpawnReasons = List.of(
+            "natural",
+            "structure"
+    );
 
     //gifts
     public int giftDesaturationQueueLength = 16;

@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.util.registry.Registry;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -67,16 +68,21 @@ public class SpawnQueue {
     }
 
     public boolean addVillager(Entity entity) {
-        if (entity instanceof IVillagerEntity && !handlesSpawnReason(((IVillagerEntity)entity).getSpawnReason())) {
+        if (entity instanceof IVillagerEntity villagerEntity && !handlesSpawnReason(villagerEntity.getSpawnReason())) {
+            return false;
+        }
+        if (Config.getInstance().villagerDimensionBlacklist.contains(entity.getEntityWorld().getRegistryKey().getValue().toString())) {
             return false;
         }
         if (Config.getInstance().overwriteOriginalVillagers
-                && entity.getClass().equals(VillagerEntity.class)
+                && (entity.getClass().equals(VillagerEntity.class) ||
+                    Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
                 && !villagerSpawnQueue.contains(entity)) {
             return villagerSpawnQueue.add((VillagerEntity)entity);
         }
         if (Config.getInstance().overwriteOriginalZombieVillagers
-                && entity.getClass().equals(ZombieVillagerEntity.class)
+                && (entity.getClass().equals(ZombieVillagerEntity.class) ||
+                    Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
                 && !zombieVillagerSpawnQueue.contains(entity)) {
             return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
         }
@@ -84,6 +90,6 @@ public class SpawnQueue {
     }
 
     private boolean handlesSpawnReason(SpawnReason reason) {
-        return reason == SpawnReason.NATURAL || reason == SpawnReason.STRUCTURE;
+        return Config.getInstance().allowedSpawnReasons.contains(reason.name().toLowerCase());
     }
 }
