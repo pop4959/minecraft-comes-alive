@@ -1,13 +1,8 @@
-package net.mca.fabric;
+package net.mca.quilt;
 
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import net.mca.ClientProxyAbstractImpl;
 import net.mca.Config;
 import net.mca.MCAClient;
@@ -20,12 +15,12 @@ import net.mca.client.render.TombstoneBlockEntityRenderer;
 import net.mca.client.render.VillagerEntityMCARenderer;
 import net.mca.client.render.ZombieVillagerEntityMCARenderer;
 import net.mca.entity.EntitiesMCA;
-import net.mca.fabric.client.gui.FabricMCAScreens;
-import net.mca.fabric.resources.FabricColorPaletteLoader;
-import net.mca.fabric.resources.FabricSupportersLoader;
 import net.mca.item.BabyItem;
 import net.mca.item.ItemsMCA;
 import net.mca.item.SirbenBabyItem;
+import net.mca.quilt.client.gui.QuiltMCAScreens;
+import net.mca.quilt.resources.QuiltColorPaletteLoader;
+import net.mca.quilt.resources.QuiltSupportersLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -34,10 +29,16 @@ import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
+import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
-public final class MCAFabricClient extends ClientProxyAbstractImpl implements ClientModInitializer {
+public final class MCAQuiltClient extends ClientProxyAbstractImpl implements ClientModInitializer {
     @Override
-    public void onInitializeClient() {
+    public void onInitializeClient(ModContainer container) {
         if (Config.getInstance().useSquidwardModels) {
             EntityRendererRegistry.register(EntitiesMCA.MALE_VILLAGER, VillagerEntityRenderer::new);
             EntityRendererRegistry.register(EntitiesMCA.FEMALE_VILLAGER, VillagerEntityRenderer::new);
@@ -59,10 +60,11 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
 
         BlockEntityRendererRegistry.register(BlockEntityTypesMCA.TOMBSTONE.get(), TombstoneBlockEntityRenderer::new);
 
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricMCAScreens());
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricColorPaletteLoader());
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricSupportersLoader());
+        ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltMCAScreens());
+        ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltColorPaletteLoader());
+        ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltSupportersLoader());
 
+        // TODO: Replace with an accesswidener or QSL equivalent when Quiltified FAPI is removed
         ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
                 BabyItem.hasBeenInvalidated(stack) ? 1 : 0
         );
@@ -80,9 +82,9 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
                 MCAClient.onLogin()
         );
 
-        BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
+        BlockRenderLayerMap.put(RenderLayer.getCutout(), BlocksMCA.INFERNAL_FLAME.get());
 
-        ClientTickEvents.START_CLIENT_TICK.register(MCAClient::tickClient);
+        ClientTickEvents.START.register(MCAClient::tickClient);
     }
 
     @Override
