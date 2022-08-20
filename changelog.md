@@ -1,3 +1,7 @@
+# 7.3.20
+
+* Fixed trades
+
 # 7.3.19
 
 * Official Support has been added for the Quilt ModLoader (Requires QSL + Quilted Fabric API)

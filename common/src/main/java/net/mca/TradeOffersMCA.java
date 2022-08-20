@@ -18,16 +18,16 @@ public class TradeOffersMCA {
     public static void bootstrap() {
         TradeOffers.PROFESSION_TO_LEVELED_TRADE.put(ProfessionsMCA.ADVENTURER.get(), new Int2ObjectOpenHashMap<>(
                 ImmutableMap.of(1, new TradeOffers.Factory[] {
-                                new SellItemFactory(Items.SLIME_BALL, 1, 10, 16, 1),
-                                new SellItemFactory(Items.LEATHER_HORSE_ARMOR, 3, 16, 10),
+                                new SellItemFactory(Items.SLIME_BALL, 1, 1, 16, 1),
+                                new SellItemFactory(Items.LEATHER_HORSE_ARMOR, 3, 1, 4, 10),
                                 new SellItemFactory(Items.SADDLE, 4, 1, 3, 5),
-                                new SellItemFactory(Items.IRON_HORSE_ARMOR, 5, 2, 20),
-                                new SellItemFactory(Items.DIAMOND, 16, 1, 20),
+                                new SellItemFactory(Items.IRON_HORSE_ARMOR, 5, 1, 2, 20),
+                                new SellItemFactory(Items.DIAMOND, 10, 1, 8, 20),
                                 new SellItemFactory(Items.GOLDEN_HORSE_ARMOR, 10, 1, 3, 30),
                                 new SellItemFactory(Items.GOLDEN_APPLE, 3, 1, 8, 30),
                                 new SellItemFactory(Items.DIAMOND_HORSE_ARMOR, 15, 1, 1, 30),
                                 new SellItemFactory(Items.ENCHANTED_GOLDEN_APPLE, 20, 1, 3, 50),
-                                new BuyForOneEmeraldFactory(Items.BREAD, 15, 10, 50)
+                                new BuyForOneEmeraldFactory(Items.BREAD, 15, 10, 30)
                         },
                         2, new TradeOffers.Factory[] {},
                         3, new TradeOffers.Factory[] {},
@@ -37,17 +37,17 @@ public class TradeOffersMCA {
 
         TradeOffers.PROFESSION_TO_LEVELED_TRADE.put(ProfessionsMCA.CULTIST.get(), new Int2ObjectOpenHashMap<>(
                 ImmutableMap.of(1, new TradeOffers.Factory[] {
-                                new SellItemFactory(ItemsMCA.SIRBEN_BABY_BOY.get(), 3, 1, 1),
-                                new SellItemFactory(ItemsMCA.SIRBEN_BABY_GIRL.get(), 3, 1, 1),
+                                new SellItemFactory(ItemsMCA.SIRBEN_BABY_BOY.get(), 5, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.SIRBEN_BABY_GIRL.get(), 5, 1, 1, 1),
                                 new BuyForOneEmeraldFactory(ItemsMCA.BABY_BOY.get(), 1, 1, 1),
                                 new BuyForOneEmeraldFactory(ItemsMCA.BABY_GIRL.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_DEATH.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_INFECTION.get(), 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_SUPPORTERS.get(), 1, 1, 1)
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_DEATH.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_INFECTION.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_SUPPORTERS.get(), 1, 1, 1, 1)
                         },
                         2, new TradeOffers.Factory[] {},
                         3, new TradeOffers.Factory[] {},
@@ -89,10 +89,6 @@ public class TradeOffersMCA {
 
         public SellItemFactory(Block block, int price, int count, int maxUses, int experience) {
             this(new ItemStack(block), price, count, maxUses, experience);
-        }
-
-        public SellItemFactory(Item item, int price, int count, int experience) {
-            this(new ItemStack(item), price, count, 12, experience);
         }
 
         public SellItemFactory(Item item, int price, int count, int maxUses, int experience) {
