@@ -58,8 +58,8 @@ jobs:
           java: |
             Java 17
           dependencies: |
+            architectury-api | depends | *
             fabric-api | recommends | *
-            architectury-api | recommends | *
             qsl | recommends | *
 
           retry-attempts: 2
