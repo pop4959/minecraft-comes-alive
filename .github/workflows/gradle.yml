@@ -53,6 +53,8 @@ jobs:
             fabric
             forge
             quilt
+          game-versions: |
+            ${{steps.split.outputs._1}}
           java: |
             Java 17
           dependencies: |
