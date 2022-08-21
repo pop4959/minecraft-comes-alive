@@ -221,7 +221,9 @@ public class Residency {
         //check if a bed can be found
         manager.findNearestVillage(player).ifPresentOrElse(village -> {
             village.getBuildingAt(player.getBlockPos()).ifPresentOrElse(building -> {
-                if (building.hasFreeSpace()) {
+                if (!entity.doesProfessionRequireHome() || entity.getDespawnDelay() > 0) {
+                    entity.sendChatMessage(player, "interaction.sethome.temporary");
+                } else if (building.hasFreeSpace()) {
                     entity.sendChatMessage(player, "interaction.sethome.success");
 
                     //remove from old home
