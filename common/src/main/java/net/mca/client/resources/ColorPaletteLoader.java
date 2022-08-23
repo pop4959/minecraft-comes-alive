@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ColorPaletteLoader extends SinglePreparationResourceReloader<Map<Identifier, ColorPalette.Data>> {
@@ -38,7 +39,7 @@ public class ColorPaletteLoader extends SinglePreparationResourceReloader<Map<Id
     protected void apply(Map<Identifier, ColorPalette.Data> palettes, ResourceManager manager, Profiler profiler) {
         palettes.forEach((id, data) -> {
             if (ColorPalette.REGISTRY.containsKey(id)) {
-                ColorPalette.REGISTRY.get(id).data = data;
+                ColorPalette.REGISTRY.get(id).data = Objects.requireNonNull(data);
             }
         });
     }
