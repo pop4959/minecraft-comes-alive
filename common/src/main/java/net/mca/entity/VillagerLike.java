@@ -181,6 +181,18 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return Text.translatable("entity.minecraft.villager." + getProfessionName());
     }
 
+    default boolean isProfessionImportant() {
+        return false;
+    }
+
+    default boolean doesProfessionRequireHome() {
+        return false;
+    }
+
+    default boolean canTradeWithProfession() {
+        return false;
+    }
+
     default String getClothes() {
         return getTrackedValue(CLOTHES);
     }
