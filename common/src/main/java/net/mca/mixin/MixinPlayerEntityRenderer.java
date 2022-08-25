@@ -96,6 +96,11 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
         PlayerEntityExtendedModel<AbstractClientPlayerEntity> model = (PlayerEntityExtendedModel<AbstractClientPlayerEntity>)layer.model;
         setModelPose(player);
 
+        model.handSwingProgress = 0.0f;
+        model.sneaking = false;
+        model.leaningPitch = 0.0f;
+        model.setAngles(player, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+
         model.setVisible(false);
 
         arm.visible = true;
