@@ -53,11 +53,13 @@ jobs:
             fabric
             forge
             quilt
+          game-versions: |
+            ${{steps.split.outputs._1}}
           java: |
             Java 17
           dependencies: |
+            architectury-api | depends | *
             fabric-api | recommends | *
-            architectury-api | recommends | *
             qsl | recommends | *
 
           retry-attempts: 2

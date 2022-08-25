@@ -30,7 +30,7 @@ public class ColorPalette {
     }
 
     public float[] getColor(float u, float v, float greenShift) {
-        int x = clampFloor(v, data.width - 1); //horizontal
+        int x = clampFloor(v, data.width - 1); // horizontal
         int y = clampFloor(u, data.height - 1); // vertical
 
         int color = data.colors[y * data.height + x];
