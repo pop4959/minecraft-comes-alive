@@ -4,6 +4,7 @@
   * 1.19.0, 1.19.1, 1.17.1, and 1.16.5 are now officially considered EOL, and users should upgrade to retain support
 * You can no longer set the home of a villager who is either there temporarily or does not require a home
 * Fixed trades
+* Fixed equipment dropping
 
 # 7.3.19
 

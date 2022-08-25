@@ -936,6 +936,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void onDeath(DamageSource cause) {
+        // deselect equipment as this messes with MobEntities equipment dropping
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            this.equipStack(slot, ItemStack.EMPTY);
+        }
+
         super.onDeath(cause);
 
         if (world.isClient) {
@@ -980,6 +985,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         residency.leaveHome();
     }
+
+
 
     @Override
     public MoveControl getMoveControl() {
