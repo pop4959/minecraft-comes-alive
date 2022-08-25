@@ -61,8 +61,8 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntit
     OUTLAWED("outlawed", (villager, player) -> villager.getVillagerData().getProfession() == ProfessionsMCA.OUTLAW.get()),
     NOT_OUTLAWED("!outlawed", (villager, player) -> villager.getVillagerData().getProfession() != ProfessionsMCA.OUTLAW.get()),
 
-    TRADER("trader", (villager, player) -> !ProfessionsMCA.canNotTrade.contains(villager.getVillagerData().getProfession())),
-    NOT_TRADER("!trader", (villager, player) -> ProfessionsMCA.canNotTrade.contains(villager.getVillagerData().getProfession())),
+    TRADER("trader", (villager, player) -> villager.canTradeWithProfession()),
+    NOT_TRADER("!trader", (villager, player) -> !villager.canTradeWithProfession()),
 
     PEASANT("peasant", (villager, player) -> isRankAtLeast(villager, player, Rank.PEASANT)),
     NOT_PEASANT("!peasant", (villager, player) -> !isRankAtLeast(villager, player, Rank.PEASANT)),
