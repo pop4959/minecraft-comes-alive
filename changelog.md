@@ -5,6 +5,7 @@
 * You can no longer set the home of a villager who is either there temporarily or does not require a home
 * Fixed trades
 * Fixed equipment dropping
+* Fixed arms being funky in multiplayer
 
 # 7.3.19
 
