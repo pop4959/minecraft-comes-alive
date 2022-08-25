@@ -1,6 +1,5 @@
 package net.mca.entity.ai;
 
-import net.mca.ProfessionsMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.server.world.data.Building;
 import net.mca.server.world.data.GraveyardManager;
