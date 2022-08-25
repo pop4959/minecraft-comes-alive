@@ -1,5 +1,6 @@
 package net.mca.entity.interaction;
 
+import net.mca.Config;
 import net.mca.ProfessionsMCA;
 import net.mca.advancement.criterion.CriterionMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -38,28 +39,6 @@ import java.util.Comparator;
 import java.util.Optional;
 
 public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityMCA> {
-    private static final String[] structures = new String[] {
-            "igloo",
-            "pyramid",
-            "ruined_portal_desert",
-            "ruined_portal_swamp",
-            "ruined_portal",
-            "ruined_portal_mountain",
-            "mansion",
-            "monument",
-            "shipwreck",
-            "shipwreck_beached",
-            "village_desert",
-            "village_taiga",
-            "village_snowy",
-            "village_plains",
-            "village_savanna",
-            "swamp_hut",
-            "mineshaft",
-            "jungle_pyramid",
-            "pillager_outpost"
-    };
-
     public VillagerCommandHandler(VillagerEntityMCA entity) {
         super(entity);
     }
@@ -262,7 +241,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             case "apologize" -> {
                 Vec3d pos = entity.getPos();
                 entity.world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
-                    if ( entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
+                    if (entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
                         v.pardonPlayers(99);
                     }
                 });
@@ -270,7 +249,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             case "location" -> {
                 //choose a random arg from the default pool
                 if (arg.length() == 0) {
-                    arg = structures[entity.getRandom().nextInt(structures.length)];
+                    arg = Config.getInstance().structuresInRumors.get(entity.getRandom().nextInt(Config.getInstance().structuresInRumors.size()));
                 }
 
                 //slightly randomly the search center

@@ -1,6 +1,7 @@
 package net.mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerLike;
@@ -16,6 +17,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class DestinyScreen extends VillagerEditorScreen {
@@ -129,12 +131,13 @@ public class DestinyScreen extends VillagerEditorScreen {
             case "destiny" -> {
                 int x = 0;
                 int y = 0;
-                for (String location : new String[] {"somewhere", "shipwreck_beached", "village_desert", "village_taiga", "village_snowy", "village_plains", "village_savanna"}) {
+                for (String location : Config.getInstance().destinyLocations) {
                     addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
                         //story
                         story = new LinkedList<>();
                         story.add(new TranslatableText("destiny.story.reason"));
-                        story.add(new TranslatableText(location.equals("shipwreck_beached") ? "destiny.story.sailing" : "destiny.story.travelling"));
+                        Map<String, String> map = Config.getInstance().destinyLocationsToTranslationMap;
+                        story.add(new TranslatableText(map.getOrDefault(location, map.getOrDefault("default", "missing_default"))));
                         story.add(new TranslatableText("destiny.story." + location));
                         this.location = location;
                         setPage("story");
