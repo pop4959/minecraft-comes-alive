@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
-    private LinkedList<Text> story;
+    private final LinkedList<Text> story = new LinkedList<>();
     private String location;
     private boolean teleported = false;
 
@@ -108,6 +108,12 @@ public class DestinyScreen extends VillagerEditorScreen {
             MCAClient.getDestinyManager().allowClosing();
             super.close();
             return;
+        } else if (page.equals("destiny")) {
+            //there is only one entry
+            if (Config.getInstance().destinyLocations.size() == 1) {
+                selectStory(Config.getInstance().destinyLocations.get(0));
+                return;
+            }
         }
 
         this.page = page;
@@ -136,14 +142,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                     float offsetX = (y + 1) == rows ? (2 - (Config.getInstance().destinyLocations.size() - 1) % 3) / 2.0f : 0;
                     float offsetY = Math.max(0, 3 - rows) / 2.0f;
                     addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + (x + offsetX) * 96), (int)(height / 2 + (y + offsetY) * 20 - 16), 96, 20, new TranslatableText("gui.destiny." + location), sender -> {
-                        //story
-                        story = new LinkedList<>();
-                        story.add(new TranslatableText("destiny.story.reason"));
-                        Map<String, String> map = Config.getInstance().destinyLocationsToTranslationMap;
-                        story.add(new TranslatableText(map.getOrDefault(location, map.getOrDefault("default", "missing_default"))));
-                        story.add(new TranslatableText("destiny.story." + location));
-                        this.location = location;
-                        setPage("story");
+                        selectStory(location);
                     }));
                     x++;
                     if (x >= 3) {
@@ -167,5 +166,15 @@ public class DestinyScreen extends VillagerEditorScreen {
             }));
             default -> super.setPage(page);
         }
+    }
+
+    private void selectStory(String location) {
+        story.clear();
+        story.add(new TranslatableText("destiny.story.reason"));
+        Map<String, String> map = Config.getInstance().destinyLocationsToTranslationMap;
+        story.add(new TranslatableText(map.getOrDefault(location, map.getOrDefault("default", "missing_default"))));
+        story.add(new TranslatableText("destiny.story." + location));
+        this.location = location;
+        setPage("story");
     }
 }
