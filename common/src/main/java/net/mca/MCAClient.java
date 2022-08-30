@@ -12,6 +12,7 @@ public class MCAClient {
     public static VillagerEntityMCA fallbackVillager;
     public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
     public static Set<UUID> playerDataRequests = new HashSet<>();
+    private static Map<String, Boolean> classCacheMap = new HashMap<>();
 
     private static final DestinyManager destinyManager = new DestinyManager();
 
@@ -38,7 +39,35 @@ public class MCAClient {
         return useGeneticsRenderer(uuid) && MCAClient.playerData.get(uuid).getPlayerModel() == VillagerLike.PlayerModel.VILLAGER;
     }
 
+    public static boolean renderArms(UUID uuid, String key) {
+        boolean canContinue = useVillagerRenderer(uuid);
+        if (canContinue) {
+            return Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                    .filter(entry -> entry.getValue().contains("arms") || entry.getValue().contains(key))
+                    .noneMatch(entry -> doesClassExist(entry.getKey()));
+        }
+        return false;
+    }
+
+    public static boolean renderArms(UUID uuid) {
+        return renderArms(uuid, "arms");
+    }
+
     public static void tickClient(MinecraftClient client) {
         destinyManager.tick(client);
+    }
+
+    private static boolean doesClassExist(String className) {
+        if (!classCacheMap.containsKey(className)) {
+            boolean result;
+            try {
+                Class.forName(className);
+                result = true;
+            } catch (Exception ignored) {
+                result = false;
+            }
+            classCacheMap.put(className, result);
+        }
+        return classCacheMap.get(className);
     }
 }

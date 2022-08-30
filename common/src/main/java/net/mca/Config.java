@@ -214,6 +214,10 @@ public final class Config implements Serializable {
 
     public Map<String, String> professionConversionsMap = Map.of();
 
+    public Map<String, String> playerRendererBlacklist = Map.of(
+            "arms", "dev.tr7zw.firstperson.FirstPersonModelCore"
+    );
+
 
     public static File getConfigFile() {
         return new File("./config/mca.json");

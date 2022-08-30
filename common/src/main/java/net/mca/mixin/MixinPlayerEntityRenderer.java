@@ -80,7 +80,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "renderRightArm(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
     public void injectRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (MCAClient.useVillagerRenderer(player.getUuid())) {
+        if (MCAClient.renderArms(player.getUuid(), "right_arm")) {
             renderCustomArm(matrices, vertexConsumers, light, player, skinLayer.model.rightArm, skinLayer.model.rightSleeve, skinLayer);
             renderCustomArm(matrices, vertexConsumers, light, player, clothingLayer.model.rightArm, clothingLayer.model.rightSleeve, clothingLayer);
             ci.cancel();
@@ -89,7 +89,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "renderLeftArm(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
     public void injectRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (MCAClient.useVillagerRenderer(player.getUuid())) {
+        if (MCAClient.renderArms(player.getUuid(), "left_arm")) {
             renderCustomArm(matrices, vertexConsumers, light, player, skinLayer.model.leftArm, skinLayer.model.leftSleeve, skinLayer);
             renderCustomArm(matrices, vertexConsumers, light, player, clothingLayer.model.leftArm, clothingLayer.model.leftSleeve, clothingLayer);
             ci.cancel();
