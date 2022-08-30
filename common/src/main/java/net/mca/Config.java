@@ -212,6 +212,8 @@ public final class Config implements Serializable {
             "shipwreck_beached", "destiny.story.sailing"
     );
 
+    public Map<String, String> professionConversionsMap = Map.of();
+
 
     public static File getConfigFile() {
         return new File("./config/mca.json");

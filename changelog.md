@@ -15,6 +15,10 @@
   * Having this trait will enforce gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
   * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.\
   * In the event of this trait being applied alongside the bisexual trait, the bisexual trait will take priority. (7.4 may change this if a conflict system is implemented)
+* Added `professionConversionsMap` as a config value, made for mod compatibility
+  * Designed to be able to use clothing from another profession, if your mod does not supply any to us
+  * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by default.
+  * Only Adult clothing is used in this, baby and child clothing remains unchanged.
 
 # 7.3.20
 
