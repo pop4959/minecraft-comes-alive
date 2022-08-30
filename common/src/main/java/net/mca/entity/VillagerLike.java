@@ -136,11 +136,15 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default boolean canBeAttractedTo(VillagerLike<?> other) {
-        return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other) || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
+        return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other)
+                || (getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other) && getGenetics().getGender() == other.getGenetics().getGender())
+                || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
     }
 
     default boolean canBeAttractedTo(PlayerSaveData other) {
-        return getTraits().hasTrait(Traits.Trait.BISEXUAL) || getGenetics().getGender().isMutuallyAttracted(other.getGender());
+        return getTraits().hasTrait(Traits.Trait.BISEXUAL)
+                || (getTraits().hasTrait(Traits.Trait.HOMOSEXUAL) && getGenetics().getGender() == other.getGender())
+                || getGenetics().getGender().isMutuallyAttracted(other.getGender());
     }
 
     default Hand getDominantHand() {

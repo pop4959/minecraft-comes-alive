@@ -30,6 +30,7 @@ public class Traits {
         ALBINISM(1.0f, 1.0f),
         VEGETARIAN(1.0f, 0.0f),
         BISEXUAL(1.0f, 0.0f),
+        HOMOSEXUAL(1.0f, 0.0f),
         ELECTRIFIED(0.0f, 0.0f),
         SIRBEN(0.025f, 1.0f),
         RAINBOW(0.05f, 0.0f);
