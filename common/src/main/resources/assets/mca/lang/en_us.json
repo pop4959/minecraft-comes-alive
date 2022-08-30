@@ -544,6 +544,7 @@
   "gui.villager_editor.vanilla_skin": "Vanilla",
   "gui.villager_editor.vanilla_skin.tooltip": "Use the vanilla player model and use this customization only for inheritance",
   "gui.villager_editor.customization_hint": "Use the comb, needle and thread and the potion of metamorphosis to customize.",
+  "gui.villager_editor.model_hint": "(Customization only used for offspring)",
 
   "command.no_permission": "This command is disabled for users.",
   "command.only_one_destiny": "You already decided your destiny.",

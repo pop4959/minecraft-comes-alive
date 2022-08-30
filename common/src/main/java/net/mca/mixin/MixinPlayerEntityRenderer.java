@@ -27,9 +27,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
     private PlayerEntityModel<AbstractClientPlayerEntity> villagerModel;
-    private PlayerEntityModel<AbstractClientPlayerEntity> originalModel;
+    private PlayerEntityModel<AbstractClientPlayerEntity> vanillaModel;
 
-    @Shadow protected abstract void setModelPose(AbstractClientPlayerEntity player);
+    @Shadow
+    protected abstract void setModelPose(AbstractClientPlayerEntity player);
 
     SkinLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> skinLayer;
     ClothingLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> clothingLayer;
@@ -42,7 +43,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     private void init(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
         if (Config.getInstance().enableVillagerPlayerModel) {
             villagerModel = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F), slim));
-            originalModel = model;
+            vanillaModel = model;
 
             skinLayer = new SkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));
             addFeature(skinLayer);
@@ -68,9 +69,12 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 matrices.translate(0, 0.6F, 0);
             }
             ci.cancel();
+
+            // switch to mca model
             model = villagerModel;
-        } else {
-            model = originalModel;
+        } else if (Config.getInstance().enableVillagerPlayerModel) {
+            // switch to vanilla model
+            model = vanillaModel;
         }
     }
 
