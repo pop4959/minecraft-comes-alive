@@ -3,6 +3,7 @@
 * Fixed adventurers spawning in unloaded chunk
 * Fixed crash when disabling MCA player model
 * Added tooltip to editor to avoid confusion when choosing vanilla model
+* Fixed players also having randomly colored hair
 * Several Changes to the Naming systems in MCA
   * `SpawnQueue` has been adjusted to properly give villager's random names (IE they don't look italicized when using WAILA-type mods)
     * Note: this only applies to newly-replaced villagers; older villagers and subsequent name replacements will still show italicized in most cases.
