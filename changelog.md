@@ -23,6 +23,7 @@
   * Supported Values: `arms`, `left_arm`, `right_arm`
 * Fixed #373 (Gamemode being switched before user finishes destiny)
   * Should also resolve the falling-through-world issue
+* Fixed #239, #368 (Compatibility Fix for older Spectrum Versions)
 
 # 7.3.20
 
