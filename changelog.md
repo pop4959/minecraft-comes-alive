@@ -19,6 +19,10 @@
   * Designed to be able to use clothing from another profession, if your mod does not supply any to us
   * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by default.
   * Only Adult clothing is used in this, baby and child clothing remains unchanged.
+* Added `playerRendererBlacklist` to disable certain render elements of the player model if certain class files are present
+  * Supported Values: `arms`, `left_arm`, `right_arm`
+* Fixed #373 (Gamemode being switched before user finishes destiny)
+  * Should also resolve the falling-through-world issue
 
 # 7.3.20
 

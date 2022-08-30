@@ -6,7 +6,6 @@ import net.mca.entity.VillagerFactory;
 import net.mca.entity.ZombieVillagerEntityMCA;
 import net.mca.entity.ZombieVillagerFactory;
 import net.mca.entity.ai.relationship.Gender;
-import net.mca.resources.Names;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieVillagerEntity;

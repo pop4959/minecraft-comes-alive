@@ -104,7 +104,7 @@ public class DestinyScreen extends VillagerEditorScreen {
     @Override
     protected void setPage(String page) {
         if (page.equals("destiny") && !allowTeleportation) {
-            NetworkHandler.sendToServer(new DestinyMessage(null));
+            NetworkHandler.sendToServer(new DestinyMessage(true));
             MCAClient.getDestinyManager().allowClosing();
             super.close();
             return;
@@ -163,6 +163,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                 if (story.size() > 1) {
                     story.remove(0);
                 } else {
+                    NetworkHandler.sendToServer(new DestinyMessage(true));
                     super.close();
                 }
             }));
