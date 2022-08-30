@@ -78,6 +78,7 @@ public class VillagerEditorScreen extends Screen {
     private ButtonWidget villagerSkinWidget;
     private ButtonWidget playerSkinWidget;
     private ButtonWidget vanillaSkinWidget;
+    private ButtonWidget doneWidget;
 
     public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
         super(new TranslatableText("gui.VillagerEditorScreen.title"));
@@ -159,7 +160,7 @@ public class VillagerEditorScreen extends Screen {
             }
 
             //close
-            addDrawableChild(new ButtonWidget(width / 2 - DATA_WIDTH + 20, height / 2 + 85, DATA_WIDTH - 40, 20, new TranslatableText("gui.done"), sender -> {
+            doneWidget = addDrawableChild(new ButtonWidget(width / 2 - DATA_WIDTH + 20, height / 2 + 85, DATA_WIDTH - 40, 20, new TranslatableText("gui.done"), sender -> {
                 syncVillagerData();
                 close();
             }));
@@ -468,25 +469,68 @@ public class VillagerEditorScreen extends Screen {
     }
 
     protected void drawName(int x, int y) {
-        Text villagerName = villager.getCustomName();
-        if (villagerName == null || villagerName.asString().isEmpty()) {
-            // Failsafe-conditions for empty names
-            if (villagerUUID.equals(playerUUID)) {
-                assert client != null;
-                assert client.player != null;
-                villagerName = client.player.getName();
-            } else {
-                villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
+        drawName(x, y, name -> {
+            this.updateName(name);
+            if (doneWidget != null) {
+                doneWidget.active = !(name.isEmpty() || name.isBlank());
             }
-            villager.setTrackedValue(VillagerLike.VILLAGER_NAME, villagerName.asString());
-        }
+        });
+    }
+
+    protected void drawName(int x, int y, Consumer<String> onChanged) {
         villagerNameField = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH / 3 * 2, 18, new TranslatableText("structure_block.structure_name")));
         villagerNameField.setMaxLength(32);
-        villagerNameField.setText(villagerName.asString());
-        villagerNameField.setChangedListener(name -> villager.setTrackedValue(VillagerLike.VILLAGER_NAME, name));
+        villagerNameField.setText(getName().asString());
+        villagerNameField.setChangedListener(onChanged);
         addDrawableChild(new ButtonWidget(x + DATA_WIDTH / 3 * 2 + 1, y - 1, DATA_WIDTH / 3 - 2, 20, new TranslatableText("gui.button.random"), (b) ->
                 NetworkHandler.sendToServer(new VillagerNameRequest(villager.getGenetics().getGender()))
         ));
+    }
+
+    public Text getName() {
+        Text villagerName = null;
+        boolean isPlayer = villagerUUID.equals(playerUUID);
+        if (isPlayer) {
+            assert client != null;
+            assert client.player != null;
+            villagerName = client.player.getCustomName();
+        } else if (villager.hasCustomName()) {
+            villagerName = villager.getCustomName();
+        }
+
+        if (villagerName == null || villagerName.asString().isEmpty()) {
+            // Failsafe-conditions for non-present custom names
+            if (isPlayer) {
+                assert client != null;
+                assert client.player != null;
+                villagerName = client.player.getName();
+                // Random Name is not in this portion since it shouldn't be possible
+                // for a player's name to be null, feel free to slap me if this is wrong.
+            } else {
+                villagerName = villager.getName();
+                if (villagerName == null || villagerName.asString().isEmpty()) {
+                    villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
+                }
+            }
+            updateName(villagerName.asString());
+        }
+        return villagerName;
+    }
+
+    public void updateName(String name) {
+        Text newName = Text.of(name);
+        boolean isPlayer = villagerUUID.equals(playerUUID);
+        if (isPlayer) {
+            assert client != null;
+            assert client.player != null;
+            if (client.player.getName().asString().equals(name)) {
+                // Remove Custom name if it is the same as our actual name
+                newName = null;
+            }
+            client.player.setCustomName(newName);
+            client.player.setCustomNameVisible(newName != null);
+        }
+        villager.setCustomName(newName);
     }
 
     private ButtonWidget genderButtonFemale;

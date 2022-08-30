@@ -3,6 +3,12 @@
 * Fixed adventurers spawning in unloaded chunk
 * Fixed crash when disabling MCA player model
 * Added tooltip to editor to avoid confusion when choosing vanilla model
+* Several Changes to the Naming systems in MCA
+  * `SpawnQueue` has been adjusted to properly give villager's random names (IE they don't look italicized when using WAILA-type mods)
+    * Note: this only applies to newly-replaced villagers; older villagers and subsequent name replacements will still show italicized in most cases.
+  * Player Naming has been fixed and works properly, much like how /nickname systems work (If you have an existing custom name, MCA will use that instead)
+  * It is no longer possible to have a whitespace/empty name, and multiple safeguards have been placed to prevent exploits.
+  * The `Nameless Traveler` code has been removed in favor of the above fix
 
 # 7.3.20
 

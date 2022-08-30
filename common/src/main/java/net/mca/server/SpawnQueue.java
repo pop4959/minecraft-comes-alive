@@ -6,6 +6,7 @@ import net.mca.entity.VillagerFactory;
 import net.mca.entity.ZombieVillagerEntityMCA;
 import net.mca.entity.ZombieVillagerFactory;
 import net.mca.entity.ai.relationship.Gender;
+import net.mca.resources.Names;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
@@ -27,14 +28,16 @@ public class SpawnQueue {
 
     public void tick() {
         // lazy spawning of our villagers as they can't be spawned while loading
+        Gender randomGender = Gender.getRandom();
+        String randomName = Names.pickCitizenName(randomGender);
         if (!villagerSpawnQueue.isEmpty()) {
             VillagerEntity e = villagerSpawnQueue.remove(0);
 
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
                 VillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
+                        .withName(e.hasCustomName() ? e.getName().getString() : randomName)
+                        .withGender(randomGender)
                         .withAge(e.getBreedingAge())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
@@ -51,8 +54,8 @@ public class SpawnQueue {
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
                 ZombieVillagerEntityMCA z = ZombieVillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
+                        .withName(e.hasCustomName() ? e.getName().getString() : randomName)
+                        .withGender(randomGender)
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())

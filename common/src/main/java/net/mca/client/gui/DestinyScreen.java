@@ -29,6 +29,7 @@ public class DestinyScreen extends VillagerEditorScreen {
     private final boolean allowTeleportation;
     private final boolean allowPlayerModel;
     private final boolean allowVillagerModel;
+    private ButtonWidget acceptWidget;
 
     public DestinyScreen(UUID playerUUID, boolean allowTeleportation, boolean allowPlayerModel, boolean allowVillagerModel) {
         super(playerUUID, playerUUID);
@@ -120,18 +121,20 @@ public class DestinyScreen extends VillagerEditorScreen {
         clearChildren();
         switch (page) {
             case "general" -> {
-                drawName(width / 2 - DATA_WIDTH / 2, height / 2);
+                drawName(width / 2 - DATA_WIDTH / 2, height / 2, name -> {
+                    this.updateName(name);
+                    if (acceptWidget != null) {
+                        acceptWidget.active = !(name.isEmpty() || name.isBlank());
+                    }
+                });
                 drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);
 
                 if (allowPlayerModel && allowVillagerModel) {
                     drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
                 }
 
-                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
+                acceptWidget = addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
                     setPage("body");
-                    if (villager.getTrackedValue(VillagerLike.VILLAGER_NAME).isEmpty()) {
-                        villager.setTrackedValue(VillagerLike.VILLAGER_NAME, "Nameless Traveller");
-                    }
                 }));
             }
             case "destiny" -> {
