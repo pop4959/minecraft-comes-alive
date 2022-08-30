@@ -23,7 +23,6 @@ import net.mca.network.c2s.VillagerEditorSyncRequest;
 import net.mca.network.c2s.VillagerNameRequest;
 import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
-import net.mca.resources.Names;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -520,7 +519,7 @@ public class VillagerEditorScreen extends Screen {
             } else {
                 villagerName = villager.getName();
                 if (villagerName == null || MCA.isBlankString(villagerName.asString())) {
-                    villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
+                    villagerName = Text.of("Carl");
                 }
             }
             updateName(villagerName.asString());
