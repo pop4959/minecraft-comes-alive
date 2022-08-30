@@ -36,6 +36,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.village.VillagerProfession;
@@ -490,8 +491,13 @@ public class Village implements Iterable<Building> {
     }
 
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
+        if (!world.isChunkLoaded(ChunkSectionPos.getSectionCoord(blockPos.getX()), ChunkSectionPos.getSectionCoord(blockPos.getZ()))) {
+            // prevent any additional retries
+            return true;
+        }
+
         String name = null;
-        if (blockPos != null && this.doesNotSuffocateAt(world, blockPos)) {
+        if (this.doesNotSuffocateAt(world, blockPos)) {
             int i = world.random.nextInt(10);
             if (i == 0 && Config.getInstance().innSpawnsWanderingTraders) {
                 WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
