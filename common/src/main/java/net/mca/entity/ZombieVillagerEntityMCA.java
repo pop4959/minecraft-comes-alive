@@ -205,7 +205,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     public void setCustomName(@Nullable Text name) {
         super.setCustomName(name);
 
-        if (!world.isClient && name != null) {
+        if (name != null) {
             setName(name.getString());
         }
     }

@@ -28,16 +28,14 @@ public class SpawnQueue {
 
     public void tick() {
         // lazy spawning of our villagers as they can't be spawned while loading
-        Gender randomGender = Gender.getRandom();
-        String randomName = Names.pickCitizenName(randomGender);
         if (!villagerSpawnQueue.isEmpty()) {
             VillagerEntity e = villagerSpawnQueue.remove(0);
 
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
                 VillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : randomName)
-                        .withGender(randomGender)
+                        .withName(e.hasCustomName() ? e.getName().getString() : null)
+                        .withGender(Gender.getRandom())
                         .withAge(e.getBreedingAge())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
@@ -54,8 +52,8 @@ public class SpawnQueue {
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
                 ZombieVillagerEntityMCA z = ZombieVillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : randomName)
-                        .withGender(randomGender)
+                        .withName(e.hasCustomName() ? e.getName().getString() : null)
+                        .withGender(Gender.getRandom())
                         .withPosition(e)
                         .withType(e.getVillagerData().getType())
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())

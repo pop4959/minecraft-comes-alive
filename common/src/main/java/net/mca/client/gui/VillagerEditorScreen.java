@@ -518,19 +518,28 @@ public class VillagerEditorScreen extends Screen {
     }
 
     public void updateName(String name) {
-        Text newName = Text.of(name);
-        boolean isPlayer = villagerUUID.equals(playerUUID);
-        if (isPlayer) {
-            assert client != null;
-            assert client.player != null;
-            if (client.player.getName().asString().equals(name)) {
-                // Remove Custom name if it is the same as our actual name
-                newName = null;
+        if (!(name.isEmpty() || name.isBlank())) {
+            Text newName = Text.of(name);
+            boolean isPlayer = villagerUUID.equals(playerUUID);
+            if (isPlayer) {
+                assert client != null;
+                assert client.player != null;
+                final Text realName = client.player.getName();
+                if (realName.asString().equals(name)) {
+                    // Remove Custom name if it is the same as our actual name
+                    newName = null;
+                }
+                client.player.setCustomName(newName);
+                client.player.setCustomNameVisible(newName != null);
+                if (client.player.isCustomNameVisible()) {
+                    villager.setCustomName(newName);
+                } else {
+                    villager.setName(realName.asString());
+                }
+            } else {
+                villager.setCustomName(newName);
             }
-            client.player.setCustomName(newName);
-            client.player.setCustomNameVisible(newName != null);
         }
-        villager.setCustomName(newName);
     }
 
     private ButtonWidget genderButtonFemale;
