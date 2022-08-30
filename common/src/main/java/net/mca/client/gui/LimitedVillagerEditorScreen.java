@@ -25,6 +25,11 @@ public class LimitedVillagerEditorScreen extends VillagerEditorScreen {
     }
 
     @Override
+    protected boolean shouldPrintPlayerHint() {
+        return false;
+    }
+
+    @Override
     protected void setPage(String page) {
         this.page = page;
 

@@ -634,6 +634,10 @@ public class VillagerEditorScreen extends Screen {
         return false;
     }
 
+    protected boolean shouldPrintPlayerHint() {
+        return true;
+    }
+
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
@@ -657,7 +661,7 @@ public class VillagerEditorScreen extends Screen {
             }
 
             // hint for confused people
-            if (villagerUUID.equals(playerUUID) && villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal()) {
+            if (shouldPrintPlayerHint() && villagerUUID.equals(playerUUID) && villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal()) {
                 matrices.push();
                 matrices.translate(x, y - 145, 0);
                 matrices.scale(0.5f, 0.5f, 0.5f);
