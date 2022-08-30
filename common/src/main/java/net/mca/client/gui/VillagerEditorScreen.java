@@ -187,7 +187,7 @@ public class VillagerEditorScreen extends Screen {
 
                 //age
                 if (!villagerUUID.equals(playerUUID)) {
-                    addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double) AgeState.getMaxAge(), b -> {
+                    addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, new TranslatableText("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
                         villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
                         villager.setBreedingAge(villagerBreedingAge);
                         villager.calculateDimensions();
@@ -610,6 +610,15 @@ public class VillagerEditorScreen extends Screen {
                 InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
             } else {
                 InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, villager);
+            }
+
+            // hint for confused people
+            if (villagerUUID.equals(playerUUID) && villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal()) {
+                matrices.push();
+                matrices.translate(x, y - 145, 0);
+                matrices.scale(0.5f, 0.5f, 0.5f);
+                drawCenteredText(matrices, textRenderer, new TranslatableText("gui.villager_editor.model_hint"), 0, 0, 0xAAFFFFFF);
+                matrices.pop();
             }
         }
 
