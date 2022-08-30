@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.cobalt.network.NetworkHandler;
-import net.mca.entity.VillagerLike;
 import net.mca.network.c2s.DestinyMessage;
 import net.mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
