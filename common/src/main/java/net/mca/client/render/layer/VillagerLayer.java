@@ -1,6 +1,7 @@
 package net.mca.client.render.layer;
 
 import com.google.common.collect.Maps;
+import net.mca.MCA;
 import net.mca.MCAClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
@@ -99,7 +100,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     @Nullable
     protected final Identifier cached(String name, Function<String, Identifier> supplier) {
-        if (name == null || name.isEmpty()) {
+        if (MCA.isBlankString(name)) {
             return null;
         }
         return TEXTURE_CACHE.computeIfAbsent(name, s -> {

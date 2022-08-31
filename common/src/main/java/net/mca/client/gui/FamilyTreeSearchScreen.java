@@ -1,5 +1,6 @@
 package net.mca.client.gui;
 
+import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.c2s.FamilyTreeUUIDLookup;
 import net.mca.resources.data.SerializablePair;
@@ -94,11 +95,11 @@ public class FamilyTreeSearchScreen extends Screen {
                 String right = pair.getRight().getRight();
 
                 Text text;
-                if (left.isEmpty() && right.isEmpty()) {
+                if (MCA.isBlankString(left) && MCA.isBlankString(right)) {
                     text = new TranslatableText("gui.family_tree.child_of_0");
-                } else if (left.isEmpty()) {
+                } else if (MCA.isBlankString(left)) {
                     text = new TranslatableText("gui.family_tree.child_of_1", right);
-                } else if (right.isEmpty()) {
+                } else if (MCA.isBlankString(right)) {
                     text = new TranslatableText("gui.family_tree.child_of_1", left);
                 } else {
                     text = new TranslatableText("gui.family_tree.child_of_2", left, right);
@@ -115,7 +116,7 @@ public class FamilyTreeSearchScreen extends Screen {
     }
 
     private void searchVillager(String v) {
-        if (!v.isEmpty()) {
+        if (!MCA.isBlankString(v)) {
             NetworkHandler.sendToServer(new FamilyTreeUUIDLookup(v));
         }
     }

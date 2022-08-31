@@ -2,6 +2,7 @@ package net.mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.MCAClient;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.c2s.DestinyMessage;
@@ -118,7 +119,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                 drawName(width / 2 - DATA_WIDTH / 2, height / 2, name -> {
                     this.updateName(name);
                     if (acceptWidget != null) {
-                        acceptWidget.active = !(name.isEmpty() || name.isBlank());
+                        acceptWidget.active = !MCA.isBlankString(name);
                     }
                 });
                 drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);

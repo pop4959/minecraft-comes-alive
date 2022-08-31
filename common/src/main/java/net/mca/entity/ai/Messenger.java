@@ -1,6 +1,7 @@
 package net.mca.entity.ai;
 
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.entity.EntityWrapper;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.family.FamilyTree;
@@ -44,7 +45,7 @@ public interface Messenger extends EntityWrapper {
             targetName = FamilyTree.get(world)
                     .getOrEmpty(target.getUuid())
                     .map(FamilyTreeNode::getName)
-                    .filter(n -> !n.isEmpty())
+                    .filter(n -> !MCA.isBlankString(n))
                     .orElse(target.getName().getString());
         } else {
             targetName = target.getName().getString();

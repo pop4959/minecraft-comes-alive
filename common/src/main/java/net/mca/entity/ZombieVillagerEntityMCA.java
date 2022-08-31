@@ -1,6 +1,7 @@
 package net.mca.entity;
 
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.TagsMCA;
 import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.Relationship;
@@ -111,7 +112,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     @Nullable
     public final Text getCustomName() {
         String value = getTrackedValue(VILLAGER_NAME);
-        return value.isEmpty() ? null : new LiteralText(value).formatted(Formatting.RED);
+        return MCA.isBlankString(value) ? null : new LiteralText(value).formatted(Formatting.RED);
     }
 
     @Override

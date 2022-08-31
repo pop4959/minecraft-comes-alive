@@ -1,5 +1,6 @@
 package net.mca.entity.ai.relationship.family;
 
+import net.mca.MCA;
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.RelationshipState;
@@ -126,7 +127,7 @@ public final class FamilyTreeNode implements Serializable {
                         getProfessionId().toString()
         ).replace(":", ".");
 
-        return professionName.isEmpty() ? "mca.none" : professionName;
+        return MCA.isBlankString(professionName) ? "mca.none" : professionName;
     }
 
     public MutableText getProfessionText() {

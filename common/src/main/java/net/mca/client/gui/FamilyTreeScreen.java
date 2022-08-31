@@ -1,6 +1,7 @@
 package net.mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.mca.MCA;
 import net.mca.client.resources.Icon;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.relationship.RelationshipState;
@@ -220,7 +221,7 @@ public class FamilyTreeScreen extends Screen {
             this.id = node.id();
             this.deceased = node.isDeceased();
             this.relationship = node.getRelationshipState();
-            final LiteralText text = new LiteralText(node.getName().isEmpty() ? defaultNodeName : node.getName());
+            final LiteralText text = new LiteralText(MCA.isBlankString(node.getName()) ? defaultNodeName : node.getName());
             this.label.add(text.setStyle(text.getStyle().withColor(node.gender().getColor())));
             this.label.add(node.getProfessionText().formatted(Formatting.GRAY));
 
