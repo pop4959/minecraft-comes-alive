@@ -1,6 +1,5 @@
 package net.mca.mixin;
 
-import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.client.model.PlayerEntityExtendedModel;
@@ -27,9 +26,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntityRenderer.class)
 public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
     private PlayerEntityModel<AbstractClientPlayerEntity> villagerModel;
-    private PlayerEntityModel<AbstractClientPlayerEntity> originalModel;
+    private PlayerEntityModel<AbstractClientPlayerEntity> vanillaModel;
 
-    @Shadow protected abstract void setModelPose(AbstractClientPlayerEntity player);
+    @Shadow
+    protected abstract void setModelPose(AbstractClientPlayerEntity player);
 
     SkinLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> skinLayer;
     ClothingLayer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> clothingLayer;
@@ -40,9 +40,9 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "<init>(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;Z)V", at = @At("TAIL"))
     private void init(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        if (Config.getInstance().enableVillagerPlayerModel) {
+        if (MCAClient.isPlayerRendererAllowed()) {
             villagerModel = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F), slim));
-            originalModel = model;
+            vanillaModel = model;
 
             skinLayer = new SkinLayer<>(this, createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F))));
             addFeature(skinLayer);
@@ -68,15 +68,18 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
                 matrices.translate(0, 0.6F, 0);
             }
             ci.cancel();
+
+            // switch to mca model
             model = villagerModel;
-        } else {
-            model = originalModel;
+        } else if (MCAClient.isPlayerRendererAllowed()) {
+            // switch to vanilla model
+            model = vanillaModel;
         }
     }
 
     @Inject(method = "renderRightArm(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
     public void injectRenderRightArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (MCAClient.useVillagerRenderer(player.getUuid())) {
+        if (MCAClient.renderArms(player.getUuid(), "right_arm")) {
             renderCustomArm(matrices, vertexConsumers, light, player, skinLayer.model.rightArm, skinLayer.model.rightSleeve, skinLayer);
             renderCustomArm(matrices, vertexConsumers, light, player, clothingLayer.model.rightArm, clothingLayer.model.rightSleeve, clothingLayer);
             ci.cancel();
@@ -85,7 +88,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "renderLeftArm(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/network/AbstractClientPlayerEntity;)V", at = @At("HEAD"), cancellable = true)
     public void injectRenderLeftArm(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity player, CallbackInfo ci) {
-        if (MCAClient.useVillagerRenderer(player.getUuid())) {
+        if (MCAClient.renderArms(player.getUuid(), "left_arm")) {
             renderCustomArm(matrices, vertexConsumers, light, player, skinLayer.model.leftArm, skinLayer.model.leftSleeve, skinLayer);
             renderCustomArm(matrices, vertexConsumers, light, player, clothingLayer.model.leftArm, clothingLayer.model.leftSleeve, clothingLayer);
             ci.cancel();

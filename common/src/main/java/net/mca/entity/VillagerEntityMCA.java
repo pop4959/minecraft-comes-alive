@@ -335,7 +335,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public void setCustomName(@Nullable Text name) {
         super.setCustomName(name);
 
-        if (!world.isClient && name != null) {
+        if (name != null) {
             setName(name.getString());
         }
     }
@@ -463,7 +463,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND) && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && canInteractWithItemStackInHand(stack)) {
+        boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registry.ITEM.getId(stack.getItem()).toString());
+        if (hand.equals(Hand.MAIN_HAND) && !isOnBlacklist && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && canInteractWithItemStackInHand(stack)) {
             if (!getVillagerBrain().isPanicking()) {
                 //make sure dialogueType is synced in case the client needs it
                 getDialogueType(player);

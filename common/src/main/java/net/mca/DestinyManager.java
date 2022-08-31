@@ -6,21 +6,17 @@ import net.minecraft.client.MinecraftClient;
 public class DestinyManager {
     private boolean openDestiny;
     private boolean allowTeleportation;
-    private boolean allowPlayerModel;
-    private boolean allowVillagerModel;
 
     public void tick(MinecraftClient client) {
         if (openDestiny && client.currentScreen == null) {
             assert client.player != null;
-            client.setScreen(new DestinyScreen(client.player.getUuid(), allowTeleportation, allowPlayerModel, allowVillagerModel));
+            client.setScreen(new DestinyScreen(client.player.getUuid(), allowTeleportation));
         }
     }
 
-    public void requestOpen(boolean allowTeleportation, boolean allowPlayerModel, boolean allowVillagerModel) {
+    public void requestOpen(boolean allowTeleportation) {
         this.openDestiny = true;
         this.allowTeleportation = allowTeleportation;
-        this.allowPlayerModel = allowPlayerModel;
-        this.allowVillagerModel = allowVillagerModel;
     }
 
     public void allowClosing() {

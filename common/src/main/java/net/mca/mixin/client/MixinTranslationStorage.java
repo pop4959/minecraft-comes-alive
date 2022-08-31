@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
-@Mixin(TranslationStorage.class)
+@Mixin(value = TranslationStorage.class, priority = 990)
 abstract class MixinTranslationStorage extends Language {
 
     @Shadow
