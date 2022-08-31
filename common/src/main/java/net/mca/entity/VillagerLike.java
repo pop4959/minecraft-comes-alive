@@ -128,7 +128,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default boolean hasCustomSkin() {
-        if (!getTrackedValue(CUSTOM_SKIN).isEmpty() && getGameProfile() != null) {
+        if (!MCA.isBlankString(getTrackedValue(CUSTOM_SKIN)) && getGameProfile() != null) {
             MinecraftClient minecraftClient = MinecraftClient.getInstance();
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraftClient.getSkinProvider().getTextures(getGameProfile());
             return map.containsKey(MinecraftProfileTexture.Type.SKIN);
@@ -180,7 +180,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                         getProfessionId().toString()
         ).replace(":", ".");
 
-        return professionName.isEmpty() ? "mca.none" : professionName;
+        return MCA.isBlankString(professionName) ? "mca.none" : professionName;
     }
 
     default MutableText getProfessionText() {

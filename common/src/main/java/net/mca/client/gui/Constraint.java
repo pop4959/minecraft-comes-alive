@@ -1,5 +1,6 @@
 package net.mca.client.gui;
 
+import net.mca.MCA;
 import net.mca.ProfessionsMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerLike;
@@ -126,7 +127,7 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntit
     }
 
     public static List<Constraint> fromStringList(String constraints) {
-        if (constraints == null || constraints.isEmpty()) {
+        if (MCA.isBlankString(constraints)) {
             return new ArrayList<>();
         }
         return Stream.of(constraints.split(","))

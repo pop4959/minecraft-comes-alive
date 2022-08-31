@@ -184,7 +184,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void updateCustomSkin() {
-        if (!getTrackedValue(CUSTOM_SKIN).isEmpty()) {
+        if (!MCA.isBlankString(getTrackedValue(CUSTOM_SKIN))) {
             gameProfile = new GameProfile(null, getTrackedValue(CUSTOM_SKIN));
             SkullBlockEntity.loadProperties(gameProfile, profile -> gameProfile = profile);
         } else {
@@ -1179,7 +1179,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Nullable
     public final Text getCustomName() {
         String value = getTrackedValue(VILLAGER_NAME);
-        return value.isEmpty() ? null : Text.literal(value);
+        return MCA.isBlankString(value) ? null : Text.literal(value);
     }
 
     @Override
