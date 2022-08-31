@@ -46,7 +46,7 @@ public class HeartsCriterion extends AbstractCriterion<HeartsCriterion.Condition
 
         public boolean test(int hearts, int increase, String source) {
             return this.hearts.test(hearts) && this.increase.test(increase)
-                    && (this.source.isEmpty() || this.source.equals(source));
+                    && (MCA.isBlankString(this.source) || this.source.equals(source));
         }
 
         @Override
