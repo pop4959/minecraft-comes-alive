@@ -27,6 +27,7 @@
 * Added `villagerInteractionItemBlacklist` to limit certain items from being used to interact with MCA villagers
   * By default, buckets are included to resolve Issue #273
 * Added command to convert vanilla villager within range
+* Fixed a possible crash when trying to edit a villager with an empty name; should now give it a random name instead
 
 # 7.3.20
 
