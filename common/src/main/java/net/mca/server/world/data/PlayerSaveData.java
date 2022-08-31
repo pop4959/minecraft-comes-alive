@@ -98,7 +98,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
 
         VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(world);
         assert villager != null;
-        villager.initializeSkin();
+        villager.initializeSkin(true);
         villager.getGenetics().randomize();
         villager.getTraits().randomize();
         villager.getVillagerBrain().randomize();

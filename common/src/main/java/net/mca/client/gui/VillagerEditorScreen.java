@@ -1,6 +1,7 @@
 package net.mca.client.gui;
 
 import net.mca.MCA;
+import net.mca.MCAClient;
 import net.mca.ProfessionsMCA;
 import net.mca.client.gui.widget.ColorPickerWidget;
 import net.mca.client.gui.widget.GeneSliderWidget;
@@ -44,6 +45,8 @@ import java.util.function.Supplier;
 public class VillagerEditorScreen extends Screen {
     final UUID villagerUUID;
     final UUID playerUUID;
+    final boolean allowPlayerModel;
+    final boolean allowVillagerModel;
     private int villagerBreedingAge;
     protected String page;
     protected final VillagerEntityMCA villager = Objects.requireNonNull(EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world));
@@ -76,11 +79,14 @@ public class VillagerEditorScreen extends Screen {
     private ButtonWidget villagerSkinWidget;
     private ButtonWidget playerSkinWidget;
     private ButtonWidget vanillaSkinWidget;
+    private ButtonWidget doneWidget;
 
-    public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
+    public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID, boolean allowPlayerModel, boolean allowVillagerModel) {
         super(Text.translatable("gui.VillagerEditorScreen.title"));
         this.villagerUUID = villagerUUID;
         this.playerUUID = playerUUID;
+        this.allowPlayerModel = allowPlayerModel;
+        this.allowVillagerModel = allowVillagerModel;
 
         if (clothing == null) {
             clothing = new HashMap<>();
@@ -89,6 +95,12 @@ public class VillagerEditorScreen extends Screen {
 
         requestVillagerData();
         setPage(Objects.requireNonNullElse(page, "loading"));
+    }
+
+    public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
+        this(villagerUUID, playerUUID,
+                MCAClient.isPlayerRendererAllowed(), MCAClient.isVillagerRendererAllowed()
+        );
     }
 
     @Override
@@ -157,7 +169,7 @@ public class VillagerEditorScreen extends Screen {
             }
 
             //close
-            addDrawableChild(new ButtonWidget(width / 2 - DATA_WIDTH + 20, height / 2 + 85, DATA_WIDTH - 40, 20, Text.translatable("gui.done"), sender -> {
+            doneWidget = addDrawableChild(new ButtonWidget(width / 2 - DATA_WIDTH + 20, height / 2 + 85, DATA_WIDTH - 40, 20, Text.translatable("gui.done"), sender -> {
                 syncVillagerData();
                 close();
             }));
@@ -185,7 +197,7 @@ public class VillagerEditorScreen extends Screen {
 
                 //age
                 if (!villagerUUID.equals(playerUUID)) {
-                    addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, Text.translatable("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double) AgeState.getMaxAge(), b -> {
+                    addDrawableChild(new GeneSliderWidget(width / 2, y, DATA_WIDTH, 20, Text.translatable("gui.villager_editor.age"), 1.0 + villagerBreedingAge / (double)AgeState.getMaxAge(), b -> {
                         villagerBreedingAge = -(int)((1.0 - b) * AgeState.getMaxAge()) + 1;
                         villager.setBreedingAge(villagerBreedingAge);
                         villager.calculateDimensions();
@@ -466,25 +478,77 @@ public class VillagerEditorScreen extends Screen {
     }
 
     protected void drawName(int x, int y) {
-        Text villagerName = villager.getCustomName();
-        if (villagerName == null || villagerName.getString().isEmpty()) {
-            // Failsafe-conditions for empty names
-            if (villagerUUID.equals(playerUUID)) {
-                assert client != null;
-                assert client.player != null;
-                villagerName = client.player.getName();
-            } else {
-                villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
+        drawName(x, y, name -> {
+            this.updateName(name);
+            if (doneWidget != null) {
+                doneWidget.active = !(name.isEmpty() || name.isBlank());
             }
-            villager.setTrackedValue(VillagerLike.VILLAGER_NAME, villagerName.getString());
-        }
+        });
+    }
+
+    protected void drawName(int x, int y, Consumer<String> onChanged) {
         villagerNameField = addDrawableChild(new TextFieldWidget(this.textRenderer, x, y, DATA_WIDTH / 3 * 2, 18, Text.translatable("structure_block.structure_name")));
         villagerNameField.setMaxLength(32);
-        villagerNameField.setText(villagerName.getString());
-        villagerNameField.setChangedListener(name -> villager.setTrackedValue(VillagerLike.VILLAGER_NAME, name));
+        villagerNameField.setText(getName().getString());
+        villagerNameField.setChangedListener(onChanged);
         addDrawableChild(new ButtonWidget(x + DATA_WIDTH / 3 * 2 + 1, y - 1, DATA_WIDTH / 3 - 2, 20, Text.translatable("gui.button.random"), (b) ->
                 NetworkHandler.sendToServer(new VillagerNameRequest(villager.getGenetics().getGender()))
         ));
+    }
+
+    public Text getName() {
+        Text villagerName = null;
+        boolean isPlayer = villagerUUID.equals(playerUUID);
+        if (isPlayer) {
+            assert client != null;
+            assert client.player != null;
+            villagerName = client.player.getCustomName();
+        } else if (villager.hasCustomName()) {
+            villagerName = villager.getCustomName();
+        }
+
+        if (villagerName == null || villagerName.getString().isEmpty()) {
+            // Failsafe-conditions for non-present custom names
+            if (isPlayer) {
+                assert client != null;
+                assert client.player != null;
+                villagerName = client.player.getName();
+                // Random Name is not in this portion since it shouldn't be possible
+                // for a player's name to be null, feel free to slap me if this is wrong.
+            } else {
+                villagerName = villager.getName();
+                if (villagerName == null || villagerName.getString().isEmpty()) {
+                    villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
+                }
+            }
+            updateName(villagerName.getString());
+        }
+        return villagerName;
+    }
+
+    public void updateName(String name) {
+        if (!(name.isEmpty() || name.isBlank())) {
+            Text newName = Text.of(name);
+            boolean isPlayer = villagerUUID.equals(playerUUID);
+            if (isPlayer) {
+                assert client != null;
+                assert client.player != null;
+                final Text realName = client.player.getName();
+                if (realName.getString().equals(name)) {
+                    // Remove Custom name if it is the same as our actual name
+                    newName = null;
+                }
+                client.player.setCustomName(newName);
+                client.player.setCustomNameVisible(newName != null);
+                if (client.player.isCustomNameVisible()) {
+                    villager.setCustomName(newName);
+                } else {
+                    villager.setName(realName.getString());
+                }
+            } else {
+                villager.setCustomName(newName);
+            }
+        }
     }
 
     private ButtonWidget genderButtonFemale;
@@ -512,32 +576,34 @@ public class VillagerEditorScreen extends Screen {
     }
 
     void drawModel(int x, int y) {
-        villagerSkinWidget = addDrawableChild(new TooltipButtonWidget(x, y, DATA_WIDTH / 3, 20, "gui.villager_editor.villager_skin", b -> {
-            villagerData.putInt("playerModel", VillagerLike.PlayerModel.VILLAGER.ordinal());
-            syncVillagerData();
-            playerSkinWidget.active = true;
-            villagerSkinWidget.active = false;
-            vanillaSkinWidget.active = true;
-        }));
-        villagerSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal();
+        if (allowPlayerModel && allowVillagerModel) {
+            villagerSkinWidget = addDrawableChild(new TooltipButtonWidget(x, y, DATA_WIDTH / 3, 20, "gui.villager_editor.villager_skin", b -> {
+                villagerData.putInt("playerModel", VillagerLike.PlayerModel.VILLAGER.ordinal());
+                syncVillagerData();
+                playerSkinWidget.active = true;
+                villagerSkinWidget.active = false;
+                vanillaSkinWidget.active = true;
+            }));
+            villagerSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal();
 
-        playerSkinWidget = addDrawableChild(new TooltipButtonWidget(x + DATA_WIDTH / 3, y, DATA_WIDTH / 3, 20, "gui.villager_editor.player_skin", b -> {
-            villagerData.putInt("playerModel", VillagerLike.PlayerModel.PLAYER.ordinal());
-            syncVillagerData();
-            playerSkinWidget.active = false;
-            villagerSkinWidget.active = true;
-            vanillaSkinWidget.active = true;
-        }));
-        playerSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.PLAYER.ordinal();
+            playerSkinWidget = addDrawableChild(new TooltipButtonWidget(x + DATA_WIDTH / 3, y, DATA_WIDTH / 3, 20, "gui.villager_editor.player_skin", b -> {
+                villagerData.putInt("playerModel", VillagerLike.PlayerModel.PLAYER.ordinal());
+                syncVillagerData();
+                playerSkinWidget.active = false;
+                villagerSkinWidget.active = true;
+                vanillaSkinWidget.active = true;
+            }));
+            playerSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.PLAYER.ordinal();
 
-        vanillaSkinWidget = addDrawableChild(new TooltipButtonWidget(x + DATA_WIDTH / 3 * 2, y, DATA_WIDTH / 3, 20, "gui.villager_editor.vanilla_skin", b -> {
-            villagerData.putInt("playerModel", VillagerLike.PlayerModel.VANILLA.ordinal());
-            syncVillagerData();
-            villagerSkinWidget.active = true;
-            playerSkinWidget.active = true;
-            vanillaSkinWidget.active = false;
-        }));
-        vanillaSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VANILLA.ordinal();
+            vanillaSkinWidget = addDrawableChild(new TooltipButtonWidget(x + DATA_WIDTH / 3 * 2, y, DATA_WIDTH / 3, 20, "gui.villager_editor.vanilla_skin", b -> {
+                villagerData.putInt("playerModel", VillagerLike.PlayerModel.VANILLA.ordinal());
+                syncVillagerData();
+                villagerSkinWidget.active = true;
+                playerSkinWidget.active = true;
+                vanillaSkinWidget.active = false;
+            }));
+            vanillaSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VANILLA.ordinal();
+        }
     }
 
     private void sendCommand(String command) {
@@ -588,6 +654,10 @@ public class VillagerEditorScreen extends Screen {
         return false;
     }
 
+    protected boolean shouldPrintPlayerHint() {
+        return true;
+    }
+
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         renderBackground(matrices);
@@ -608,6 +678,15 @@ public class VillagerEditorScreen extends Screen {
                 InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
             } else {
                 InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, villager);
+            }
+
+            // hint for confused people
+            if (shouldPrintPlayerHint() && villagerUUID.equals(playerUUID) && villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal()) {
+                matrices.push();
+                matrices.translate(x, y - 145, 0);
+                matrices.scale(0.5f, 0.5f, 0.5f);
+                drawCenteredText(matrices, textRenderer, Text.translatable("gui.villager_editor.model_hint"), 0, 0, 0xAAFFFFFF);
+                matrices.pop();
             }
         }
 

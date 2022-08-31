@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.cobalt.network.NetworkHandler;
-import net.mca.entity.VillagerLike;
 import net.mca.network.c2s.DestinyMessage;
 import net.mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
@@ -21,20 +20,16 @@ import java.util.UUID;
 
 public class DestinyScreen extends VillagerEditorScreen {
     private static final Identifier LOGO_TEXTURE = new Identifier("mca:textures/banner.png");
-    private LinkedList<Text> story;
+    private final LinkedList<Text> story = new LinkedList<>();
     private String location;
     private boolean teleported = false;
-
     private final boolean allowTeleportation;
-    private final boolean allowPlayerModel;
-    private final boolean allowVillagerModel;
+    private ButtonWidget acceptWidget;
 
-    public DestinyScreen(UUID playerUUID, boolean allowTeleportation, boolean allowPlayerModel, boolean allowVillagerModel) {
+    public DestinyScreen(UUID playerUUID, boolean allowTeleportation) {
         super(playerUUID, playerUUID);
 
         this.allowTeleportation = allowTeleportation;
-        this.allowPlayerModel = allowPlayerModel;
-        this.allowVillagerModel = allowVillagerModel;
     }
 
     @Override
@@ -103,43 +98,45 @@ public class DestinyScreen extends VillagerEditorScreen {
     @Override
     protected void setPage(String page) {
         if (page.equals("destiny") && !allowTeleportation) {
-            NetworkHandler.sendToServer(new DestinyMessage(null));
+            NetworkHandler.sendToServer(new DestinyMessage(true));
             MCAClient.getDestinyManager().allowClosing();
             super.close();
             return;
+        } else if (page.equals("destiny")) {
+            //there is only one entry
+            if (Config.getInstance().destinyLocations.size() == 1) {
+                selectStory(Config.getInstance().destinyLocations.get(0));
+                return;
+            }
         }
 
         this.page = page;
         clearChildren();
         switch (page) {
             case "general" -> {
-                drawName(width / 2 - DATA_WIDTH / 2, height / 2);
+                drawName(width / 2 - DATA_WIDTH / 2, height / 2, name -> {
+                    this.updateName(name);
+                    if (acceptWidget != null) {
+                        acceptWidget.active = !(name.isEmpty() || name.isBlank());
+                    }
+                });
                 drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);
 
-                if (allowPlayerModel && allowVillagerModel) {
-                    drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
-                }
+                drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
 
-                addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, Text.translatable("gui.button.accept"), sender -> {
+                acceptWidget = addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, Text.translatable("gui.button.accept"), sender -> {
                     setPage("body");
-                    if (villager.getTrackedValue(VillagerLike.VILLAGER_NAME).isEmpty()) {
-                        villager.setTrackedValue(VillagerLike.VILLAGER_NAME, "Nameless Traveller");
-                    }
                 }));
             }
             case "destiny" -> {
                 int x = 0;
                 int y = 0;
                 for (String location : Config.getInstance().destinyLocations) {
-                    addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + x * 96), height / 2 + y * 20 - 16, 96, 20, Text.translatable("gui.destiny." + location), sender -> {
-                        //story
-                        story = new LinkedList<>();
-                        story.add(Text.translatable("destiny.story.reason"));
-                        Map<String, String> map = Config.getInstance().destinyLocationsToTranslationMap;
-                        story.add(Text.translatable(map.getOrDefault(location, map.getOrDefault("default", "missing_default"))));
-                        story.add(Text.translatable("destiny.story." + location));
-                        this.location = location;
-                        setPage("story");
+                    int rows = (int)Math.ceil(Config.getInstance().destinyLocations.size() / 3.0f);
+                    float offsetX = (y + 1) == rows ? (2 - (Config.getInstance().destinyLocations.size() - 1) % 3) / 2.0f : 0;
+                    float offsetY = Math.max(0, 3 - rows) / 2.0f;
+                    addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + (x + offsetX) * 96), (int)(height / 2 + (y + offsetY) * 20 - 16), 96, 20, Text.translatable("gui.destiny." + location), sender -> {
+                        selectStory(location);
                     }));
                     x++;
                     if (x >= 3) {
@@ -158,10 +155,21 @@ public class DestinyScreen extends VillagerEditorScreen {
                 if (story.size() > 1) {
                     story.remove(0);
                 } else {
+                    NetworkHandler.sendToServer(new DestinyMessage(true));
                     super.close();
                 }
             }));
             default -> super.setPage(page);
         }
+    }
+
+    private void selectStory(String location) {
+        story.clear();
+        story.add(Text.translatable("destiny.story.reason"));
+        Map<String, String> map = Config.getInstance().destinyLocationsToTranslationMap;
+        story.add(Text.translatable(map.getOrDefault(location, map.getOrDefault("default", "missing_default"))));
+        story.add(Text.translatable("destiny.story." + location));
+        this.location = location;
+        setPage("story");
     }
 }

@@ -2,6 +2,7 @@ package net.mca.resources;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.mca.Config;
 import net.mca.MCA;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
@@ -86,7 +87,10 @@ public class ClothingList extends JsonDataLoader {
     }
 
     public WeightedPool<String> getPool(Gender gender, @Nullable VillagerProfession profession) {
-        return getPool(gender, profession == null ? "minecraft:none" : Registry.VILLAGER_PROFESSION.getId(profession).toString());
+        Map<String, String> map = Config.getInstance().professionConversionsMap;
+        String currentValue = profession == null ? "minecraft:none" : Registry.VILLAGER_PROFESSION.getId(profession).toString();
+        String identifier = map.getOrDefault(currentValue, map.getOrDefault("default", currentValue));
+        return getPool(gender, identifier);
     }
 
     public WeightedPool<String> getPool(Gender gender, @Nullable String profession) {
