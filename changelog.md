@@ -13,13 +13,13 @@
 * Added a Homosexuality Trait as a possible chance to spawn with
   * This trait cannot be inherited from past/to future generations
   * Having this trait will enforce gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
-  * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.\
+  * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
   * In the event of this trait being applied alongside the bisexual trait, the bisexual trait will take priority. (7.4 may change this if a conflict system is implemented)
 * Added `professionConversionsMap` as a config value, made for mod compatibility
   * Designed to be able to use clothing from another profession, if your mod does not supply any to us
   * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by default.
   * Only Adult clothing is used in this, baby and child clothing remains unchanged.
-* Added `playerRendererBlacklist` to disable certain render elements of the player model if certain class files are present
+* Added `playerRendererBlacklist` to disable certain render elements of the player model if certain mods are present
   * Supported Values: `arms`, `left_arm`, `right_arm`, `all`, `block_player`, `block_villager`
 * Fixed #373 (Gamemode being switched before user finishes destiny)
   * Should also resolve the falling-through-world issue
