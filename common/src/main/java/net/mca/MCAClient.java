@@ -12,7 +12,7 @@ public class MCAClient {
     public static VillagerEntityMCA fallbackVillager;
     public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
     public static Set<UUID> playerDataRequests = new HashSet<>();
-    private static Map<String, Boolean> classCacheMap = new HashMap<>();
+    private static final Map<String, Boolean> classCacheMap = new HashMap<>();
 
     private static final DestinyManager destinyManager = new DestinyManager();
 
@@ -25,7 +25,7 @@ public class MCAClient {
     }
 
     public static boolean useGeneticsRenderer(UUID uuid) {
-        if (Config.getInstance().enableVillagerPlayerModel) {
+        if (isPlayerRendererAllowed()) {
             if (!MCAClient.playerDataRequests.contains(uuid)) {
                 MCAClient.playerDataRequests.add(uuid);
                 NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
@@ -35,18 +35,29 @@ public class MCAClient {
         return false;
     }
 
+    public static boolean isPlayerRendererAllowed() {
+        return Config.getInstance().enableVillagerPlayerModel &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getKey().contains("all") || entry.getKey().contains("block_player"))
+                        .noneMatch(entry -> doesClassExist(entry.getValue()));
+    }
+
+    public static boolean isVillagerRendererAllowed() {
+        return !Config.getInstance().forceVillagerPlayerModel &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getKey().contains("all") || entry.getKey().contains("block_villager"))
+                        .noneMatch(entry -> doesClassExist(entry.getValue()));
+    }
+
     public static boolean useVillagerRenderer(UUID uuid) {
         return useGeneticsRenderer(uuid) && MCAClient.playerData.get(uuid).getPlayerModel() == VillagerLike.PlayerModel.VILLAGER;
     }
 
     public static boolean renderArms(UUID uuid, String key) {
-        boolean canContinue = useVillagerRenderer(uuid);
-        if (canContinue) {
-            return Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                    .filter(entry -> entry.getValue().contains("arms") || entry.getValue().contains(key))
-                    .noneMatch(entry -> doesClassExist(entry.getKey()));
-        }
-        return false;
+        return useVillagerRenderer(uuid) &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getKey().contains("arms") || entry.getKey().contains(key))
+                        .noneMatch(entry -> doesClassExist(entry.getValue()));
     }
 
     public static boolean renderArms(UUID uuid) {
