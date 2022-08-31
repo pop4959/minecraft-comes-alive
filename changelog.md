@@ -20,7 +20,7 @@
   * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by default.
   * Only Adult clothing is used in this, baby and child clothing remains unchanged.
 * Added `playerRendererBlacklist` to disable certain render elements of the player model if certain class files are present
-  * Supported Values: `arms`, `left_arm`, `right_arm`
+  * Supported Values: `arms`, `left_arm`, `right_arm`, `all`, `block_player`, `block_villager`
 * Fixed #373 (Gamemode being switched before user finishes destiny)
   * Should also resolve the falling-through-world issue
 * Fixed #239, #368 (Compatibility Fix for older Spectrum Versions)
