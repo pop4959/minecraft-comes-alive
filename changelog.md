@@ -24,6 +24,8 @@
 * Fixed #373 (Gamemode being switched before user finishes destiny)
   * Should also resolve the falling-through-world issue
 * Fixed #239, #368 (Compatibility Fix for older Spectrum Versions)
+* Added `villagerInteractionItemBlacklist` to limit certain items from being used to interact with MCA villagers
+  * By default, buckets are included to resolve Issue #273
 
 # 7.3.20
 

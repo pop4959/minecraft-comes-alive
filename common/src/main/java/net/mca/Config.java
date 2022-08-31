@@ -104,6 +104,9 @@ public final class Config implements Serializable {
             "natural",
             "structure"
     );
+    public List<String> villagerInteractionItemBlacklist = List.of(
+            "minecraft:bucket"
+    );
 
     //gifts
     public int giftDesaturationQueueLength = 16;
