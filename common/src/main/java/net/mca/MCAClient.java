@@ -1,5 +1,6 @@
 package net.mca;
 
+import dev.architectury.platform.Platform;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerLike;
@@ -12,7 +13,7 @@ public class MCAClient {
     public static VillagerEntityMCA fallbackVillager;
     public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
     public static Set<UUID> playerDataRequests = new HashSet<>();
-    private static final Map<String, Boolean> classCacheMap = new HashMap<>();
+    private static final Map<String, Boolean> modCacheMap = new HashMap<>();
 
     private static final DestinyManager destinyManager = new DestinyManager();
 
@@ -38,15 +39,15 @@ public class MCAClient {
     public static boolean isPlayerRendererAllowed() {
         return Config.getInstance().enableVillagerPlayerModel &&
                 Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                        .filter(entry -> entry.getKey().contains("all") || entry.getKey().contains("block_player"))
-                        .noneMatch(entry -> doesClassExist(entry.getValue()));
+                        .filter(entry -> entry.getValue().equals("all") || entry.getValue().equals("block_player"))
+                        .noneMatch(entry -> doesModExist(entry.getKey()));
     }
 
     public static boolean isVillagerRendererAllowed() {
         return !Config.getInstance().forceVillagerPlayerModel &&
                 Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                        .filter(entry -> entry.getKey().contains("all") || entry.getKey().contains("block_villager"))
-                        .noneMatch(entry -> doesClassExist(entry.getValue()));
+                        .filter(entry -> entry.getValue().equals("all") || entry.getValue().equals("block_villager"))
+                        .noneMatch(entry -> doesModExist(entry.getKey()));
     }
 
     public static boolean useVillagerRenderer(UUID uuid) {
@@ -56,8 +57,8 @@ public class MCAClient {
     public static boolean renderArms(UUID uuid, String key) {
         return useVillagerRenderer(uuid) &&
                 Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                        .filter(entry -> entry.getKey().contains("arms") || entry.getKey().contains(key))
-                        .noneMatch(entry -> doesClassExist(entry.getValue()));
+                        .filter(entry -> entry.getValue().equals("arms") || entry.getValue().equals(key))
+                        .noneMatch(entry -> doesModExist(entry.getKey()));
     }
 
     public static boolean renderArms(UUID uuid) {
@@ -68,17 +69,10 @@ public class MCAClient {
         destinyManager.tick(client);
     }
 
-    private static boolean doesClassExist(String className) {
-        if (!classCacheMap.containsKey(className)) {
-            boolean result;
-            try {
-                Class.forName(className);
-                result = true;
-            } catch (Exception ignored) {
-                result = false;
-            }
-            classCacheMap.put(className, result);
+    private static boolean doesModExist(String modId) {
+        if (!modCacheMap.containsKey(modId)) {
+            modCacheMap.put(modId, Platform.getOptionalMod(modId).isPresent());
         }
-        return classCacheMap.get(className);
+        return modCacheMap.get(modId);
     }
 }

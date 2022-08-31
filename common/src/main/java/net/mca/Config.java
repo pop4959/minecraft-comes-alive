@@ -218,8 +218,9 @@ public final class Config implements Serializable {
     public Map<String, String> professionConversionsMap = Map.of();
 
     public Map<String, String> playerRendererBlacklist = Map.of(
-            "arms", "dev.tr7zw.firstperson.FirstPersonModelCore",
-            "all", "yesman.epicfight.main"
+            "firstpersonmod", "arms",
+            "firstperson", "arms",
+            "epicfight", "all"
     );
 
 
