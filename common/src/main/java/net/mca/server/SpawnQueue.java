@@ -92,4 +92,8 @@ public class SpawnQueue {
     private boolean handlesSpawnReason(SpawnReason reason) {
         return Config.getInstance().allowedSpawnReasons.contains(reason.name().toLowerCase());
     }
+
+    public void convert(VillagerEntity villager) {
+        villagerSpawnQueue.add(villager);
+    }
 }

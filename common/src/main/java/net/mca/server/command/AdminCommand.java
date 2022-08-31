@@ -14,6 +14,7 @@ import net.mca.entity.ai.relationship.RelationshipState;
 import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.item.BabyItem;
+import net.mca.server.SpawnQueue;
 import net.mca.server.world.data.Building;
 import net.mca.server.world.data.PlayerSaveData;
 import net.mca.server.world.data.Village;
@@ -21,6 +22,7 @@ import net.mca.server.world.data.VillageManager;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -61,6 +63,7 @@ public class AdminCommand {
                 .then(register("assumeNameDead").then(CommandManager.argument("name", StringArgumentType.string()).executes(AdminCommand::assumeNameDead)))
                 .then(register("assumeUuidDead").then(CommandManager.argument("uuid", UuidArgumentType.uuid()).executes(AdminCommand::assumeUuidDead)))
                 .then(register("removeVillageWithId").then(CommandManager.argument("id", IntegerArgumentType.integer()).executes(AdminCommand::removeVillageWithId)))
+                .then(register("convertVanillaVillagers").then(CommandManager.argument("radius", IntegerArgumentType.integer()).executes(AdminCommand::convertVanillaVillagers)))
                 .then(register("removeVillage").then(CommandManager.argument("name", StringArgumentType.string()).executes(AdminCommand::removeVillage)))
                 .then(register("buildingProcessingRate").then(CommandManager.argument("cooldown", IntegerArgumentType.integer()).executes(AdminCommand::buildingProcessingRate)))
                 .requires((serverCommandSource) -> serverCommandSource.hasPermissionLevel(2))
@@ -71,12 +74,12 @@ public class AdminCommand {
         for (Village village : VillageManager.get(ctx.getSource().getWorld())) {
             final BlockPos pos = village.getBox().getCenter();
             success(String.format("%d: %s with %d buildings and %d/%d villager(s)",
-                    village.getId(),
-                    village.getName(),
-                    village.getBuildings().size(),
-                    village.getPopulation(),
-                    village.getMaxPopulation()
-            ), ctx,
+                            village.getId(),
+                            village.getName(),
+                            village.getBuildings().size(),
+                            village.getPopulation(),
+                            village.getMaxPopulation()
+                    ), ctx,
                     new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("chat.coordinates.tooltip")),
                     new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + pos.getX() + " ~ " + pos.getZ()));
         }
@@ -140,6 +143,17 @@ public class AdminCommand {
         } else {
             fail("Village with this ID does not exist.", ctx);
         }
+        return 0;
+    }
+
+    private static int convertVanillaVillagers(CommandContext<ServerCommandSource> ctx) {
+        int radius = IntegerArgumentType.getInteger(ctx, "radius");
+        ServerWorld world = ctx.getSource().getWorld();
+        world.getEntitiesByType(EntityType.VILLAGER, x -> true).stream().map(VillagerEntity.class::cast).forEach(v -> {
+            if (v.distanceTo(ctx.getSource().getEntity()) < radius) {
+                SpawnQueue.getInstance().convert(v);
+            }
+        });
         return 0;
     }
 
@@ -279,7 +293,7 @@ public class AdminCommand {
 
     private static Stream<VillagerEntityMCA> getLoadedVillagers(final CommandContext<ServerCommandSource> ctx) {
         ServerWorld world = ctx.getSource().getWorld();
-        return Stream.concat(world.getEntitiesByType(EntitiesMCA.FEMALE_VILLAGER.get(), x-> true).stream(),world.getEntitiesByType(EntitiesMCA.MALE_VILLAGER.get(), x-> true).stream()).map(VillagerEntityMCA.class::cast);
+        return Stream.concat(world.getEntitiesByType(EntitiesMCA.FEMALE_VILLAGER.get(), x -> true).stream(), world.getEntitiesByType(EntitiesMCA.MALE_VILLAGER.get(), x -> true).stream()).map(VillagerEntityMCA.class::cast);
     }
 
     private static void success(String message, CommandContext<ServerCommandSource> ctx, Object... events) {
@@ -319,6 +333,8 @@ public class AdminCommand {
 
         sendMessage(player, WHITE + " /mca-admin listVillages " + GOLD + " - Prints a list of all villages.");
         sendMessage(player, WHITE + " /mca-admin removeVillage id" + GOLD + " - Removed a village with given id.");
+
+        sendMessage(player, WHITE + " /mca-admin convertVanillaVillagers radius" + GOLD + " - Convert vanilla villagers in the given radius");
 
         sendMessage(player, WHITE + " /mca-admin incrementHearts " + GOLD + " - Increase hearts by 10.");
         sendMessage(player, WHITE + " /mca-admin decrementHearts " + GOLD + " - Decrease hearts by 10.");
