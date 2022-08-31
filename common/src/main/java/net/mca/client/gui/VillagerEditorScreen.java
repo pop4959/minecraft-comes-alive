@@ -23,7 +23,6 @@ import net.mca.network.c2s.VillagerEditorSyncRequest;
 import net.mca.network.c2s.VillagerNameRequest;
 import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
-import net.mca.resources.Names;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -515,15 +514,15 @@ public class VillagerEditorScreen extends Screen {
                 assert client != null;
                 assert client.player != null;
                 villagerName = client.player.getName();
-                // Random Name is not in this portion since it shouldn't be possible
-                // for a player's name to be null, feel free to slap me if this is wrong.
             } else {
                 villagerName = villager.getName();
-                if (villagerName == null || MCA.isBlankString(villagerName.asString())) {
-                    villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
-                }
             }
-            updateName(villagerName.asString());
+
+            if (villagerName == null || MCA.isBlankString(villagerName.asString())) {
+                NetworkHandler.sendToServer(new VillagerNameRequest(villager.getGenetics().getGender()));
+            } else {
+                updateName(villagerName.asString());
+            }
         }
         return villagerName;
     }
@@ -749,7 +748,7 @@ public class VillagerEditorScreen extends Screen {
 
     public void setVillagerName(String name) {
         villagerNameField.setText(name);
-        villager.setTrackedValue(VillagerLike.VILLAGER_NAME, name);
+        updateName(name);
     }
 
     public void setVillagerData(NbtCompound villagerData) {
