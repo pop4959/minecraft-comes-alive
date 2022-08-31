@@ -11,4 +11,8 @@ public final class MCA {
     public static Identifier locate(String id) {
         return new Identifier(MOD_ID, id);
     }
+
+    public static boolean isBlankString(String string) {
+        return string == null || string.trim().isEmpty();
+    }
 }

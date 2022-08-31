@@ -457,7 +457,7 @@ public class VillagerEditorScreen extends Screen {
                         return true;
                     }
                 })
-                .filter(v -> searchString.isEmpty() || v.getKey().contains(searchString))
+                .filter(v -> MCA.isBlankString(searchString) || v.getKey().contains(searchString))
                 .map(Map.Entry::getKey)
                 .toList();
 
@@ -481,7 +481,7 @@ public class VillagerEditorScreen extends Screen {
         drawName(x, y, name -> {
             this.updateName(name);
             if (doneWidget != null) {
-                doneWidget.active = !(name.isEmpty() || name.isBlank());
+                doneWidget.active = !MCA.isBlankString(name);
             }
         });
     }
@@ -507,7 +507,7 @@ public class VillagerEditorScreen extends Screen {
             villagerName = villager.getCustomName();
         }
 
-        if (villagerName == null || villagerName.getString().isEmpty()) {
+        if (villagerName == null || MCA.isBlankString(villagerName.getString())) {
             // Failsafe-conditions for non-present custom names
             if (isPlayer) {
                 assert client != null;
@@ -517,7 +517,7 @@ public class VillagerEditorScreen extends Screen {
                 // for a player's name to be null, feel free to slap me if this is wrong.
             } else {
                 villagerName = villager.getName();
-                if (villagerName == null || villagerName.getString().isEmpty()) {
+                if (villagerName == null || MCA.isBlankString(villagerName.getString())) {
                     villagerName = Text.of(Names.pickCitizenName(villager.getGenetics().getGender()));
                 }
             }
@@ -527,7 +527,7 @@ public class VillagerEditorScreen extends Screen {
     }
 
     public void updateName(String name) {
-        if (!(name.isEmpty() || name.isBlank())) {
+        if (!MCA.isBlankString(name)) {
             Text newName = Text.of(name);
             boolean isPlayer = villagerUUID.equals(playerUUID);
             if (isPlayer) {
