@@ -2,8 +2,6 @@ package net.mca.network.s2c;
 
 import net.mca.ClientProxy;
 import net.mca.Config;
-import net.mca.MCA;
-import net.mca.MCAClient;
 import net.mca.cobalt.network.Message;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -15,15 +13,10 @@ public class OpenDestinyGuiRequest implements Message {
 
     public final int player;
     public boolean allowTeleportation;
-    public boolean allowPlayerModel;
-    public boolean allowVillagerModel;
 
     public OpenDestinyGuiRequest(ServerPlayerEntity player) {
         this.player = player.getId();
-
-        allowTeleportation = Config.getInstance().allowDestinyTeleportation;
-        allowPlayerModel = MCAClient.isPlayerRendererAllowed();
-        allowVillagerModel = MCAClient.isVillagerRendererAllowed();
+        this.allowTeleportation = Config.getInstance().allowDestinyTeleportation;
     }
 
     @Override

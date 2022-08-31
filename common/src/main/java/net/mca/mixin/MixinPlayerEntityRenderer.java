@@ -1,6 +1,5 @@
 package net.mca.mixin;
 
-import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.client.model.PlayerEntityExtendedModel;

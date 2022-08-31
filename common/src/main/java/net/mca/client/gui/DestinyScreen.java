@@ -24,18 +24,13 @@ public class DestinyScreen extends VillagerEditorScreen {
     private final LinkedList<Text> story = new LinkedList<>();
     private String location;
     private boolean teleported = false;
-
     private final boolean allowTeleportation;
-    private final boolean allowPlayerModel;
-    private final boolean allowVillagerModel;
     private ButtonWidget acceptWidget;
 
-    public DestinyScreen(UUID playerUUID, boolean allowTeleportation, boolean allowPlayerModel, boolean allowVillagerModel) {
+    public DestinyScreen(UUID playerUUID, boolean allowTeleportation) {
         super(playerUUID, playerUUID);
 
         this.allowTeleportation = allowTeleportation;
-        this.allowPlayerModel = allowPlayerModel;
-        this.allowVillagerModel = allowVillagerModel;
     }
 
     @Override
@@ -128,9 +123,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                 });
                 drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);
 
-                if (allowPlayerModel && allowVillagerModel) {
-                    drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
-                }
+                drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
 
                 acceptWidget = addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, new TranslatableText("gui.button.accept"), sender -> {
                     setPage("body");
