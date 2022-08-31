@@ -104,6 +104,9 @@ public final class Config implements Serializable {
             "natural",
             "structure"
     );
+    public List<String> villagerInteractionItemBlacklist = List.of(
+            "minecraft:bucket"
+    );
 
     //gifts
     public int giftDesaturationQueueLength = 16;
@@ -210,6 +213,14 @@ public final class Config implements Serializable {
     public Map<String, String> destinyLocationsToTranslationMap = Map.of(
             "default", "destiny.story.travelling",
             "shipwreck_beached", "destiny.story.sailing"
+    );
+
+    public Map<String, String> professionConversionsMap = Map.of();
+
+    public Map<String, String> playerRendererBlacklist = Map.of(
+            "firstpersonmod", "arms",
+            "firstperson", "arms",
+            "epicfight", "all"
     );
 
 

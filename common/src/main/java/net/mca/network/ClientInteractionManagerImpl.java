@@ -1,5 +1,6 @@
 package net.mca.network;
 
+import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.client.book.Book;
 import net.mca.client.gui.*;
@@ -17,6 +18,7 @@ import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.registry.Registry;
 
 import java.util.Optional;
 
@@ -45,8 +47,14 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 client.setScreen(new BlueprintScreen());
                 break;
             case INTERACT:
-                VillagerLike<?> villager = (VillagerLike<?>)client.world.getEntityById(message.villager);
-                client.setScreen(new InteractScreen(villager));
+                if (client.player != null) {
+                    ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);
+                    boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registry.ITEM.getId(item.getItem()).toString());
+                    if (!isOnBlacklist) {
+                        VillagerLike<?> villager = (VillagerLike<?>)client.world.getEntityById(message.villager);
+                        client.setScreen(new InteractScreen(villager));
+                    }
+                }
                 break;
             case VILLAGER_EDITOR:
                 entity = client.world.getEntityById(message.villager);
@@ -208,10 +216,6 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
 
     @Override
     public void handleDestinyGuiRequest(OpenDestinyGuiRequest message) {
-        MCAClient.getDestinyManager().requestOpen(
-                message.allowTeleportation,
-                message.allowPlayerModel,
-                message.allowVillagerModel
-        );
+        MCAClient.getDestinyManager().requestOpen(message.allowTeleportation);
     }
 }

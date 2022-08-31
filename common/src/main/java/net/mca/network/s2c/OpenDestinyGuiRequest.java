@@ -13,15 +13,10 @@ public class OpenDestinyGuiRequest implements Message {
 
     public final int player;
     public boolean allowTeleportation;
-    public boolean allowPlayerModel;
-    public boolean allowVillagerModel;
 
     public OpenDestinyGuiRequest(ServerPlayerEntity player) {
         this.player = player.getId();
-
-        allowTeleportation = Config.getInstance().allowDestinyTeleportation;
-        allowPlayerModel = Config.getInstance().enableVillagerPlayerModel;
-        allowVillagerModel = !Config.getInstance().forceVillagerPlayerModel;
+        this.allowTeleportation = Config.getInstance().allowDestinyTeleportation;
     }
 
     @Override

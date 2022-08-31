@@ -20,14 +20,24 @@ public class DestinyMessage implements Message {
     private static final long serialVersionUID = -782119062565197963L;
 
     private final String location;
+    private final boolean isClosing;
+
+    public DestinyMessage(String location, boolean isClosing) {
+        this.location = location;
+        this.isClosing = isClosing;
+    }
 
     public DestinyMessage(String location) {
-        this.location = location;
+        this(location, false);
+    }
+
+    public DestinyMessage(boolean isClosing) {
+        this(null, isClosing);
     }
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        if (player.isSpectator()) {
+        if (isClosing && player.isSpectator()) {
             player.changeGameMode(GameMode.SURVIVAL);
         }
 

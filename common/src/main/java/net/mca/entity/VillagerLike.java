@@ -90,7 +90,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                 setName(Names.pickCitizenName(getGenetics().getGender(), asEntity()));
             }
 
-            initializeSkin();
+            initializeSkin(false);
 
             getVillagerBrain().randomize();
         }
@@ -110,7 +110,9 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void setName(String name) {
         setTrackedValue(VILLAGER_NAME, name);
-        EntityRelationship.of(asEntity()).ifPresent(relationship -> relationship.getFamilyEntry().setName(name));
+        if (!asEntity().world.isClient) {
+            EntityRelationship.of(asEntity()).ifPresent(relationship -> relationship.getFamilyEntry().setName(name));
+        }
     }
 
     default void setCustomSkin(String name) {
@@ -136,11 +138,15 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default boolean canBeAttractedTo(VillagerLike<?> other) {
-        return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other) || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
+        return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other)
+                || (getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other) && getGenetics().getGender() == other.getGenetics().getGender())
+                || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
     }
 
     default boolean canBeAttractedTo(PlayerSaveData other) {
-        return getTraits().hasTrait(Traits.Trait.BISEXUAL) || getGenetics().getGender().isMutuallyAttracted(other.getGender());
+        return getTraits().hasTrait(Traits.Trait.BISEXUAL)
+                || (getTraits().hasTrait(Traits.Trait.HOMOSEXUAL) && getGenetics().getGender() == other.getGender())
+                || getGenetics().getGender().isMutuallyAttracted(other.getGender());
     }
 
     default Hand getDominantHand() {
@@ -326,9 +332,26 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return getVillagerBrain().getMemoriesForPlayer(receiver).getDialogueType();
     }
 
-    default void initializeSkin() {
+    default void initializeSkin(boolean isPlayer) {
         randomizeClothes();
         randomizeHair();
+
+        //colored hair
+        if (!isPlayer) {
+            MobEntity entity = asEntity();
+            if (entity.getRandom().nextFloat() < Config.getInstance().coloredHairChance) {
+                int n = entity.getRandom().nextInt(25);
+                int o = DyeColor.values().length;
+                int p = n % o;
+                int q = (n + 1) % o;
+                float r = entity.getRandom().nextFloat();
+                float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
+                float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
+                setTrackedValue(HAIR_COLOR_RED, fs[0] * (1.0f - r) + gs[0] * r);
+                setTrackedValue(HAIR_COLOR_GREEN, fs[1] * (1.0f - r) + gs[1] * r);
+                setTrackedValue(HAIR_COLOR_BLUE, fs[2] * (1.0f - r) + gs[2] * r);
+            }
+        }
     }
 
     default void randomizeClothes() {
@@ -337,21 +360,6 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void randomizeHair() {
         setHair(HairList.getInstance().getPool(getGenetics().getGender()).pickOne());
-
-        //colored hair
-        MobEntity entity = asEntity();
-        if (entity.getRandom().nextFloat() < Config.getInstance().coloredHairChance) {
-            int n = entity.getRandom().nextInt(25);
-            int o = DyeColor.values().length;
-            int p = n % o;
-            int q = (n + 1) % o;
-            float r = entity.getRandom().nextFloat();
-            float[] fs = SheepEntity.getRgbColor(DyeColor.byId(p));
-            float[] gs = SheepEntity.getRgbColor(DyeColor.byId(q));
-            setTrackedValue(HAIR_COLOR_RED, fs[0] * (1.0f - r) + gs[0] * r);
-            setTrackedValue(HAIR_COLOR_GREEN, fs[1] * (1.0f - r) + gs[1] * r);
-            setTrackedValue(HAIR_COLOR_BLUE, fs[2] * (1.0f - r) + gs[2] * r);
-        }
     }
 
     default void validateClothes() {
