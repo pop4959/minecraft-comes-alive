@@ -2,7 +2,6 @@ package net.mca;
 
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
-import net.minecraft.SharedConstants;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +38,7 @@ public final class MCA {
     }
 
     public static boolean areShadersAllowed(String key) {
-        return SharedConstants.getGameVersion().getProtocolVersion() >= 755 && Config.getInstance().enablePlayerShaders &&
+        return Config.getInstance().enablePlayerShaders &&
                 Config.getInstance().playerRendererBlacklist.entrySet().stream()
                         .filter(entry -> entry.getValue().equals("shaders") || entry.getValue().equals(key))
                         .noneMatch(entry -> doesModExist(entry.getKey()));
