@@ -81,6 +81,10 @@ public class Traits {
         return hasTrait(entity, trait);
     }
 
+    public boolean eitherHaveTrait(Trait trait, VillagerLike<?> other) {
+        return hasTrait(entity, trait) || hasTrait(other, trait);
+    }
+
     public boolean hasSameTrait(Trait trait, VillagerLike<?> other) {
         return hasTrait(entity, trait) && hasTrait(other, trait);
     }

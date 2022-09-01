@@ -138,8 +138,8 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default boolean canBeAttractedTo(VillagerLike<?> other) {
-        if (getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other)) {
-            return getGenetics().getGender() == other.getGenetics().getGender();
+        if (getTraits().eitherHaveTrait(Traits.Trait.HOMOSEXUAL, other)) {
+            return getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other) && getGenetics().getGender() == other.getGenetics().getGender();
         }
         return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other)
                 || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
