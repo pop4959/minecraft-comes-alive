@@ -4,7 +4,6 @@ import net.mca.Config;
 import net.mca.MCA;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.entity.VillagerLike;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.client.render.GameRenderer;
@@ -32,7 +31,7 @@ public abstract class MixinGameRenderer {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void onCameraSet(CallbackInfo ci) {
-        if (MCA.areShadersAllowed() && SharedConstants.getGameVersion().getProtocolVersion() >= 755) {
+        if (MCA.areShadersAllowed()) {
             if (this.client.cameraEntity != null) {
                 VillagerLike<?> villagerLike = CommonVillagerModel.getVillager(this.client.cameraEntity);
                 if (villagerLike != null) {

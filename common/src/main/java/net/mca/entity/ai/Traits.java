@@ -1,6 +1,7 @@
 package net.mca.entity.ai;
 
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.entity.VillagerLike;
 import net.mca.util.network.datasync.CDataManager;
 import net.mca.util.network.datasync.CDataParameter;
@@ -21,7 +22,7 @@ public class Traits {
 
     public enum Trait {
         LEFT_HANDED(1.0f, 0.5f, false),
-        COLOR_BLIND(1.0f, 0.5f),
+        COLOR_BLIND(1.0f, 0.5f, MCA.areShadersAllowed()),
         HETEROCHROMIA(1.0f, 2.0f),
         LACTOSE_INTOLERANCE(1.0f, 1.0f),
         COELIAC_DISEASE(1.0f, 1.0f, false), // TODO: Implement for 7.3.21
