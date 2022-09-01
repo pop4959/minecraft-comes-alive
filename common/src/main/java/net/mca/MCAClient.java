@@ -1,5 +1,6 @@
 package net.mca;
 
+import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerEntityMCA;
@@ -82,7 +83,13 @@ public class MCAClient {
 
     private static boolean doesModExist(String modId) {
         if (!modCacheMap.containsKey(modId)) {
-            modCacheMap.put(modId, Platform.getOptionalMod(modId).isPresent());
+            Optional<Mod> modData;
+            try {
+                modData = Optional.of(Platform.getMod(modId));
+            } catch (Exception ignored) {
+                modData = Optional.empty();
+            }
+            modCacheMap.put(modId, modData.isPresent());
         }
         return modCacheMap.get(modId);
     }
