@@ -99,6 +99,7 @@ public final class Config implements Serializable {
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
+    public int percentageOfVanillaVillages = 25;
     public int minimumBuildingsToBeConsideredAVillage = 3;
     public List<String> villagerDimensionBlacklist = List.of();
     public List<String> allowedSpawnReasons = List.of(
