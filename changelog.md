@@ -31,6 +31,8 @@
 * Added `shaderLocationsMap` to allow specifying custom shaders dependent on traits
   * If the camera entity has the specified trait, it'll apply the shader, and remove it when the current camera entity does not.
   * Requires `enablePlayerShaders` to be true to utilize this feature
+* Added functionality for `Lactose Intolerance`
+  * Applies a Poison effect after usage, similar to if a spider eye were consumed
 
 # 7.3.20
 

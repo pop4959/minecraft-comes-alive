@@ -11,6 +11,7 @@
     "MixinEntityType",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
+    "MixinMilkBucketItem",
     "MixinPlayerEntity",
     "MixinPlayerInventory",
     "MixinProtoChunk",
