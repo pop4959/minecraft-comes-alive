@@ -5,12 +5,14 @@ import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.VillagerDimensions;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
+
+import java.util.UUID;
 
 public interface CommonVillagerModel<T extends LivingEntity> {
     ModelPart getBreastPart();
@@ -79,14 +81,18 @@ public interface CommonVillagerModel<T extends LivingEntity> {
         target.setBreastSize(getBreastSize());
     }
 
+    static VillagerLike<?> getVillager(World world, UUID uuid) {
+        if (MCAClient.fallbackVillager == null) {
+            MCAClient.fallbackVillager = EntitiesMCA.MALE_VILLAGER.get().create(world);
+        }
+        return MCAClient.playerData.getOrDefault(uuid, MCAClient.fallbackVillager);
+    }
+
     static VillagerLike<?> getVillager(Entity villager) {
         if (villager instanceof VillagerLike<?> v) {
             return v;
         } else {
-            if (MCAClient.fallbackVillager == null) {
-                MCAClient.fallbackVillager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
-            }
-            return MCAClient.playerData.getOrDefault(villager.getUuid(), MCAClient.fallbackVillager);
+            return getVillager(villager.getWorld(), villager.getUuid());
         }
     }
 }

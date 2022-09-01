@@ -138,15 +138,15 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default boolean canBeAttractedTo(VillagerLike<?> other) {
+        if (getTraits().eitherHaveTrait(Traits.Trait.HOMOSEXUAL, other)) {
+            return getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other) && getGenetics().getGender() == other.getGenetics().getGender();
+        }
         return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other)
-                || (getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other) && getGenetics().getGender() == other.getGenetics().getGender())
                 || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
     }
 
     default boolean canBeAttractedTo(PlayerSaveData other) {
-        return getTraits().hasTrait(Traits.Trait.BISEXUAL)
-                || (getTraits().hasTrait(Traits.Trait.HOMOSEXUAL) && getGenetics().getGender() == other.getGender())
-                || getGenetics().getGender().isMutuallyAttracted(other.getGender());
+        return canBeAttractedTo(toVillager(other));
     }
 
     default Hand getDominantHand() {
@@ -404,15 +404,19 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         readNbtForConversion(other.asEntity().getType(), other.toNbtForConversion(asEntity().getType()));
     }
 
+    static VillagerLike<?> toVillager(PlayerSaveData player) {
+        NbtCompound villagerData = player.getEntityData();
+        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(player.getWorld());
+        assert villager != null;
+        villager.readCustomDataFromNbt(villagerData);
+        return villager;
+    }
+
     static VillagerLike<?> toVillager(Entity entity) {
         if (entity instanceof VillagerLike<?>) {
             return (VillagerLike<?>)entity;
         } else if (entity instanceof ServerPlayerEntity playerEntity) {
-            NbtCompound villagerData = PlayerSaveData.get(playerEntity).getEntityData();
-            VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(entity.world);
-            assert villager != null;
-            villager.readCustomDataFromNbt(villagerData);
-            return villager;
+            return toVillager(PlayerSaveData.get(playerEntity));
         } else {
             return null;
         }
