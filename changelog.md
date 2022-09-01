@@ -33,6 +33,8 @@
   * Requires `enablePlayerShaders` to be true to utilize this feature
 * Added functionality for `Lactose Intolerance`
   * Applies a Poison effect after usage, similar to if a spider eye were consumed
+* Traits that are not meant to be equipped by players will no longer be seen in the Editor or Destiny Screen
+  * This can be bypassed via the `bypassTraitRestrictions` setting
 
 # 7.3.20
 

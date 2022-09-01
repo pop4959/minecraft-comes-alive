@@ -1,5 +1,6 @@
 package net.mca.client.gui;
 
+import net.mca.Config;
 import net.mca.MCA;
 import net.mca.MCAClient;
 import net.mca.ProfessionsMCA;
@@ -318,7 +319,12 @@ public class VillagerEditorScreen extends Screen {
                 addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - 32, y, 32, 20, new LiteralText(">"), b -> setTraitPage(traitPage + 1)));
                 addDrawableChild(new ButtonWidget(width / 2 + 32, y, DATA_WIDTH - 32 * 2, 20, new TranslatableText("gui.villager_editor.page", traitPage + 1), b -> traitPage++));
                 y += 22;
-                Traits.Trait[] traits = Traits.Trait.values();
+                Traits.Trait[] traits = Arrays.stream(Traits.Trait.values()).filter(e -> {
+                    if (villagerUUID.equals(playerUUID)) {
+                        return Config.getInstance().bypassTraitRestrictions || e.isUsableOnPlayer();
+                    }
+                    return true;
+                }).toList().toArray(Traits.Trait[]::new);
                 for (int i = 0; i < TRAITS_PER_PAGE; i++) {
                     int index = i + traitPage * TRAITS_PER_PAGE;
                     if (index < traits.length) {
@@ -618,7 +624,12 @@ public class VillagerEditorScreen extends Screen {
     }
 
     private void setTraitPage(int i) {
-        Traits.Trait[] traits = Traits.Trait.values();
+        Traits.Trait[] traits = Arrays.stream(Traits.Trait.values()).filter(e -> {
+            if (villagerUUID.equals(playerUUID)) {
+                return Config.getInstance().bypassTraitRestrictions || e.isUsableOnPlayer();
+            }
+            return true;
+        }).toList().toArray(Traits.Trait[]::new);
         int maxPage = (int)((double)traits.length / TRAITS_PER_PAGE);
         traitPage = Math.max(0, Math.min(maxPage, i));
         setPage("traits");

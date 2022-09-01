@@ -65,6 +65,7 @@ public final class Config implements Serializable {
     public int immigrantChance = 20;
     public float traitChance = 0.25f;
     public float traitInheritChance = 0.5f;
+    public boolean bypassTraitRestrictions = false;
     public float nightOwlChance = 0.5f;
     public boolean allowAnyNightOwl = false;
     public int heartsForPardonHit = 30;

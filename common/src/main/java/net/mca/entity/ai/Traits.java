@@ -20,27 +20,33 @@ public class Traits {
     private static final CDataParameter<NbtCompound> TRAITS = CParameter.create("traits", new NbtCompound());
 
     public enum Trait {
-        LEFT_HANDED(1.0f, 0.5f),
+        LEFT_HANDED(1.0f, 0.5f, false),
         COLOR_BLIND(1.0f, 0.5f),
         HETEROCHROMIA(1.0f, 2.0f),
         LACTOSE_INTOLERANCE(1.0f, 1.0f),
-        COELIAC_DISEASE(1.0f, 1.0f),
-        DIABETES(1.0f, 1.0f),
+        COELIAC_DISEASE(1.0f, 1.0f, false), // TODO: Implement for 7.3.21
+        DIABETES(1.0f, 1.0f, false), // TODO: Implement for 7.3.21
         DWARFISM(1.0f, 1.0f),
         ALBINISM(1.0f, 1.0f),
-        VEGETARIAN(1.0f, 0.0f),
+        VEGETARIAN(1.0f, 0.0f, false), // TODO: Implement for 7.3.21
         BISEXUAL(1.0f, 0.0f),
         HOMOSEXUAL(1.0f, 0.0f),
-        ELECTRIFIED(0.0f, 0.0f),
-        SIRBEN(0.025f, 1.0f),
+        ELECTRIFIED(0.0f, 0.0f, false),
+        SIRBEN(0.025f, 1.0f, false),
         RAINBOW(0.05f, 0.0f);
 
         private final float chance;
         private final float inherit;
+        private final boolean usableOnPlayer;
 
-        Trait(float chance, float inherit) {
+        Trait(float chance, float inherit, boolean usableOnPlayer) {
             this.chance = chance;
             this.inherit = inherit;
+            this.usableOnPlayer = usableOnPlayer;
+        }
+
+        Trait(float chance, float inherit) {
+            this(chance, inherit, true);
         }
 
         public Text getName() {
@@ -49,6 +55,10 @@ public class Traits {
 
         public Text getDescription() {
             return new TranslatableText("traitDescription." + name().toLowerCase(Locale.ENGLISH));
+        }
+
+        public boolean isUsableOnPlayer() {
+            return usableOnPlayer;
         }
     }
 
