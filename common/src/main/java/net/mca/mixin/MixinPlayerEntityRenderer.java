@@ -1,5 +1,6 @@
 package net.mca.mixin;
 
+import net.mca.MCA;
 import net.mca.MCAClient;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.client.model.PlayerEntityExtendedModel;
@@ -40,7 +41,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
     @Inject(method = "<init>(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;Z)V", at = @At("TAIL"))
     private void init(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        if (MCAClient.isPlayerRendererAllowed()) {
+        if (MCA.isPlayerRendererAllowed()) {
             villagerModel = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.0F), slim));
             vanillaModel = model;
 
@@ -71,7 +72,7 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
 
             // switch to mca model
             model = villagerModel;
-        } else if (MCAClient.isPlayerRendererAllowed()) {
+        } else if (MCA.isPlayerRendererAllowed()) {
             // switch to vanilla model
             model = vanillaModel;
         }
