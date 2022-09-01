@@ -146,11 +146,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default boolean canBeAttractedTo(PlayerSaveData other) {
-        if (getTraits().hasTrait(Traits.Trait.HOMOSEXUAL)) {
-            return getGenetics().getGender() == other.getGender();
-        }
-        return getTraits().hasTrait(Traits.Trait.BISEXUAL)
-                || getGenetics().getGender().isMutuallyAttracted(other.getGender());
+        return canBeAttractedTo(toVillager(other));
     }
 
     default Hand getDominantHand() {
@@ -408,15 +404,19 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         readNbtForConversion(other.asEntity().getType(), other.toNbtForConversion(asEntity().getType()));
     }
 
+    static VillagerLike<?> toVillager(PlayerSaveData player) {
+        NbtCompound villagerData = player.getEntityData();
+        VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(player.getWorld());
+        assert villager != null;
+        villager.readCustomDataFromNbt(villagerData);
+        return villager;
+    }
+
     static VillagerLike<?> toVillager(Entity entity) {
         if (entity instanceof VillagerLike<?>) {
             return (VillagerLike<?>)entity;
         } else if (entity instanceof ServerPlayerEntity playerEntity) {
-            NbtCompound villagerData = PlayerSaveData.get(playerEntity).getEntityData();
-            VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(entity.world);
-            assert villager != null;
-            villager.readCustomDataFromNbt(villagerData);
-            return villager;
+            return toVillager(PlayerSaveData.get(playerEntity));
         } else {
             return null;
         }

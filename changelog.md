@@ -5,8 +5,6 @@
 * Added tooltip to editor to avoid confusion when choosing vanilla model
 * Fixed players also having randomly colored hair
 * Several Changes to the Naming systems in MCA
-  * `SpawnQueue` has been adjusted to properly give villager's random names (IE they don't look italicized when using WAILA-type mods)
-    * Note: this only applies to newly-replaced villagers; older villagers and subsequent name replacements will still show italicized in most cases.
   * Player Naming has been fixed and works properly, much like how /nickname systems work (If you have an existing custom name, MCA will use that instead)
   * It is no longer possible to have a whitespace/empty name, and multiple safeguards have been placed to prevent exploits.
   * The `Nameless Traveler` code has been removed in favor of the above fix.
@@ -14,7 +12,7 @@
   * This trait cannot be inherited from past/to future generations
   * Having this trait will enforce gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
   * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
-  * In the event of this trait being applied alongside the bisexual trait, the bisexual trait will take priority. (7.4 may change this if a conflict system is implemented)
+  * In the event of this trait being applied alongside the bisexual trait, the homosexual trait will take priority.
 * Added `professionConversionsMap` as a config value, made for mod compatibility
   * Designed to be able to use clothing from another profession, if your mod does not supply any to us
   * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by default.
@@ -28,6 +26,8 @@
   * By default, buckets are included to resolve Issue #273
 * Added command to convert vanilla villager within range
 * Fixed a possible crash when trying to edit a villager with an empty name; should now give it a random name instead
+* The `canBeAttractedTo` checks for a Player/Villager relationship now properly respect traits
+  * IE the same logic that is used for villagers now also applies to players
 
 # 7.3.20
 
