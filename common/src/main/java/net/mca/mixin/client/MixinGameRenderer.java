@@ -4,6 +4,7 @@ import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.entity.VillagerLike;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.client.render.GameRenderer;
@@ -25,11 +26,13 @@ public abstract class MixinGameRenderer {
 
     @Shadow private @Nullable ShaderEffect shader;
 
+    @Shadow public abstract void disableShader();
+
     private Pair<String, Identifier> currentShader;
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void onCameraSet(CallbackInfo ci) {
-        if (MCAClient.areShadersAllowed()) {
+        if (MCAClient.areShadersAllowed() && SharedConstants.getGameVersion().getProtocolVersion() >= 755) {
             if (this.client.cameraEntity != null) {
                 VillagerLike<?> villagerLike = CommonVillagerModel.getVillager(this.client.cameraEntity);
                 if (villagerLike != null) {
@@ -48,19 +51,12 @@ public abstract class MixinGameRenderer {
                         }
                     } else if (currentShader != null) {
                         if (!villagerLike.getTraits().hasTrait(currentShader.getLeft())) {
-                            resetShader();
+                            disableShader();
                             this.currentShader = null;
                         }
                     }
                 }
             }
         }
-    }
-
-    private void resetShader() {
-        if (this.shader != null) {
-            this.shader.close();
-        }
-        this.shader = null;
     }
 }
