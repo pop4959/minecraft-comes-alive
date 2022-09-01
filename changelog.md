@@ -28,6 +28,9 @@
 * Fixed a possible crash when trying to edit a villager with an empty name; should now give it a random name instead
 * The `canBeAttractedTo` checks for a Player/Villager relationship now properly respect traits
   * IE the same logic that is used for villagers now also applies to players
+* Added `shaderLocationsMap` to allow specifying custom shaders dependent on traits
+  * If the camera entity has the specified trait, it'll apply the shader, and remove it when the current camera entity does not.
+  * Requires `enablePlayerShaders` to be true to utilize this feature
 
 # 7.3.20
 

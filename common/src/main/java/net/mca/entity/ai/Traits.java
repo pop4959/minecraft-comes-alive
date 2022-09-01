@@ -81,6 +81,10 @@ public class Traits {
         return hasTrait(entity, trait);
     }
 
+    public boolean hasTrait(String trait) {
+        return hasTrait(entity, Trait.valueOf(trait.toUpperCase()));
+    }
+
     public boolean eitherHaveTrait(Trait trait, VillagerLike<?> other) {
         return hasTrait(entity, trait) || hasTrait(other, trait);
     }
