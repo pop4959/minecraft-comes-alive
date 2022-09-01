@@ -629,7 +629,7 @@ public class VillagerEditorScreen extends Screen {
             }
             return true;
         }).toList().toArray(Traits.Trait[]::new);
-        int maxPage = (int)((double)traits.length / TRAITS_PER_PAGE);
+        int maxPage = (int)Math.ceil((double)traits.length / TRAITS_PER_PAGE) - 1;
         traitPage = Math.max(0, Math.min(maxPage, i));
         setPage("traits");
     }
