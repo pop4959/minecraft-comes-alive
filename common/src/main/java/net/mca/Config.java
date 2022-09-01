@@ -65,6 +65,7 @@ public final class Config implements Serializable {
     public int immigrantChance = 20;
     public float traitChance = 0.25f;
     public float traitInheritChance = 0.5f;
+    public boolean bypassTraitRestrictions = false;
     public float nightOwlChance = 0.5f;
     public boolean allowAnyNightOwl = false;
     public int heartsForPardonHit = 30;
@@ -98,6 +99,7 @@ public final class Config implements Serializable {
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
+    public int percentageOfVanillaVillages = 0;
     public int minimumBuildingsToBeConsideredAVillage = 3;
     public List<String> villagerDimensionBlacklist = List.of();
     public List<String> allowedSpawnReasons = List.of(
@@ -139,6 +141,7 @@ public final class Config implements Serializable {
     public boolean allowDestinyCommandOnce = true;
     public boolean allowDestinyCommandMoreThanOnce = false;
     public boolean allowDestinyTeleportation = true;
+    public boolean enablePlayerShaders = true;
     public boolean enableVillagerPlayerModel = true;
     public boolean forceVillagerPlayerModel = false;
     public boolean allowLimitedPlayerEditor = true;
@@ -216,6 +219,10 @@ public final class Config implements Serializable {
     );
 
     public Map<String, String> professionConversionsMap = Map.of();
+
+    public Map<String, String> shaderLocationsMap = Map.of(
+            "color_blind", "minecraft:shaders/post/desaturate.json"
+    );
 
     public Map<String, String> playerRendererBlacklist = Map.of(
             "firstpersonmod", "arms",

@@ -6,10 +6,12 @@ import net.mca.entity.VillagerFactory;
 import net.mca.entity.ZombieVillagerEntityMCA;
 import net.mca.entity.ZombieVillagerFactory;
 import net.mca.entity.ai.relationship.Gender;
+import net.mca.server.world.data.Nationality;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.Registry;
 
 import java.util.LinkedList;
@@ -67,6 +69,15 @@ public class SpawnQueue {
         }
     }
 
+    public static boolean shouldGetConverted(Entity entity) {
+        if (Config.getInstance().percentageOfVanillaVillages <= 0) {
+            return true;
+        } else {
+            int i = Nationality.get((ServerWorld)entity.getWorld()).getRegionId(entity.getBlockPos());
+            return Math.floorMod(i, 100) >= Config.getInstance().percentageOfVanillaVillages;
+        }
+    }
+
     public boolean addVillager(Entity entity) {
         if (entity instanceof IVillagerEntity villagerEntity && !handlesSpawnReason(villagerEntity.getSpawnReason())) {
             return false;
@@ -77,6 +88,7 @@ public class SpawnQueue {
         if (Config.getInstance().overwriteOriginalVillagers
                 && (entity.getClass().equals(VillagerEntity.class) ||
                     Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
+                && shouldGetConverted(entity)
                 && !villagerSpawnQueue.contains(entity)) {
             return villagerSpawnQueue.add((VillagerEntity)entity);
         }

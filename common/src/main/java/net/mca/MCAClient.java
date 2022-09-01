@@ -50,6 +50,17 @@ public class MCAClient {
                         .noneMatch(entry -> doesModExist(entry.getKey()));
     }
 
+    public static boolean areShadersAllowed(String key) {
+        return Config.getInstance().enablePlayerShaders &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals("shaders") || entry.getValue().equals(key))
+                        .noneMatch(entry -> doesModExist(entry.getKey()));
+    }
+
+    public static boolean areShadersAllowed() {
+        return areShadersAllowed("shaders");
+    }
+
     public static boolean useVillagerRenderer(UUID uuid) {
         return useGeneticsRenderer(uuid) && MCAClient.playerData.get(uuid).getPlayerModel() == VillagerLike.PlayerModel.VILLAGER;
     }

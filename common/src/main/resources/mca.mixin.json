@@ -11,6 +11,7 @@
     "MixinEntityType",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
+    "MixinMilkBucketItem",
     "MixinPlayerEntity",
     "MixinPlayerInventory",
     "MixinProtoChunk",
@@ -24,6 +25,7 @@
     "MixinHeldItemFeatureRenderer",
     "MixinLivingEntityRenderer",
     "MixinPlayerEntityRenderer",
+    "client.MixinGameRenderer",
     "client.MixinTranslationStorage"
   ],
   "injectors": {
