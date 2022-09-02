@@ -182,40 +182,40 @@ public final class Config implements Serializable {
     );
 
     public List<String> structuresInRumors = List.of(
-            "igloo",
-            "pyramid",
-            "ruined_portal_desert",
-            "ruined_portal_swamp",
-            "ruined_portal",
-            "ruined_portal_mountain",
-            "mansion",
-            "monument",
-            "shipwreck",
-            "shipwreck_beached",
-            "village_desert",
-            "village_taiga",
-            "village_snowy",
-            "village_plains",
-            "village_savanna",
-            "swamp_hut",
-            "mineshaft",
-            "jungle_pyramid",
-            "pillager_outpost"
+            "minecraft:igloo",
+            "minecraft:pyramid",
+            "minecraft:ruined_portal_desert",
+            "minecraft:ruined_portal_swamp",
+            "minecraft:ruined_portal",
+            "minecraft:ruined_portal_mountain",
+            "minecraft:mansion",
+            "minecraft:monument",
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached",
+            "minecraft:village_desert",
+            "minecraft:village_taiga",
+            "minecraft:village_snowy",
+            "minecraft:village_plains",
+            "minecraft:village_savanna",
+            "minecraft:swamp_hut",
+            "minecraft:mineshaft",
+            "minecraft:jungle_pyramid",
+            "minecraft:pillager_outpost"
     );
 
     public List<String> destinyLocations = List.of(
             "somewhere",
-            "shipwreck_beached",
-            "village_desert",
-            "village_taiga",
-            "village_snowy",
-            "village_plains",
-            "village_savanna"
+            "minecraft:shipwreck_beached",
+            "minecraft:village_desert",
+            "minecraft:village_taiga",
+            "minecraft:village_snowy",
+            "minecraft:village_plains",
+            "minecraft:village_savanna"
     );
 
     public Map<String, String> destinyLocationsToTranslationMap = Map.of(
             "default", "destiny.story.travelling",
-            "shipwreck_beached", "destiny.story.sailing"
+            "minecraft:shipwreck_beached", "destiny.story.sailing"
     );
 
     public Map<String, String> professionConversionsMap = Map.of();
