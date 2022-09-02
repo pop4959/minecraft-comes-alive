@@ -76,10 +76,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -96,10 +93,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static net.mca.client.model.CommonVillagerModel.getVillager;
@@ -115,6 +109,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private int despawnDelay;
     private int burned;
+
+    public final ConversationManager conversationManager = new ConversationManager(this);
 
     @Override
     public PlayerModel getPlayerModel() {
