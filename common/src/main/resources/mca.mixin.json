@@ -26,6 +26,7 @@
     "MixinLivingEntityRenderer",
     "MixinPlayerEntityRenderer",
     "client.MixinGameRenderer",
+    "client.MixinScreen",
     "client.MixinTranslationStorage"
   ],
   "injectors": {

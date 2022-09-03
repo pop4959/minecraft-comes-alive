@@ -45,6 +45,7 @@ public class ConversationManager {
 
         public final int validUntil;
         public static final int TIME_VALID = 20 * 60 * 5;
+        private boolean delivered = false;
 
         private Message(Entity receiver) {
             this.receiver = receiver;
@@ -55,10 +56,12 @@ public class ConversationManager {
             return receiver;
         }
 
-        abstract public void deliver();
+        public void deliver() {
+            delivered = true;
+        }
 
         public boolean stillValid() {
-            return !receiver.isRemoved() && receiver.age < validUntil;
+            return !delivered && !receiver.isRemoved() && receiver.age < validUntil;
         }
     }
 
@@ -73,6 +76,7 @@ public class ConversationManager {
         @Override
         public void deliver() {
             this.entity.sendChatMessage(text, getReceiver());
+            super.deliver();
         }
     }
 
@@ -87,6 +91,7 @@ public class ConversationManager {
         @Override
         public void deliver() {
             this.entity.sendChatMessage((PlayerEntity)getReceiver(), text);
+            super.deliver();
         }
     }
 }
