@@ -74,7 +74,7 @@ public class PTG3 {
         input.add("$villager is " + translate(villager.getVillagerBrain().getMood().getName()) + ". ");
         input.add("$villager is " + translate(villager.getVillagerBrain().getPersonality().name()) + ". ");
         for (Traits.Trait trait : villager.getTraits().getTraits()) {
-            input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name())));
+            input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name()) + ". "));
         }
         int hearts = villager.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
         if (hearts < -25) {
