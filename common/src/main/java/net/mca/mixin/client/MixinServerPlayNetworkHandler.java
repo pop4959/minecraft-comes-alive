@@ -15,13 +15,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 
 import static net.mca.entity.VillagerLike.VILLAGER_NAME;
 
 @Mixin(ServerPlayNetworkHandler.class)
-public class MixinScreen {
+public class MixinServerPlayNetworkHandler {
     @Shadow
     public ServerPlayerEntity player;
 
@@ -34,7 +33,7 @@ public class MixinScreen {
                     .getCloseEntities(player.world, player, 32, VillagerEntityMCA.class)
                     .forEach(villager -> {
                         if (search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
-                            PTG3.answer(player, villager, List.of(msg), (response) -> {
+                            PTG3.answer(player, villager, msg, (response) -> {
                                 villager.conversationManager.addMessage(player, new LiteralText(response));
                             });
                         }

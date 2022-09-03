@@ -8,10 +8,7 @@ import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class PTG3 {
@@ -19,27 +16,93 @@ public class PTG3 {
 
     private static final String url = "http://127.0.0.1:8000/chat";
 
-    public static void answer(PlayerEntity player, VillagerEntityMCA villager, List<String> pastDialogue, Consumer<String> consumer) {
-        List<String> input = new LinkedList<>();
+    private static final int MAX_MEMORY = 10;
+    private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
+
+    private static final Map<UUID, List<String>> memory = new HashMap<>();
+    private static final Map<UUID, Long> lastInteractions = new HashMap<>();
+
+    private static String translate(String phrase) {
+        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
+    }
+
+    private static final Map<String, String> traitDescription = new HashMap<>() {{
+        put("lactose_intolerance", "$villager is intolerant to lactose.");
+        put("coeliac_disease", "$villager has coeliac disease.");
+        put("diabetes", "$villager has diabetes.");
+        put("sirben", "$villager has was unfortunately born as a Sirben.");
+        put("dwarfism", "$villager has dwarfism.");
+        put("albinism", "$villager is an albino.");
+        put("heterochromia", "$villager has heterochromia.");
+        put("color_blind", "$villager is color blind.");
+        put("vegetarian", "$villager is a vegetarian.");
+        put("bisexual", "$villager is bisexual.");
+        put("homosexual", "$villager is homosexual.");
+        put("left_handed", "$villager is left handed.");
+        put("electrified", "$villager has been struck by lightning.");
+        put("rainbow", "$villager has very colorful hair.");
+    }};
+
+    public static void answer(PlayerEntity player, VillagerEntityMCA villager, String msg, Consumer<String> consumer) {
+        String playerName = player.getName().asString();
+        String villagerName = villager.getName().asString();
+
+        // forgot about last conversation if it's too long ago
+        long time = villager.world.getTime();
+        if (time > lastInteractions.getOrDefault(villager.getUuid(), 0L) + MAX_MEMORY_TIME) {
+            memory.remove(villager.getUuid());
+        }
+        lastInteractions.put(villager.getUuid(), time);
+
+        // remember phrase
+        List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
+        pastDialogue.add(playerName + ": " + msg);
+        if (pastDialogue.size() > MAX_MEMORY) {
+            pastDialogue.remove(0);
+        }
 
         // construct context
-        input.add("This is a conversation with a Minecraft villager named $villager and $villager." + " ");
-        input.add("$villager lives in a small village in a forest. ");
-        input.add("$villager is angry. ");
-        input.add("$villager has diabetes. ");
-        input.add("$villager dislikes you. ");
-        input.add("\n");
+        // todo split into modules
+        List<String> input = new LinkedList<>();
+        input.add("This is a conversation with a Minecraft villager named $villager and player." + " ");
+        input.add("$villager lives in a small, medieval village in a forest. ");
+        input.add("The village has a library, and an armory. "); // todo village buildings
+        input.add("$villager is a " + translate(villager.getGenetics().getGender().name()) + ". ");
+        input.add("$villager is " + translate(villager.getVillagerBrain().getMood().getName()) + ". ");
+        input.add("$villager is " + translate(villager.getVillagerBrain().getPersonality().name()) + ". ");
+        for (Traits.Trait trait : villager.getTraits().getTraits()) {
+            input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name())));
+        }
+        int hearts = villager.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
+        if (hearts < -25) {
+            input.add("$villager hates $player. ");
+        } else if (hearts < 0) {
+            input.add("$villager dislikes $player. ");
+        } else if (hearts < 33) {
+            input.add("$villager knows $player well. ");
+        } else if (hearts < 66) {
+            input.add("$villager likes $player. ");
+        } else {
+            input.add("$villager likes $player really well. ");
+        }
+        if (villager.getRelationships().isMarriedTo(player.getUuid())) {
+            input.add("$villager is married to $player. ");
+        } else if (villager.getRelationships().isMarried()) {
+            input.add("$villager is married. ");
+        }
+        input.add("$player visited the nether. "); // todo player achievements
+        input.add("\n\n");
 
         // construct memory
-        for (int i = 0; i < pastDialogue.size(); i++) {
-            input.add((i % 2 == 0 ? "$player: " : "$villager: ") + pastDialogue.get(i) + "\n");
+        for (String s : pastDialogue) {
+            input.add(s + "\n");
         }
         input.add("$villager:");
 
         // gather variables
         Map<String, String> variables = Map.of(
-                "player", player.getName().asString(),
-                "villager", villager.getName().asString()
+                "player", playerName,
+                "villager", villagerName
         );
 
         // add variables
@@ -50,10 +113,10 @@ public class PTG3 {
             }
             sb.append(s);
         }
-        String prompt = sb.toString();
 
+        // build http request
         HttpUrl.Builder httpBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
-        httpBuilder.addQueryParameter("prompt", prompt);
+        httpBuilder.addQueryParameter("prompt", sb.toString());
         httpBuilder.addQueryParameter("player", variables.get("player"));
         httpBuilder.addQueryParameter("villager", variables.get("villager"));
 
@@ -62,7 +125,7 @@ public class PTG3 {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+                e.printStackTrace();
             }
 
             @Override
@@ -71,6 +134,7 @@ public class PTG3 {
                 if (body != null) {
                     JsonObject map = JsonParser.parseString(body.string()).getAsJsonObject();
                     String message = map.get("answer").getAsString().trim().replace("\n", "");
+                    pastDialogue.add(villagerName + ": " + message);
                     consumer.accept(message);
                 }
             }
