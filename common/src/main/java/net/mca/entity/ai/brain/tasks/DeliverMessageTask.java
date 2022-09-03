@@ -15,12 +15,13 @@ import java.util.Optional;
 
 public class DeliverMessageTask extends Task<VillagerEntityMCA> {
     private static final int MAX_COOLDOWN = 10;
+    private static final int TALKING_TIME = 100;
 
     private Optional<ConversationManager.Message> message = Optional.empty();
 
     private int cooldown;
 
-    private boolean talked;
+    private int talked;
 
     public DeliverMessageTask() {
         super(ImmutableMap.of(
@@ -45,13 +46,13 @@ public class DeliverMessageTask extends Task<VillagerEntityMCA> {
     @Override
     protected void run(ServerWorld world, VillagerEntityMCA villager, long time) {
         message.ifPresent(m -> {
-            talked = false;
+            talked = 0;
         });
     }
 
     @Override
     protected boolean shouldKeepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        return !talked && !villager.getVillagerBrain().isPanicking() && !villager.isSleeping();
+        return talked < TALKING_TIME && !villager.getVillagerBrain().isPanicking() && !villager.isSleeping();
     }
 
     @Override
@@ -62,12 +63,16 @@ public class DeliverMessageTask extends Task<VillagerEntityMCA> {
                 LookTargetUtil.lookAt(villager, e);
             }
 
-            if (isWithinGreetingDistance(villager, m.getReceiver())) {
-                villager.playWelcomeSound();
-                m.deliver();
-                talked = true;
+            if (talked == 0) {
+                if (isWithinGreetingDistance(villager, m.getReceiver())) {
+                    villager.playWelcomeSound();
+                    m.deliver();
+                    talked = 1;
+                } else {
+                    LookTargetUtil.walkTowards(villager, m.getReceiver(), 0.55F, 2);
+                }
             } else {
-                LookTargetUtil.walkTowards(villager, m.getReceiver(), 0.55F, 2);
+                talked++;
             }
         });
     }

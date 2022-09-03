@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,8 @@ public class PTG3 {
 
     private static final int MAX_MEMORY = 10;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
+    private static final int CONVERSATION_TIME = 20 * 60 * 2;
+    private static final int CONVERSATION_DISTANCE = 16;
 
     private static final Map<UUID, List<String>> memory = new HashMap<>();
     private static final Map<UUID, Long> lastInteractions = new HashMap<>();
@@ -139,5 +142,9 @@ public class PTG3 {
                 }
             }
         });
+    }
+
+    public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
+        return villager.distanceTo(player) < CONVERSATION_DISTANCE && villager.world.getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME;
     }
 }

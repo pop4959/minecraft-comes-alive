@@ -32,7 +32,7 @@ public class MixinServerPlayNetworkHandler {
             WorldUtils
                     .getCloseEntities(player.world, player, 32, VillagerEntityMCA.class)
                     .forEach(villager -> {
-                        if (search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
+                        if (PTG3.inConversationWith(villager, player) || search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
                             PTG3.answer(player, villager, msg, (response) -> {
                                 villager.conversationManager.addMessage(player, new LiteralText(response));
                             });
