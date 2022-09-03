@@ -19,7 +19,7 @@ public class PTG3 {
 
     private static final int MAX_MEMORY = 10;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
-    private static final int CONVERSATION_TIME = 20 * 60 * 2;
+    private static final int CONVERSATION_TIME = 20 * 60;
     private static final int CONVERSATION_DISTANCE = 16;
 
     private static final Map<UUID, List<String>> memory = new HashMap<>();

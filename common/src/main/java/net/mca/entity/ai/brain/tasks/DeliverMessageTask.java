@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class DeliverMessageTask extends Task<VillagerEntityMCA> {
     private static final int MAX_COOLDOWN = 10;
-    private static final int TALKING_TIME = 100;
+    private static final int TALKING_TIME = 200;
 
     private Optional<ConversationManager.Message> message = Optional.empty();
 
@@ -69,9 +69,10 @@ public class DeliverMessageTask extends Task<VillagerEntityMCA> {
                     m.deliver();
                     talked = 1;
                 } else {
-                    LookTargetUtil.walkTowards(villager, m.getReceiver(), 0.55F, 2);
+                    LookTargetUtil.walkTowards(villager, m.getReceiver(), 0.65F, 2);
                 }
             } else {
+                LookTargetUtil.walkTowards(villager, m.getReceiver(), 0.45F, 2);
                 talked++;
             }
         });

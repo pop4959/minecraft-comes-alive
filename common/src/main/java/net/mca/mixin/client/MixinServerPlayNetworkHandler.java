@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 
 import static net.mca.entity.VillagerLike.VILLAGER_NAME;
@@ -29,15 +30,31 @@ public class MixinServerPlayNetworkHandler {
         String msg = message.getRaw();
         if (!msg.startsWith("/")) {
             HashSet<String> search = new HashSet<>(Arrays.asList(msg.toLowerCase(Locale.ROOT).split("\\P{L}+")));
-            WorldUtils
-                    .getCloseEntities(player.world, player, 32, VillagerEntityMCA.class)
-                    .forEach(villager -> {
-                        if (PTG3.inConversationWith(villager, player) || search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
-                            PTG3.answer(player, villager, msg, (response) -> {
-                                villager.conversationManager.addMessage(player, new LiteralText(response));
-                            });
-                        }
+            List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.world, player, 32, VillagerEntityMCA.class);
+
+            // talk to specific villager
+            boolean talked = false;
+            for (VillagerEntityMCA villager : entities) {
+                if (search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
+                    PTG3.answer(player, villager, msg, (response) -> {
+                        villager.conversationManager.addMessage(player, new LiteralText(response));
                     });
+                    talked = true;
+                    break;
+                }
+            }
+
+            // continue convo
+            if (!talked) {
+                for (VillagerEntityMCA villager : entities) {
+                    if (PTG3.inConversationWith(villager, player)) {
+                        PTG3.answer(player, villager, msg, (response) -> {
+                            villager.conversationManager.addMessage(player, new LiteralText(response));
+                        });
+                        break;
+                    }
+                }
+            }
         }
     }
 }
