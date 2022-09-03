@@ -221,7 +221,8 @@ public final class Config implements Serializable {
     public Map<String, String> professionConversionsMap = Map.of();
 
     public Map<String, String> shaderLocationsMap = Map.of(
-            "color_blind", "minecraft:shaders/post/desaturate.json"
+            "color_blind", "minecraft:shaders/post/desaturate.json",
+            "sirben", "mca:shaders/post/sirben.json"
     );
 
     public Map<String, String> playerRendererBlacklist = Map.of(

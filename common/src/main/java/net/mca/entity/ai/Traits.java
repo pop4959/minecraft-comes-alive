@@ -32,7 +32,7 @@ public class Traits {
         BISEXUAL(1.0f, 0.0f),
         HOMOSEXUAL(1.0f, 0.0f),
         ELECTRIFIED(0.0f, 0.0f, false),
-        SIRBEN(0.025f, 1.0f, false),
+        SIRBEN(0.025f, 1.0f, true),
         RAINBOW(0.05f, 0.0f);
 
         private final float chance;
