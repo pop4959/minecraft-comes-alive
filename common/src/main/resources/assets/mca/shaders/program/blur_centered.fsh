@@ -17,7 +17,7 @@ void main() {
     float totalStrength = 0.0;
     float totalAlpha = 0.0;
     float totalSamples = 0.0;
-    float distance = pow(length(texCoord - vec2(0.5f)), 2.0);
+    float distance = pow(length(texCoord - vec2(0.5f)), 3.0);
     for (float r = -Radius; r <= Radius; r += 1.0) {
         vec4 sampleValue = texture(DiffuseSampler, texCoord + oneTexel * r * BlurDir * distance);
 

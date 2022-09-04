@@ -1,5 +1,6 @@
 package net.mca.mixin.client;
 
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.PTG3;
 import net.mca.util.WorldUtils;
@@ -27,6 +28,10 @@ public class MixinServerPlayNetworkHandler {
 
     @Inject(method = "handleMessage(Lnet/minecraft/server/filter/TextStream$Message;)V", at = @At("HEAD"))
     public void sendMessage(TextStream.Message message, CallbackInfo ci) {
+        if (!Config.getInstance().enableVillagerChatAI) {
+            return;
+        }
+
         String msg = message.getRaw();
         if (!msg.startsWith("/")) {
             HashSet<String> search = new HashSet<>(Arrays.asList(msg.toLowerCase(Locale.ROOT).split("\\P{L}+")));

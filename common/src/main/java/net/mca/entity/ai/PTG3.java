@@ -25,6 +25,7 @@ public class PTG3 {
 
     private static final Map<UUID, List<String>> memory = new HashMap<>();
     private static final Map<UUID, Long> lastInteractions = new HashMap<>();
+    private static final Map<UUID, UUID> lastInteraction = new HashMap<>();
 
     public static String translate(String phrase) {
         return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
@@ -40,6 +41,7 @@ public class PTG3 {
             memory.remove(villager.getUuid());
         }
         lastInteractions.put(villager.getUuid(), time);
+        lastInteraction.put(player.getUuid(), villager.getUuid());
 
         // remember phrase
         List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
@@ -50,14 +52,11 @@ public class PTG3 {
 
         // construct context
         List<String> input = new LinkedList<>();
-        input.add("This is a conversation with a Minecraft villager named $villager and player." + " ");
-
-        VillageModule.apply(input, villager, player);
         PersonalityModule.apply(input, villager, player);
         TraitsModule.apply(input, villager, player);
         RelationModule.apply(input, villager, player);
+        VillageModule.apply(input, villager, player);
         PlayerModule.apply(input, villager, player);
-
         input.add("\n\n");
 
         // construct memory
@@ -109,6 +108,8 @@ public class PTG3 {
     }
 
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
-        return villager.distanceTo(player) < CONVERSATION_DISTANCE && villager.world.getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME;
+        return villager.distanceTo(player) < CONVERSATION_DISTANCE
+                && villager.world.getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME
+                && lastInteraction.get(player.getUuid()).equals(villager.getUuid());
     }
 }
