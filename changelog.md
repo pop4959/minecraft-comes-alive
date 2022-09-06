@@ -1,9 +1,6 @@
-# 7.4.0
-
-* Added `percentageOfVanillaVillages` as a config value to randomly keep vanilla villages
-
 # 7.3.21
 
+* Added `percentageOfVanillaVillages` as a config value to randomly keep vanilla villages
 * Fixed adventurers spawning in unloaded chunk
 * Fixed crash when disabling MCA player model
 * Added tooltip to editor to avoid confusion when choosing vanilla model
