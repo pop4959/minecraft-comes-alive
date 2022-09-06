@@ -1224,7 +1224,7 @@
   "adult.dialogue.chat.plains/1": "Do you like the plains? I've never been anywhere else. I should travel one day...",
   "adult.dialogue.chat.plains/2": "The plains are so peaceful. Even if it's not as exciting as it is in other biomes, I still wouldn't want to live anywhere else.",
   "adult.dialogue.chat.savanna/1": "It's hot over here in the savanna, but at least we never have to worry about the winter.",
-  "adult.dialogue.chat.savanna/2": "the llamas are sort of annoying, but I enjoy it here.",
+  "adult.dialogue.chat.savanna/2": "The llamas are sort of annoying, but I enjoy it here.",
   "adult.dialogue.chat.taiga/1": "I like the woods. They provide building material, firewood, and are great hunting grounds.",
   "adult.dialogue.chat.taiga/2": "Some say it's cold here in the Taiga biome, but if you ask me, we have pretty much all we need here. I wouldn't change it for anything!",
   "adult.dialogue.chat.snowy_plains/1": "It's cold here, but as long as there is enough firewood it's no problem.",
@@ -1261,20 +1261,20 @@
   "dialogue.story.wither.fail/2": "You look too much in one piece for that to be true.",
 
   "dialogue.divorce": "Do you really want a divorce? A cleric can provide divorce papers to decrease penalties.",
-  "dialogue.divorce.confirm": "confirm",
-  "dialogue.divorce.cancel": "cancel",
+  "dialogue.divorce.confirm": "Confirm",
+  "dialogue.divorce.cancel": "Cancel",
 
   "dialogue.procreate": "Do you really want a child?",
-  "dialogue.procreate.confirm": "confirm",
-  "dialogue.procreate.cancel": "cancel",
+  "dialogue.procreate.confirm": "Confirm",
+  "dialogue.procreate.cancel": "Cancel",
 
   "dialogue.adopt": "Do you really want to be my parent?",
-  "dialogue.adopt.confirm": "confirm",
-  "dialogue.adopt.cancel": "cancel",
+  "dialogue.adopt.confirm": "Confirm",
+  "dialogue.adopt.cancel": "Cancel",
 
-  "dialogue.hire.short": "hire for 3 days (5 emeralds)",
-  "dialogue.hire.long": "hire for a week (10 emeralds)",
-  "dialogue.hire.cancel": "cancel",
+  "dialogue.hire.short": "Hire for 3 days (5 emeralds)",
+  "dialogue.hire.long": "Hire for a week (10 emeralds)",
+  "dialogue.hire.cancel": "Cancel",
 
   "dialogue.stay.fail/1": "Nah thanks, I'm more the adventurer.",
   "dialogue.stay.fail/2": "Thanks for asking, but I prefer to venture and explore the world!",
@@ -1288,6 +1288,10 @@
 
   "dialogue.divorcePapers": "Here you go, bring these papers to your spouse to confirm the divorce.",
 
-  "dialogue.hire": "Alright, just tell me when you need help. I will be around for the paid time.",
-  "dialogue.no_money": "You need more emeralds!"
+  "dialogue.hire/1": "Alright, just tell me when you need help. I will be around for the paid time.",
+  "dialogue.hire/2": "Cool! Let me know when you need me. I'll be here for the emeralds!",
+  "dialogue.hire/3": "Great! You won't be disappointed! Just have the emeralds ready!",
+  "dialogue.no_money/1": "You need more emeralds to hire me!",
+  "dialogue.no_money/2": "Are you trying to rip me off? You need more emeralds!",
+  "dialogue.no_money/3": "I may look cheap, but my services aren't. You will need more to hire me."
 }
