@@ -1024,7 +1024,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getDeathSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1071,11 +1071,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 return getGenetics().getGender() == Gender.MALE ? mood.getSoundMale() : mood.getSoundFemale();
             }
 
-            return null;
+            return SoundsMCA.SILENT.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getAmbientSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1083,8 +1083,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     protected final SoundEvent getHurtSound(DamageSource cause) {
         if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_HURT.get() : SoundsMCA.VILLAGER_FEMALE_HURT.get();
-        } else {
+        } else if (Config.getInstance().useVanillaVoices) {
             return super.getHurtSound(cause);
+        } else {
+            return SoundsMCA.SILENT.get();
         }
     }
 
