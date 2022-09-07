@@ -4,8 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import net.mca.entity.ai.Traits;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -232,12 +234,22 @@ public final class Config implements Serializable {
             "epicfight", "all"
     );
 
+    public Map<String, Boolean> enabledTraits = new HashMap<>();
+
 
     public static File getConfigFile() {
         return new File("./config/mca.json");
     }
 
+    public void autocomplete() {
+        for (Traits.Trait trait : Traits.Trait.values()) {
+            enabledTraits.putIfAbsent(trait.name(), true);
+        }
+    }
+
     public void save() {
+        autocomplete();
+
         try (FileWriter writer = new FileWriter(getConfigFile())) {
             version = VERSION;
             Gson gson = new GsonBuilder().setPrettyPrinting().create();

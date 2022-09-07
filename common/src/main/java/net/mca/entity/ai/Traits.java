@@ -24,11 +24,11 @@ public class Traits {
         COLOR_BLIND(1.0f, 0.5f),
         HETEROCHROMIA(1.0f, 2.0f),
         LACTOSE_INTOLERANCE(1.0f, 1.0f),
-        COELIAC_DISEASE(1.0f, 1.0f, false), // TODO: Implement for 7.3.21
-        DIABETES(1.0f, 1.0f, false), // TODO: Implement for 7.3.21
+        COELIAC_DISEASE(1.0f, 1.0f, false), // TODO: Implement for 7.4
+        DIABETES(1.0f, 1.0f, false), // TODO: Implement for 7.4
         DWARFISM(1.0f, 1.0f),
         ALBINISM(1.0f, 1.0f),
-        VEGETARIAN(1.0f, 0.0f, false), // TODO: Implement for 7.3.21
+        VEGETARIAN(1.0f, 0.0f, false), // TODO: Implement for 7.4
         BISEXUAL(1.0f, 0.0f),
         HOMOSEXUAL(1.0f, 0.0f),
         ELECTRIFIED(0.0f, 0.0f, false),
@@ -59,6 +59,10 @@ public class Traits {
 
         public boolean isUsableOnPlayer() {
             return usableOnPlayer;
+        }
+
+        public boolean isEnabled() {
+            return Config.getInstance().enabledTraits.get(name());
         }
     }
 
@@ -120,7 +124,7 @@ public class Traits {
         float total = (float)Arrays.stream(Trait.values()).mapToDouble(tr -> tr.chance).sum();
         for (Trait t : Trait.values()) {
             float chance = Config.getInstance().traitChance / total * t.chance;
-            if (random.nextFloat() < chance) {
+            if (random.nextFloat() < chance && t.isEnabled()) {
                 addTrait(t);
             }
         }
