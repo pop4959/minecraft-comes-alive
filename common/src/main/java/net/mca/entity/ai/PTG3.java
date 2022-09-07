@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 public class PTG3 {
     static final OkHttpClient client = new OkHttpClient();
 
-    private static final String url = "http://127.0.0.1:8000/chat";
+    private static final String url = "http://snoweagle.tk/chat";
 
     private static final int MAX_MEMORY = 10;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
