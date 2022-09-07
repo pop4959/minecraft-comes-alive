@@ -1367,6 +1367,7 @@
   "adult.dialogue.chat.taiga/6": "The fresh crisp air the taiga brings is so relaxing at times.",
   "adult.dialogue.chat.taiga/7": "Although the sweet berry bushes have the best berries, getting pricked by one is awful!",
   "adult.dialogue.chat.taiga/8": "The rain here in the taiga gets pretty cold, but it's very peaceful to say the least.",
+  "child.dialogue.chat.taiga/1": "Did you see the foxes? I really want one as a pet, but they are so fast. Can you catch one for me?",
   "adult.dialogue.chat.snowy_plains/1": "It's cold here, but as long as there is enough firewood it's no problem for me.",
   "adult.dialogue.chat.snowy_plains/2": "It's freezing out here, but at least there's plenty of fish. Haha!",
   "adult.dialogue.chat.snowy_plains/3": "In weather like this, it's perfect for snuggling myself in a blanket reading a book by the furnace!",
@@ -1383,6 +1384,8 @@
   "adult.dialogue.chat.desert/6": "Phew! The sun is pretty bad today!",
   "adult.dialogue.chat.desert/7": "Have you found any rabbits? They're hard to see here!",
   "adult.dialogue.chat.desert/8": "One downside about living here are the husks. No matter what, you get super hungry when they smack you! What gives!?",
+  "adult.dialogue.chat.desert/9": "Pricked myself on a cactus the other day. Gotta mind your step around here!",
+  "adult.dialogue.chat.desert/10": "Life in the dry desert is not easy, but at least we have this village where we can get water and food.",
 
   "dialogue.story.exploring.success/1": "Cool! I'll explore the world too, one day!.",
   "dialogue.story.exploring.success/2": "Wow! It must be amazing to just get to travel and explore. I love my village, family and friends, but listening to you really makes me feel jealous!",
