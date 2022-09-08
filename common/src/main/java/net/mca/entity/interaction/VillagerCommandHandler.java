@@ -11,7 +11,6 @@ import net.mca.entity.ai.relationship.RelationshipState;
 import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.item.ItemsMCA;
-import net.mca.server.world.data.BabyTracker;
 import net.mca.server.world.data.PlayerSaveData;
 import net.mca.util.WorldUtils;
 import net.minecraft.entity.Saddleable;
@@ -140,17 +139,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 parentSpouse.ifPresent(p -> entity.getRelationships().getFamilyEntry().assignParent(p));
             }
             case "procreate" -> {
-                BabyTracker tracker = BabyTracker.get((ServerWorld)entity.world);
-                if (tracker.hasActiveBaby(player.getUuid(), entity.getUuid())) {
-                    BabyTracker.Pairing pairing = tracker.getPairing(player.getUuid(), entity.getUuid());
-
-                    if (pairing.locateBaby(player).getRight().wasFound()) {
-                        entity.sendChatMessage(player, "interaction.procreate.fail.hasbaby");
-                    } else {
-                        entity.sendChatMessage(player, "interaction.procreate.fail.lostbaby");
-                        pairing.reconstructBaby(player);
-                    }
-                } else if (memory.getHearts() < 100) {
+                if (memory.getHearts() < 100) {
                     entity.sendChatMessage(player, "interaction.procreate.fail.lowhearts");
                 } else {
                     entity.getRelationships().startProcreating();

@@ -3,7 +3,6 @@ package net.mca.item;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Traits;
 import net.mca.entity.ai.relationship.Gender;
-import net.mca.server.world.data.BabyTracker;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -19,8 +18,8 @@ public class SirbenBabyItem extends BabyItem {
     }
 
     @Override
-    protected VillagerEntityMCA birthChild(BabyTracker.ChildSaveState state, ServerWorld world, ServerPlayerEntity player) {
-        VillagerEntityMCA child = super.birthChild(state, world, player);
+    protected VillagerEntityMCA birthChild(ItemStack stack, ServerWorld world, ServerPlayerEntity player) {
+        VillagerEntityMCA child = super.birthChild(stack, world, player);
         child.getTraits().addTrait(Traits.Trait.SIRBEN);
         return child;
     }

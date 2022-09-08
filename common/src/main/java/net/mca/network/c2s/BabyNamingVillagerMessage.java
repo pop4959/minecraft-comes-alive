@@ -1,7 +1,7 @@
 package net.mca.network.c2s;
 
 import net.mca.cobalt.network.Message;
-import net.mca.server.world.data.BabyTracker;
+import net.mca.item.BabyItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -22,9 +22,6 @@ public class BabyNamingVillagerMessage implements Message {
     @Override
     public void receive(ServerPlayerEntity player) {
         ItemStack stack = player.getInventory().getStack(slot);
-        BabyTracker.getState(stack, player.getWorld()).ifPresent(state -> {
-            state.setName(name);
-            state.writeToItem(stack);
-        });
+        BabyItem.getNbt(stack).putString("babyName", name);
     }
 }
