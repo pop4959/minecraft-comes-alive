@@ -2,7 +2,7 @@ package net.mca.entity.ai.ptg3Modules;
 
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Traits;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +28,7 @@ public class TraitsModule {
         put("rainbow", "$villager has very colorful hair.");
     }};
 
-    public static void apply(List<String> input, VillagerEntityMCA villager, PlayerEntity player) {
+    public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
         for (Traits.Trait trait : villager.getTraits().getTraits()) {
             input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name()) + ". "));
         }

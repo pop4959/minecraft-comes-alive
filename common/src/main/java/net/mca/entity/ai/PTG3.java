@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.ptg3Modules.*;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ public class PTG3 {
         return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
     }
 
-    public static void answer(PlayerEntity player, VillagerEntityMCA villager, String msg, Consumer<String> consumer) {
+    public static void answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg, Consumer<String> consumer) {
         String playerName = player.getName().asString();
         String villagerName = villager.getName().asString();
 
