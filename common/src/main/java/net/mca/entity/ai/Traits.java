@@ -96,7 +96,7 @@ public class Traits {
     }
 
     public boolean hasTrait(String trait) {
-        return hasTrait(entity, Trait.valueOf(trait.toUpperCase()));
+        return hasTrait(entity, Trait.valueOf(trait.toUpperCase(Locale.ROOT)));
     }
 
     public boolean eitherHaveTrait(Trait trait, VillagerLike<?> other) {
