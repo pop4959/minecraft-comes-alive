@@ -4,7 +4,7 @@ import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.PTG3;
 import net.mca.util.WorldUtils;
-import net.minecraft.server.filter.TextStream;
+import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -26,10 +26,10 @@ public class MixinServerPlayNetworkHandler {
     @Shadow
     public ServerPlayerEntity player;
 
-    @Inject(method = "handleMessage(Lnet/minecraft/server/filter/TextStream$Message;)V", at = @At("HEAD"))
-    public void sendMessage(TextStream.Message message, CallbackInfo ci) {
+    @Inject(method = "handleDecoratedMessage", at = @At("HEAD"))
+    public void sendMessage(SignedMessage message, CallbackInfo ci) {
         if (Config.getInstance().enableVillagerChatAI) {
-            String msg = message.getRaw();
+            String msg = message.getContent().getString();
             if (!msg.startsWith("/")) {
                 HashSet<String> search = new HashSet<>(Arrays.asList(msg.toLowerCase(Locale.ROOT).split("\\P{L}+")));
                 List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.world, player, 32, VillagerEntityMCA.class);
@@ -51,7 +51,7 @@ public class MixinServerPlayNetworkHandler {
                     for (VillagerEntityMCA villager : entities) {
                         if (PTG3.inConversationWith(villager, player)) {
                             PTG3.answer(player, villager, msg, (response) -> {
-                                villager.conversationManager.addMessage(player, new LiteralText(response));
+                                villager.conversationManager.addMessage(player, Text.literal(response));
                             });
                             break;
                         }
