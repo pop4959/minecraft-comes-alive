@@ -140,6 +140,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         nbt.putInt("lastVillageId", lastVillageId);
         nbt.put("villages", NbtHelper.fromList(villages.values(), Village::save));
         nbt.put("reapers", reapers.writeNbt());
+        nbt.put("babies", babies.writeNbt());
         return nbt;
     }
 

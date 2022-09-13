@@ -10,7 +10,6 @@ import net.mca.entity.VillagerLike;
 import net.mca.item.BabyItem;
 import net.mca.item.ExtendedWrittenBookItem;
 import net.mca.network.s2c.*;
-import net.mca.server.world.data.BabyTracker;
 import net.mca.server.world.data.Village;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,8 +18,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.registry.Registry;
-
-import java.util.Optional;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -157,11 +154,6 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         if (screen instanceof InteractScreen gui) {
             gui.setDialogue(message.question, message.answers, message.silent);
         }
-    }
-
-    @Override
-    public void handleChildData(GetChildDataResponse message) {
-        BabyItem.CLIENT_STATE_CACHE.put(message.id, Optional.ofNullable(message.getData()).map(BabyTracker.ChildSaveState::new));
     }
 
     @Override

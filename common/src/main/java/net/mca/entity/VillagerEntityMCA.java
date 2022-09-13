@@ -74,10 +74,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -94,10 +91,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static net.mca.client.model.CommonVillagerModel.getVillager;
@@ -113,6 +107,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private int despawnDelay;
     private int burned;
+
+    public final ConversationManager conversationManager = new ConversationManager(this);
 
     @Override
     public PlayerModel getPlayerModel() {
@@ -1026,7 +1022,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getDeathSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1073,11 +1069,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 return getGenetics().getGender() == Gender.MALE ? mood.getSoundMale() : mood.getSoundFemale();
             }
 
-            return null;
+            return SoundsMCA.SILENT.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getAmbientSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1085,8 +1081,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     protected final SoundEvent getHurtSound(DamageSource cause) {
         if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_HURT.get() : SoundsMCA.VILLAGER_FEMALE_HURT.get();
-        } else {
+        } else if (Config.getInstance().useVanillaVoices) {
             return super.getHurtSound(cause);
+        } else {
+            return SoundsMCA.SILENT.get();
         }
     }
 

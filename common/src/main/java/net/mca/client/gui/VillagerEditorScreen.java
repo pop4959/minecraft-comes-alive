@@ -316,12 +316,7 @@ public class VillagerEditorScreen extends Screen {
                 addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - 32, y, 32, 20, Text.literal(">"), b -> setTraitPage(traitPage + 1)));
                 addDrawableChild(new ButtonWidget(width / 2 + 32, y, DATA_WIDTH - 32 * 2, 20, Text.translatable("gui.villager_editor.page", traitPage + 1), b -> traitPage++));
                 y += 22;
-                Traits.Trait[] traits = Arrays.stream(Traits.Trait.values()).filter(e -> {
-                    if (villagerUUID.equals(playerUUID)) {
-                        return Config.getInstance().bypassTraitRestrictions || e.isUsableOnPlayer();
-                    }
-                    return true;
-                }).toList().toArray(Traits.Trait[]::new);
+                Traits.Trait[] traits = getValidTraits();
                 for (int i = 0; i < TRAITS_PER_PAGE; i++) {
                     int index = i + traitPage * TRAITS_PER_PAGE;
                     if (index < traits.length) {
@@ -435,6 +430,15 @@ public class VillagerEditorScreen extends Screen {
                 filter();
             }
         }
+    }
+
+    private Traits.Trait[] getValidTraits() {
+        return Arrays.stream(Traits.Trait.values()).filter(e -> {
+            if (villagerUUID.equals(playerUUID)) {
+                return (Config.getInstance().bypassTraitRestrictions || e.isUsableOnPlayer()) && e.isEnabled();
+            }
+            return e.isEnabled();
+        }).toList().toArray(Traits.Trait[]::new);
     }
 
     private void updateClothingPageWidget() {
@@ -621,12 +625,7 @@ public class VillagerEditorScreen extends Screen {
     }
 
     private void setTraitPage(int i) {
-        Traits.Trait[] traits = Arrays.stream(Traits.Trait.values()).filter(e -> {
-            if (villagerUUID.equals(playerUUID)) {
-                return Config.getInstance().bypassTraitRestrictions || e.isUsableOnPlayer();
-            }
-            return true;
-        }).toList().toArray(Traits.Trait[]::new);
+        Traits.Trait[] traits = getValidTraits();
         int maxPage = (int)Math.ceil((double)traits.length / TRAITS_PER_PAGE) - 1;
         traitPage = Math.max(0, Math.min(maxPage, i));
         setPage("traits");

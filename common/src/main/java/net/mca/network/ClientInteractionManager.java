@@ -19,8 +19,6 @@ public interface ClientInteractionManager {
 
     void handleDialogueResponse(InteractionDialogueResponse message);
 
-    void handleChildData(GetChildDataResponse message);
-
     void handleSkinListResponse(AnalysisResults message);
 
     void handleBabyNameResponse(BabyNameResponse message);
