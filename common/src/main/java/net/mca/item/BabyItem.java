@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
@@ -250,7 +251,7 @@ public class BabyItem extends Item {
 
         // Name
         if (getNbt(stack).contains("babyName")) {
-            final LiteralText text = new LiteralText(getNbt(stack).getString("babyName"));
+            final MutableText text = Text.literal(getNbt(stack).getString("babyName"));
             tooltip.add(Text.translatable("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
 
             if (age > 0) {

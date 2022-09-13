@@ -31,8 +31,8 @@ public class PTG3 {
     }
 
     public static void answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg, Consumer<String> consumer) {
-        String playerName = player.getName().asString();
-        String villagerName = villager.getName().asString();
+        String playerName = player.getName().getString();
+        String villagerName = villager.getName().getString();
 
         // forgot about last conversation if it's too long ago
         long time = villager.world.getTime();
