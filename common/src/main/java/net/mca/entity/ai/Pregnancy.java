@@ -5,7 +5,7 @@ import net.mca.advancement.criterion.CriterionMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.Gender;
-import net.mca.server.world.data.BabyTracker;
+import net.mca.item.BabyItem;
 import net.mca.util.WorldUtils;
 import net.mca.util.network.datasync.CDataManager;
 import net.mca.util.network.datasync.CDataParameter;
@@ -15,8 +15,8 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -99,7 +99,7 @@ public class Pregnancy {
     }
 
     public VillagerEntityMCA createChild(Gender gender, VillagerEntityMCA partner) {
-        VillagerEntityMCA child = gender.getVillagerType().create(mother.world);
+        VillagerEntityMCA child = Objects.requireNonNull(gender.getVillagerType().create(mother.world));
 
         child.getGenetics().combine(partner.getGenetics(), mother.getGenetics());
         child.getTraits().inherit(partner.getTraits());
@@ -141,16 +141,10 @@ public class Pregnancy {
 
         long seed = random.nextLong();
         for (int i = 0; i < count; i++) {
-            BabyTracker.get((ServerWorld)mother.world).getPairing(mother.getUuid(), spouse.getUuid()).addChild(state -> {
-                ItemStack stack = state
-                        .setGender(Gender.getRandom())
-                        .setOwner(mother)
-                        .setSeed(seed)
-                .createItem();
-                if (!(spouse instanceof PlayerEntity player && player.giveItemStack(stack))) {
-                    mother.getInventory().addStack(stack);
-                }
-            });
+            ItemStack stack = BabyItem.createItem(mother, spouse, seed);
+            if (!(spouse instanceof PlayerEntity player && player.giveItemStack(stack))) {
+                mother.getInventory().addStack(stack);
+            }
         }
     }
 }

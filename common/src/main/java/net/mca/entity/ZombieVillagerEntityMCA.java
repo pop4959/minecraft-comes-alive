@@ -184,6 +184,11 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     }
 
     @Override
+    protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {
+        child.initialize((ServerWorldAccess) world, world.getLocalDifficulty(child.getBlockPos()), SpawnReason.SPAWN_EGG, null, null);
+    }
+
+    @Override
     public void tickMovement() {
         super.tickMovement();
 

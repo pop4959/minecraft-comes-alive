@@ -28,13 +28,12 @@ public class BabyBunker {
         limbo = NbtHelper.toMap(nbt, UUID::fromString, element -> NbtHelper.toList(element, i -> ItemStack.fromNbt((NbtCompound)i)));
     }
 
-    public NbtCompound writeNbt(NbtCompound nbt) {
-        return NbtHelper.fromMap(nbt, limbo, UUID::toString, stacks -> NbtHelper.fromList(stacks, stack -> stack.writeNbt(new NbtCompound())));
+    public NbtCompound writeNbt() {
+        return NbtHelper.fromMap(new NbtCompound(), limbo, UUID::toString, stacks -> NbtHelper.fromList(stacks, stack -> stack.writeNbt(new NbtCompound())));
     }
 
     public void pop(PlayerEntity player) {
         // When players respawn check to see if their baby was saved in limbo. Add it back to their inventory.
-
         List<ItemStack> baby = limbo.remove(player.getUuid());
 
         if (baby != null) {

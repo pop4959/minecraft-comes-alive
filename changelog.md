@@ -1,3 +1,11 @@
+# 7.4.0
+
+* Added special vision for Sirbens
+* Added PTG-3 based villager chat AI
+    * Enable in Config
+    * Speak their name once to start a conversation
+* Added more phrases
+
 # 7.3.21
 
 * Added `percentageOfVanillaVillages` as a config value to randomly keep vanilla villages
