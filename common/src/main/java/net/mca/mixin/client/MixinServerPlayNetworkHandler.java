@@ -28,35 +28,33 @@ public class MixinServerPlayNetworkHandler {
 
     @Inject(method = "handleMessage(Lnet/minecraft/server/filter/TextStream$Message;)V", at = @At("HEAD"))
     public void sendMessage(TextStream.Message message, CallbackInfo ci) {
-        if (!Config.getInstance().enableVillagerChatAI) {
-            return;
-        }
+        if (Config.getInstance().enableVillagerChatAI) {
+            String msg = message.getRaw();
+            if (!msg.startsWith("/")) {
+                HashSet<String> search = new HashSet<>(Arrays.asList(msg.toLowerCase(Locale.ROOT).split("\\P{L}+")));
+                List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.world, player, 32, VillagerEntityMCA.class);
 
-        String msg = message.getRaw();
-        if (!msg.startsWith("/")) {
-            HashSet<String> search = new HashSet<>(Arrays.asList(msg.toLowerCase(Locale.ROOT).split("\\P{L}+")));
-            List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.world, player, 32, VillagerEntityMCA.class);
-
-            // talk to specific villager
-            boolean talked = false;
-            for (VillagerEntityMCA villager : entities) {
-                if (search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
-                    PTG3.answer(player, villager, msg, (response) -> {
-                        villager.conversationManager.addMessage(player, Text.literal(response));
-                    });
-                    talked = true;
-                    break;
-                }
-            }
-
-            // continue convo
-            if (!talked) {
+                // talk to specific villager
+                boolean talked = false;
                 for (VillagerEntityMCA villager : entities) {
-                    if (PTG3.inConversationWith(villager, player)) {
+                    if (search.contains(villager.getTrackedValue(VILLAGER_NAME).toLowerCase(Locale.ROOT))) {
                         PTG3.answer(player, villager, msg, (response) -> {
                             villager.conversationManager.addMessage(player, Text.literal(response));
                         });
+                        talked = true;
                         break;
+                    }
+                }
+
+                // continue convo
+                if (!talked) {
+                    for (VillagerEntityMCA villager : entities) {
+                        if (PTG3.inConversationWith(villager, player)) {
+                            PTG3.answer(player, villager, msg, (response) -> {
+                                villager.conversationManager.addMessage(player, new LiteralText(response));
+                            });
+                            break;
+                        }
                     }
                 }
             }
