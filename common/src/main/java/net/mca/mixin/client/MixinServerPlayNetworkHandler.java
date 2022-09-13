@@ -4,10 +4,11 @@ import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.PTG3;
 import net.mca.util.WorldUtils;
-import net.minecraft.network.message.SignedMessage;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,10 +27,10 @@ public class MixinServerPlayNetworkHandler {
     @Shadow
     public ServerPlayerEntity player;
 
-    @Inject(method = "handleDecoratedMessage", at = @At("HEAD"))
-    public void sendMessage(SignedMessage message, CallbackInfo ci) {
+    @Inject(method = "onChatMessage", at = @At("HEAD"))
+    public void sendMessage(ChatMessageC2SPacket message, CallbackInfo ci) {
         if (Config.getInstance().enableVillagerChatAI) {
-            String msg = message.getContent().getString();
+            String msg = StringUtils.normalizeSpace(message.chatMessage());
             if (!msg.startsWith("/")) {
                 HashSet<String> search = new HashSet<>(Arrays.asList(msg.toLowerCase(Locale.ROOT).split("\\P{L}+")));
                 List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.world, player, 32, VillagerEntityMCA.class);
