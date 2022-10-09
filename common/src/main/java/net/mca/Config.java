@@ -270,13 +270,11 @@ public final class Config implements Serializable {
             return config;
         } catch (JsonSyntaxException e) {
             MCA.LOGGER.error("");
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
-            MCA.LOGGER.error("Fix errors, or delete file to reset");
             e.printStackTrace();
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             MCA.LOGGER.error("");
-            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }

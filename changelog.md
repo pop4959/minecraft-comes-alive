@@ -5,6 +5,7 @@
     * Enable in Config
     * Speak their name once to start a conversation
 * Added more phrases
+* Less crashes when crippling the Config
 
 # 7.3.21
 
