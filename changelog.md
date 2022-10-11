@@ -5,7 +5,12 @@
     * Enable in Config
     * Speak their name once to start a conversation
 * Added more phrases
-* Less crashes when crippling the Config
+    * Especially if you are a parent
+* Fewer crashes when crippling the Config
+* Improved dialogues
+    * Player Gender
+    * Added Greeting back
+    * Villager no longer welcome you if you are a Mayor or Monarch
 
 # 7.3.21
 

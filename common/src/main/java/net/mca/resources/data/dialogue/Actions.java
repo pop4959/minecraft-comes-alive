@@ -6,9 +6,11 @@ import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.LongTermMemory;
+import net.mca.network.s2c.InteractionDialogueQuestionResponse;
 import net.mca.network.s2c.InteractionDialogueResponse;
 import net.mca.resources.Dialogues;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.JsonHelper;
 
 import java.util.HashMap;
@@ -31,7 +33,10 @@ public class Actions {
                         Dialogues.getInstance().selectAnswer(villager, player, newQuestion.getId(), newQuestion.getAnswers().get(0).getName());
                         return;
                     } else {
+                        // a silent message might be a question the player asks one self and should not be spoken by the villager
+                        TranslatableText text = villager.getTranslatable(player, "dialogue." + id);
                         NetworkHandler.sendToPlayer(new InteractionDialogueResponse(newQuestion, player, villager), player);
+                        NetworkHandler.sendToPlayer(new InteractionDialogueQuestionResponse(newQuestion.isSilent(), text), player);
                     }
                 } else {
                     // we send nevertheless and assume it's a final question
@@ -47,7 +52,10 @@ public class Actions {
             }
         });
 
-        register("say", JsonHelper::asString, id -> (villager, player) -> villager.sendChatMessage(player, "dialogue." + id));
+        register("say", JsonHelper::asString, id -> (villager, player) -> {
+            TranslatableText text = villager.getTranslatable(player, "dialogue." + id);
+            NetworkHandler.sendToPlayer(new InteractionDialogueQuestionResponse(false, text), player);
+        });
 
         register("remember", JsonHelper::asObject, json -> (villager, player) -> {
             String id = LongTermMemory.parseId(json, player);

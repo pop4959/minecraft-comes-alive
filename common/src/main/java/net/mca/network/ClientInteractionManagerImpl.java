@@ -152,7 +152,15 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleDialogueResponse(InteractionDialogueResponse message) {
         Screen screen = client.currentScreen;
         if (screen instanceof InteractScreen gui) {
-            gui.setDialogue(message.question, message.answers, message.silent);
+            gui.setDialogue(message.question, message.answers);
+        }
+    }
+
+    @Override
+    public void handleDialogueQuestionResponse(InteractionDialogueQuestionResponse message) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof InteractScreen gui) {
+            gui.setLastPhrase(message.getQuestionText(), message.silent);
         }
     }
 
