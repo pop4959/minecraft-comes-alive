@@ -7,9 +7,11 @@ import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.resources.API;
+import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -18,6 +20,8 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+
+import java.util.Locale;
 
 public interface Messenger extends EntityWrapper {
     TargetPredicate CAN_RECEIVE = TargetPredicate.createNonAttackable();
@@ -39,6 +43,8 @@ public interface Messenger extends EntityWrapper {
     }
 
     default TranslatableText getTranslatable(PlayerEntity target, String phraseId, Object... params) {
+        String genderString = "";
+
         String targetName;
         if (target.world instanceof ServerWorld world) {
             //todo won't work on a few client side use cases
@@ -47,6 +53,9 @@ public interface Messenger extends EntityWrapper {
                     .map(FamilyTreeNode::getName)
                     .filter(n -> !MCA.isBlankString(n))
                     .orElse(target.getName().getString());
+
+            //player gender
+            genderString = "#G" + PlayerSaveData.get((ServerPlayerEntity)target).getGender().name().toLowerCase(Locale.ROOT) + ".";
         } else {
             targetName = target.getName().getString();
         }
@@ -62,11 +71,11 @@ public interface Messenger extends EntityWrapper {
 
         //and personality
         String personalityString = "";
-        if (!asEntity().isBaby() && asEntity() instanceof VillagerEntityMCA v) {
+        if (asEntity() instanceof VillagerEntityMCA v) {
             personalityString = "#E" + v.getVillagerBrain().getPersonality().name() + ".";
         }
 
-        return new TranslatableText(personalityString + professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
+        return new TranslatableText(genderString + personalityString + professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
     default void sendChatToAllAround(String phrase, Object... params) {
