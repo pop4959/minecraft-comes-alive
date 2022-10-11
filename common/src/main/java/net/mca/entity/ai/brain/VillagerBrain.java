@@ -37,10 +37,13 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
     private static final CDataParameter<Optional<UUID>> CHORE_ASSIGNING_PLAYER = CParameter.create("choreAssigningPlayer", Optional.empty());
     private static final CDataParameter<Boolean> PANICKING = CParameter.create("isPanicking", false);
     private static final CDataParameter<Boolean> WEAR_ARMOR = CParameter.create("wearArmor", false);
+    private static final CDataParameter<Integer> LAST_GRIEVE = CParameter.create("lastGrieve", 0);
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(CDataManager.Builder<E> builder) {
-        return builder.addAll(MEMORIES, PERSONALITY, MOOD, MOVE_STATE, ACTIVE_CHORE, CHORE_ASSIGNING_PLAYER, PANICKING, WEAR_ARMOR);
+        return builder.addAll(MEMORIES, PERSONALITY, MOOD, MOVE_STATE, ACTIVE_CHORE, CHORE_ASSIGNING_PLAYER, PANICKING, WEAR_ARMOR, LAST_GRIEVE);
     }
+
+    private final static int GRIEVE_COOLDOWN = 24000 * 7;
 
     private final E entity;
 
@@ -211,6 +214,19 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
 
     public boolean getArmorWear() {
         return entity.getTrackedValue(WEAR_ARMOR);
+    }
+
+    public void setGrieving() {
+        entity.setTrackedValue(LAST_GRIEVE, -GRIEVE_COOLDOWN);
+    }
+
+    public void justGrieved() {
+        entity.setTrackedValue(LAST_GRIEVE, entity.age);
+    }
+
+    public boolean shouldGrieve() {
+        long diff = entity.world.getTime() - entity.getTrackedValue(LAST_GRIEVE);
+        return diff > GRIEVE_COOLDOWN;
     }
 
     /**

@@ -463,7 +463,9 @@ public class Building implements Serializable, Iterable<UUID> {
         this.type = type;
     }
 
-    public void setForcedType(String type) { this.forcedType = type; }
+    public void setForcedType(String type) {
+        this.forcedType = type;
+    }
 
     public Map<UUID, String> getResidents() {
         return residents;
@@ -510,6 +512,10 @@ public class Building implements Serializable, Iterable<UUID> {
     }
 
     public boolean containsPos(Vec3i pos) {
+        if (getBuildingType().grouped()) {
+            //todo
+            return pos.isWithinDistance(getCenter(), 3);
+        }
         return pos.getX() >= pos0X && pos.getX() <= pos1X
                 && pos.getY() >= pos0Y && pos.getY() <= pos1Y
                 && pos.getZ() >= pos0Z && pos.getZ() <= pos1Z;

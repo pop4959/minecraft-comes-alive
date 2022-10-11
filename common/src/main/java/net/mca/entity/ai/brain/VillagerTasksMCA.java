@@ -146,6 +146,8 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.RAID, VillagerTasksMCA.getRaidPackage(0.5F));
         }
 
+        brain.setTaskList(ActivityMCA.GRIEVE.get(), VillagerTasksMCA.getGrievingPackage());
+
         if (!noDefault) {
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getCorePackage(0.5F));
@@ -156,7 +158,6 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.PRE_RAID, VillagerTasksMCA.getPreRaidPackage(0.5F));
             brain.setTaskList(Activity.HIDE, VillagerTasksMCA.getHidePackage(0.5F));
             brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage());
-            brain.setTaskList(ActivityMCA.GRIEVE.get(), VillagerTasksMCA.getGrievingPackage());
         }
 
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
@@ -231,10 +232,10 @@ public class VillagerTasksMCA {
                         new PanicTask()
                 )),
                 Pair.of(0,
-                        new ShoutTask("villager.retreat", 100, e -> VillagerTasksMCA.guardTooHurt(e) && e.getVillagerBrain().isPanicking())
+                        new SayTask("villager.retreat", 100, e -> VillagerTasksMCA.guardTooHurt(e) && e.getVillagerBrain().isPanicking())
                 ),
                 Pair.of(0,
-                        new ShoutTask("villager.attack", 160, e -> !VillagerTasksMCA.guardTooHurt(e) && VillagerTasksMCA.getPreferredTarget(e).isPresent())
+                        new SayTask("villager.attack", 160, e -> !VillagerTasksMCA.guardTooHurt(e) && VillagerTasksMCA.getPreferredTarget(e).isPresent())
                 ),
                 Pair.of(0, new ConditionalTask<>(VillagerTasksMCA::guardTooHurt,
                         // self-defence while fleeing
@@ -309,17 +310,24 @@ public class VillagerTasksMCA {
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getGrievingPackage() {
         return ImmutableList.of(
-                Pair.of(0, new CompositeTask<>(
-                        ImmutableMap.of(),
-                        ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET),
-                        CompositeTask.Order.ORDERED,
-                        CompositeTask.RunMode.RUN_ONE,
+                Pair.of(0, new SequenceTask<>(
+                        ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryModuleState.VALUE_ABSENT),
                         ImmutableList.of(
-                                Pair.of(new FindWalkTargetTask(1.5F), 1),
-                                Pair.of(new WaitTask(80, 180), 2)
+                                new EnterBuildingTask("graveyard", 0.5f),
+                                new WanderOrTeleportToTargetTask(),
+                                new WaitTask(100, 300),
+                                new SayTask("villager.grieving"),
+                                new WaitTask(100, 300),
+                                new SayTask("villager.grieving"),
+                                new WaitTask(100, 300),
+                                new SayTask("villager.grieving"),
+                                new LambdaTask<>((v) -> {
+                                    v.getVillagerBrain().justGrieved();
+                                    v.getBrain().refreshActivities(v.getWorld().getTimeOfDay(), v.getWorld().getTime());
+                                })
+
                         )
-                )),
-                Pair.of(99, new ScheduleActivityTask())
+                ))
         );
     }
 
@@ -422,6 +430,7 @@ public class VillagerTasksMCA {
                 Pair.of(3, new GiveGiftsToHeroTask(100)),
                 Pair.of(3, new FindInteractionTargetTask(EntityType.PLAYER, 4)),
                 Pair.of(3, new HoldTradeOffersTask(400, 1600)),
+                Pair.of(3, new GrieveTask()),
                 Pair.of(3, new CompositeTask<>(ImmutableMap.of(),
                         ImmutableSet.of(MemoryModuleType.INTERACTION_TARGET),
                         CompositeTask.Order.ORDERED,
