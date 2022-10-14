@@ -42,6 +42,7 @@ public enum DialogueType {
             case TODDLER -> TODDLERP;
             case CHILD -> CHILDP;
             case TEEN -> TEENP;
+            case ADULT -> ADULTP;
             default -> UNASSIGNED;
         };
     }
