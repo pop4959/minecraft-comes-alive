@@ -24,10 +24,10 @@ public class TradeOffersMCA {
                                 new SellItemFactory(Items.IRON_HORSE_ARMOR, 5, 1, 2, 20),
                                 new SellItemFactory(Items.DIAMOND, 10, 1, 8, 20),
                                 new SellItemFactory(Items.GOLDEN_HORSE_ARMOR, 10, 1, 3, 30),
-                                new SellItemFactory(Items.GOLDEN_APPLE, 3, 1, 8, 30),
+                                new SellItemFactory(Items.GOLDEN_APPLE, 5, 1, 8, 30),
                                 new SellItemFactory(Items.DIAMOND_HORSE_ARMOR, 15, 1, 1, 30),
-                                new SellItemFactory(Items.ENCHANTED_GOLDEN_APPLE, 20, 1, 3, 50),
-                                new BuyForOneEmeraldFactory(Items.BREAD, 15, 10, 30)
+                                new SellItemFactory(Items.ENCHANTED_GOLDEN_APPLE, 32, 1, 3, 50),
+                                new BuyForOneEmeraldFactory(Items.BREAD, 10, 10, 30)
                         },
                         2, new TradeOffers.Factory[] {},
                         3, new TradeOffers.Factory[] {},
