@@ -475,7 +475,7 @@ public class BlueprintScreen extends ExtendedScreen {
         }
 
         //residents
-        for (String name : hoverBuilding.getResidents().values()) {
+        for (String name : village.getResidents(hoverBuilding.getId())) {
             lines.add(new LiteralText(name));
         }
 
@@ -551,8 +551,7 @@ public class BlueprintScreen extends ExtendedScreen {
         int maxPages = (int)Math.ceil(village.getPopulation() / 9.0);
         buttonPage.setMessage(new LiteralText((pageNumber + 1) + "/" + maxPages));
 
-        List<Map.Entry<UUID, String>> villager = village.getBuildings().values().stream()
-                .flatMap(b -> b.getResidents().entrySet().stream())
+        List<Map.Entry<UUID, String>> villager = village.getResidentNames().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue()).toList();
 
         selectedVillager = null;

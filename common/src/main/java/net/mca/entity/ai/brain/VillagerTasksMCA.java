@@ -188,6 +188,7 @@ public class VillagerTasksMCA {
                 Pair.of(0, new StayAboveWaterTask(0.8F)),
                 Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
+                Pair.of(0, new WakeUpTask()),
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(3, new InteractTask(speedModifier))
         );
@@ -197,10 +198,17 @@ public class VillagerTasksMCA {
         return ImmutableList.of(
                 Pair.of(0, new GreetPlayerTask()),
                 Pair.of(0, new DeliverMessageTask()),
-                Pair.of(0, new WakeUpTask()),
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
+                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, false, Optional.of((byte)14), (entity) -> {
+                    // update villagers home/bed position
+                    if (entity instanceof VillagerEntityMCA villager) {
+                        villager.getResidency().getHomeVillage().ifPresent(v -> {
+                            v.updateResident(villager);
+                        });
+                    }
+                })),
                 Pair.of(10, new FindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
         );
     }
@@ -377,20 +385,17 @@ public class VillagerTasksMCA {
         );
     }
 
-    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(float speedModifier) {
+    public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(float speed) {
         return ImmutableList.of(
-                Pair.of(3, new ExtendedSleepTask(speedModifier)),
-                Pair.of(5, new RandomTask<>( //behavior when they are homeless
-                        ImmutableMap.of(MemoryModuleType.HOME, MemoryModuleState.VALUE_ABSENT),
-                        ImmutableList.of(
-                                Pair.of(new WalkHomeTask(speedModifier), 1),
-                                Pair.of(new WanderIndoorsTask(speedModifier), 4),
-                                Pair.of(new GoToPointOfInterestTask(speedModifier, 4), 2),
-                                Pair.of(new WaitTask(20, 40), 2))
-                )),
-                getMinimalLookBehavior(),
-                Pair.of(99, new ScheduleActivityTask())
-        );
+                Pair.of(2, new VillagerWalkTowardsTask(MemoryModuleType.HOME, speed, 1, 150, 1200)),
+                Pair.of(3, new ForgetCompletedPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME)),
+                Pair.of(3, new SleepTask()),
+                Pair.of(5, new RandomTask<>(ImmutableMap.of(MemoryModuleType.HOME, MemoryModuleState.VALUE_ABSENT), ImmutableList.of(
+                        Pair.of(new WalkHomeTask(speed), 1),
+                        Pair.of(new WanderIndoorsTask(speed), 4),
+                        Pair.of(new GoToPointOfInterestTask(speed, 4), 2),
+                        Pair.of(new WaitTask(20, 40), 2)))),
+                Pair.of(99, new ScheduleActivityTask()));
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getMeetPackage(float speedModifier) {

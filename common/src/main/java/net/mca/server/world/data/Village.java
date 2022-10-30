@@ -26,15 +26,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtInt;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.MathHelper;
@@ -56,10 +54,15 @@ public class Village implements Iterable<Building> {
     private String name = API.getVillagePool().pickVillageName("village");
 
     public final List<ItemStack> storageBuffer = new LinkedList<>();
+
     private final Map<Integer, Building> buildings = new HashMap<>();
     private Map<UUID, Integer> unspentHearts = new HashMap<>();
     private Map<UUID, Map<UUID, Integer>> reputation = new HashMap<>();
     private int unspentMood = 0;
+
+    private Map<Long, Long> beds = new HashMap<>();
+    private Map<UUID, String> residentNames = new HashMap<>();
+    private Map<UUID, Long> residentHomes = new HashMap<>();
 
     public long lastMoveIn;
     private int id;
@@ -145,6 +148,10 @@ public class Village implements Iterable<Building> {
         return box;
     }
 
+    public List<String> getResidents(int building) {
+        return List.of(); //todo
+    }
+
     public int getTaxes() {
         return taxes;
     }
@@ -206,17 +213,11 @@ public class Village implements Iterable<Building> {
     }
 
     public int getPopulation() {
-        int residents = 0;
-        for (Building b : this) {
-            residents += b.getResidents().size();
-        }
-        return residents;
+        return residentNames.size();
     }
 
     public Stream<UUID> getResidentsUUIDs() {
-        return getBuildings().values()
-                .stream()
-                .flatMap(building -> building.getResidents().keySet().stream());
+        return residentNames.keySet().stream();
     }
 
     public List<VillagerEntityMCA> getResidents(ServerWorld world) {
@@ -228,11 +229,7 @@ public class Village implements Iterable<Building> {
     }
 
     public int getMaxPopulation() {
-        int residents = 0;
-        for (Building b : this) {
-            residents += b.getBedCount();
-        }
-        return residents;
+        return beds.size();
     }
 
     public boolean hasStoredResource() {
@@ -311,6 +308,7 @@ public class Village implements Iterable<Building> {
         }
     }
 
+    //todo taxmanager
     public void deliverTaxes(ServerWorld world) {
         if (hasStoredResource()) {
             getBuildingsOfType("storage").forEach(building -> building.getBlocks().values().stream()
@@ -406,15 +404,11 @@ public class Village implements Iterable<Building> {
             return;
         }
 
-        int population = getPopulation();
-        int maxPopulation = getMaxPopulation();
-        if (population >= maxPopulation * getPopulationThreshold() / 100F) {
-            return;
-        }
-
         // look for married women without baby
         PoolUtil.pick(getResidents(world), world.random)
+                //todo make the population limit absolute
                 .filter(villager -> villager.getGenetics().getGender() == Gender.FEMALE)
+                //todo check if the villager has seen an empty bed in last few minutes
                 .filter(villager -> world.random.nextFloat() < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
                 .ifPresent(villager ->
@@ -434,7 +428,7 @@ public class Village implements Iterable<Building> {
             return;
         }
 
-        //list all and lonely villagers
+        //list all lonely villagers
         List<VillagerEntityMCA> allVillagers = getResidents(world);
         List<VillagerEntityMCA> availableVillagers = allVillagers.stream()
                 .filter(v -> !v.isBaby())
@@ -468,6 +462,7 @@ public class Village implements Iterable<Building> {
                 });
     }
 
+    //todo weird name, also implement as manager
     private void inn(ServerWorld world) {
         getBuildingsOfType("inn").forEach((b) -> {
             if (world.random.nextFloat() < Config.getInstance().adventurerAtInnChance / 100f) {
@@ -538,12 +533,6 @@ public class Village implements Iterable<Building> {
                 .forEach(player -> player.sendMessage(new TranslatableText(event, suitor.getName(), mate.getName()), !Config.getInstance().showNotificationsAsChat));
     }
 
-    public void broadCastMessage(ServerWorld world, String event, VillagerEntityMCA target) {
-        world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId()
-                        || target.getVillagerBrain().getMemoriesForPlayer(p).getHearts() > Config.getInstance().heartsToBeConsideredAsFriend)
-                .forEach(player -> player.sendMessage(new TranslatableText(event, target.getName()), !Config.getInstance().showNotificationsAsChat));
-    }
-
     public void broadCastMessage(ServerWorld world, String event, String targetName) {
         world.getPlayers().stream().filter(p -> PlayerSaveData.get(p).getLastSeenVillageId().orElse(-2) == getId())
                 .forEach(player -> player.sendMessage(new TranslatableText(event, targetName), !Config.getInstance().showNotificationsAsChat));
@@ -551,21 +540,6 @@ public class Village implements Iterable<Building> {
 
     public void markDirty(ServerWorld world) {
         VillageManager.get(world).markDirty();
-    }
-
-    public void addResident(VillagerEntityMCA villager, int buildingId) {
-        removeResident(villager);
-        lastMoveIn = villager.world.getTime();
-        buildings.get(buildingId).addResident(villager);
-        markDirty((ServerWorld)villager.world);
-    }
-
-    public void removeResident(VillagerEntityMCA villager) {
-        removeResident(villager.getUuid());
-    }
-
-    public void removeResident(UUID uuid) {
-        buildings.values().forEach(b -> b.getResidents().remove(uuid));
     }
 
     public EquipmentSet getGuardEquipment(VillagerProfession profession, Hand dominantHand) {
@@ -683,9 +657,12 @@ public class Village implements Iterable<Building> {
         v.putString("name", name);
         v.putInt("taxes", taxes);
         v.put("unspentHearts", NbtHelper.fromMap(new NbtCompound(), unspentHearts, UUID::toString, NbtInt::of));
+        v.put("beds", NbtHelper.fromMap(new NbtCompound(), beds, Object::toString, NbtLong::of));
         v.put("reputation", NbtHelper.fromMap(new NbtCompound(), reputation, UUID::toString, i ->
                 NbtHelper.fromMap(new NbtCompound(), i, UUID::toString, NbtInt::of)
         ));
+        v.put("residentNames", NbtHelper.fromMap(new NbtCompound(), residentNames, Object::toString, NbtString::of));
+        v.put("residentHomes", NbtHelper.fromMap(new NbtCompound(), residentHomes, Object::toString, NbtLong::of));
         v.putInt("unspentMood", unspentMood);
         v.putInt("populationThreshold", populationThreshold);
         v.putInt("marriageThreshold", marriageThreshold);
@@ -699,9 +676,12 @@ public class Village implements Iterable<Building> {
         name = v.getString("name");
         taxes = v.getInt("taxes");
         unspentHearts = NbtHelper.toMap(v.getCompound("unspentHearts"), UUID::fromString, i -> ((NbtInt)i).intValue());
+        beds = NbtHelper.toMap(v.getCompound("beds"), Long::parseLong, i -> ((NbtLong)i).longValue());
         reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i ->
                 NbtHelper.toMap((NbtCompound)i, UUID::fromString, i2 -> ((NbtInt)i2).intValue())
         );
+        residentNames = NbtHelper.toMap(v.getCompound("residentNames"), UUID::fromString, NbtElement::asString);
+        residentHomes = NbtHelper.toMap(v.getCompound("residentHomes"), UUID::fromString, i -> ((NbtLong)i).longValue());
         unspentMood = v.getInt("unspentMood");
         populationThreshold = v.getInt("populationThreshold");
         marriageThreshold = v.getInt("marriageThreshold");
@@ -731,5 +711,34 @@ public class Village implements Iterable<Building> {
 
     public boolean isVillage() {
         return getBuildings().size() >= Config.getInstance().minimumBuildingsToBeConsideredAVillage;
+    }
+
+    public void updateResident(VillagerEntityMCA e) {
+        residentNames.put(e.getUuid(), e.getName().getString());
+
+        Optional<GlobalPos> home = e.getResidency().getHome();
+        if (home.isPresent()) {
+            residentHomes.put(e.getUuid(), home.get().getPos().asLong());
+        } else {
+            residentHomes.remove(e.getUuid());
+        }
+    }
+
+    public Map<UUID, String> getResidentNames() {
+        return residentNames;
+    }
+
+    public boolean hasResident(UUID id) {
+        return residentNames.containsKey(id);
+    }
+
+    public void removeResident(VillagerEntityMCA villager) {
+        removeResident(villager.getUuid());
+    }
+
+    public void removeResident(UUID uuid) {
+        residentNames.remove(uuid);
+        residentHomes.remove(uuid);
+        //todo mark dirty
     }
 }

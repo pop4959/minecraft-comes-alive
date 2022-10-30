@@ -9,21 +9,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.enums.BedPart;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import net.minecraft.world.poi.PointOfInterest;
-import net.minecraft.world.poi.PointOfInterestStorage;
-import net.minecraft.world.poi.PointOfInterestType;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -32,7 +24,7 @@ import java.util.stream.Stream;
 
 import static net.minecraft.tag.BlockTags.LEAVES;
 
-public class Building implements Serializable, Iterable<UUID> {
+public class Building implements Serializable {
     @Serial
     private static final long serialVersionUID = -1106627083469687307L;
     public static final long SCAN_COOLDOWN = 4800;
@@ -40,7 +32,6 @@ public class Building implements Serializable, Iterable<UUID> {
             Direction.UP, Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
 
-    private final Map<UUID, String> residents = new HashMap<>();
     private final Map<Identifier, List<BlockPos>> blocks = new HashMap<>();
 
     private String type = "building";
@@ -103,12 +94,6 @@ public class Building implements Serializable, Iterable<UUID> {
 
         strictScan = v.getBoolean("strictScan");
 
-        NbtList res = v.getList("residents", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < res.size(); i++) {
-            NbtCompound c = res.getCompound(i);
-            residents.put(c.getUuid("uuid"), c.getString("name"));
-        }
-
         blocks.putAll(NbtHelper.toMap(v.getCompound("blocks2"),
                 Identifier::new,
                 l -> NbtHelper.toList(l, e -> {
@@ -136,13 +121,6 @@ public class Building implements Serializable, Iterable<UUID> {
         v.putString("type", type);
         v.putBoolean("strictScan", strictScan);
 
-        v.put("residents", NbtHelper.fromList(residents.entrySet(), resident -> {
-            NbtCompound entry = new NbtCompound();
-            entry.putUuid("uuid", resident.getKey());
-            entry.putString("name", resident.getValue());
-            return entry;
-        }));
-
         NbtCompound b = new NbtCompound();
         NbtHelper.fromMap(
                 b,
@@ -159,44 +137,6 @@ public class Building implements Serializable, Iterable<UUID> {
         v.put("blocks2", b);
 
         return v;
-    }
-
-    public boolean hasFreeSpace() {
-        return getBedCount() > getResidents().size();
-    }
-
-    public boolean isCrowded() {
-        return getBedCount() < getResidents().size();
-    }
-
-    public Stream<BlockPos> findEmptyBed(ServerWorld world) {
-        return world.getPointOfInterestStorage().getInSquare(
-                        PointOfInterestType.HOME.getCompletionCondition(),
-                        getCenter(),
-                        getPos0().getManhattanDistance(getPos1()),
-                        PointOfInterestStorage.OccupationStatus.ANY)
-                .filter(p -> {
-                    BlockState blockState = world.getBlockState(p.getPos());
-                    return blockState.isIn(BlockTags.BEDS) && !(Boolean)blockState.get(BedBlock.OCCUPIED);
-                })
-                .map(PointOfInterest::getPos)
-                .filter(this::containsPos);
-    }
-
-    public Optional<BlockPos> findClosestEmptyBed(ServerWorld world, BlockPos pos) {
-        return findEmptyBed(world).min(Comparator.comparingInt(a -> a.getManhattanDistance(pos)));
-    }
-
-    public void addResident(Entity e) {
-        if (!residents.containsKey(e.getUuid())) {
-            residents.put(e.getUuid(), e.getName().getString());
-        }
-    }
-
-    public void updateResident(Entity e) {
-        if (residents.containsKey(e.getUuid())) {
-            residents.put(e.getUuid(), e.getName().getString());
-        }
     }
 
     public BlockPos getPos0() {
@@ -467,19 +407,6 @@ public class Building implements Serializable, Iterable<UUID> {
         this.forcedType = type;
     }
 
-    public Map<UUID, String> getResidents() {
-        return residents;
-    }
-
-    @Override
-    public Iterator<UUID> iterator() {
-        return residents.keySet().iterator();
-    }
-
-    public boolean hasResident(UUID id) {
-        return residents.containsKey(id);
-    }
-
     public Map<Identifier, List<BlockPos>> getBlocks() {
         return blocks;
     }
@@ -523,10 +450,6 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public boolean isIdentical(Building b) {
         return pos0X == b.pos0X && pos1X == b.pos1X && pos0Y == b.pos0Y && pos1Y == b.pos1Y && pos0Z == b.pos0Z && pos1Z == b.pos1Z;
-    }
-
-    public int getBedCount() {
-        return getBlocksOfGroup(new Identifier("minecraft:beds")).size();
     }
 
     @Deprecated
