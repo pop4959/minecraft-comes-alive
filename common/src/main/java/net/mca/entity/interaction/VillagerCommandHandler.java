@@ -114,10 +114,6 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 entity.getResidency().setWorkplace(player);
                 return true;
             }
-            case "sethangout" -> {
-                entity.getResidency().setHangout(player);
-                return true;
-            }
             case "trade" -> {
                 entity.getInteractions().stopInteracting();
                 prepareOffersFor(player);

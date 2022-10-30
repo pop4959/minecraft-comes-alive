@@ -27,10 +27,9 @@ import java.util.stream.Stream;
  */
 public class Residency {
     private static final CDataParameter<Integer> BUILDING = CParameter.create("buildings", -1);
-    private static final CDataParameter<BlockPos> HANGOUT = CParameter.create("hangoutPos", BlockPos.ORIGIN);
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(CDataManager.Builder<E> builder) {
-        return builder.addAll(BUILDING, HANGOUT);
+        return builder.addAll(BUILDING);
     }
 
     private final VillagerEntityMCA entity;
@@ -51,15 +50,6 @@ public class Residency {
         entity.getBrain().forget(MemoryModuleType.JOB_SITE);
         entity.getBrain().forget(MemoryModuleType.POTENTIAL_JOB_SITE);
         //todo: Implement proper logic for this in 7.4.0
-    }
-
-    public BlockPos getHangout() {
-        return entity.getTrackedValue(HANGOUT);
-    }
-
-    public void setHangout(PlayerEntity player) {
-        entity.sendChatMessage(player, "interaction.sethangout.success");
-        entity.setTrackedValue(HANGOUT, player.getBlockPos());
     }
 
     public void setBuildingId(int id) {
