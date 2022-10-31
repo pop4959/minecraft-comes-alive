@@ -976,7 +976,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
                 village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
-                village.get().markDirty(servRef);
             }
         }
 

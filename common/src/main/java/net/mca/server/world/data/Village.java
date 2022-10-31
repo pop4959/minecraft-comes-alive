@@ -15,16 +15,21 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.poi.PointOfInterestStorage;
+import net.minecraft.world.poi.PointOfInterestType;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Village implements Iterable<Building> {
     private static final int MOVE_IN_COOLDOWN = 1200;
-
     public final static int BORDER_MARGIN = 32;
     public final static int MERGE_MARGIN = 64;
+    private static final long BED_SYNC_TIME = 200;
+
+    @Nullable
     private final ServerWorld world;
 
     private String name = API.getVillagePool().pickVillageName("village");
@@ -36,7 +41,9 @@ public class Village implements Iterable<Building> {
     private Map<UUID, Map<UUID, Integer>> reputation = new HashMap<>();
     private int unspentMood = 0;
 
-    private Map<Long, Long> beds = new HashMap<>();
+    private int beds;
+    private long lastBedSync;
+
     private Map<UUID, String> residentNames = new HashMap<>();
     private Map<UUID, Long> residentHomes = new HashMap<>();
 
@@ -57,18 +64,18 @@ public class Village implements Iterable<Building> {
     private final VillageProcreationManager villageProcreationManager = new VillageProcreationManager(this);
     private final VillageTaxesManager villageTaxesManager = new VillageTaxesManager(this);
 
-    public Village(int id, ServerWorld world) {
+    public Village(int id, @Nullable ServerWorld world) {
         this.id = id;
 
         this.world = world;
     }
 
-    public Village(NbtCompound v, ServerWorld world) {
+    public Village(NbtCompound v, @Nullable ServerWorld world) {
         id = v.getInt("id");
         name = v.getString("name");
         taxes = v.getInt("taxes");
+        beds = v.getInt("beds");
         unspentHearts = NbtHelper.toMap(v.getCompound("unspentHearts"), UUID::fromString, i -> ((NbtInt)i).intValue());
-        beds = NbtHelper.toMap(v.getCompound("beds"), Long::parseLong, i -> ((NbtLong)i).longValue());
         reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i ->
                 NbtHelper.toMap((NbtCompound)i, UUID::fromString, i2 -> ((NbtInt)i2).intValue())
         );
@@ -122,6 +129,7 @@ public class Village implements Iterable<Building> {
         if (!buildings.isEmpty()) {
             calculateDimensions();
         }
+        markDirty();
     }
 
     public Stream<Building> getBuildingsOfType(String type) {
@@ -163,7 +171,9 @@ public class Village implements Iterable<Building> {
     }
 
     public List<String> getResidents(int building) {
-        return List.of(); //todo
+        return getBuilding(building).map(value -> residentHomes.entrySet().stream().filter(e -> {
+            return value.containsPos(BlockPos.fromLong(e.getValue()));
+        }).map(k -> residentNames.getOrDefault(k.getKey(), "Unknown")).collect(Collectors.toList())).orElseGet(List::of);
     }
 
     public int getTaxes() {
@@ -241,9 +251,24 @@ public class Village implements Iterable<Building> {
                 .map(VillagerEntityMCA.class::cast)
                 .collect(Collectors.toList());
     }
-    
+
+    public void updateMaxPopulation() {
+        if (world != null) {
+            beds = (int)world.getPointOfInterestStorage().getPositions(
+                    PointOfInterestType.HOME.getCompletionCondition(),
+                    (p) -> true, //todo add restricted areas
+                    new BlockPos(getCenter()),
+                    48,
+                    PointOfInterestStorage.OccupationStatus.HAS_SPACE).count();
+        }
+    }
+
     public int getMaxPopulation() {
-        return beds.size();
+        if (world != null && world.getTime() - lastBedSync > BED_SYNC_TIME) {
+            lastBedSync = world.getTime();
+            updateMaxPopulation();
+        }
+        return beds;
     }
 
     public boolean hasStoredResource() {
@@ -327,6 +352,7 @@ public class Village implements Iterable<Building> {
 
     public void pushHearts(UUID player, int rep) {
         unspentHearts.put(player, unspentHearts.getOrDefault(player, 0) + rep);
+        markDirty();
     }
 
     public int popHearts(PlayerEntity player) {
@@ -355,12 +381,12 @@ public class Village implements Iterable<Building> {
         }
     }
 
-    public void pushMood(ServerWorld world, int m) {
+    public void pushMood(int m) {
         unspentMood += m;
         markDirty();
     }
 
-    public int popMood(ServerWorld world) {
+    public int popMood() {
         int step = (int)Math.ceil(Math.abs(((double)unspentMood) / getPopulation()));
         if (unspentMood > 0) {
             unspentMood -= step;
@@ -380,8 +406,8 @@ public class Village implements Iterable<Building> {
         v.putInt("id", id);
         v.putString("name", name);
         v.putInt("taxes", taxes);
+        v.putInt("beds", beds);
         v.put("unspentHearts", NbtHelper.fromMap(new NbtCompound(), unspentHearts, UUID::toString, NbtInt::of));
-        v.put("beds", NbtHelper.fromMap(new NbtCompound(), beds, Object::toString, NbtLong::of));
         v.put("reputation", NbtHelper.fromMap(new NbtCompound(), reputation, UUID::toString, i ->
                 NbtHelper.fromMap(new NbtCompound(), i, UUID::toString, NbtInt::of)
         ));

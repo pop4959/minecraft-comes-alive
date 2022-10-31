@@ -21,11 +21,15 @@ public class VillageProcreationManager {
             return;
         }
 
+        int population = village.getPopulation();
+        int maxPopulation = village.getMaxPopulation();
+        if (population >= maxPopulation * village.getPopulationThreshold() / 100F) {
+            return;
+        }
+
         // look for married women without baby
         PoolUtil.pick(village.getResidents(world), world.random)
-                //todo make the population limit absolute
                 .filter(villager -> villager.getGenetics().getGender() == Gender.FEMALE)
-                //todo check if the villager has seen an empty bed in last few minutes
                 .filter(villager -> world.random.nextFloat() < 1.0 / (FamilyTree.get(world).getOrCreate(villager).getChildren().count() + 0.1))
                 .filter(villager -> villager.getRelationships().getPregnancy().tryStartGestation())
                 .ifPresent(villager ->

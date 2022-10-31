@@ -59,7 +59,6 @@ public class Residency {
         village.ifPresent(v -> {
             v.removeResident(entity);
             v.cleanReputation();
-            v.markDirty();
         });
     }
 
@@ -78,7 +77,7 @@ public class Residency {
         if (entity.age % 1200 == 0) {
             getHomeVillage().ifPresentOrElse(village -> {
                 //fetch mood from the village storage
-                int mood = village.popMood((ServerWorld)entity.world);
+                int mood = village.popMood();
                 if (mood != 0) {
                     entity.getVillagerBrain().modifyMoodValue(mood);
                 }

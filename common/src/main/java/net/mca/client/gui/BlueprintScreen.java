@@ -208,7 +208,6 @@ public class BlueprintScreen extends ExtendedScreen {
                         setPage("rename");
                     }));
                 }
-                by += 22;
             case "map":
                 //add building
                 bx = width / 2 + 180 - 64 - 16;
