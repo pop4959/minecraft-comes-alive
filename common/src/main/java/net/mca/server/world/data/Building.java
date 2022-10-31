@@ -442,8 +442,7 @@ public class Building implements Serializable {
 
     public boolean containsPos(Vec3i pos) {
         if (getBuildingType().grouped()) {
-            //todo
-            return pos.isWithinDistance(getCenter(), 3);
+            return pos.isWithinDistance(getCenter(), getBuildingType().getMargin());
         }
         return pos.getX() >= pos0X && pos.getX() <= pos1X
                 && pos.getY() >= pos0Y && pos.getY() <= pos1Y

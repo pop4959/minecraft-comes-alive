@@ -11,6 +11,7 @@ import net.mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
@@ -143,39 +144,31 @@ public class Residency {
         GraveyardManager.get((ServerWorld)entity.world).reportToVillageManager(entity);
     }
 
-    public void setHome(PlayerEntity player) {
+    public void setHome(ServerPlayerEntity player) {
+        if (!entity.doesProfessionRequireHome() || entity.getDespawnDelay() > 0) {
+            entity.sendChatMessage(player, "interaction.sethome.temporary");
+        }
+
         // also trigger a building refresh, because why not
         VillageManager manager = VillageManager.get((ServerWorld)player.world);
         manager.processBuilding(player.getBlockPos(), true, false);
 
+        seekHome();
+
         //check if a bed can be found
-        //todo
-        /*
-        manager.findNearestVillage(player).ifPresentOrElse(village -> {
-            village.getBuildingAt(player.getBlockPos()).ifPresentOrElse(building -> {
-                if (!entity.doesProfessionRequireHome() || entity.getDespawnDelay() > 0) {
-                    entity.sendChatMessage(player, "interaction.sethome.temporary");
-                } else if (building.hasFreeSpace()) {
-                    entity.sendChatMessage(player, "interaction.sethome.success");
-
-                    //remove from old home
-                    setHomeLess();
-
-                    //add to residents
-                    setBuilding(building, player.getBlockPos());
-                    village.addResident(entity, building.getId());
-                } else if (building.getBuildingType().noBeds()) {
-                    entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
-                } else if (building.getBedCount() == 0) {
-                    entity.sendChatMessage(player, "interaction.sethome.nobeds");
-                } else {
-                    entity.sendChatMessage(player, "interaction.sethome.bedfail");
-                }
-            }, () -> entity.sendChatMessage(player, "interaction.sethome.fail"));
-        }, () -> {
-            entity.sendChatMessage(player, "interaction.sethome.fail");
-        });
-        */
+        PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
+        Optional<BlockPos> position = pointOfInterestStorage.getSortedPositions(PointOfInterestType.HOME.getCompletionCondition(), (p) -> true, player.getBlockPos(), 16, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
+        if (position.isPresent()) {
+            entity.sendChatMessage(player, "interaction.sethome.success");
+            pointOfInterestStorage.getPosition(PointOfInterestType.HOME.getCompletionCondition(), (p) -> true, position.get(), 1);
+            entity.getBrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.world.getRegistryKey(), position.get()));
+        } else {
+            getHomeVillage().map(v -> v.getBuildingAt(entity.getBlockPos())).filter(Optional::isPresent).map(Optional::get).filter(b -> b.getBuildingType().noBeds()).ifPresentOrElse(building -> {
+                entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
+            }, () -> {
+                entity.sendChatMessage(player, "interaction.sethome.bedfail");
+            });
+        }
     }
 
     public Optional<GlobalPos> getHome() {
