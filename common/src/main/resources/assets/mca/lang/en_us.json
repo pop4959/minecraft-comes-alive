@@ -380,6 +380,7 @@
   "gui.blueprint.cancel": "Cancel",
   "gui.blueprint.catalogFull": "Building Catalog",
   "gui.blueprint.catalogHint": "Build special buildings by fulfilling those conditions!",
+  "gui.blueprint.autoScanDisabled": "Enable auto-scan (under advanced) or add buildings manually!",
   "gui.blueprint.tooltip.taxes": "Tax your villagers! The higher percentage, the more they will deliver into the storage at the cost of reputation.",
   "gui.blueprint.tooltip.births": "Control the percentage of occupied beds, 0% prevents births completely.",
   "gui.blueprint.tooltip.marriage": "Control the percentage of married people, 0% prevents marriages completely.",

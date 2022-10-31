@@ -384,6 +384,11 @@ public class BlueprintScreen extends ExtendedScreen {
         int y = height / 2 + 8;
         RectangleWidget.drawRectangle(transform, width / 2 - mapSize, y - mapSize, width / 2 + mapSize, y + mapSize, 0xffffff88);
 
+        //hint
+        if (!village.isAutoScan() && village.getBuildings().size() <= 1) {
+            drawCenteredText(transform, textRenderer, new TranslatableText("gui.blueprint.autoScanDisabled"), width / 2, height / 2 + 90, 0xaaffffff);
+        }
+
         transform.push();
 
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
