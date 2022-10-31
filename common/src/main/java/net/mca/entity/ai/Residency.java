@@ -1,5 +1,6 @@
 package net.mca.entity.ai;
 
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.server.world.data.GraveyardManager;
 import net.mca.server.world.data.Village;
@@ -86,7 +87,7 @@ public class Residency {
         //report buildings close by
         if (entity.age % 600 == 0 && entity.doesProfessionRequireHome()) {
             Optional<Village> village = getHomeVillage();
-            if (village.filter(v -> !v.isAutoScan()).isEmpty()) {
+            if (village.isEmpty() && Config.getInstance().enableAutoScanByDefault || village.filter(Village::isAutoScan).isPresent()) {
                 reportBuildings();
             }
 

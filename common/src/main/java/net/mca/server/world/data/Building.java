@@ -140,11 +140,13 @@ public class Building implements Serializable {
     }
 
     public BlockPos getPos0() {
-        return new BlockPos(pos0X, pos0Y, pos0Z);
+        int margin = getBuildingType().getMargin();
+        return new BlockPos(pos0X, pos0Y, pos0Z).subtract(new Vec3i(margin, margin, margin));
     }
 
     public BlockPos getPos1() {
-        return new BlockPos(pos1X, pos1Y, pos1Z);
+        int margin = getBuildingType().getMargin();
+        return new BlockPos(pos1X, pos1Y, pos1Z).add(new Vec3i(margin, margin, margin));
     }
 
     public BlockPos getCenter() {

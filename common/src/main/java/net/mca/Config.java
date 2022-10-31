@@ -112,6 +112,7 @@ public final class Config implements Serializable {
     public List<String> villagerInteractionItemBlacklist = List.of(
             "minecraft:bucket"
     );
+    public boolean enableAutoScanByDefault = false;
 
     //gifts
     public int giftDesaturationQueueLength = 16;

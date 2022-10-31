@@ -25,8 +25,9 @@ import java.util.stream.Stream;
 
 public class Village implements Iterable<Building> {
     private static final int MOVE_IN_COOLDOWN = 1200;
-    public final static int BORDER_MARGIN = 32;
-    public final static int MERGE_MARGIN = 64;
+    public final static int PLAYER_BORDER_MARGIN = 32;
+    public final static int BORDER_MARGIN = 75;
+    public final static int MERGE_MARGIN = 80;
     private static final long BED_SYNC_TIME = 200;
 
     @Nullable
@@ -54,7 +55,7 @@ public class Village implements Iterable<Building> {
     private int populationThreshold = 75;
     private int marriageThreshold = 50;
 
-    private boolean autoScan = true;
+    private boolean autoScan = Config.getInstance().enableAutoScanByDefault;
 
     private BlockBoxExtended box = new BlockBoxExtended(0, 0, 0, 0, 0, 0);
 
@@ -108,11 +109,7 @@ public class Village implements Iterable<Building> {
     }
 
     public boolean isWithinBorder(Entity entity) {
-        return isWithinBorder(entity.getBlockPos());
-    }
-
-    public boolean isWithinBorder(BlockPos pos) {
-        return isWithinBorder(pos, BORDER_MARGIN);
+        return isWithinBorder(entity.getBlockPos(), entity instanceof PlayerEntity ? PLAYER_BORDER_MARGIN : BORDER_MARGIN);
     }
 
     public boolean isWithinBorder(BlockPos pos, int margin) {
@@ -260,7 +257,7 @@ public class Village implements Iterable<Building> {
                     PointOfInterestType.HOME.getCompletionCondition(),
                     (p) -> true, //todo add restricted areas
                     new BlockPos(getCenter()),
-                    radius,
+                    radius + BORDER_MARGIN,
                     PointOfInterestStorage.OccupationStatus.ANY).count();
         }
     }

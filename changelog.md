@@ -1,5 +1,11 @@
 # 7.4.0
 
+* Simplified Villages
+    * Villager no longer rely on a village to find a home
+    * Buildings are no longer required and automatic scanning is disabled by default
+      * This can be toggled in the blueprint
+      * Manual tagging is possible too
+    * Buildings do however grant buffs and upgrades to the community, boosting moods and enhancing guards armor 
 * Added special vision for Sirbens
 * Added PTG-3 based villager chat AI
     * Enable in Config
