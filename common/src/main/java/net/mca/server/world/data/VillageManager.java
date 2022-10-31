@@ -41,8 +41,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
     public final Set<BlockPos> cache = ConcurrentHashMap.newKeySet();
 
-    public final Map<Integer, Integer> buildingToVillages = new HashMap<>();
-
     private final List<BlockPos> buildingQueue = new LinkedList<>();
 
     private int lastBuildingId;
@@ -80,13 +78,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                 markDirty();
             } else {
                 villages.put(village.getId(), village);
-            }
-        }
-
-        //create a mapping from building id to its village id
-        for (Village v : villages.values()) {
-            for (Building b : v.getBuildings().values()) {
-                buildingToVillages.put(b.getId(), v.getId());
             }
         }
     }
@@ -364,7 +355,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             building.setId(lastBuildingId++);
             village.getBuildings().put(building.getId(), building);
             village.calculateDimensions();
-            buildingToVillages.put(building.getId(), village.getId());
 
             //attempt to merge
             villages.values().stream()
@@ -392,15 +382,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         this.buildingCooldown = buildingCooldown;
     }
 
-    public int mapBuildingToVillage(Integer buildingId) {
-        return buildingToVillages.getOrDefault(buildingId, -1);
-    }
-
     public void merge(Village into, Village from) {
         into.merge(from);
-
-        for (Building b : from.getBuildings().values()) {
-            buildingToVillages.put(b.getId(), into.getId());
-        }
     }
 }
