@@ -74,8 +74,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
         NbtList villageList = nbt.getList("villages", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < villageList.size(); i++) {
-            Village village = new Village();
-            village.load(villageList.getCompound(i));
+            Village village = new Village(villageList.getCompound(i));
             if (village.getBuildings().isEmpty()) {
                 MCA.LOGGER.warn("Empty village detected (" + village.getName() + "), removing...");
                 markDirty();

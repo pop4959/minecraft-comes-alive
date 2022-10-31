@@ -40,7 +40,7 @@ public class Village implements Iterable<Building> {
     private Map<UUID, Long> residentHomes = new HashMap<>();
 
     public long lastMoveIn;
-    private int id;
+    private final int id;
 
     private int taxes = 0;
     private int populationThreshold = 75;
@@ -56,11 +56,40 @@ public class Village implements Iterable<Building> {
     private final VillageProcreationManager villageProcreationManager = new VillageProcreationManager(this);
     private final VillageTaxesManager villageTaxesManager = new VillageTaxesManager(this);
 
-    public Village() {
-    }
-
     public Village(int id) {
         this.id = id;
+    }
+
+    public Village(NbtCompound v) {
+        id = v.getInt("id");
+        name = v.getString("name");
+        taxes = v.getInt("taxes");
+        unspentHearts = NbtHelper.toMap(v.getCompound("unspentHearts"), UUID::fromString, i -> ((NbtInt)i).intValue());
+        beds = NbtHelper.toMap(v.getCompound("beds"), Long::parseLong, i -> ((NbtLong)i).longValue());
+        reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i ->
+                NbtHelper.toMap((NbtCompound)i, UUID::fromString, i2 -> ((NbtInt)i2).intValue())
+        );
+        residentNames = NbtHelper.toMap(v.getCompound("residentNames"), UUID::fromString, NbtElement::asString);
+        residentHomes = NbtHelper.toMap(v.getCompound("residentHomes"), UUID::fromString, i -> ((NbtLong)i).longValue());
+        unspentMood = v.getInt("unspentMood");
+        populationThreshold = v.getInt("populationThreshold");
+        marriageThreshold = v.getInt("marriageThreshold");
+
+        if (v.contains("autoScan")) {
+            autoScan = v.getBoolean("autoScan");
+        } else {
+            autoScan = true;
+        }
+
+        NbtList b = v.getList("buildings", NbtElement.COMPOUND_TYPE);
+        for (int i = 0; i < b.size(); i++) {
+            Building building = new Building(b.getCompound(i));
+            buildings.put(building.getId(), building);
+        }
+
+        if (!buildings.isEmpty()) {
+            calculateDimensions();
+        }
     }
 
     public static Optional<Village> findNearest(Entity entity) {
@@ -208,7 +237,7 @@ public class Village implements Iterable<Building> {
                 .map(VillagerEntityMCA.class::cast)
                 .collect(Collectors.toList());
     }
-
+    
     public int getMaxPopulation() {
         return beds.size();
     }
@@ -360,38 +389,6 @@ public class Village implements Iterable<Building> {
         v.put("buildings", NbtHelper.fromList(buildings.values(), Building::save));
         v.putBoolean("autoScan", autoScan);
         return v;
-    }
-
-    public void load(NbtCompound v) {
-        id = v.getInt("id");
-        name = v.getString("name");
-        taxes = v.getInt("taxes");
-        unspentHearts = NbtHelper.toMap(v.getCompound("unspentHearts"), UUID::fromString, i -> ((NbtInt)i).intValue());
-        beds = NbtHelper.toMap(v.getCompound("beds"), Long::parseLong, i -> ((NbtLong)i).longValue());
-        reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i ->
-                NbtHelper.toMap((NbtCompound)i, UUID::fromString, i2 -> ((NbtInt)i2).intValue())
-        );
-        residentNames = NbtHelper.toMap(v.getCompound("residentNames"), UUID::fromString, NbtElement::asString);
-        residentHomes = NbtHelper.toMap(v.getCompound("residentHomes"), UUID::fromString, i -> ((NbtLong)i).longValue());
-        unspentMood = v.getInt("unspentMood");
-        populationThreshold = v.getInt("populationThreshold");
-        marriageThreshold = v.getInt("marriageThreshold");
-
-        if (v.contains("autoScan")) {
-            autoScan = v.getBoolean("autoScan");
-        } else {
-            autoScan = true;
-        }
-
-        NbtList b = v.getList("buildings", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < b.size(); i++) {
-            Building building = new Building(b.getCompound(i));
-            buildings.put(building.getId(), building);
-        }
-
-        if (!buildings.isEmpty()) {
-            calculateDimensions();
-        }
     }
 
     public void merge(Village village) {

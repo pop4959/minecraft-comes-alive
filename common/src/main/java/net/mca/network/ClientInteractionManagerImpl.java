@@ -116,9 +116,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleVillageDataResponse(GetVillageResponse message) {
         Screen screen = client.currentScreen;
         if (screen instanceof BlueprintScreen gui) {
-            Village village = new Village();
-            village.load(message.getData());
-
+            Village village = new Village(message.getData());
             gui.setVillage(village);
             gui.setRank(message.rank, message.reputation, message.isVillage, message.ids, message.tasks, message.buildingTypes);
         }
