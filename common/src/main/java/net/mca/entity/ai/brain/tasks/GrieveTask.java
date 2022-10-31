@@ -14,9 +14,8 @@ public class GrieveTask extends Task<VillagerEntityMCA> {
         super(ImmutableMap.of());
     }
 
-    @Override
-    protected boolean shouldKeepRunning(ServerWorld serverWorld, VillagerEntityMCA villagerEntity, long l) {
-        return villagerEntity.getVillagerBrain().shouldGrieve();
+    protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
+        return entity.getVillagerBrain().shouldGrieve();
     }
 
     @Override
