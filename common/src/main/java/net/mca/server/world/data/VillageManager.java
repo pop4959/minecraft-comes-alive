@@ -74,7 +74,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
         NbtList villageList = nbt.getList("villages", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < villageList.size(); i++) {
-            Village village = new Village(villageList.getCompound(i));
+            Village village = new Village(villageList.getCompound(i), world);
             if (village.getBuildings().isEmpty()) {
                 MCA.LOGGER.warn("Empty village detected (" + village.getName() + "), removing...");
                 markDirty();
@@ -337,7 +337,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         //add a new building, if no overlap has been found or the player enforced a full add
         if (!found && !blocked.contains(pos)) {
             //create new village
-            Village village = optionalVillage.orElse(new Village(lastVillageId++));
+            Village village = optionalVillage.orElse(new Village(lastVillageId++, world));
 
             //create new building
             Building building = new Building(pos, strictScan);

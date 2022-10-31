@@ -25,6 +25,7 @@ public class Village implements Iterable<Building> {
 
     public final static int BORDER_MARGIN = 32;
     public final static int MERGE_MARGIN = 64;
+    private final ServerWorld world;
 
     private String name = API.getVillagePool().pickVillageName("village");
 
@@ -56,11 +57,13 @@ public class Village implements Iterable<Building> {
     private final VillageProcreationManager villageProcreationManager = new VillageProcreationManager(this);
     private final VillageTaxesManager villageTaxesManager = new VillageTaxesManager(this);
 
-    public Village(int id) {
+    public Village(int id, ServerWorld world) {
         this.id = id;
+
+        this.world = world;
     }
 
-    public Village(NbtCompound v) {
+    public Village(NbtCompound v, ServerWorld world) {
         id = v.getInt("id");
         name = v.getString("name");
         taxes = v.getInt("taxes");
@@ -74,6 +77,7 @@ public class Village implements Iterable<Building> {
         unspentMood = v.getInt("unspentMood");
         populationThreshold = v.getInt("populationThreshold");
         marriageThreshold = v.getInt("marriageThreshold");
+        this.world = world;
 
         if (v.contains("autoScan")) {
             autoScan = v.getBoolean("autoScan");
@@ -286,7 +290,7 @@ public class Village implements Iterable<Building> {
                 .forEach(player -> player.sendMessage(new TranslatableText(event, targetName), !Config.getInstance().showNotificationsAsChat));
     }
 
-    public void markDirty(ServerWorld world) {
+    public void markDirty() {
         VillageManager.get(world).markDirty();
     }
 
@@ -303,7 +307,7 @@ public class Village implements Iterable<Building> {
 
     public void setReputation(PlayerEntity player, VillagerEntityMCA villager, int rep) {
         reputation.computeIfAbsent(player.getUuid(), i -> new HashMap<>()).put(villager.getUuid(), rep);
-        markDirty((ServerWorld)player.world);
+        markDirty();
     }
 
     public int getReputation(PlayerEntity player) {
@@ -313,12 +317,12 @@ public class Village implements Iterable<Building> {
 
     public void resetHearts(PlayerEntity player) {
         unspentHearts.remove(player.getUuid());
-        markDirty((ServerWorld)player.world);
+        markDirty();
     }
 
     public void pushHearts(PlayerEntity player, int rep) {
         pushHearts(player.getUuid(), rep);
-        markDirty((ServerWorld)player.world);
+        markDirty();
     }
 
     public void pushHearts(UUID player, int rep) {
@@ -335,7 +339,7 @@ public class Village implements Iterable<Building> {
             } else {
                 unspentHearts.put(player.getUuid(), v);
             }
-            markDirty((ServerWorld)player.world);
+            markDirty();
             return step;
         } else if (v < 0) {
             v += step;
@@ -344,7 +348,7 @@ public class Village implements Iterable<Building> {
             } else {
                 unspentHearts.put(player.getUuid(), v);
             }
-            markDirty((ServerWorld)player.world);
+            markDirty();
             return -step;
         } else {
             return 0;
@@ -353,18 +357,18 @@ public class Village implements Iterable<Building> {
 
     public void pushMood(ServerWorld world, int m) {
         unspentMood += m;
-        markDirty(world);
+        markDirty();
     }
 
     public int popMood(ServerWorld world) {
         int step = (int)Math.ceil(Math.abs(((double)unspentMood) / getPopulation()));
         if (unspentMood > 0) {
             unspentMood -= step;
-            markDirty(world);
+            markDirty();
             return step;
         } else if (unspentMood < 0) {
             unspentMood += step;
-            markDirty(world);
+            markDirty();
             return -step;
         } else {
             return 0;
@@ -427,6 +431,10 @@ public class Village implements Iterable<Building> {
     public void removeResident(UUID uuid) {
         residentNames.remove(uuid);
         residentHomes.remove(uuid);
-        //todo mark dirty
+        markDirty();
+    }
+
+    public VillageGuardsManager getVillageGuardsManager() {
+        return villageGuardsManager;
     }
 }

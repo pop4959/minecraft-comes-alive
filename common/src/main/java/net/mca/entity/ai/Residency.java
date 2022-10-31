@@ -59,7 +59,7 @@ public class Residency {
         village.ifPresent(v -> {
             v.removeResident(entity);
             v.cleanReputation();
-            v.markDirty((ServerWorld)entity.world);
+            v.markDirty();
         });
     }
 
