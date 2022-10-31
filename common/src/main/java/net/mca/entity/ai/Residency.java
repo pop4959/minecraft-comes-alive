@@ -54,12 +54,27 @@ public class Residency {
         return manager.getOrEmpty(entity.getTrackedValue(VILLAGE));
     }
 
+    /**
+     * Joins the closest village, if in range
+     */
+    public void seekHome() {
+        entity.getResidency().getHomeVillage().ifPresentOrElse(v -> {
+            v.updateResident(entity);
+        }, () -> {
+            VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+            manager.findNearestVillage(entity).filter(Village::hasSpace).ifPresent(v -> {
+                v.updateResident(entity);
+                entity.setTrackedValue(VILLAGE, v.getId());
+            });
+        });
+    }
+
     public void leaveHome() {
         Optional<Village> village = getHomeVillage();
         village.ifPresent(v -> {
             v.removeResident(entity);
-            v.cleanReputation();
         });
+        entity.setTrackedValue(VILLAGE, -1);
     }
 
     public void tick() {
@@ -67,9 +82,17 @@ public class Residency {
             return;
         }
 
+
+        //report buildings close by
         if (entity.age % 600 == 0 && entity.doesProfessionRequireHome()) {
-            if (getHomeVillage().filter(v -> !v.isAutoScan()).isEmpty()) {
+            Optional<Village> village = getHomeVillage();
+            if (village.filter(v -> !v.isAutoScan()).isEmpty()) {
                 reportBuildings();
+            }
+
+            //seek a home
+            if (village.isEmpty()) {
+                seekHome();
             }
         }
 
@@ -96,14 +119,8 @@ public class Residency {
                     int hearts = entity.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
                     village.setReputation(player, entity, hearts);
                 });
-            }, this::setHomeLess);
+            }, this::leaveHome);
         }
-    }
-
-    private void setHomeLess() {
-        Optional<Village> village = getHomeVillage();
-        village.ifPresent(buildings -> buildings.removeResident(this.entity));
-        entity.getMCABrain().forget(MemoryModuleType.HOME);
     }
 
     //report potential buildings within this villagers reach

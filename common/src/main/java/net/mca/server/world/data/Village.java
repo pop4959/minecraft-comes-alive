@@ -254,12 +254,14 @@ public class Village implements Iterable<Building> {
 
     public void updateMaxPopulation() {
         if (world != null) {
+            Vec3i dimensions = box.getDimensions();
+            int radius = (int)Math.sqrt(dimensions.getX() * dimensions.getX() + dimensions.getY() * dimensions.getY() + dimensions.getZ() * dimensions.getZ());
             beds = (int)world.getPointOfInterestStorage().getPositions(
                     PointOfInterestType.HOME.getCompletionCondition(),
                     (p) -> true, //todo add restricted areas
                     new BlockPos(getCenter()),
-                    48,
-                    PointOfInterestStorage.OccupationStatus.HAS_SPACE).count();
+                    radius,
+                    PointOfInterestStorage.OccupationStatus.ANY).count();
         }
     }
 
@@ -457,6 +459,7 @@ public class Village implements Iterable<Building> {
     public void removeResident(UUID uuid) {
         residentNames.remove(uuid);
         residentHomes.remove(uuid);
+        cleanReputation();
         markDirty();
     }
 

@@ -17,7 +17,7 @@ import net.mca.entity.ai.brain.tasks.chore.FishingTask;
 import net.mca.entity.ai.brain.tasks.chore.HarvestingTask;
 import net.mca.entity.ai.brain.tasks.chore.HuntingTask;
 import net.mca.entity.ai.relationship.AgeState;
-import net.mca.server.world.data.Village;
+import net.mca.server.world.data.VillageManager;
 import net.mca.server.world.data.villageComponents.VillageGuardsManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -28,6 +28,7 @@ import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.ai.brain.task.*;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 
@@ -205,12 +206,25 @@ public class VillagerTasksMCA {
                 Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, false, Optional.of((byte)14), (entity) -> {
                     // update villagers home/bed position
                     if (entity instanceof VillagerEntityMCA villager) {
-                        villager.getResidency().getHomeVillage().ifPresent(v -> {
-                            v.updateResident(villager);
-                        });
+                        villager.getResidency().seekHome();
                     }
                 })),
-                Pair.of(10, new FindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14)))
+                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (entity) -> {
+                    //report a town bell, the only building always added
+                    entity.getBrain().getOptionalMemory(MemoryModuleType.MEETING_POINT).ifPresent(p -> {
+                        if (entity.world.getRegistryKey() == p.getDimension()) {
+                            VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+                            if (!manager.cache.contains(p.getPos())) {
+                                manager.cache.add(p.getPos());
+                                manager.processBuilding(p.getPos());
+                            }
+
+                            if (entity instanceof VillagerEntityMCA villager) {
+                                villager.getResidency().seekHome();
+                            }
+                        }
+                    });
+                }))
         );
     }
 

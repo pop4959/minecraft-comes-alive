@@ -982,8 +982,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         residency.leaveHome();
     }
 
-
-
     @Override
     public MoveControl getMoveControl() {
         return isRidingHorse() ? moveControl : super.getMoveControl();
