@@ -64,8 +64,8 @@ public class VillagerEditorScreen extends Screen {
 
     private List<String> filteredClothing = new LinkedList<>();
     private List<String> filteredHair = new LinkedList<>();
-    private static HashMap<String, ClothingList.Clothing> clothing;
-    private static HashMap<String, HairList.Hair> hair;
+    private static HashMap<String, ClothingList.Clothing> clothing = new HashMap<>();
+    private static HashMap<String, HairList.Hair> hair = new HashMap<>();
     private Gender filterGender = Gender.NEUTRAL;
     private String searchString = "";
     private int hoveredClothingId;
