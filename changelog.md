@@ -18,6 +18,7 @@
     * Player Gender
     * Added Greeting back
     * Villager no longer welcome you if you are a Mayor or Monarch
+* Staff of Life now has 10 uses instead of 5
 
 # 7.3.21
 

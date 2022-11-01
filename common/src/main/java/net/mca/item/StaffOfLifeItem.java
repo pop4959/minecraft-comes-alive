@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class StaffOfLifeItem extends TooltippedItem {
-
     public StaffOfLifeItem(Item.Settings properties) {
         super(properties);
     }
