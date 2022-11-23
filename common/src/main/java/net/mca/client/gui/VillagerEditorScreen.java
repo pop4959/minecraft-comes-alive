@@ -380,10 +380,10 @@ public class VillagerEditorScreen extends Screen {
                 assert client != null;
                 assert client.player != null;
                 Memories player = villager.getVillagerBrain().getMemoriesForPlayer(client.player);
-                y = integerChanger(y, player::modHearts, () -> new LiteralText(player.getHearts() + " hearts"));
+                y = integerChanger(y, player::modHearts, () -> new TranslatableText("gui.blueprint.reputation", player.getHearts()));
 
                 //mood
-                integerChanger(y, v -> villager.getVillagerBrain().modifyMoodValue(v), () -> new LiteralText(villager.getVillagerBrain().getMoodValue() + " mood"));
+                integerChanger(y, v -> villager.getVillagerBrain().modifyMoodValue(v), () -> new TranslatableText("gui.interact.label.mood", villager.getVillagerBrain().getMoodValue()));
             }
             case "clothing", "hair" -> {
                 filterGender = villager.getGenetics().getGender();
