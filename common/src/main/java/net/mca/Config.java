@@ -169,8 +169,8 @@ public final class Config implements Serializable {
             .put("minecraft:spider", 0)
             .put("minecraft:skeleton", 0)
             .put("minecraft:slime", 0)
-            .put(MCA.MOD_ID + "female_zombie_villager", 3)
-            .put(MCA.MOD_ID + "male_zombie_villager", 3)
+            .put(MCA.MOD_ID + ":female_zombie_villager", 3)
+            .put(MCA.MOD_ID + ":male_zombie_villager", 3)
             .build();
 
     public List<String> villagerPathfindingBlacklist = List.of(
