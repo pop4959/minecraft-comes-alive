@@ -24,6 +24,7 @@
 * Fixed Turkish locale issues again
 * You can now start a village with a room (e.g. underground)
 * Added more phrases
+* Fixed villagers using the steve second layer
 
 # 7.3.21
 
