@@ -3,10 +3,10 @@
 * Simplified Villages
     * Villager no longer rely on a village to find a home
     * Buildings are no longer required and automatic scanning is disabled by default
-      * Frees a bit of CPU
-      * This can be toggled in the blueprint
-      * Manual tagging is possible too for more control
-    * Buildings do however grant buffs and upgrades to the community, boosting the mood and enhancing guards armor 
+        * Frees a bit of CPU
+        * This can be toggled in the blueprint
+        * Manual tagging is possible too for more control
+    * Buildings do however grant buffs and upgrades to the community, boosting the mood and enhancing guards armor
 * Added special vision for Sirbens
 * Added PTG-3 based villager chat AI
     * Enable in Config
@@ -19,6 +19,10 @@
     * Added Greeting back
     * Villager no longer welcome you if you are a Mayor or Monarch
 * Staff of Life now has 10 uses instead of 5
+* Fixed armor texture on female players
+* Fixed performance issue related to villager renderer
+* Fixed Turkish locale issues again
+* You can now start a village with a room (e.g. underground)
 
 # 7.3.21
 
