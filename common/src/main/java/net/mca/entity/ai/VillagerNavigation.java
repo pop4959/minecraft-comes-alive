@@ -1,7 +1,9 @@
 package net.mca.entity.ai;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.DoorBlock;
+import net.minecraft.block.FenceGateBlock;
 import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeNavigator;
@@ -15,7 +17,6 @@ import net.minecraft.world.World;
 import java.util.EnumSet;
 
 public class VillagerNavigation extends MobNavigation {
-
     public VillagerNavigation(MobEntity mobEntity, World world) {
         super(mobEntity, world);
     }
@@ -31,25 +32,36 @@ public class VillagerNavigation extends MobNavigation {
 
         @Override
         public PathNodeType findNearbyNodeTypes(BlockView world, int x, int y, int z, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors, EnumSet<PathNodeType> nearbyTypes, PathNodeType type, BlockPos pos) {
-
             BlockPos.Mutable p = new BlockPos.Mutable(x, y, z);
 
-            for(int i = 0; i < sizeX; ++i) {
-                for(int j = 0; j < sizeY; ++j) {
-                    for(int k = 0; k < sizeZ; ++k) {
+            for (int i = 0; i < sizeX; ++i) {
+                for (int j = 0; j < sizeY; ++j) {
+                    for (int k = 0; k < sizeZ; ++k) {
                         int l = i + x;
                         int m = j + y;
                         int n = k + z;
 
                         p.set(l, m, n);
 
-                        BlockState state = world.getBlockState(p);
+                        BlockState blockState = world.getBlockState(p);
 
                         PathNodeType pathNodeType = getDefaultNodeType(world, l, m, n);
                         pathNodeType = adjustNodeType(world, canOpenDoors, canEnterOpenDoors, pos, pathNodeType);
 
+                        // Villager can also open gates
+                        if (blockState.isIn(BlockTags.FENCE_GATES, state -> state.getBlock() instanceof FenceGateBlock)) {
+                            pathNodeType = PathNodeType.WALKABLE_DOOR;
+                        }
+
+                        // prefer paths
+                        BlockState blockState2 = world.getBlockState(p.add(0, -1, 0));
+                        if (blockState2.getBlock().equals(Blocks.GRASS_BLOCK)) {
+                            //pathNodeType = PathNodeType.DAMAGE_FIRE;
+                            //todo
+                        }
+
                         if (pathNodeType != PathNodeType.DOOR_OPEN) {
-                            if (state.getBlock() instanceof DoorBlock) {
+                            if (blockState.getBlock() instanceof DoorBlock) {
                                 // if we find a door, check that it's adjacent to any of the previously found pressure plates
                                 for (BlockPos adjacent : BlockPos.iterate(l - 1, m - 1, n - 1, l + 1, m + 1, n + 1)) {
                                     if (world.getBlockState(adjacent).isIn(BlockTags.PRESSURE_PLATES)) {

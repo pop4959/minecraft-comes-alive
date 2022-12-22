@@ -2,8 +2,11 @@ package net.mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
+import net.minecraft.block.FenceGateBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -12,9 +15,13 @@ import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.ai.pathing.PathNode;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.dynamic.GlobalPos;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldEvents;
+import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
@@ -38,7 +45,8 @@ public class SmarterOpenDoorsTask extends Task<LivingEntity> {
         //noinspection OptionalGetWithoutIsPresent
         Path path = entity.getBrain().getOptionalMemory(MemoryModuleType.PATH).get();
 
-        if (path.isStart() || path.isFinished()) {
+        //Luke100000: I removed the path.isStart() check as this caused villagers to slam their face onto the door, not being able to open it anymore.
+        if (path.isFinished()) {
             return false;
         }
 
@@ -55,19 +63,35 @@ public class SmarterOpenDoorsTask extends Task<LivingEntity> {
         return this.ticks == 0;
     }
 
+    public static boolean setOpen(@Nullable Entity entity, World world, BlockState state, BlockPos pos, boolean open) {
+        if (state.contains(Properties.OPEN) && state.get(Properties.OPEN) != open) {
+            world.setBlockState(pos, state.with(Properties.OPEN, open), Block.NOTIFY_LISTENERS | Block.REDRAW_ON_MAIN_THREAD);
+            world.emitGameEvent(entity, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
+            playOpenCloseSound(world, pos, open);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static void playOpenCloseSound(World world, BlockPos pos, boolean open) {
+        world.syncWorldEvent(null, open ? WorldEvents.WOODEN_DOOR_OPENS : WorldEvents.WOODEN_DOOR_CLOSES, pos, 0);
+    }
+
     private void openDoor(ServerWorld world, LivingEntity entity, PathNode pathNode) {
         if (pathNode != null) {
             BlockPos blockPos = pathNode.getBlockPos();
             BlockState blockState = world.getBlockState(blockPos);
-            if (blockState.isIn(BlockTags.WOODEN_DOORS, state -> state.getBlock() instanceof DoorBlock)) {
-                DoorBlock doorBlock = (DoorBlock)blockState.getBlock();
-                if (!doorBlock.isOpen(blockState)) {
-                    doorBlock.setOpen(entity, world, blockState, blockPos, true);
+            if (isDoor(blockState)) {
+                if (setOpen(entity, world, blockState, blockPos, true)) {
+                    this.rememberToCloseDoor(world, entity, blockPos);
                 }
-
-                this.rememberToCloseDoor(world, entity, blockPos);
             }
         }
+    }
+
+    private static boolean isDoor(BlockState blockState) {
+        return blockState.isIn(BlockTags.WOODEN_DOORS, state -> state.getBlock() instanceof DoorBlock) || blockState.isIn(BlockTags.FENCE_GATES, state -> state.getBlock() instanceof FenceGateBlock);
     }
 
     @Override
@@ -102,14 +126,13 @@ public class SmarterOpenDoorsTask extends Task<LivingEntity> {
 
                 // That's no door
                 BlockState blockState = world.getBlockState(blockPos);
-                if (!blockState.isIn(BlockTags.WOODEN_DOORS, state -> state.getBlock() instanceof DoorBlock)) {
+                if (!isDoor(blockState)) {
                     iterator.remove();
                     continue;
                 }
 
                 // Door isn't even open
-                DoorBlock doorBlock = (DoorBlock)blockState.getBlock();
-                if (!doorBlock.isOpen(blockState)) {
+                if (blockState.contains(Properties.OPEN) && !blockState.get(Properties.OPEN)) {
                     iterator.remove();
                     continue;
                 }
@@ -121,7 +144,7 @@ public class SmarterOpenDoorsTask extends Task<LivingEntity> {
                 }
 
                 // Close the door
-                doorBlock.setOpen(entity, world, blockState, blockPos, false);
+                setOpen(entity, world, blockState, blockPos, false);
                 iterator.remove();
             }
         }
@@ -149,8 +172,7 @@ public class SmarterOpenDoorsTask extends Task<LivingEntity> {
         if (pathNode == null) {
             return false;
         }
-        PathNode pathNode2 = path.getCurrentNode();
-        return pos.equals(pathNode.getBlockPos()) || pos.equals(pathNode2.getBlockPos());
+        return pos.equals(pathNode.getBlockPos()) || pos.equals(path.getCurrentNode().getBlockPos());
     }
 
     private static boolean cannotReachDoor(ServerWorld world, LivingEntity entity, GlobalPos doorPos) {
