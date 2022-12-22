@@ -23,6 +23,7 @@
 * Fixed performance issue related to villager renderer
 * Fixed Turkish locale issues again
 * You can now start a village with a room (e.g. underground)
+* Added more phrases
 
 # 7.3.21
 

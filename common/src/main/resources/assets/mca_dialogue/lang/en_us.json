@@ -500,6 +500,7 @@
   "dialogue.main.flirt": "Flirt",
   "dialogue.main.kiss": "Kiss",
   "dialogue.main.procreate": "Procreate",
+  "dialogue.main.procreate_engaged": "Procreate?",
   "dialogue.main.adopt": "Adopt",
   "dialogue.main.divorceInitiate": "Divorce",
   "dialogue.main.divorcePapers": "Divorce papers",
@@ -896,6 +897,8 @@
   "dialogue.greet.short": "I'm good.",
   "dialogue.greet.kind": "I'm good, how are you?",
   "dialogue.greet.shake_hand": "*Shake hands*",
+
+  "dialogue.procreate_engaged": "We should marry first.",
 
   "adult.dialogue.shake_hand.success/1": "You have a nice grip!",
   "adult.dialogue.shake_hand.success/2": "Your grip shows me you have great power!",
