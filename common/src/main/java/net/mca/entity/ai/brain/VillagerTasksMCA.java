@@ -188,7 +188,7 @@ public class VillagerTasksMCA {
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getImportantCorePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new StayAboveWaterTask(0.8F)),
-                Pair.of(0, new OpenDoorsTask()),
+                Pair.of(0, new SmarterOpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
                 Pair.of(0, new WakeUpTask()),
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
