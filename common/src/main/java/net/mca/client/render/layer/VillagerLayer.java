@@ -1,7 +1,6 @@
 package net.mca.client.render.layer;
 
 import com.google.common.collect.Maps;
-import net.mca.MCA;
 import net.mca.MCAClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
@@ -28,6 +27,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
     private static final float[] DEFAULT_COLOR = new float[] {1, 1, 1};
 
     private static final Map<String, Identifier> TEXTURE_CACHE = Maps.newHashMap();
+    private static final Map<Identifier, Boolean> TEXTURE_EXIST_CACHE = Maps.newHashMap();
 
     public final M model;
 
@@ -64,7 +64,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
             return;
         }
 
-        if (villager instanceof PlayerEntity && !MCAClient.useVillagerRenderer(villager.getUuid()))  {
+        if (villager instanceof PlayerEntity && !MCAClient.useVillagerRenderer(villager.getUuid())) {
             return;
         }
 
@@ -95,14 +95,13 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
     }
 
     protected final boolean canUse(Identifier texture) {
-        return texture != null && MinecraftClient.getInstance().getResourceManager().containsResource(texture);
+        return TEXTURE_EXIST_CACHE.computeIfAbsent(texture, s -> {
+            return texture != null && MinecraftClient.getInstance().getResourceManager().containsResource(texture);
+        });
     }
 
     @Nullable
     protected final Identifier cached(String name, Function<String, Identifier> supplier) {
-        if (MCA.isBlankString(name)) {
-            return null;
-        }
         return TEXTURE_CACHE.computeIfAbsent(name, s -> {
             try {
                 return supplier.apply(s);
