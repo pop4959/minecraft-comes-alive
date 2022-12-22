@@ -10,7 +10,6 @@ import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.function.Function;
@@ -40,7 +39,7 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
         boolean present = villager.getBrain().getOptionalMemory(MemoryModuleTypeMCA.WEARS_ARMOR.get()).isPresent();
         if (condition.test(villager)) {
             lastEquipTime = villager.age;
-            return !present || equipmentSet.apply(villager).getMainHand() != Items.AIR && villager.getMainHandStack().isEmpty();
+            return !present || equipmentSet.apply(villager).getMainHand() != null && villager.getMainHandStack().isEmpty();
         } else if (villager.age - lastEquipTime > COOLDOWN) {
             return present;
         } else {
@@ -49,12 +48,12 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
     }
 
     private void equipBestArmor(VillagerEntityMCA villager, EquipmentSlot slot, Item fallback) {
-        ItemStack stack = InventoryUtils.getBestArmor(villager.getInventory(), slot).orElse(new ItemStack(fallback));
+        ItemStack stack = InventoryUtils.getBestArmor(villager.getInventory(), slot).orElse(fallback == null ? ItemStack.EMPTY : new ItemStack(fallback));
         villager.equipStack(slot, stack);
     }
 
     private void equipBestWeapon(VillagerEntityMCA villager, Item fallback) {
-        ItemStack stack = InventoryUtils.getBestSword(villager.getInventory()).orElse(new ItemStack(fallback));
+        ItemStack stack = InventoryUtils.getBestSword(villager.getInventory()).orElse(fallback == null ? ItemStack.EMPTY : new ItemStack(fallback));
         villager.equipStack(villager.getDominantSlot(), stack);
     }
 
