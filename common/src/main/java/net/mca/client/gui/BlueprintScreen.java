@@ -156,8 +156,13 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 - 48;
                 by = height / 2;
-                addDrawableChild(new ButtonWidget(bx, by + 5, 96, 20, new TranslatableText("gui.blueprint.addBuilding"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx - 50, by + 5, 96, 20, new TranslatableText("gui.blueprint.addBuilding"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
+                    NetworkHandler.sendToServer(new GetVillageRequest());
+                    close();
+                }));
+                addDrawableChild(new TooltipButtonWidget(bx + 50, by + 5, 96, 20, new TranslatableText("gui.blueprint.addRoom"), (b) -> {
+                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     close();
                 }));
@@ -212,7 +217,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 + 180 - 64 - 16;
                 by = height / 2 - 56 + 22 * 3;
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.addBuilding"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, new TranslatableText("gui.blueprint.addBuilding"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
