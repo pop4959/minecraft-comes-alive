@@ -103,7 +103,7 @@ public class SmarterOpenDoorsTask extends Task<LivingEntity> {
         openDoor(world, entity, path.getLastNode());
         openDoor(world, entity, path.getCurrentNode());
 
-        closeDoors(world, entity, pathNode, path.getCurrentNode());
+        closeDoors(world, entity, path.getLastNode(), path.getCurrentNode());
     }
 
     public static void closeDoors(ServerWorld world, LivingEntity entity, @Nullable PathNode lastNode, @Nullable PathNode currentNode) {
