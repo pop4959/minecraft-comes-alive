@@ -1,4 +1,4 @@
-package net.mca.entity.ai;
+package net.mca.entity.ai.pathfinder;
 
 import net.minecraft.entity.ai.pathing.MobNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeNavigator;

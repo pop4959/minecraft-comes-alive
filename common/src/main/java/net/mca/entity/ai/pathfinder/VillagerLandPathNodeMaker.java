@@ -1,4 +1,4 @@
-package net.mca.entity.ai;
+package net.mca.entity.ai.pathfinder;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -21,18 +21,18 @@ import java.util.EnumSet;
 
 public class VillagerLandPathNodeMaker extends PathNodeMaker {
     protected float waterPathNodeTypeWeight;
-    private final Long2ObjectMap<PathNodeType> nodeTypes = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectMap<ExtendedPathNodeType> nodeTypes = new Long2ObjectOpenHashMap<>();
     private final Object2BooleanMap<Box> collidedBoxes = new Object2BooleanOpenHashMap<>();
 
     @Override
     public void init(ChunkCache cachedWorld, MobEntity entity) {
         super.init(cachedWorld, entity);
-        this.waterPathNodeTypeWeight = entity.getPathfindingPenalty(PathNodeType.WATER);
+        this.waterPathNodeTypeWeight = getPenalty(entity, ExtendedPathNodeType.WATER);
     }
 
     @Override
     public void clear() {
-        this.entity.setPathfindingPenalty(PathNodeType.WATER, this.waterPathNodeTypeWeight);
+        this.entity.setPathfindingPenalty(ExtendedPathNodeType.WATER.toVanilla(), this.waterPathNodeTypeWeight);
         this.nodeTypes.clear();
         this.collidedBoxes.clear();
         super.clear();
@@ -40,7 +40,6 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
 
     @Override
     public PathNode getStart() {
-        BlockPos blockPos;
         BlockPos.Mutable mutable = new BlockPos.Mutable();
         int i = this.entity.getBlockY();
         BlockState blockState = this.cachedWorld.getBlockState(mutable.set(this.entity.getX(), i, this.entity.getZ()));
@@ -57,32 +56,36 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         } else if (this.entity.isOnGround()) {
             i = MathHelper.floor(this.entity.getY() + 0.5);
         } else {
-            blockPos = this.entity.getBlockPos();
+            BlockPos blockPos = this.entity.getBlockPos();
             while ((this.cachedWorld.getBlockState(blockPos).isAir() || this.cachedWorld.getBlockState(blockPos).canPathfindThrough(this.cachedWorld, blockPos, NavigationType.LAND)) && blockPos.getY() > this.entity.world.getBottomY()) {
                 blockPos = blockPos.down();
             }
             i = blockPos.up().getY();
         }
-        blockPos = this.entity.getBlockPos();
-        PathNodeType pathNodeType = this.getNodeType(this.entity, blockPos.getX(), i, blockPos.getZ());
-        if (this.entity.getPathfindingPenalty(pathNodeType) < 0.0f) {
+
+        BlockPos blockPos = this.entity.getBlockPos();
+        ExtendedPathNodeType pathNodeType = this.getNodeType(this.entity, blockPos.getX(), i, blockPos.getZ());
+        if (getPenalty(pathNodeType) < 0.0f) {
             Box box = this.entity.getBoundingBox();
             if (this.canPathThrough(mutable.set(box.minX, i, box.minZ)) || this.canPathThrough(mutable.set(box.minX, i, box.maxZ)) || this.canPathThrough(mutable.set(box.maxX, i, box.minZ)) || this.canPathThrough(mutable.set(box.maxX, i, box.maxZ))) {
                 PathNode pathNode = this.getNode(mutable);
-                pathNode.type = this.getNodeType(this.entity, pathNode.getBlockPos());
-                pathNode.penalty = this.entity.getPathfindingPenalty(pathNode.type);
+                ExtendedPathNodeType type = this.getNodeType(this.entity, pathNode.getBlockPos());
+                pathNode.type = type.toVanilla();
+                pathNode.penalty = getPenalty(type);
                 return pathNode;
             }
         }
+
         PathNode pathNode2 = this.getNode(blockPos.getX(), i, blockPos.getZ());
-        pathNode2.type = this.getNodeType(this.entity, pathNode2.getBlockPos());
-        pathNode2.penalty = this.entity.getPathfindingPenalty(pathNode2.type);
+        ExtendedPathNodeType type = this.getNodeType(this.entity, pathNode2.getBlockPos());
+        pathNode2.type = type.toVanilla();
+        pathNode2.penalty = getPenalty(type);
         return pathNode2;
     }
 
     private boolean canPathThrough(BlockPos pos) {
-        PathNodeType pathNodeType = this.getNodeType(this.entity, pos);
-        return this.entity.getPathfindingPenalty(pathNodeType) >= 0.0f;
+        ExtendedPathNodeType pathNodeType = this.getNodeType(this.entity, pos);
+        return getPenalty(pathNodeType) >= 0.0f;
     }
 
     @Override
@@ -92,12 +95,12 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
 
     @Override
     public int getSuccessors(PathNode[] successors, PathNode node) {
-        PathNodeType pathNodeTypeHead = this.getNodeType(this.entity, node.x, node.y + 1, node.z);
-        PathNodeType pathNodeType = this.getNodeType(this.entity, node.x, node.y, node.z);
+        ExtendedPathNodeType pathNodeTypeHead = this.getNodeType(this.entity, node.x, node.y + 1, node.z);
+        ExtendedPathNodeType pathNodeType = this.getNodeType(this.entity, node.x, node.y, node.z);
 
         double feetY = this.getFeetY(new BlockPos(node.x, node.y, node.z));
         int maxYStep = 0;
-        if (this.entity.getPathfindingPenalty(pathNodeTypeHead) >= 0.0f && pathNodeType != PathNodeType.STICKY_HONEY) {
+        if (getPenalty(pathNodeTypeHead) >= 0.0f && pathNodeType != ExtendedPathNodeType.STICKY_HONEY) {
             maxYStep = MathHelper.floor(Math.max(1.0f, this.entity.stepHeight));
         }
 
@@ -152,10 +155,10 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         if (xDiagNode.y > xNode.y || zNode.y > xNode.y) {
             return false;
         }
-        if (zNode.type == PathNodeType.WALKABLE_DOOR || xDiagNode.type == PathNodeType.WALKABLE_DOOR || zDiagNode.type == PathNodeType.WALKABLE_DOOR) {
+        if (zNode.type == ExtendedPathNodeType.WALKABLE_DOOR.toVanilla() || xDiagNode.type == ExtendedPathNodeType.WALKABLE_DOOR.toVanilla() || zDiagNode.type == ExtendedPathNodeType.WALKABLE_DOOR.toVanilla()) {
             return false;
         }
-        boolean bl = xDiagNode.type == PathNodeType.FENCE && zNode.type == PathNodeType.FENCE && (double)this.entity.getWidth() < 0.5;
+        boolean bl = xDiagNode.type == ExtendedPathNodeType.FENCE.toVanilla() && zNode.type == ExtendedPathNodeType.FENCE.toVanilla() && (double)this.entity.getWidth() < 0.5;
         return zDiagNode.penalty >= 0.0f && (xDiagNode.y < xNode.y || xDiagNode.penalty >= 0.0f || bl) && (zNode.y < xNode.y || zNode.penalty >= 0.0f || bl);
     }
 
@@ -181,8 +184,16 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         return (double)blockPos.getY() + (voxelShape.isEmpty() ? 0.0 : voxelShape.getMax(Direction.Axis.Y));
     }
 
+    float getPenalty(ExtendedPathNodeType pathNodeType) {
+        return getPenalty(entity, pathNodeType);
+    }
+
+    private float getPenalty(MobEntity mob, ExtendedPathNodeType type) {
+        return mob.getPathfindingPenalty(type.toVanilla()) + type.getBonusPenalty();
+    }
+
     @Nullable
-    protected PathNode getPathNode(int x, int y, int z, int maxYStep, double prevFeetY, Direction direction, PathNodeType nodeType) {
+    protected PathNode getPathNode(int x, int y, int z, int maxYStep, double prevFeetY, Direction direction, ExtendedPathNodeType nodeType) {
         double h;
         double g;
 
@@ -192,91 +203,81 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             return null;
         }
 
-        PathNodeType pathNodeType = this.getNodeType(this.entity, x, y, z);
-        float f = this.entity.getPathfindingPenalty(pathNodeType);
+        ExtendedPathNodeType pathNodeType = this.getNodeType(this.entity, x, y, z);
+        float penalty = getPenalty(pathNodeType);
         double e = (double)this.entity.getWidth() / 2.0;
 
         PathNode pathNode = null;
-        if (f >= 0.0f) {
+        if (penalty >= 0.0f) {
             pathNode = this.getNode(x, y, z);
-            pathNode.type = pathNodeType;
-            pathNode.penalty = Math.max(pathNode.penalty, f);
+            pathNode.type = pathNodeType.toVanilla();
+            pathNode.penalty = Math.max(pathNode.penalty, penalty);
         }
 
-        if (nodeType == PathNodeType.FENCE && pathNode != null && pathNode.penalty >= 0.0f && !this.isBlocked(pathNode)) {
+        if (nodeType == ExtendedPathNodeType.FENCE && pathNode != null && pathNode.penalty >= 0.0f && !this.isBlocked(pathNode)) {
             pathNode = null;
         }
 
-        if (pathNodeType == PathNodeType.WALKABLE) {
-            if (pathNode != null) {
-                BlockState blockState = cachedWorld.getBlockState(new BlockPos(x, y - 1, z));
-                if ((blockState.getBlock() instanceof DirtPathBlock)) {
-                    pathNode.penalty += 0.0f;
-                } else if ((blockState.getBlock() instanceof GrassBlock)) {
-                    pathNode.penalty += 4.0f;
-                } else {
-                    pathNode.penalty += 2.0f;
-                }
-            }
+        if (pathNodeType.isWalkable()) {
             return pathNode;
         }
 
-        if ((pathNode == null || pathNode.penalty < 0.0f) && maxYStep > 0 && pathNodeType != PathNodeType.FENCE && pathNodeType != PathNodeType.UNPASSABLE_RAIL && pathNodeType != PathNodeType.TRAPDOOR && pathNodeType != PathNodeType.POWDER_SNOW && (pathNode = this.getPathNode(x, y + 1, z, maxYStep - 1, prevFeetY, direction, nodeType)) != null && (pathNode.type == PathNodeType.OPEN || pathNode.type == PathNodeType.WALKABLE) && this.entity.getWidth() < 1.0f && this.checkBoxCollision(
+        if ((pathNode == null || pathNode.penalty < 0.0f) && maxYStep > 0 && pathNodeType != ExtendedPathNodeType.FENCE && pathNodeType != ExtendedPathNodeType.UNPASSABLE_RAIL && pathNodeType != ExtendedPathNodeType.TRAPDOOR && pathNodeType != ExtendedPathNodeType.POWDER_SNOW && (pathNode = this.getPathNode(x, y + 1, z, maxYStep - 1, prevFeetY, direction, nodeType)) != null && (pathNode.type == ExtendedPathNodeType.OPEN.toVanilla() || pathNode.type == ExtendedPathNodeType.WALKABLE.toVanilla()) && this.entity.getWidth() < 1.0f && this.checkBoxCollision(
                 new Box((g = (double)(x - direction.getOffsetX()) + 0.5) - e, VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(g, y + 1, h = (double)(z - direction.getOffsetZ()) + 0.5)) + 0.001, h - e, g + e, (double)this.entity.getHeight() + VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(pathNode.x, pathNode.y, (double)pathNode.z)) - 0.002, h + e))) {
             pathNode = null;
         }
 
-        if (pathNodeType == PathNodeType.WATER && !this.canSwim()) {
-            if (this.getNodeType(this.entity, x, y - 1, z) != PathNodeType.WATER) {
+        if (pathNodeType == ExtendedPathNodeType.WATER && !this.canSwim()) {
+            if (this.getNodeType(this.entity, x, y - 1, z) != ExtendedPathNodeType.WATER) {
                 return pathNode;
             }
             while (y > this.entity.world.getBottomY()) {
-                if ((pathNodeType = this.getNodeType(this.entity, x, --y, z)) == PathNodeType.WATER) {
+                if ((pathNodeType = this.getNodeType(this.entity, x, --y, z)) == ExtendedPathNodeType.WATER) {
                     pathNode = this.getNode(x, y, z);
-                    pathNode.type = pathNodeType;
-                    pathNode.penalty = Math.max(pathNode.penalty, this.entity.getPathfindingPenalty(pathNodeType));
+                    pathNode.type = pathNodeType.toVanilla();
+                    pathNode.penalty = Math.max(pathNode.penalty, getPenalty(pathNodeType));
                     continue;
                 }
                 return pathNode;
             }
         }
 
-        if (pathNodeType == PathNodeType.OPEN) {
+        if (pathNodeType == ExtendedPathNodeType.OPEN) {
             int i = 0;
             int j = y;
-            while (pathNodeType == PathNodeType.OPEN) {
+            while (pathNodeType == ExtendedPathNodeType.OPEN) {
                 if (--y < this.entity.world.getBottomY()) {
                     PathNode pathNode2 = this.getNode(x, j, z);
-                    pathNode2.type = PathNodeType.BLOCKED;
+                    pathNode2.type = ExtendedPathNodeType.BLOCKED.toVanilla();
                     pathNode2.penalty = -1.0f;
                     return pathNode2;
                 }
                 if (i++ >= this.entity.getSafeFallDistance()) {
                     PathNode pathNode2 = this.getNode(x, y, z);
-                    pathNode2.type = PathNodeType.BLOCKED;
+                    pathNode2.type = ExtendedPathNodeType.BLOCKED.toVanilla();
                     pathNode2.penalty = -1.0f;
                     return pathNode2;
                 }
                 pathNodeType = this.getNodeType(this.entity, x, y, z);
-                f = this.entity.getPathfindingPenalty(pathNodeType);
-                if (pathNodeType != PathNodeType.OPEN && f >= 0.0f) {
+                penalty = getPenalty(pathNodeType);
+                if (pathNodeType != ExtendedPathNodeType.OPEN && penalty >= 0.0f) {
                     pathNode = this.getNode(x, y, z);
-                    pathNode.type = pathNodeType;
-                    pathNode.penalty = Math.max(pathNode.penalty, f);
+                    pathNode.type = pathNodeType.toVanilla();
+                    pathNode.penalty = Math.max(pathNode.penalty, penalty);
                     break;
                 }
-                if (!(f < 0.0f)) continue;
+                if (!(penalty < 0.0f)) continue;
                 PathNode pathNode2 = this.getNode(x, y, z);
-                pathNode2.type = PathNodeType.BLOCKED;
+                pathNode2.type = ExtendedPathNodeType.BLOCKED.toVanilla();
                 pathNode2.penalty = -1.0f;
                 return pathNode2;
             }
         }
 
-        if (pathNodeType == PathNodeType.FENCE) {
+        if (pathNodeType == ExtendedPathNodeType.FENCE) {
             pathNode = this.getNode(x, y, z);
             pathNode.visited = true;
-            pathNode.type = pathNodeType;
+            pathNode.type = pathNodeType.toVanilla();
             pathNode.penalty = pathNodeType.getDefaultPenalty();
         }
 
@@ -289,37 +290,35 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
 
     @Override
     public PathNodeType getNodeType(BlockView world, int x, int y, int z, MobEntity mob, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors) {
-        EnumSet<PathNodeType> enumSet = EnumSet.noneOf(PathNodeType.class);
-        PathNodeType pathNodeType = PathNodeType.BLOCKED;
-        BlockPos blockPos = mob.getBlockPos();
-        pathNodeType = this.
-                findNearbyNodeTypes(world, x, y, z, sizeX, sizeY, sizeZ, canOpenDoors, canEnterOpenDoors, enumSet, pathNodeType, blockPos);
-        if (enumSet.contains(PathNodeType.FENCE)) {
-            return PathNodeType.FENCE;
+        // Placeholder, not used
+        return getExtendedNodeType(world, x, y, z, mob, sizeX, sizeY, sizeZ, canOpenDoors, canEnterOpenDoors).toVanilla();
+    }
+
+    public ExtendedPathNodeType getExtendedNodeType(BlockView world, int x, int y, int z, MobEntity mob, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors) {
+        EnumSet<ExtendedPathNodeType> enumSet = EnumSet.noneOf(ExtendedPathNodeType.class);
+        this.findNearbyNodeTypes(world, x, y, z, sizeX, sizeY, sizeZ, canOpenDoors, canEnterOpenDoors, enumSet, mob.getBlockPos());
+        if (enumSet.contains(ExtendedPathNodeType.FENCE)) {
+            return ExtendedPathNodeType.FENCE;
         }
-        if (enumSet.contains(PathNodeType.UNPASSABLE_RAIL)) {
-            return PathNodeType.UNPASSABLE_RAIL;
+        if (enumSet.contains(ExtendedPathNodeType.UNPASSABLE_RAIL)) {
+            return ExtendedPathNodeType.UNPASSABLE_RAIL;
         }
-        PathNodeType pathNodeType2 = PathNodeType.BLOCKED;
-        for (PathNodeType pathNodeType3 : enumSet) {
-            if (mob.getPathfindingPenalty(pathNodeType3) < 0.0f) {
-                return pathNodeType3;
+        ExtendedPathNodeType worstPathNode = ExtendedPathNodeType.BLOCKED;
+        for (ExtendedPathNodeType touchedPathNodeType : enumSet) {
+            if (getPenalty(mob, touchedPathNodeType) < 0.0f) {
+                return touchedPathNodeType;
             }
-            if (!(mob.getPathfindingPenalty(pathNodeType3) >= mob.getPathfindingPenalty(pathNodeType2))) continue;
-            pathNodeType2 = pathNodeType3;
+            if (getPenalty(mob, touchedPathNodeType) >= getPenalty(mob, worstPathNode)) {
+                worstPathNode = touchedPathNodeType;
+            }
         }
-        if (pathNodeType == PathNodeType.OPEN && mob.getPathfindingPenalty(pathNodeType2) == 0.0f && sizeX <= 1) {
-            return PathNodeType.OPEN;
-        }
-        return pathNodeType2;
+        return worstPathNode;
     }
 
     /**
      * Adds the node types in the box with the given size to the input EnumSet.
-     *
-     * @return The node type at the least coordinates of the input box.
      */
-    public PathNodeType findNearbyNodeTypes(BlockView world, int x, int y, int z, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors, EnumSet<PathNodeType> nearbyTypes, PathNodeType type, BlockPos pos) {
+    public void findNearbyNodeTypes(BlockView world, int x, int y, int z, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors, EnumSet<ExtendedPathNodeType> nearbyTypes, BlockPos pos) {
         BlockPos.Mutable p = new BlockPos.Mutable(x, y, z);
 
         for (int i = 0; i < sizeX; ++i) {
@@ -333,181 +332,200 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
 
                     BlockState blockState = world.getBlockState(p);
 
-                    PathNodeType pathNodeType = getDefaultNodeType(world, l, m, n);
+                    ExtendedPathNodeType pathNodeType = getExtendedDefaultNodeType(world, l, m, n);
                     pathNodeType = adjustNodeType(world, canOpenDoors, canEnterOpenDoors, pos, pathNodeType);
 
                     // Villager can also open gates
                     if (blockState.isIn(BlockTags.FENCE_GATES, state -> state.getBlock() instanceof FenceGateBlock)) {
-                        pathNodeType = PathNodeType.WALKABLE_DOOR;
+                        pathNodeType = ExtendedPathNodeType.WALKABLE_DOOR;
                     }
 
-                    if (pathNodeType != PathNodeType.DOOR_OPEN) {
+                    if (pathNodeType != ExtendedPathNodeType.DOOR_OPEN) {
                         if (blockState.getBlock() instanceof DoorBlock) {
-                            // if we find a door, check that it's adjacent to any of the previously found pressure plates
+                            // if we find a door, check that it's adjacent to any of the previously found pressure plates.
                             for (BlockPos adjacent : BlockPos.iterate(l - 1, m - 1, n - 1, l + 1, m + 1, n + 1)) {
                                 if (world.getBlockState(adjacent).isIn(BlockTags.PRESSURE_PLATES)) {
-                                    pathNodeType = PathNodeType.DOOR_OPEN;
+                                    pathNodeType = ExtendedPathNodeType.DOOR_OPEN;
                                     break;
                                 }
                             }
                         }
                     }
 
-                    if (i == 0 && j == 0 && k == 0) {
-                        type = pathNodeType;
-                    }
-
                     nearbyTypes.add(pathNodeType);
                 }
             }
         }
+    }
 
+    protected ExtendedPathNodeType adjustNodeType(BlockView world, boolean canOpenDoors, boolean canEnterOpenDoors, BlockPos pos, ExtendedPathNodeType type) {
+        if (type == ExtendedPathNodeType.DOOR_WOOD_CLOSED && canOpenDoors && canEnterOpenDoors) {
+            type = ExtendedPathNodeType.WALKABLE_DOOR;
+        }
+        if (type == ExtendedPathNodeType.DOOR_OPEN && !canEnterOpenDoors) {
+            type = ExtendedPathNodeType.BLOCKED;
+        }
+        if (type == ExtendedPathNodeType.RAIL && !(world.getBlockState(pos).getBlock() instanceof AbstractRailBlock) && !(world.getBlockState(pos.down()).getBlock() instanceof AbstractRailBlock)) {
+            type = ExtendedPathNodeType.UNPASSABLE_RAIL;
+        }
+        if (type == ExtendedPathNodeType.LEAVES) {
+            type = ExtendedPathNodeType.BLOCKED;
+        }
         return type;
     }
 
-    protected PathNodeType adjustNodeType(BlockView world, boolean canOpenDoors, boolean canEnterOpenDoors, BlockPos pos, PathNodeType type) {
-        if (type == PathNodeType.DOOR_WOOD_CLOSED && canOpenDoors && canEnterOpenDoors) {
-            type = PathNodeType.WALKABLE_DOOR;
-        }
-        if (type == PathNodeType.DOOR_OPEN && !canEnterOpenDoors) {
-            type = PathNodeType.BLOCKED;
-        }
-        if (type == PathNodeType.RAIL && !(world.getBlockState(pos).getBlock() instanceof AbstractRailBlock) && !(world.getBlockState(pos.down()).getBlock() instanceof AbstractRailBlock)) {
-            type = PathNodeType.UNPASSABLE_RAIL;
-        }
-        if (type == PathNodeType.LEAVES) {
-            type = PathNodeType.BLOCKED;
-        }
-        return type;
-    }
-
-    private PathNodeType getNodeType(MobEntity entity, BlockPos pos) {
+    private ExtendedPathNodeType getNodeType(MobEntity entity, BlockPos pos) {
         return this.getNodeType(entity, pos.getX(), pos.getY(), pos.getZ());
     }
 
-    protected PathNodeType getNodeType(MobEntity entity, int x, int y, int z) {
-        return this.nodeTypes.computeIfAbsent(BlockPos.asLong(x, y, z), l -> this.getNodeType(this.cachedWorld, x, y, z, entity, this.entityBlockXSize, this.entityBlockYSize, this.entityBlockZSize, this.canOpenDoors(), this.canEnterOpenDoors()));
+    protected ExtendedPathNodeType getNodeType(MobEntity entity, int x, int y, int z) {
+        return this.nodeTypes.computeIfAbsent(BlockPos.asLong(x, y, z), l -> this.getExtendedNodeType(this.cachedWorld, x, y, z, entity, this.entityBlockXSize, this.entityBlockYSize, this.entityBlockZSize, this.canOpenDoors(), this.canEnterOpenDoors()));
     }
 
     @Override
     public PathNodeType getDefaultNodeType(BlockView world, int x, int y, int z) {
+        return getExtendedDefaultNodeType(world, x, y, z).toVanilla();
+    }
+
+    public ExtendedPathNodeType getExtendedDefaultNodeType(BlockView world, int x, int y, int z) {
         return VillagerLandPathNodeMaker.getLandNodeType(world, new BlockPos.Mutable(x, y, z));
     }
 
-    public static PathNodeType getLandNodeType(BlockView world, BlockPos.Mutable pos) {
-        int i = pos.getX();
-        int j = pos.getY();
-        int k = pos.getZ();
-        PathNodeType pathNodeType = VillagerLandPathNodeMaker.getCommonNodeType(world, pos);
-        if (pathNodeType == PathNodeType.OPEN && j >= world.getBottomY() + 1) {
-            PathNodeType pathNodeType2 = VillagerLandPathNodeMaker.getCommonNodeType(world, pos.set(i, j - 1, k));
-            pathNodeType = pathNodeType2 == PathNodeType.WALKABLE || pathNodeType2 == PathNodeType.OPEN || pathNodeType2 == PathNodeType.WATER || pathNodeType2 == PathNodeType.LAVA ? PathNodeType.OPEN : PathNodeType.WALKABLE;
-            if (pathNodeType2 == PathNodeType.DAMAGE_FIRE) {
-                pathNodeType = PathNodeType.DAMAGE_FIRE;
+    public static ExtendedPathNodeType getLandNodeType(BlockView world, BlockPos.Mutable pos) {
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        ExtendedPathNodeType pathNodeType = VillagerLandPathNodeMaker.getCommonNodeType(world, pos);
+        if (pathNodeType == ExtendedPathNodeType.OPEN && y >= world.getBottomY() + 1) {
+            ExtendedPathNodeType floorType = VillagerLandPathNodeMaker.getCommonNodeType(world, pos.set(x, y - 1, z));
+            pathNodeType = floorType == ExtendedPathNodeType.WALKABLE || floorType == ExtendedPathNodeType.OPEN || floorType == ExtendedPathNodeType.WATER || floorType == ExtendedPathNodeType.LAVA ? ExtendedPathNodeType.OPEN : ExtendedPathNodeType.WALKABLE;
+
+            // Start of MCA
+            if (floorType == ExtendedPathNodeType.PATH) {
+                pathNodeType = ExtendedPathNodeType.WALKABLE_PATH;
             }
-            if (pathNodeType2 == PathNodeType.DAMAGE_CACTUS) {
-                pathNodeType = PathNodeType.DAMAGE_CACTUS;
+            if (floorType == ExtendedPathNodeType.GRASS) {
+                pathNodeType = ExtendedPathNodeType.WALKABLE_GRASS;
             }
-            if (pathNodeType2 == PathNodeType.DAMAGE_OTHER) {
-                pathNodeType = PathNodeType.DAMAGE_OTHER;
+
+            // Start of vanilla
+            if (floorType == ExtendedPathNodeType.DAMAGE_FIRE) {
+                pathNodeType = ExtendedPathNodeType.DAMAGE_FIRE;
             }
-            if (pathNodeType2 == PathNodeType.STICKY_HONEY) {
-                pathNodeType = PathNodeType.STICKY_HONEY;
+            if (floorType == ExtendedPathNodeType.DAMAGE_CACTUS) {
+                pathNodeType = ExtendedPathNodeType.DAMAGE_CACTUS;
             }
-            if (pathNodeType2 == PathNodeType.POWDER_SNOW) {
-                pathNodeType = PathNodeType.DANGER_POWDER_SNOW;
+            if (floorType == ExtendedPathNodeType.DAMAGE_OTHER) {
+                pathNodeType = ExtendedPathNodeType.DAMAGE_OTHER;
+            }
+            if (floorType == ExtendedPathNodeType.STICKY_HONEY) {
+                pathNodeType = ExtendedPathNodeType.STICKY_HONEY;
+            }
+            if (floorType == ExtendedPathNodeType.POWDER_SNOW) {
+                pathNodeType = ExtendedPathNodeType.DANGER_POWDER_SNOW;
             }
         }
-        if (pathNodeType == PathNodeType.WALKABLE) {
-            pathNodeType = VillagerLandPathNodeMaker.getNodeTypeFromNeighbors(world, pos.set(i, j, k), pathNodeType);
+        if (pathNodeType.isWalkable()) {
+            pathNodeType = VillagerLandPathNodeMaker.getNodeTypeFromNeighbors(world, pos.set(x, y, z), pathNodeType);
         }
         return pathNodeType;
     }
 
-    public static PathNodeType getNodeTypeFromNeighbors(BlockView world, BlockPos.Mutable pos, PathNodeType nodeType) {
-        int i = pos.getX();
-        int j = pos.getY();
-        int k = pos.getZ();
+    public static ExtendedPathNodeType getNodeTypeFromNeighbors(BlockView world, BlockPos.Mutable pos, ExtendedPathNodeType nodeType) {
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
         for (int l = -1; l <= 1; ++l) {
             for (int m = -1; m <= 1; ++m) {
                 for (int n = -1; n <= 1; ++n) {
                     if (l == 0 && n == 0) continue;
-                    pos.set(i + l, j + m, k + n);
+                    pos.set(x + l, y + m, z + n);
                     BlockState blockState = world.getBlockState(pos);
                     if (blockState.isOf(Blocks.CACTUS)) {
-                        return PathNodeType.DANGER_CACTUS;
+                        return ExtendedPathNodeType.DANGER_CACTUS;
                     }
                     if (blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
-                        return PathNodeType.DANGER_OTHER;
+                        return ExtendedPathNodeType.DANGER_OTHER;
                     }
                     if (VillagerLandPathNodeMaker.inflictsFireDamage(blockState)) {
-                        return PathNodeType.DANGER_FIRE;
+                        return ExtendedPathNodeType.DANGER_FIRE;
                     }
                     if (!world.getFluidState(pos).isIn(FluidTags.WATER)) continue;
-                    return PathNodeType.WATER_BORDER;
+                    return ExtendedPathNodeType.WATER_BORDER;
                 }
             }
         }
         return nodeType;
     }
 
-    protected static PathNodeType getCommonNodeType(BlockView world, BlockPos pos) {
+    protected static ExtendedPathNodeType getCommonNodeType(BlockView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
         Material material = blockState.getMaterial();
+
+        // Here starts mca custom types
+        if (block instanceof DirtPathBlock) {
+            return ExtendedPathNodeType.PATH;
+        }
+        if (block instanceof GrassBlock) {
+            return ExtendedPathNodeType.GRASS;
+        }
+
+        // Here starts vanilla types
         if (blockState.isAir()) {
-            return PathNodeType.OPEN;
+            return ExtendedPathNodeType.OPEN;
         }
         if (blockState.isIn(BlockTags.TRAPDOORS) || blockState.isOf(Blocks.LILY_PAD) || blockState.isOf(Blocks.BIG_DRIPLEAF)) {
-            return PathNodeType.TRAPDOOR;
+            return ExtendedPathNodeType.TRAPDOOR;
         }
         if (blockState.isOf(Blocks.POWDER_SNOW)) {
-            return PathNodeType.POWDER_SNOW;
+            return ExtendedPathNodeType.POWDER_SNOW;
         }
         if (blockState.isOf(Blocks.CACTUS)) {
-            return PathNodeType.DAMAGE_CACTUS;
+            return ExtendedPathNodeType.DAMAGE_CACTUS;
         }
         if (blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
-            return PathNodeType.DAMAGE_OTHER;
+            return ExtendedPathNodeType.DAMAGE_OTHER;
         }
         if (blockState.isOf(Blocks.HONEY_BLOCK)) {
-            return PathNodeType.STICKY_HONEY;
+            return ExtendedPathNodeType.STICKY_HONEY;
         }
         if (blockState.isOf(Blocks.COCOA)) {
-            return PathNodeType.COCOA;
+            return ExtendedPathNodeType.COCOA;
         }
         FluidState fluidState = world.getFluidState(pos);
         if (fluidState.isIn(FluidTags.LAVA)) {
-            return PathNodeType.LAVA;
+            return ExtendedPathNodeType.LAVA;
         }
         if (VillagerLandPathNodeMaker.inflictsFireDamage(blockState)) {
-            return PathNodeType.DAMAGE_FIRE;
+            return ExtendedPathNodeType.DAMAGE_FIRE;
         }
         if (DoorBlock.isWoodenDoor(blockState) && !blockState.get(DoorBlock.OPEN)) {
-            return PathNodeType.DOOR_WOOD_CLOSED;
+            return ExtendedPathNodeType.DOOR_WOOD_CLOSED;
         }
         if (block instanceof DoorBlock && material == Material.METAL && !blockState.get(DoorBlock.OPEN)) {
-            return PathNodeType.DOOR_IRON_CLOSED;
+            return ExtendedPathNodeType.DOOR_IRON_CLOSED;
         }
         if (block instanceof DoorBlock && blockState.get(DoorBlock.OPEN)) {
-            return PathNodeType.DOOR_OPEN;
+            return ExtendedPathNodeType.DOOR_OPEN;
         }
         if (block instanceof AbstractRailBlock) {
-            return PathNodeType.RAIL;
+            return ExtendedPathNodeType.RAIL;
         }
         if (block instanceof LeavesBlock) {
-            return PathNodeType.LEAVES;
+            return ExtendedPathNodeType.LEAVES;
         }
         if (blockState.isIn(BlockTags.FENCES) || blockState.isIn(BlockTags.WALLS) || block instanceof FenceGateBlock && !blockState.get(FenceGateBlock.OPEN)) {
-            return PathNodeType.FENCE;
+            return ExtendedPathNodeType.FENCE;
         }
         if (!blockState.canPathfindThrough(world, pos, NavigationType.LAND)) {
-            return PathNodeType.BLOCKED;
+            return ExtendedPathNodeType.BLOCKED;
         }
         if (fluidState.isIn(FluidTags.WATER)) {
-            return PathNodeType.WATER;
+            return ExtendedPathNodeType.WATER;
         }
-        return PathNodeType.OPEN;
+
+        return ExtendedPathNodeType.OPEN;
     }
 
     public static boolean inflictsFireDamage(BlockState state) {
