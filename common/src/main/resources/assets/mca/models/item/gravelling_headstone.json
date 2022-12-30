@@ -1,5 +1,5 @@
 {
-  "parent": "mca:block/monument_gravelling",
+  "parent": "mca:block/gravelling_headstone",
   "display": {
     "gui": {
       "rotation": [ 30, 225, 0 ],

@@ -59,15 +59,14 @@ import java.util.stream.Collectors;
 public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
     public static final VoxelShape GRAVELLING_SHAPE = Block.createCuboidShape(1, 0, 1, 15, 1, 15);
     public static final VoxelShape UPRIGHT_SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(1, 0, 2, 15, 18, 4),
-            Block.createCuboidShape(2, 18, 2, 14, 19, 4),
-            Block.createCuboidShape(3, 19, 2, 13, 20, 4)
+            Block.createCuboidShape(2, 2, 7, 14, 15, 9),
+            Block.createCuboidShape(1, 0, 6, 15, 2, 10)
     );
     public static final VoxelShape CROSS_SHAPE = VoxelShapes.union(
             Block.createCuboidShape(6, 0, 2, 10, 28, 4),
             Block.createCuboidShape(-1, 18, 2, 17, 21, 4)
     );
-    public static final VoxelShape SLANTED_SHAPE = Block.createCuboidShape(0, 0, 1, 16, 10, 10);
+    public static final VoxelShape SLANTED_SHAPE = Block.createCuboidShape(0, 0, 2, 16, 7, 14);
     public static final VoxelShape WALL_SHAPE = Block.createCuboidShape(1, 1, 0, 15, 15, 1);
 
     private final Map<Direction, VoxelShape> shapes;

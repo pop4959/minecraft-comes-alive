@@ -118,7 +118,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
             Optional<BlockPos> nearest = GraveyardManager.get(world).findNearest(entity.getBlockPos(), GraveyardManager.TombstoneState.EMPTY, 10);
 
             // if no one was found, try to place one
-            if (nearest.isEmpty()) {
+            if ((beRemembered || beLoved) && nearest.isEmpty()) {
                 nearest = placeTombstone(world, entity.getBlockPos());
             }
 

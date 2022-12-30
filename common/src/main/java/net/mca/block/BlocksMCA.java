@@ -22,8 +22,8 @@ public interface BlocksMCA {
     RegistrySupplier<Block> INFERNAL_FLAME = register("infernal_flame", () -> new InfernalFlameBlock(Block.Settings.copy(Blocks.SOUL_FIRE)));
 
     RegistrySupplier<Block> GRAVELLING_HEADSTONE = register("gravelling_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 100, 50, new Vec3d(0, -25, 40), -90.0f,true, TombstoneBlock.GRAVELLING_SHAPE));
-    RegistrySupplier<Block> UPRIGHT_HEADSTONE = register("upright_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 90, 50, new Vec3d(0, -55, 23),0.0f, true, TombstoneBlock.UPRIGHT_SHAPE));
-    RegistrySupplier<Block> SLANTED_HEADSTONE = register("slanted_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 100, 15, new Vec3d(0, -25, 10), -45.0f,true, TombstoneBlock.SLANTED_SHAPE));
+    RegistrySupplier<Block> UPRIGHT_HEADSTONE = register("upright_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 75, 50, new Vec3d(0, -25, -8),0.0f, true, TombstoneBlock.UPRIGHT_SHAPE));
+    RegistrySupplier<Block> SLANTED_HEADSTONE = register("slanted_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 100, 15, new Vec3d(0, -12, 22), -72.5f,true, TombstoneBlock.SLANTED_SHAPE));
     RegistrySupplier<Block> CROSS_HEADSTONE = register("cross_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 80, 15, new Vec3d(0, -13, 15),-45.0f, true, TombstoneBlock.CROSS_SHAPE));
     RegistrySupplier<Block> WALL_HEADSTONE = register("wall_headstone", () -> new TombstoneBlock(Block.Settings.copy(Blocks.STONE).nonOpaque(), 100, 15, new Vec3d(0, -25, 40),0.0f, false, TombstoneBlock.WALL_SHAPE));
 

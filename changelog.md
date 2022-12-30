@@ -34,6 +34,8 @@
     * Tax items can now be configured
 * Fixed graveyards disappearing
 * Villager with family or friends will now spawn a gravestone if none was found
+* Updated most textures to SoyTutta
+* Updated and added additional headstones
 
 # 7.3.21
 
