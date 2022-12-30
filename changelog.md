@@ -33,6 +33,7 @@
 * Improved taxes
     * Tax items can now be configured
 * Fixed graveyards disappearing
+* Villager with family or friends will now spawn a gravestone if none was found
 
 # 7.3.21
 

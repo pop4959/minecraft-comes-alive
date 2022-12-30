@@ -2,6 +2,7 @@ package net.mca.entity.ai;
 
 import net.mca.Config;
 import net.mca.TagsMCA;
+import net.mca.block.BlocksMCA;
 import net.mca.block.TombstoneBlock;
 import net.mca.entity.Status;
 import net.mca.entity.VillagerEntityMCA;
@@ -30,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 
@@ -78,6 +80,31 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
         return getFamilyTree().getOrCreate(entity);
     }
 
+    private Optional<BlockPos> placeTombstone(ServerWorld world, BlockPos entityPos) {
+        int range = 2;
+        for (int y = -range; y <= range; y++) {
+            // prefer center
+            BlockPos pos = entityPos.add(0, y, 0);
+            if (world.getBlockState(pos).isAir()) {
+                world.setBlockState(pos, BlocksMCA.CROSS_HEADSTONE.get().getDefaultState());
+                return Optional.ofNullable(pos);
+            }
+
+            for (int x = -range; x <= range; x++) {
+                for (int z = -range; z <= range; z++) {
+                    if (x != 0 || z != 0) {
+                        pos = entityPos.add(x, y, z);
+                        if (world.getBlockState(pos).isAir()) {
+                            world.setBlockState(pos, BlocksMCA.CROSS_HEADSTONE.get().getDefaultState());
+                            return Optional.ofNullable(pos);
+                        }
+                    }
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
     public void onDeath(DamageSource cause) {
         boolean beRemembered = getFamilyEntry().willBeRemembered();
         boolean beLoved = entity.getVillagerBrain().getMemories().values().stream().anyMatch(m -> m.getHearts() > Config.getInstance().heartsRequiredToAutoSpawnGravestone);
@@ -85,22 +112,29 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
         if (beRemembered || beLoved || !entity.isHostile()) {
             getFamilyEntry().setDeceased(true);
 
-            //look for a gravestone
-            //todo place one for villagers being remembered or loved
-            GraveyardManager.get((ServerWorld)entity.world)
-                    .findNearest(entity.getBlockPos(), GraveyardManager.TombstoneState.EMPTY, 10)
-                    .ifPresentOrElse(pos -> {
-                        if (entity.world.getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
-                            BlockEntity be = entity.world.getBlockEntity(pos);
-                            if (be instanceof TombstoneBlock.Data) {
-                                onTragedy(cause, pos);
-                                ((TombstoneBlock.Data)be).setEntity(entity);
-                            }
-                        }
-                        onTragedy(cause, null);
-                    }, () -> {
-                        onTragedy(cause, null);
-                    });
+            ServerWorld world = (ServerWorld)entity.world;
+
+            // look for a gravestone
+            Optional<BlockPos> nearest = GraveyardManager.get(world).findNearest(entity.getBlockPos(), GraveyardManager.TombstoneState.EMPTY, 10);
+
+            // if no one was found, try to place one
+            if (nearest.isEmpty()) {
+                nearest = placeTombstone(world, entity.getBlockPos());
+            }
+
+            // fill it and yeet the villager into depression
+            nearest.ifPresentOrElse(pos -> {
+                if (entity.world.getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
+                    BlockEntity be = entity.world.getBlockEntity(pos);
+                    if (be instanceof TombstoneBlock.Data) {
+                        onTragedy(cause, pos);
+                        ((TombstoneBlock.Data)be).setEntity(entity);
+                    }
+                }
+                onTragedy(cause, null);
+            }, () -> {
+                onTragedy(cause, null);
+            });
         } else {
             onTragedy(cause, null);
         }
