@@ -66,9 +66,9 @@ public enum ExtendedPathNodeType {
 
     public float getBonusPenalty() {
         return defaultPenalty >= 0.0f ? (
-                this == ExtendedPathNodeType.WALKABLE_GRASS ? 1.0f :
-                        this == ExtendedPathNodeType.WALKABLE_PATH ? 0.01f :
-                                this == ExtendedPathNodeType.OPEN ? 0.0f : 0.1f
+                this == ExtendedPathNodeType.WALKABLE_GRASS ? 2.0f :
+                        this == ExtendedPathNodeType.WALKABLE_PATH ? 0.001f :
+                                this == ExtendedPathNodeType.OPEN ? 0.0f : 1.0f
         ) : 0.0f;
     }
 }

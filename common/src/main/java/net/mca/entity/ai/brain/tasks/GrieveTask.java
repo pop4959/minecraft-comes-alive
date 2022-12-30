@@ -15,7 +15,7 @@ public class GrieveTask extends Task<VillagerEntityMCA> {
     }
 
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
-        return entity.getVillagerBrain().shouldGrieve();
+        return entity.getVillagerBrain().shouldGrieve() && entity.getResidency().getHomeVillage().filter(v -> v.hasBuilding("graveyard")).isPresent();
     }
 
     @Override

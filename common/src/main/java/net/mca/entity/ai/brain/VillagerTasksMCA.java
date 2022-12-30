@@ -27,8 +27,10 @@ import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
 import net.minecraft.entity.ai.brain.task.*;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Hand;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 
@@ -338,6 +340,14 @@ public class VillagerTasksMCA {
                         ImmutableMap.of(MemoryModuleType.WALK_TARGET, MemoryModuleState.VALUE_ABSENT),
                         ImmutableList.of(
                                 new EnterBuildingTask("graveyard", 0.5f),
+                                new RandomTask<>(
+                                        ImmutableList.of(
+                                                Pair.of(new HoldItemTask(Hand.MAIN_HAND, Items.WHITE_TULIP), 1),
+                                                Pair.of(new HoldItemTask(Hand.MAIN_HAND, Items.RED_TULIP), 1),
+                                                Pair.of(new HoldItemTask(Hand.MAIN_HAND, Items.ORANGE_TULIP), 1),
+                                                Pair.of(new HoldItemTask(Hand.MAIN_HAND, Items.PINK_TULIP), 1)
+                                        )
+                                ),
                                 new WanderOrTeleportToTargetTask(),
                                 new WaitTask(100, 300),
                                 new SayTask("villager.grieving"),
@@ -345,6 +355,7 @@ public class VillagerTasksMCA {
                                 new SayTask("villager.grieving"),
                                 new WaitTask(100, 300),
                                 new SayTask("villager.grieving"),
+                                new HoldItemTask(Hand.MAIN_HAND, ItemStack.EMPTY),
                                 new LambdaTask<>((v) -> {
                                     v.getVillagerBrain().justGrieved();
                                     v.getBrain().refreshActivities(v.getWorld().getTimeOfDay(), v.getWorld().getTime());
