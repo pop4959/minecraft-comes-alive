@@ -73,12 +73,12 @@ public class GrimReaperRestGoal extends Goal {
             int dZ = reaper.getRandom().nextInt(16) - 8;
             int y = TaskUtils.getSpawnSafeTopLevel(reaper.world, (int)reaper.getX() + dX, 256, (int)reaper.getZ() + dZ);
 
-            EntityType.LIGHTNING_BOLT.spawn((ServerWorld)reaper.world, null, null, null, new BlockPos(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED, false, false);
+            EntityType.LIGHTNING_BOLT.spawn((ServerWorld)reaper.world, new BlockPos(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED);
 
             if (!reaper.world.isClient && healingTime % 100 == 0) {
                 // Also spawn a random enemy
                 EntityType<?> m = reaper.getRandom().nextFloat() < 0.5f ? EntityType.ZOMBIE : EntityType.SKELETON;
-                Entity e = m.spawn((ServerWorld)reaper.world, null, null, null, new BlockPos(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED, false, false);
+                Entity e = m.spawn((ServerWorld)reaper.world, new BlockPos(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED);
 
                 // Equip them
                 if (e != null) {

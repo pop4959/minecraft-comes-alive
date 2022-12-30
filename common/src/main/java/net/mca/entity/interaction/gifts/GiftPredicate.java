@@ -19,12 +19,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -45,7 +46,7 @@ public class GiftPredicate {
 
     static {
         register("profession", (json, name) ->
-                new Identifier(JsonHelper.asString(json, name)), profession -> (villager, stack, player) -> Registry.VILLAGER_PROFESSION.getId(villager.getProfession()).equals(profession) ? 1.0f : 0.0f);
+                new Identifier(JsonHelper.asString(json, name)), profession -> (villager, stack, player) -> Registries.VILLAGER_PROFESSION.getId(villager.getProfession()).equals(profession) ? 1.0f : 0.0f);
         register("age_group", (json, name) ->
                 AgeState.valueOf(JsonHelper.asString(json, name).toUpperCase(Locale.ENGLISH)), group -> (villager, stack, player) -> villager.getAgeState() == group ? 1.0f : 0.0f);
         register("gender", (json, name) ->
@@ -116,12 +117,12 @@ public class GiftPredicate {
         );
         register("item", (json, name) -> {
             Identifier id = new Identifier(JsonHelper.asString(json, name));
-            Item item = Registry.ITEM.getOrEmpty(id).orElseThrow(() -> new JsonSyntaxException("Unknown item '" + id + "'"));
+            Item item = Registries.ITEM.getOrEmpty(id).orElseThrow(() -> new JsonSyntaxException("Unknown item '" + id + "'"));
             return Ingredient.ofStacks(new ItemStack(item));
         }, (Ingredient ingredient) -> (villager, stack, player) -> ingredient.test(stack) ? 1.0f : 0.0f);
         register("tag", (json, name) -> {
             Identifier id = new Identifier(JsonHelper.asString(json, name));
-            TagKey<Item> tag = TagKey.of(Registry.ITEM_KEY, id);
+            TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, id);
             if (tag == null) {
                 throw new JsonSyntaxException("Unknown item tag '" + id + "'");
             }

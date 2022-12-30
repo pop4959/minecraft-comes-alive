@@ -69,7 +69,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         }
 
         //copy the animation to this layers model
-        getContextModel().setAttributes(model);
+        getContextModel().copyBipedStateTo(model);
 
         renderFinal(transform, provider, light, villager, tickDelta);
     }

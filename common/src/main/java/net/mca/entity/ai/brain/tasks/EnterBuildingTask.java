@@ -6,6 +6,7 @@ import net.mca.server.world.data.Building;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 import java.util.Comparator;
 import java.util.Optional;
 
-public class EnterBuildingTask extends Task<VillagerEntityMCA> {
+public class EnterBuildingTask extends MultiTickTask<VillagerEntityMCA> {
     private final String building;
     private final float speed;
 

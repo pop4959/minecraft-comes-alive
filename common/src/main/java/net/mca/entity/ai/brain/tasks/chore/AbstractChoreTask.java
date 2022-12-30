@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.FuzzyTargeting;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -14,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
+public abstract class AbstractChoreTask extends MultiTickTask<VillagerEntityMCA> {
     protected VillagerEntityMCA villager;
     protected int failedTicks, walkingTicks;
     protected int lastAge;

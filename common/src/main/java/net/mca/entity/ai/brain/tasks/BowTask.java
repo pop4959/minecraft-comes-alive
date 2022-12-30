@@ -6,12 +6,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 
-public class BowTask<E extends MobEntity & CrossbowUser> extends Task<E> {
+public class BowTask<E extends MobEntity & CrossbowUser> extends MultiTickTask<E> {
     private int lastShot;
     private final int fireInterval;
     private final int squaredRange;

@@ -38,12 +38,12 @@ public class ColorPickerWidget extends ClickableWidget {
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
         RenderSystem.setShaderTexture(0, texture);
-        DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, width, height);
+        DrawableHelper.drawTexture(matrices, getX(), getY(), 0, 0, width, height, width, height);
 
         RenderSystem.setShaderTexture(0, MCA_GUI_ICONS_TEXTURE);
-        DrawableHelper.drawTexture(matrices, (int)(x + valueX * width) - 8, (int)(y + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
+        DrawableHelper.drawTexture(matrices, (int)(getX() + valueX * width) - 8, (int)(getY() + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
 
-        RectangleWidget.drawRectangle(matrices, x, y, x + width, y + height, 0xaaffffff);
+        RectangleWidget.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
     }
 
     @Override
@@ -61,17 +61,17 @@ public class ColorPickerWidget extends ClickableWidget {
     }
 
     private boolean isInArea(double mouseX, double mouseY) {
-        return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+        return mouseX >= getX() && mouseX <= getX() + width && mouseY >= getY() && mouseY <= getY() + height;
     }
 
     private void update(double mouseX, double mouseY) {
-        valueX = MathHelper.clamp((mouseX - x) / width, 0.0, 1.0);
-        valueY = MathHelper.clamp((mouseY - y) / height, 0.0, 1.0);
+        valueX = MathHelper.clamp((mouseX - getX()) / width, 0.0, 1.0);
+        valueY = MathHelper.clamp((mouseY - getY()) / height, 0.0, 1.0);
         consumer.apply(valueX, valueY);
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
         appendDefaultNarrations(builder);
     }
 }

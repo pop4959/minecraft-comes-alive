@@ -2,9 +2,9 @@ package net.mca;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public interface TagsMCA {
     interface Blocks {
@@ -13,7 +13,7 @@ public interface TagsMCA {
         static void bootstrap() {}
 
         static TagKey<Block> register(String path) {
-            return TagKey.of(Registry.BLOCK_KEY, new Identifier(MCA.MOD_ID, path));
+            return TagKey.of(RegistryKeys.BLOCK, new Identifier(MCA.MOD_ID, path));
         }
     }
 
@@ -27,7 +27,7 @@ public interface TagsMCA {
         static void bootstrap() {}
 
         static TagKey<Item> register(String path) {
-            return TagKey.of(Registry.ITEM_KEY, new Identifier(MCA.MOD_ID, path));
+            return TagKey.of(RegistryKeys.ITEM, new Identifier(MCA.MOD_ID, path));
         }
     }
 }

@@ -3,16 +3,21 @@ package net.mca.entity.ai.brain.tasks;
 import com.google.common.collect.ImmutableMap;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.server.world.data.Building;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.*;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.OpenDoorsTask;
 import net.minecraft.entity.ai.brain.task.Task;
+import net.minecraft.entity.ai.pathing.PathNode;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
+public class ExtendedSleepTask extends MultiTickTask<VillagerEntityMCA> {
     private long startTime;
     private final float speed;
     private BlockPos bed;
@@ -96,7 +101,18 @@ public class ExtendedSleepTask extends Task<VillagerEntityMCA> {
     @Override
     protected void run(ServerWorld world, VillagerEntityMCA entity, long time) {
         if (time > startTime) {
-            OpenDoorsTask.pathToDoor(world, entity, null, null);
+            Brain<?> brain = entity.getBrain();
+            if (brain.hasMemoryModule(MemoryModuleType.DOORS_TO_CLOSE)) {
+                Set<GlobalPos> set = brain.getOptionalRegisteredMemory(MemoryModuleType.DOORS_TO_CLOSE).get();
+                Optional<List<LivingEntity>> optional;
+                if (brain.hasMemoryModule(MemoryModuleType.MOBS)) {
+                    optional = brain.getOptionalRegisteredMemory(MemoryModuleType.MOBS);
+                } else {
+                    optional = Optional.empty();
+                }
+
+                OpenDoorsTask.pathToDoor(world, entity, null, null, set, optional);
+            }
             entity.sleep(bed);
         }
     }

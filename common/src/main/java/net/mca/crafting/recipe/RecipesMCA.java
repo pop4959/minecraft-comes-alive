@@ -3,17 +3,15 @@ package net.mca.crafting.recipe;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.mca.MCA;
-import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 
 public interface RecipesMCA {
 
-    DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(MCA.MOD_ID, Registry.RECIPE_SERIALIZER_KEY);
+    DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.RECIPE_SERIALIZER);
 
    // TODO: See 55a267864e93b0a37a86506a85993953735b8979
    // - This 110% needs to be reimplemented, commit id is for the prior 1.17- version
@@ -25,15 +23,15 @@ public interface RecipesMCA {
     }
 
     // TODO: Migrate to Deferred when Mojang inevitably freezes this registry
-    static <T extends Recipe<?>> RecipeType<T> type(String name) {
-        Identifier id = new Identifier(MCA.MOD_ID, name);
-        return Registry.register(Registry.RECIPE_TYPE, id, new RecipeType<>() {
-            @Override
-            public String toString() {
-                return name;
-            }
-        });
-    }
+//    static <T extends Recipe<?>> RecipeType<T> type(String name) {
+//        Identifier id = new Identifier(MCA.MOD_ID, name);
+//        return Registry.register(Registry.RECIPE_TYPE, id, new RecipeType<>() {
+//            @Override
+//            public String toString() {
+//                return name;
+//            }
+//        });
+//    }
 
     static <T extends RecipeSerializer<?>> RegistrySupplier<T> serializer(String name, Supplier<T> obj) {
         Identifier id = new Identifier(MCA.MOD_ID, name);

@@ -8,11 +8,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.ai.pathing.PathNode;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class SmarterOpenDoorsTask extends Task<LivingEntity> {
+public class SmarterOpenDoorsTask extends MultiTickTask<LivingEntity> {
     private static final int RUN_TIME = 20;
     private static final double PATHING_DISTANCE = 2.0;
     private static final double REACH_DISTANCE = 2.0;

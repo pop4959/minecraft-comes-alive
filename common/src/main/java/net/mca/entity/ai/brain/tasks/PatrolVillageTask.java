@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +16,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Optional;
 
-public class PatrolVillageTask extends Task<VillagerEntityMCA> {
+public class PatrolVillageTask extends MultiTickTask<VillagerEntityMCA> {
     private final int completionRange;
     private final float speed;
 

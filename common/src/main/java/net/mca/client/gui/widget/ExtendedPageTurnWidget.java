@@ -31,6 +31,6 @@ public class ExtendedPageTurnWidget extends PageTurnWidget {
             j += 13;
         }
 
-        drawTexture(matrices, x, y, i, j, 23, 13);
+        drawTexture(matrices, getX(), getY(), i, j, 23, 13);
     }
 }

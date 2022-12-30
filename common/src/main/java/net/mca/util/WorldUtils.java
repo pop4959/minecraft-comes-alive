@@ -5,14 +5,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -55,9 +56,9 @@ public interface WorldUtils {
 
     //a wrapper for the unnecessary complex query provided by minecraft
     static Optional<BlockPos> getClosestStructurePosition(ServerWorld world, BlockPos center, Identifier structure, int radius) {
-        Registry<Structure> registry = world.getRegistryManager().get(Registry.STRUCTURE_KEY);
+        Registry<Structure> registry = world.getRegistryManager().get(RegistryKeys.STRUCTURE);
         Structure feature = registry.get(structure);
-        Optional<RegistryEntry<Structure>> entry = registry.getEntry(registry.getRawId(feature));
+        Optional<RegistryEntry.Reference<Structure>> entry = registry.getEntry(registry.getRawId(feature));
         if (entry.isPresent()) {
             RegistryEntryList.Direct<Structure> of = RegistryEntryList.of(entry.get());
             Pair<BlockPos, RegistryEntry<Structure>> pair = world.getChunkManager().getChunkGenerator().locateStructure(world, of, center, radius, false);

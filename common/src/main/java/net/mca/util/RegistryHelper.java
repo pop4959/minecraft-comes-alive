@@ -1,10 +1,11 @@
 package net.mca.util;
 
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryEntryList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -38,6 +39,6 @@ public class RegistryHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> Registry<T> getRegistryOf(@NotNull TagKey<T> key) {
-        return (Registry<T>) Registry.REGISTRIES.get(key.registry().getValue());
+        return (Registry<T>) Registries.REGISTRIES.get(key.registry().getValue());
     }
 }

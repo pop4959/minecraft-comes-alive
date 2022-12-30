@@ -19,6 +19,6 @@ public class NamedTextFieldWidget extends TextFieldWidget {
         super.renderButton(matrices, mouseX, mouseY, delta);
 
         OrderedText orderedText = getMessage().asOrderedText();
-        textRenderer.drawWithShadow(matrices, orderedText, (float)(x - textRenderer.getWidth(orderedText) - 4), (float)y + (height - 8) / 2.0f, 0xffffff);
+        textRenderer.drawWithShadow(matrices, orderedText, (float)(getX() - textRenderer.getWidth(orderedText) - 4), (float)getY() + (height - 8) / 2.0f, 0xffffff);
     }
 }

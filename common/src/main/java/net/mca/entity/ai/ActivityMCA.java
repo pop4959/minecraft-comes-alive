@@ -11,15 +11,15 @@ import net.mca.mixin.MixinSensorType;
 import net.minecraft.entity.ai.brain.Activity;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.ai.brain.sensor.SensorType;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 
 public interface ActivityMCA {
 
-    DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(MCA.MOD_ID, Registry.ACTIVITY_KEY);
-    DeferredRegister<SensorType<?>> SENSORS = DeferredRegister.create(MCA.MOD_ID, Registry.SENSOR_TYPE_KEY);
+    DeferredRegister<Activity> ACTIVITIES = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.ACTIVITY);
+    DeferredRegister<SensorType<?>> SENSORS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.SENSOR_TYPE);
 
     RegistrySupplier<Activity> CHORE = activity("chore");
     RegistrySupplier<Activity> GRIEVE = activity("grieve");

@@ -6,12 +6,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 
-public class ExtendedMeleeAttackTask extends Task<MobEntity> {
+public class ExtendedMeleeAttackTask extends MultiTickTask<MobEntity> {
     private final float range;
     private final int interval;
     private final MemoryModuleType<? extends LivingEntity> target;

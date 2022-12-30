@@ -6,10 +6,11 @@ import net.mca.entity.ai.MemoryModuleTypeMCA;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
-public class FollowTask extends Task<VillagerEntityMCA> {
+public class FollowTask extends MultiTickTask<VillagerEntityMCA> {
     public FollowTask() {
         super(ImmutableMap.of(
                 MemoryModuleTypeMCA.PLAYER_FOLLOWING.get(), MemoryModuleState.VALUE_PRESENT

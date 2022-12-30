@@ -499,20 +499,20 @@ public class Village implements Iterable<Building> {
         if (this.doesNotSuffocateAt(world, blockPos)) {
             int i = world.random.nextInt(10);
             if (i == 0 && Config.getInstance().innSpawnsWanderingTraders) {
-                WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
+                WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, blockPos, SpawnReason.EVENT);
                 if (trader != null) {
                     name = trader.getName().getString();
                     trader.setDespawnDelay(48000);
                 }
             } else if (i == 1 && Config.getInstance().innSpawnsCultists) {
-                VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
+                VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, blockPos, SpawnReason.EVENT);
                 if (adventurer != null) {
                     name = adventurer.getName().getString();
                     adventurer.setProfession(ProfessionsMCA.CULTIST.get());
                     adventurer.setDespawnDelay(48000);
                 }
             } else if (Config.getInstance().innSpawnsAdventurers) {
-                VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
+                VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, blockPos, SpawnReason.EVENT);
                 if (adventurer != null) {
                     name = adventurer.getName().getString();
                     adventurer.setProfession(ProfessionsMCA.ADVENTURER.get());

@@ -32,11 +32,11 @@
     "mca.mixin.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.9",
-    "minecraft": ">=1.19.2",
+    "fabricloader": ">=0.14.12",
+    "minecraft": ">=1.19.3",
     "java": ">=17",
     "fabric-api-base": ">=0.1.0",
     "fabric-registry-sync-v0": ">=0.1.0",
-    "architectury": ">=6.2.43"
+    "architectury": ">=7.0.66"
   }
 }

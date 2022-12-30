@@ -23,18 +23,18 @@ import net.mca.network.c2s.VillagerEditorSyncRequest;
 import net.mca.network.c2s.VillagerNameRequest;
 import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
+import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
 import java.util.*;
@@ -356,7 +356,7 @@ public class VillagerEditorScreen extends Screen {
                     MutableText text = Text.translatable("entity.minecraft.villager." + p);
                     ButtonWidget widget = addDrawableChild(new ButtonWidget(width / 2 + (right ? DATA_WIDTH / 2 : 0), y, DATA_WIDTH / 2, 20, text, b -> {
                         NbtCompound compound = new NbtCompound();
-                        compound.putString("profession", Registry.VILLAGER_PROFESSION.getId(p).toString());
+                        compound.putString("profession", Registries.VILLAGER_PROFESSION.getId(p).toString());
                         syncVillagerData();
                         NetworkHandler.sendToServer(new VillagerEditorSyncRequest("profession", villagerUUID, compound));
                         requestVillagerData();

@@ -7,6 +7,7 @@ import net.mca.entity.ai.MemoryModuleTypeMCA;
 import net.mca.util.InventoryUtils;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ import net.minecraft.server.world.ServerWorld;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class EquipmentTask extends Task<VillagerEntityMCA> {
+public class EquipmentTask extends MultiTickTask<VillagerEntityMCA> {
     private static final int COOLDOWN = 100;
     private int lastEquipTime;
     private final Predicate<VillagerEntityMCA> condition;

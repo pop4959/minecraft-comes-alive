@@ -6,15 +6,15 @@ import net.mca.MCA;
 import net.mca.TagsMCA;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 
 public interface BlocksMCA {
 
-    DeferredRegister<Block> BLOCKS = DeferredRegister.create(MCA.MOD_ID, Registry.BLOCK_KEY);
+    DeferredRegister<Block> BLOCKS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.BLOCK);
 
     RegistrySupplier<Block> ROSE_GOLD_BLOCK = register("rose_gold_block", () -> new Block(Block.Settings.copy(Blocks.GOLD_BLOCK)));
 

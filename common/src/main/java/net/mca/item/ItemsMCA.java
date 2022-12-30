@@ -17,16 +17,17 @@ import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.Supporters;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public interface ItemsMCA {
-    DeferredRegister<Item> ITEMS = DeferredRegister.create(MCA.MOD_ID, Registry.ITEM_KEY);
+    DeferredRegister<Item> ITEMS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.ITEM);
 
     RegistrySupplier<Item> MALE_VILLAGER_SPAWN_EGG = register("male_villager_spawn_egg", () -> new ArchitecturySpawnEggItem(EntitiesMCA.MALE_VILLAGER, 0x5e9aff, 0x3366bc, baseProps()));
     RegistrySupplier<Item> FEMALE_VILLAGER_SPAWN_EGG = register("female_villager_spawn_egg", () -> new ArchitecturySpawnEggItem(EntitiesMCA.FEMALE_VILLAGER, 0xe85ca1, 0xe3368c, baseProps()));
@@ -38,8 +39,8 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> BABY_BOY = register("baby_boy", () -> new BabyItem(Gender.MALE, baseProps().maxCount(1)));
     RegistrySupplier<Item> BABY_GIRL = register("baby_girl", () -> new BabyItem(Gender.FEMALE, baseProps().maxCount(1)));
-    RegistrySupplier<Item> SIRBEN_BABY_BOY = register("sirben_baby_boy", () -> new SirbenBabyItem(Gender.MALE, baseProps().group(null).maxCount(1)));
-    RegistrySupplier<Item> SIRBEN_BABY_GIRL = register("sirben_baby_girl", () -> new SirbenBabyItem(Gender.FEMALE, baseProps().group(null).maxCount(1)));
+    RegistrySupplier<Item> SIRBEN_BABY_BOY = register("sirben_baby_boy", () -> new SirbenBabyItem(Gender.MALE, baseProps().arch$tab((ItemGroup) null).maxCount(1)));
+    RegistrySupplier<Item> SIRBEN_BABY_GIRL = register("sirben_baby_girl", () -> new SirbenBabyItem(Gender.FEMALE, baseProps().arch$tab((ItemGroup) null).maxCount(1)));
 
     RegistrySupplier<Item> WEDDING_RING = register("wedding_ring", () -> new WeddingRingItem(unstackableProps()));
     RegistrySupplier<Item> WEDDING_RING_RG = register("wedding_ring_rg", () -> new WeddingRingItem(unstackableProps()));
@@ -152,7 +153,7 @@ public interface ItemsMCA {
     }
 
     static Item.Settings baseProps() {
-        return new Item.Settings().group(ItemGroupMCA.MCA_GROUP);
+        return new Item.Settings().arch$tab(ItemGroupMCA.MCA_GROUP);
     }
 
     static Item.Settings unstackableProps() {

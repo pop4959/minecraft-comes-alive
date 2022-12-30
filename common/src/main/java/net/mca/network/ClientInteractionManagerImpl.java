@@ -17,8 +17,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
             case INTERACT:
                 if (client.player != null) {
                     ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);
-                    boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registry.ITEM.getId(item.getItem()).toString());
+                    boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registries.ITEM.getId(item.getItem()).toString());
                     if (!isOnBlacklist) {
                         VillagerLike<?> villager = (VillagerLike<?>)client.world.getEntityById(message.villager);
                         client.setScreen(new InteractScreen(villager));

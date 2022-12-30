@@ -3,11 +3,12 @@ package net.mca.resources.data;
 import net.mca.MCA;
 import net.mca.util.RegistryHelper;
 import net.minecraft.block.Block;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -87,14 +88,14 @@ public final class BuildingType implements Serializable {
                 Identifier identifier;
                 if (requirement.getKey().startsWith("#")) {
                     identifier = new Identifier(requirement.getKey().substring(1));
-                    TagKey<Block> tag = TagKey.of(Registry.BLOCK_KEY, identifier);
+                    TagKey<Block> tag = TagKey.of(RegistryKeys.BLOCK, identifier);
                     if (tag == null || RegistryHelper.isTagEmpty(tag)) {
                         MCA.LOGGER.error("Unknown building type tag " + identifier);
                     } else {
                         var entries = RegistryHelper.getEntries(tag);
                         entries.ifPresent(registryEntries -> {
                             for (Block b : registryEntries.stream().map(RegistryEntry::value).toList()) {
-                                blockToGroup.putIfAbsent(Registry.BLOCK.getId(b), identifier);
+                                blockToGroup.putIfAbsent(Registries.BLOCK.getId(b), identifier);
                             }
                         });
                     }

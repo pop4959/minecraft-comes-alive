@@ -10,6 +10,7 @@ import net.mca.server.world.data.Village;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -17,7 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 
 import java.util.Optional;
 
-public class GreetPlayerTask extends Task<VillagerEntityMCA> {
+public class GreetPlayerTask extends MultiTickTask<VillagerEntityMCA> {
     private static final int MAX_COOLDOWN = 2000;
 
     private Optional<? extends PlayerEntity> target = Optional.empty();

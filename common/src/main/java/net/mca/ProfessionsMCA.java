@@ -7,12 +7,12 @@ import net.mca.entity.ai.PointOfInterestTypeMCA;
 import net.mca.mixin.MixinVillagerProfession;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 public interface ProfessionsMCA {
-    DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(MCA.MOD_ID, Registry.VILLAGER_PROFESSION_KEY);
+    DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.VILLAGER_PROFESSION);
 
     RegistrySupplier<VillagerProfession> OUTLAW = register("outlaw", false, true, true, PointOfInterestType.NONE, VillagerProfession.IS_ACQUIRABLE_JOB_SITE, SoundEvents.ENTITY_VILLAGER_WORK_FARMER);
     RegistrySupplier<VillagerProfession> GUARD = register("guard", false, true, false, PointOfInterestType.NONE, VillagerProfession.IS_ACQUIRABLE_JOB_SITE, SoundEvents.ENTITY_VILLAGER_WORK_ARMORER);

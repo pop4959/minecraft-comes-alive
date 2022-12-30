@@ -101,8 +101,8 @@ public class VillagerEntityModelMCA<T extends LivingEntity & VillagerLike<T>> ex
     }
 
     @Override
-    public void setAttributes(BipedEntityModel<T> target) {
-        super.setAttributes(target);
+    public void copyBipedStateTo(BipedEntityModel<T> target) {
+        super.copyBipedStateTo(target);
         if (target instanceof VillagerEntityModelMCA) {
             copyAttributes((VillagerEntityModelMCA<T>)target);
         }

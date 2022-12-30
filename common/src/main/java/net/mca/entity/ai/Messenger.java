@@ -10,11 +10,11 @@ import net.mca.resources.API;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public interface Messenger extends EntityWrapper {
@@ -55,7 +55,7 @@ public interface Messenger extends EntityWrapper {
         //also pass profession
         String professionString = "";
         if (!asEntity().isBaby() && asEntity() instanceof VillagerEntityMCA v) {
-            professionString = "#P" + Registry.VILLAGER_PROFESSION.getId(v.getProfession()).getPath() + ".";
+            professionString = "#P" + Registries.VILLAGER_PROFESSION.getId(v.getProfession()).getPath() + ".";
         }
 
         //and personality

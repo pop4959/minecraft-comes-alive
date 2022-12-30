@@ -6,12 +6,12 @@ import net.mca.Config;
 import net.mca.MCA;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +88,7 @@ public class ClothingList extends JsonDataLoader {
 
     public WeightedPool<String> getPool(Gender gender, @Nullable VillagerProfession profession) {
         Map<String, String> map = Config.getInstance().professionConversionsMap;
-        String currentValue = profession == null ? "minecraft:none" : Registry.VILLAGER_PROFESSION.getId(profession).toString();
+        String currentValue = profession == null ? "minecraft:none" : Registries.VILLAGER_PROFESSION.getId(profession).toString();
         String identifier = map.getOrDefault(currentValue, map.getOrDefault("default", currentValue));
         return getPool(gender, identifier);
     }

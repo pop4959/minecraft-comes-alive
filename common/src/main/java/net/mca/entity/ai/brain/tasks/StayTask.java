@@ -4,10 +4,11 @@ import com.google.common.collect.ImmutableMap;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.MemoryModuleTypeMCA;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
+import net.minecraft.entity.ai.brain.task.MultiTickTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
-public class StayTask extends Task<VillagerEntityMCA> {
+public class StayTask extends MultiTickTask<VillagerEntityMCA> {
     public StayTask() {
         super(ImmutableMap.of());
     }

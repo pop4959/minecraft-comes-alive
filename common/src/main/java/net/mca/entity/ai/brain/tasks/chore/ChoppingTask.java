@@ -14,13 +14,14 @@ import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,13 +161,13 @@ public class ChoppingTask extends AbstractChoreTask {
     private boolean isValidTree(ServerWorld world, BlockPos pos) {
         // Similar logic to WanderOrTeleportToTargetTask#isAreaSafe
         final BlockState state = world.getBlockState(pos);
-        final Identifier stateId = Registry.BLOCK.getId(state.getBlock());
+        final Identifier stateId = Registries.BLOCK.getId(state.getBlock());
         for (String blockId : Config.getInstance().validTreeSources) {
             if (blockId.equals(stateId.toString())) {
                 return true;
             } else if (blockId.charAt(0) == '#') {
                 Identifier identifier = new Identifier(blockId.substring(1));
-                TagKey<Block> tag = TagKey.of(Registry.BLOCK_KEY, identifier);
+                TagKey<Block> tag = TagKey.of(RegistryKeys.BLOCK, identifier);
                 if (tag != null && !RegistryHelper.isTagEmpty(tag)) {
                     if (state.isIn(tag)) {
                         return true;
@@ -182,13 +183,13 @@ public class ChoppingTask extends AbstractChoreTask {
     private int getTicksFor(BlockState state, int fallback) {
         // Similar logic to WanderOrTeleportToTargetTask#isAreaSafe
         final Map<String, Integer> sources = Config.getInstance().maxTreeTicks;
-        final Identifier stateId = Registry.BLOCK.getId(state.getBlock());
+        final Identifier stateId = Registries.BLOCK.getId(state.getBlock());
         for (String blockId : sources.keySet()) {
             if (blockId.equals(stateId.toString())) {
                 return sources.get(blockId);
             } else if (blockId.charAt(0) == '#') {
                 Identifier identifier = new Identifier(blockId.substring(1));
-                TagKey<Block> tag = TagKey.of(Registry.BLOCK_KEY, identifier);
+                TagKey<Block> tag = TagKey.of(RegistryKeys.BLOCK, identifier);
                 if (tag != null && !RegistryHelper.isTagEmpty(tag)) {
                     if (state.isIn(tag)) {
                         return sources.get(blockId);

@@ -5,8 +5,8 @@ import net.mca.util.NbtHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class GiftSaturation {
         }
 
         // add to queue
-        Identifier id = Registry.ITEM.getId(stack.getItem());
+        Identifier id = Registries.ITEM.getId(stack.getItem());
         values.add(id);
 
         // clear old values if limit is reached
@@ -30,7 +30,7 @@ public class GiftSaturation {
     }
 
     public int get(ItemStack stack) {
-        Identifier id = Registry.ITEM.getId(stack.getItem());
+        Identifier id = Registries.ITEM.getId(stack.getItem());
         return (int)values.stream().filter(v -> v.equals(id)).count();
     }
 

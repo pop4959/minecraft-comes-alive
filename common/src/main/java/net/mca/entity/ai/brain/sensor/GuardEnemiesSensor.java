@@ -10,10 +10,10 @@ import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.sensor.Sensor;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.Monster;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +53,7 @@ public class GuardEnemiesSensor extends Sensor<LivingEntity> {
             //priority is irrelevant if this entity is currently an active threat
             return 9;
         } else {
-            Identifier id = Registry.ENTITY_TYPE.getId(entity.getType());
+            Identifier id = Registries.ENTITY_TYPE.getId(entity.getType());
             if (Config.getInstance().guardsTargetEntities.containsKey(id.toString())) {
                 return Config.getInstance().guardsTargetEntities.get(id.toString());
             } else if (Config.getInstance().guardsTargetMonsters && entity instanceof Monster) {

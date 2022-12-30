@@ -17,12 +17,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 
 import java.io.Serial;
@@ -102,7 +102,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
                 break;
             case "profession":
                 if (entity instanceof VillagerEntityMCA villager) {
-                    VillagerProfession profession = Registry.VILLAGER_PROFESSION.get(new Identifier(getData().getString("profession")));
+                    VillagerProfession profession = Registries.VILLAGER_PROFESSION.get(new Identifier(getData().getString("profession")));
                     villager.setProfession(profession);
                 }
                 break;

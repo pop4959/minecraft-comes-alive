@@ -14,19 +14,19 @@ import net.mca.resources.data.BuildingType;
 import net.mca.resources.data.tasks.Task;
 import net.mca.server.world.data.Building;
 import net.mca.server.world.data.Village;
+import net.mca.util.compat.ButtonWidget;
 import net.mca.util.localization.FlowingText;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -47,7 +47,8 @@ public class BlueprintScreen extends ExtendedScreen {
     private ButtonWidget[] buttonMarriage;
     private ButtonWidget buttonPage;
     private int pageNumber = 0;
-    private final List<ButtonWidget> catalogButtons = new LinkedList<>();
+    // 1.19.3: This needs to be the MC type, DO NOT TOUCH !!!
+    private final List<net.minecraft.client.gui.widget.ButtonWidget> catalogButtons = new LinkedList<>();
 
     private static final Identifier ICON_TEXTURES = MCA.locate("textures/buildings.png");
     private BuildingType selectedBuilding;
@@ -98,8 +99,7 @@ public class BlueprintScreen extends ExtendedScreen {
         buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
                 Text.literal(""), (b) -> {
         },
-                (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
-                        renderTooltip(matrixStack, FlowingText.wrap(tooltip, 160), mx, my)
+                tooltip
         ));
 
         return buttons;
@@ -604,8 +604,8 @@ public class BlueprintScreen extends ExtendedScreen {
     }
 
     private Text getBlockName(Identifier id) {
-        if (Registry.BLOCK.containsId(id)) {
-            return Text.translatable(Registry.BLOCK.get(id).getTranslationKey());
+        if (Registries.BLOCK.containsId(id)) {
+            return Text.translatable(Registries.BLOCK.get(id).getTranslationKey());
         } else {
             return Text.translatable("tag." + id.toString());
         }

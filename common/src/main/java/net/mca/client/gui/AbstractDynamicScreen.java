@@ -129,7 +129,8 @@ public abstract class AbstractDynamicScreen extends Screen {
                     apiButton.width(),
                     apiButton.height(),
                     Text.translatable(apiButton.identifier()),
-                    a -> screen.buttonPressed(apiButton));
+                    a -> screen.buttonPressed(apiButton),
+                    DEFAULT_NARRATION_SUPPLIER);
             this.apiButton = apiButton;
 
             // Remove the button if we specify it should not be present on constraint failure

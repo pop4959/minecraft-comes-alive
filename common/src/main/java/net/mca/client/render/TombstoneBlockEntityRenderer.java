@@ -13,8 +13,8 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
 
@@ -40,14 +40,14 @@ public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<Tombsto
 
         Direction facing = state.get(Properties.HORIZONTAL_FACING).getOpposite();
 
-        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-facing.asRotation()));
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-facing.asRotation()));
         matrices.translate(0, 0, 0);
         matrices.scale(0.010416667F, 0.010416667F, 0.010416667F);
-        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
 
         TombstoneBlock block = (TombstoneBlock)state.getBlock();
 
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(block.getRotation()));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(block.getRotation()));
 
         Vec3d offset = block.getNameplateOffset();
         matrices.translate(offset.getX(), offset.getY(), offset.getZ());

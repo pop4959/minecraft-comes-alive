@@ -15,9 +15,9 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -97,7 +97,7 @@ public class ReaperSpawner {
 
         start(new SummonPosition(pos, totems));
 
-        EntityType.LIGHTNING_BOLT.spawn(world, null, null, null, pos, SpawnReason.TRIGGERED, false, false);
+        EntityType.LIGHTNING_BOLT.spawn(world, pos, SpawnReason.TRIGGERED);
 
         world.setBlockState(pos.down(), Blocks.SOUL_SOIL.getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
         world.setBlockState(pos, BlocksMCA.INFERNAL_FLAME.get().getDefaultState(), Block.NOTIFY_NEIGHBORS | Block.NOTIFY_LISTENERS);
@@ -243,11 +243,11 @@ public class ReaperSpawner {
             }
 
             if (--ticks % 20 == 0) {
-                EntityType.LIGHTNING_BOLT.spawn(world, null, null, null, position.spawnPosition, SpawnReason.TRIGGERED, false, false);
+                EntityType.LIGHTNING_BOLT.spawn(world, position.spawnPosition, SpawnReason.TRIGGERED);
             }
 
             if (ticks == 0) {
-                GrimReaperEntity reaper = EntitiesMCA.GRIM_REAPER.get().spawn(world, null, null, null, position.spawnPosition, SpawnReason.TRIGGERED, false, false);
+                GrimReaperEntity reaper = EntitiesMCA.GRIM_REAPER.get().spawn(world, position.spawnPosition, SpawnReason.TRIGGERED);
                 if (reaper != null) {
                     reaper.playSound(SoundsMCA.REAPER_SUMMON.get(), 1.0F, 1.0F);
                 }

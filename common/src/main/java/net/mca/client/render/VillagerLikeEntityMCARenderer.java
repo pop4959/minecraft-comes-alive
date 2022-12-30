@@ -18,7 +18,8 @@ import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.dynamic.DynamicSerializableUuid;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Uuids;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -61,14 +62,14 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
                             )) : 
                     RenderLayer.getEntityCutoutNoCull(
                             DefaultSkinHelper.getTexture(
-                                    DynamicSerializableUuid.getUuidFromProfile(entity.getGameProfile())
+                                    Uuids.getUuidFromProfile(entity.getGameProfile())
                             )
                     );
         }
 
         //setting the type to null prevents it from rendering
         //we need a skin layer anyway because of the color
-        return super.getRenderLayer(entity, showBody, translucent, showOutlines);
+        return null;
     }
 
     @Override
@@ -77,6 +78,11 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
         return player != null
                 && player.squaredDistanceTo(villager) < 25
                 && Config.getInstance().showNameTags && !villager.isInvisibleTo(player);
+    }
+
+    @Override
+    public Identifier getTexture(T entity) {
+        return null;
     }
 
     @Override

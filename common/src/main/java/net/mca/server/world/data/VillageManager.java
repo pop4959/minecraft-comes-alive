@@ -18,13 +18,13 @@ import net.minecraft.entity.mob.IllagerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.PersistentState;
@@ -246,7 +246,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     private BuildingType getGroupedBuildingType(BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
         for (BuildingType bt : API.getVillagePool()) {
-            if (bt.grouped() && bt.getBlockToGroup().containsKey(Registry.BLOCK.getId(block))) {
+            if (bt.grouped() && bt.getBlockToGroup().containsKey(Registries.BLOCK.getId(block))) {
                 return bt;
             }
         }

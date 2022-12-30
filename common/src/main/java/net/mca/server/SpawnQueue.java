@@ -11,8 +11,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.Registry;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -87,14 +87,14 @@ public class SpawnQueue {
         }
         if (Config.getInstance().overwriteOriginalVillagers
                 && (entity.getClass().equals(VillagerEntity.class) ||
-                    Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
+                    Config.getInstance().moddedVillagerWhitelist.contains(Registries.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
                 && shouldGetConverted(entity)
                 && !villagerSpawnQueue.contains(entity)) {
             return villagerSpawnQueue.add((VillagerEntity)entity);
         }
         if (Config.getInstance().overwriteOriginalZombieVillagers
                 && (entity.getClass().equals(ZombieVillagerEntity.class) ||
-                    Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
+                    Config.getInstance().moddedZombieVillagerWhitelist.contains(Registries.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
                 && !zombieVillagerSpawnQueue.contains(entity)) {
             return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
         }

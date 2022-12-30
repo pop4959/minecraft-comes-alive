@@ -2,12 +2,12 @@ package net.mca;
 
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public interface SoundsMCA {
-    DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(MCA.MOD_ID, Registry.SOUND_EVENT_KEY);
+    DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.SOUND_EVENT);
     
     RegistrySupplier<SoundEvent> REAPER_SCYTHE_OUT = register("reaper.scythe_out");
     RegistrySupplier<SoundEvent> REAPER_SCYTHE_SWING = register("reaper.scythe_swing");
@@ -64,6 +64,6 @@ public interface SoundsMCA {
 
     static RegistrySupplier<SoundEvent> register(String sound) {
         Identifier id = new Identifier(MCA.MOD_ID, sound);
-        return SOUNDS.register(id, () -> new SoundEvent(id));
+        return SOUNDS.register(id, () -> SoundEvent.of(id));
     }
 }

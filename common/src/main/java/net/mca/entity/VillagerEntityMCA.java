@@ -65,6 +65,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
@@ -82,7 +83,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
@@ -293,7 +293,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public Identifier getProfessionId() {
-        return Registry.VILLAGER_PROFESSION.getId(getProfession());
+        return Registries.VILLAGER_PROFESSION.getId(getProfession());
     }
 
     @Override
@@ -463,7 +463,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registry.ITEM.getId(stack.getItem()).toString());
+        boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registries.ITEM.getId(stack.getItem()).toString());
         if (hand.equals(Hand.MAIN_HAND) && !isOnBlacklist && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && canInteractWithItemStackInHand(stack)) {
             if (!getVillagerBrain().isPanicking()) {
                 //make sure dialogueType is synced in case the client needs it
@@ -1333,7 +1333,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (mob instanceof ZombieVillagerEntity zombie) {
             zombie.initialize((ServerWorld)world, world.getLocalDifficulty(zombie.getBlockPos()), SpawnReason.CONVERSION, new ZombieEntity.ZombieData(false, true), null);
             zombie.setVillagerData(getVillagerData());
-            zombie.setGossipData(getGossip().serialize(NbtOps.INSTANCE).getValue());
+            zombie.setGossipData(getGossip().serialize(NbtOps.INSTANCE));
             zombie.setOfferData(getOffers().toNbt());
             zombie.setXp(getExperience());
             zombie.setUuid(getUuid());

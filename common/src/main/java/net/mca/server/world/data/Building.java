@@ -13,13 +13,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.poi.PointOfInterest;
 import net.minecraft.world.poi.PointOfInterestStorage;
@@ -29,8 +29,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Stream;
-
-import static net.minecraft.tag.BlockTags.LEAVES;
 
 public class Building implements Serializable, Iterable<UUID> {
     @Serial
@@ -225,7 +223,7 @@ public class Building implements Serializable, Iterable<UUID> {
         //remove all invalid blocks
         for (Map.Entry<Identifier, List<BlockPos>> positions : blocks.entrySet()) {
             List<BlockPos> mask = positions.getValue().stream()
-                    .filter(p -> !Registry.BLOCK.getId(world.getBlockState(p).getBlock()).equals(positions.getKey()))
+                    .filter(p -> !Registries.BLOCK.getId(world.getBlockState(p).getBlock()).equals(positions.getKey()))
                     .toList();
             positions.getValue().removeAll(mask);
         }
@@ -325,7 +323,7 @@ public class Building implements Serializable, Iterable<UUID> {
                                     //found valid block
                                     BlockState block = world.getBlockState(n2);
                                     if (!block.isAir() || roofCache.containsKey(n2)) {
-                                        if (!(roofCache.containsKey(n2) && !roofCache.get(n2)) && !block.isIn(LEAVES)) {
+                                        if (!(roofCache.containsKey(n2) && !roofCache.get(n2)) && !block.isIn(BlockTags.LEAVES)) {
                                             for (int i2 = i; i2 >= 0; i2--) {
                                                 n2 = n2.down();
                                                 roofCache.put(n2, true);
@@ -388,7 +386,7 @@ public class Building implements Serializable, Iterable<UUID> {
                 //count blocks types
                 BlockState blockState = world.getBlockState(p);
                 Block block = blockState.getBlock();
-                if (blockTypes.contains(Registry.BLOCK.getId(block))) {
+                if (blockTypes.contains(Registries.BLOCK.getId(block))) {
                     if (block instanceof BedBlock) {
                         // TODO: look for better solution for 7.4.0
                         if (blockState.get(BedBlock.PART) == BedPart.HEAD) {
@@ -483,7 +481,7 @@ public class Building implements Serializable, Iterable<UUID> {
     }
 
     public void addBlock(Block block, BlockPos p) {
-        Identifier key = Registry.BLOCK.getId(block);
+        Identifier key = Registries.BLOCK.getId(block);
         if (!blocks.containsKey(key)) {
             blocks.put(key, new ArrayList<>());
         }
@@ -491,7 +489,7 @@ public class Building implements Serializable, Iterable<UUID> {
     }
 
     public void removeBlock(Block block, BlockPos p) {
-        Identifier key = Registry.BLOCK.getId(block);
+        Identifier key = Registries.BLOCK.getId(block);
         if (blocks.containsKey(key)) {
             blocks.get(key).remove(p);
         }

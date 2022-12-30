@@ -8,11 +8,12 @@ import net.mca.entity.VillagerEntityMCA;
 import net.mca.resources.data.analysis.IntAnalysis;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
-import net.minecraft.util.registry.Registry;
 
 import java.util.*;
 import java.util.function.Function;
@@ -35,7 +36,7 @@ public class GiftType {
             Integer satisfaction = element.getValue().getAsInt();
             if (string.charAt(0) == '#') {
                 Identifier identifier = new Identifier(string.substring(1));
-                TagKey<Item> tag = TagKey.of(Registry.ITEM_KEY, identifier);
+                TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, identifier);
                 if (tag != null) {
                     tags.put(tag, satisfaction);
                 } else {
@@ -45,7 +46,7 @@ public class GiftType {
                 }
             } else {
                 Identifier identifier = new Identifier(string);
-                Optional<Item> item = Registry.ITEM.getOrEmpty(identifier);
+                Optional<Item> item = Registries.ITEM.getOrEmpty(identifier);
                 if (item.isPresent()) {
                     items.put(item.get(), satisfaction);
                 } else if (identifier.getNamespace().equals(MCA.MOD_ID)) {
@@ -124,7 +125,7 @@ public class GiftType {
 
     public GiftType(Item item, int satisfaction, Map<Response, String> responses) {
         this(
-                Registry.ITEM.getId(item),
+                Registries.ITEM.getId(item),
                 0,
                 new LinkedList<>(),
                 Collections.singletonMap(item, satisfaction),
