@@ -38,7 +38,7 @@ public class ListPage extends Page {
 
         int y = 48;
         for (int i = page * entriesPerPage; i < Math.min(text.size(), (page + 1) * entriesPerPage); i++) {
-            drawCenteredText(matrices, screen.getTextRenderer(), text.get(i), screen.width / 2, y, 0xFFFFFFFF);
+            drawCenteredText(matrices, screen.getTextRenderer(), text.get(i), screen.width / 2 - 4, y, 0xFFFFFFFF);
             y += 10;
         }
     }
