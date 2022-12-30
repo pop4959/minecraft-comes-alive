@@ -84,7 +84,6 @@ public class Residency {
             return;
         }
 
-
         //report buildings close by
         if (entity.age % 600 == 0 && entity.doesProfessionRequireHome()) {
             Optional<Village> village = getHomeVillage();

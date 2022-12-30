@@ -210,6 +210,12 @@ public class Building implements Serializable {
     }
 
     public validationResult validateBuilding(World world, Set<BlockPos> blocked) {
+        //validate grouped buildings differently
+        if (getBuildingType().grouped()) {
+            validateBlocks(world);
+            return getBlockPosStream().findAny().isEmpty() ? validationResult.TOO_SMALL : validationResult.SUCCESS;
+        }
+
         //clear old building
         blocks.clear();
         size = 0;

@@ -5,7 +5,6 @@ import net.mca.server.world.data.Building;
 import net.mca.server.world.data.GraveyardManager;
 import net.mca.server.world.data.Village;
 import net.mca.server.world.data.VillageManager;
-import net.mca.util.WorldUtils;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 

@@ -234,6 +234,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         return processBuilding(pos, false, false);
     }
 
+    //checks weather the given block contains a grouped building block, e.g., a town bell or gravestone
     private BuildingType getGroupedBuildingType(BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
         for (BuildingType bt : API.getVillagePool()) {
@@ -299,19 +300,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                 }
             }
 
-            //verify all poi buildings
-            village.getBuildings().values().stream()
-                    .filter(b -> enforce || world.getTime() - b.getLastScan() > Building.SCAN_COOLDOWN)
-                    .filter(b -> b.getBuildingType().grouped())
-                    .filter(b -> b.getCenter().getSquaredDistance(pos) < 1024.0)
-                    .forEach(b -> {
-                        b.validateBlocks(world);
-                        if (b.getBlockPosStream().findAny().isEmpty()) {
-                            toRemove.add(b.getId());
-                        }
-                    });
-
-            //remove buildings which became invalid for whatever reason
+            //remove buildings, which became invalid for whatever reason
             for (int id : toRemove) {
                 village.removeBuilding(id);
                 markDirty();

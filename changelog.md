@@ -30,6 +30,9 @@
 * Improved grieving
     * Villager will grieve when a close villager dies
     * Villager will also grieve once a week at a graveyard
+* Improved taxes
+    * Tax items can now be configured
+* Fixed graveyards disappearing
 
 # 7.3.21
 
