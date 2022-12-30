@@ -3,12 +3,6 @@ package net.mca.entity.ai.pathfinder;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 
 public enum ExtendedPathNodeType {
-    // MCA custom types
-    GRASS(-1.0f, PathNodeType.BLOCKED),
-    PATH(-1.0f, PathNodeType.BLOCKED),
-    WALKABLE_GRASS(0.0f, PathNodeType.WALKABLE),
-    WALKABLE_PATH(0.0f, PathNodeType.WALKABLE),
-
     // Vanilla types
     BLOCKED(-1.0F),
     OPEN(0.0F),
@@ -35,7 +29,13 @@ public enum ExtendedPathNodeType {
     BREACH(4.0F),
     LEAVES(-1.0F),
     STICKY_HONEY(8.0F),
-    COCOA(0.0F);
+    COCOA(0.0F),
+
+    // MCA custom types
+    GRASS(-1.0f, PathNodeType.BLOCKED),
+    PATH(-1.0f, PathNodeType.BLOCKED),
+    WALKABLE_GRASS(0.0f, PathNodeType.WALKABLE),
+    WALKABLE_PATH(0.0f, PathNodeType.WALKABLE);
 
     private final float defaultPenalty;
     private PathNodeType vanilla;
@@ -65,6 +65,10 @@ public enum ExtendedPathNodeType {
     }
 
     public float getBonusPenalty() {
-        return defaultPenalty >= 0.0f ? (this == ExtendedPathNodeType.WALKABLE_GRASS ? 5.0f : this == ExtendedPathNodeType.WALKABLE_PATH ? 0.0f : 1.0f) : 0.0f;
+        return defaultPenalty >= 0.0f ? (
+                this == ExtendedPathNodeType.WALKABLE_GRASS ? 1.0f :
+                        this == ExtendedPathNodeType.WALKABLE_PATH ? 0.01f :
+                                this == ExtendedPathNodeType.OPEN ? 0.0f : 0.1f
+        ) : 0.0f;
     }
 }

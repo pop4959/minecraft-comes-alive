@@ -25,8 +25,8 @@
 * You can now start a village with a room (e.g. underground)
 * Added more phrases
 * Fixed villagers using the steve second layer
-* Villager can now open gates (WIP, behave funky)
-* Villager now prefer paths (WIP, potential unstable)
+* Villager can now open gates
+* Villager now prefer paths and dislike stepping on grass (potential unstable)
 
 # 7.3.21
 

@@ -222,9 +222,26 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             return pathNode;
         }
 
-        if ((pathNode == null || pathNode.penalty < 0.0f) && maxYStep > 0 && pathNodeType != ExtendedPathNodeType.FENCE && pathNodeType != ExtendedPathNodeType.UNPASSABLE_RAIL && pathNodeType != ExtendedPathNodeType.TRAPDOOR && pathNodeType != ExtendedPathNodeType.POWDER_SNOW && (pathNode = this.getPathNode(x, y + 1, z, maxYStep - 1, prevFeetY, direction, nodeType)) != null && (pathNode.type == ExtendedPathNodeType.OPEN.toVanilla() || pathNode.type == ExtendedPathNodeType.WALKABLE.toVanilla()) && this.entity.getWidth() < 1.0f && this.checkBoxCollision(
-                new Box((g = (double)(x - direction.getOffsetX()) + 0.5) - e, VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(g, y + 1, h = (double)(z - direction.getOffsetZ()) + 0.5)) + 0.001, h - e, g + e, (double)this.entity.getHeight() + VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(pathNode.x, pathNode.y, (double)pathNode.z)) - 0.002, h + e))) {
-            pathNode = null;
+        // Step
+        if ((pathNode == null || pathNode.penalty < 0.0f) &&
+                maxYStep > 0 &&
+                pathNodeType != ExtendedPathNodeType.FENCE &&
+                pathNodeType != ExtendedPathNodeType.UNPASSABLE_RAIL &&
+                pathNodeType != ExtendedPathNodeType.TRAPDOOR &&
+                pathNodeType != ExtendedPathNodeType.POWDER_SNOW) {
+            pathNode = this.getPathNode(x, y + 1, z, maxYStep - 1, prevFeetY, direction, nodeType);
+            if (pathNode != null &&
+                    (pathNode.type == ExtendedPathNodeType.OPEN.toVanilla() || pathNode.type == ExtendedPathNodeType.WALKABLE.toVanilla()) &&
+                    this.entity.getWidth() < 1.0f &&
+                    this.checkBoxCollision(new Box((g = (double)(x - direction.getOffsetX()) + 0.5) - e,
+                            VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(g, y + 1, h = (double)(z - direction.getOffsetZ()) + 0.5)) + 0.001,
+                            h - e,
+                            g + e,
+                            (double)this.entity.getHeight() + VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(pathNode.x, pathNode.y, (double)pathNode.z)) - 0.002,
+                            h + e)
+                    )) {
+                pathNode = null;
+            }
         }
 
         if (pathNodeType == ExtendedPathNodeType.WATER && !this.canSwim()) {
@@ -266,11 +283,12 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
                     pathNode.penalty = Math.max(pathNode.penalty, penalty);
                     break;
                 }
-                if (!(penalty < 0.0f)) continue;
-                PathNode pathNode2 = this.getNode(x, y, z);
-                pathNode2.type = ExtendedPathNodeType.BLOCKED.toVanilla();
-                pathNode2.penalty = -1.0f;
-                return pathNode2;
+                if (penalty < 0.0f) {
+                    PathNode pathNode2 = this.getNode(x, y, z);
+                    pathNode2.type = ExtendedPathNodeType.BLOCKED.toVanilla();
+                    pathNode2.penalty = -1.0f;
+                    return pathNode2;
+                }
             }
         }
 
@@ -296,7 +314,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
 
     public ExtendedPathNodeType getExtendedNodeType(BlockView world, int x, int y, int z, MobEntity mob, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors) {
         EnumSet<ExtendedPathNodeType> enumSet = EnumSet.noneOf(ExtendedPathNodeType.class);
-        this.findNearbyNodeTypes(world, x, y, z, sizeX, sizeY, sizeZ, canOpenDoors, canEnterOpenDoors, enumSet, mob.getBlockPos());
+        ExtendedPathNodeType centerPathNodeType = this.findNearbyNodeTypes(world, x, y, z, sizeX, sizeY, sizeZ, canOpenDoors, canEnterOpenDoors, enumSet, mob.getBlockPos());
         if (enumSet.contains(ExtendedPathNodeType.FENCE)) {
             return ExtendedPathNodeType.FENCE;
         }
@@ -312,14 +330,18 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
                 worstPathNode = touchedPathNodeType;
             }
         }
+        if (sizeX <= 1 && centerPathNodeType == ExtendedPathNodeType.OPEN && getPenalty(mob, worstPathNode) == 0.0f) {
+            return ExtendedPathNodeType.OPEN;
+        }
         return worstPathNode;
     }
 
     /**
      * Adds the node types in the box with the given size to the input EnumSet.
      */
-    public void findNearbyNodeTypes(BlockView world, int x, int y, int z, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors, EnumSet<ExtendedPathNodeType> nearbyTypes, BlockPos pos) {
+    public ExtendedPathNodeType findNearbyNodeTypes(BlockView world, int x, int y, int z, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors, EnumSet<ExtendedPathNodeType> nearbyTypes, BlockPos pos) {
         BlockPos.Mutable p = new BlockPos.Mutable(x, y, z);
+        ExtendedPathNodeType type = ExtendedPathNodeType.BLOCKED;
 
         for (int i = 0; i < sizeX; ++i) {
             for (int j = 0; j < sizeY; ++j) {
@@ -352,10 +374,16 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
                         }
                     }
 
+                    if (i == 0 && j == 0 && k == 0) {
+                        type = pathNodeType;
+                    }
+
                     nearbyTypes.add(pathNodeType);
                 }
             }
         }
+
+        return type;
     }
 
     protected ExtendedPathNodeType adjustNodeType(BlockView world, boolean canOpenDoors, boolean canEnterOpenDoors, BlockPos pos, ExtendedPathNodeType type) {
@@ -398,7 +426,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         ExtendedPathNodeType pathNodeType = VillagerLandPathNodeMaker.getCommonNodeType(world, pos);
         if (pathNodeType == ExtendedPathNodeType.OPEN && y >= world.getBottomY() + 1) {
             ExtendedPathNodeType floorType = VillagerLandPathNodeMaker.getCommonNodeType(world, pos.set(x, y - 1, z));
-            pathNodeType = floorType == ExtendedPathNodeType.WALKABLE || floorType == ExtendedPathNodeType.OPEN || floorType == ExtendedPathNodeType.WATER || floorType == ExtendedPathNodeType.LAVA ? ExtendedPathNodeType.OPEN : ExtendedPathNodeType.WALKABLE;
+            pathNodeType = floorType.isWalkable() || floorType == ExtendedPathNodeType.OPEN || floorType == ExtendedPathNodeType.WATER || floorType == ExtendedPathNodeType.LAVA ? ExtendedPathNodeType.OPEN : ExtendedPathNodeType.WALKABLE;
 
             // Start of MCA
             if (floorType == ExtendedPathNodeType.PATH) {
