@@ -27,6 +27,9 @@
 * Fixed villagers using the steve second layer
 * Villager can now open gates
 * Villager now prefer paths and dislike stepping on grass (potential unstable)
+* Improved grieving
+    * Villager will grieve when a close villager dies
+    * Villager will also grieve once a week at a graveyard
 
 # 7.3.21
 
