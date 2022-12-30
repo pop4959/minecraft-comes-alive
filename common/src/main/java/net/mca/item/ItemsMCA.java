@@ -76,6 +76,7 @@ public interface ItemsMCA {
             .addSimplePages(10)));
 
     RegistrySupplier<Item> BOOK_FAMILY = register("book_family", () -> new ExtendedWrittenBookItem(baseProps(), new Book("family")
+            .setBackground(MCA.locate("textures/gui/books/family.png"))
             .addPage(new TitlePage("family"))
             .addSimplePages(8)));
 
@@ -116,9 +117,9 @@ public interface ItemsMCA {
             .addPage(new TitlePage("cult_0", Formatting.DARK_RED))
             .addPage(new CenteredTextPage("cult_0", 0))
             .addPage(new CenteredTextPage("cult_0", 1))
-            //.addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), "cult_0", 3))
             .addPage(new CenteredTextPage("cult_0", 2))
-            .addPage(new CenteredTextPage("cult_0", 3))));
+            .addPage(new CenteredTextPage("cult_0", 3))
+            .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), ""))));
 
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));

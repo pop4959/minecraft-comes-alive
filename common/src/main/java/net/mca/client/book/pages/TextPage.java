@@ -6,6 +6,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class TextPage extends Page {
@@ -28,7 +29,11 @@ public class TextPage extends Page {
             } catch (Exception ignored) {
             }
 
-            cachedPage = screen.getTextRenderer().wrapLines(stringVisitable, 114);
+            if (stringVisitable == null) {
+                cachedPage = new LinkedList<>();
+            } else {
+                cachedPage = screen.getTextRenderer().wrapLines(stringVisitable, 114);
+            }
         }
         return cachedPage;
     }
