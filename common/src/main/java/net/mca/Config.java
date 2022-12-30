@@ -92,7 +92,7 @@ public final class Config implements Serializable {
 
     //village behavior
     public int guardSpawnRate = 6;
-    public float taxesFactor = 1.5f;
+    public float taxesFactor = 0.5f;
     public int taxSeason = 168000;
     public int marriageChance = 5;
     public int adventurerAtInnChance = 5;
@@ -237,6 +237,9 @@ public final class Config implements Serializable {
 
     public Map<String, Boolean> enabledTraits = new HashMap<>();
 
+    public Map<String, Float> taxesMap = Map.of(
+            "minecraft:diamond", 10.0f
+    );
 
     public static File getConfigFile() {
         return new File("./config/mca.json");

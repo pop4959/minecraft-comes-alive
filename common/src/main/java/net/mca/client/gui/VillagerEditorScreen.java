@@ -130,20 +130,20 @@ public class VillagerEditorScreen extends Screen {
         int bw = 22;
         ButtonWidget current = addDrawableChild(new ButtonWidget(width / 2 + bw * 2, y, DATA_WIDTH - bw * 4, 20, content.get(), b -> {
         }));
-        addDrawableChild(new ButtonWidget(width / 2, y, bw, 20, new LiteralText("-1"), b -> {
-            onClick.accept(-1);
+        addDrawableChild(new ButtonWidget(width / 2, y, bw, 20, new LiteralText("-5"), b -> {
+            onClick.accept(-5);
             current.setMessage(content.get());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + bw, y, bw, 20, new LiteralText("-10"), b -> {
-            onClick.accept(-10);
+        addDrawableChild(new ButtonWidget(width / 2 + bw, y, bw, 20, new LiteralText("-50"), b -> {
+            onClick.accept(-50);
             current.setMessage(content.get());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw * 2, y, bw, 20, new LiteralText("+10"), b -> {
-            onClick.accept(10);
+        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw * 2, y, bw, 20, new LiteralText("+50"), b -> {
+            onClick.accept(50);
             current.setMessage(content.get());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw, y, bw, 20, new LiteralText("+1"), b -> {
-            onClick.accept(1);
+        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw, y, bw, 20, new LiteralText("+5"), b -> {
+            onClick.accept(5);
             current.setMessage(content.get());
         }));
         return y + 22;

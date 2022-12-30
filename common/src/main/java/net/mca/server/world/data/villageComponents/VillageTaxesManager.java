@@ -10,16 +10,21 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class VillageTaxesManager {
     private static final int MAX_STORAGE_SIZE = 1024;
@@ -27,20 +32,20 @@ public class VillageTaxesManager {
     private final Village village;
 
     public VillageTaxesManager(Village village) {
-        this.village= village;
+        this.village = village;
     }
 
     public void taxes(ServerWorld world) {
-        int emeraldValue = 100;
-        int taxes = (int)(Config.getInstance().taxesFactor * village.getPopulation() * village.getTaxes() + world.random.nextInt(emeraldValue));
+        double taxes = Config.getInstance().taxesFactor / 100.0 * village.getPopulation() * village.getTaxes() + world.random.nextDouble();
         int moodImpact = 0;
 
         //response
         Text msg;
-        float r = MathHelper.lerp(0.5f, village.getTaxes() / 100.0f, world.random.nextFloat());
+        float r = village.getTaxes() / 100.0f + (world.random.nextFloat() - 0.5f) * world.random.nextFloat();
         if (village.getTaxes() == 0.0f) {
             msg = new TranslatableText("gui.village.taxes.no", village.getName()).formatted(Formatting.GREEN);
             moodImpact = 5;
+            taxes = 0.0;
         } else if (r < 0.1) {
             msg = new TranslatableText("gui.village.taxes.more", village.getName()).formatted(Formatting.GREEN);
             taxes += village.getPopulation() * 0.25;
@@ -65,14 +70,43 @@ public class VillageTaxesManager {
                 .filter(v -> Tasks.getRank(village, v).isAtLeast(Rank.MERCHANT))
                 .forEach(player -> player.sendMessage(msg, true));
 
+        //upgrades
         if (village.hasBuilding("library")) {
             taxes *= 1.5;
         }
 
-        int emeraldCount = taxes / emeraldValue;
-        while (emeraldCount > 0 && village.storageBuffer.size() < MAX_STORAGE_SIZE) {
-            village.storageBuffer.add(new ItemStack(Items.EMERALD, Math.min(emeraldCount, Items.EMERALD.getMaxCount())));
-            emeraldCount -= Items.EMERALD.getMaxCount();
+        //choose as many items as possible
+        while (taxes > 0.0) {
+            double finalTaxes = taxes;
+
+            // create a weighted list of all available items
+            List<String> valids = Config.getInstance().taxesMap.entrySet().stream()
+                    .filter(e -> e.getValue() * world.random.nextFloat() < finalTaxes)
+                    .map(Map.Entry::getKey)
+                    .toList();
+
+            if (valids.isEmpty()) {
+                break;
+            }
+
+            // pick a random item
+            String itemName = valids.get(world.random.nextInt(valids.size()));
+            Item item = Registry.ITEM.get(new Identifier(itemName));
+
+            if (item == Items.AIR) {
+                throw new RuntimeException("The taxes map contains an invalid item %s!".formatted(itemName));
+            }
+
+            // pay the price
+            taxes -= Config.getInstance().taxesMap.get(itemName);
+
+            // stack it or create a new item
+            Optional<ItemStack> stack = village.storageBuffer.stream().filter(i -> i.isOf(item) && i.getCount() < i.getMaxCount()).findAny();
+            if (stack.isPresent()) {
+                stack.get().increment(1);
+            } else if (village.storageBuffer.size() < MAX_STORAGE_SIZE) {
+                village.storageBuffer.add(new ItemStack(item, 1));
+            }
         }
 
         if (moodImpact != 0) {
