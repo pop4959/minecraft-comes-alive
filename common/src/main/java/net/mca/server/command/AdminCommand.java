@@ -166,9 +166,11 @@ public class AdminCommand {
                 b.containsPos(e.getBlockPos())).findAny());
         if (building.isPresent()) {
             if (building.get().getType().equals(type)) {
+                building.get().setTypeForced(false);
                 building.get().determineType();
             } else {
-                building.get().setForcedType(type);
+                building.get().setTypeForced(true);
+                building.get().setType(type);
             }
         } else {
             fail(new TranslatableText("blueprint.noBuilding").getString(), ctx);
@@ -332,7 +334,7 @@ public class AdminCommand {
         sendMessage(player, WHITE + " /mca-admin restoreClearedVillagers " + GOLD + " - Restores cleared villagers. ");
 
         sendMessage(player, WHITE + " /mca-admin listVillages " + GOLD + " - Prints a list of all villages.");
-        sendMessage(player, WHITE + " /mca-admin removeVillage id" + GOLD + " - Removed a village with given id.");
+        sendMessage(player, WHITE + " /mca-admin removeVillage id" + GOLD + " - Removed a village with given ID.");
 
         sendMessage(player, WHITE + " /mca-admin convertVanillaVillagers radius" + GOLD + " - Convert vanilla villagers in the given radius");
 

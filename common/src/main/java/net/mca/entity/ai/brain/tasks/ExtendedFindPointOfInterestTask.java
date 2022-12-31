@@ -1,27 +1,143 @@
 package net.mca.entity.ai.brain.tasks;
 
+import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.mca.entity.VillagerEntityMCA;
+import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.task.FindPointOfInterestTask;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.ai.brain.task.Task;
+import net.minecraft.entity.ai.pathing.Path;
+import net.minecraft.server.network.DebugInfoSender;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.dynamic.GlobalPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestType;
 
 import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-public class ExtendedFindPointOfInterestTask extends FindPointOfInterestTask {
-    private final Consumer<PathAwareEntity> consumer;
+public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
+    private static final int MAX_POSITIONS_PER_RUN = 5;
+    private static final int POSITION_EXPIRE_INTERVAL = 20;
+    public static final int POI_SORTING_RADIUS = 48;
 
-    public ExtendedFindPointOfInterestTask(PointOfInterestType poiType, MemoryModuleType<GlobalPos> moduleType, boolean onlyRunIfChild, Optional<Byte> entityStatus, Consumer<PathAwareEntity> consumer) {
-        super(poiType, moduleType, onlyRunIfChild, entityStatus);
-        this.consumer = consumer;
+    private final Consumer<VillagerEntityMCA> onFinish;
+    private final BiPredicate<VillagerEntityMCA, BlockPos> predicate;
+
+    private final PointOfInterestType poiType;
+    private final MemoryModuleType<GlobalPos> targetMemoryModuleType;
+    private final boolean onlyRunIfAdult;
+    private final Optional<Byte> entityStatus;
+    private long positionExpireTimeLimit;
+    private final Long2ObjectMap<RetryMarker> foundPositionsToExpiry = new Long2ObjectOpenHashMap<>();
+
+    public ExtendedFindPointOfInterestTask(PointOfInterestType poiType, MemoryModuleType<GlobalPos> moduleType, boolean onlyRunIfAdult, Optional<Byte> entityStatus, Consumer<VillagerEntityMCA> onFinish) {
+        this(poiType, moduleType, onlyRunIfAdult, entityStatus, onFinish, (e, p) -> true);
+    }
+
+    public ExtendedFindPointOfInterestTask(PointOfInterestType poiType, MemoryModuleType<GlobalPos> moduleType, boolean onlyRunIfAdult, Optional<Byte> entityStatus, Consumer<VillagerEntityMCA> onFinish, BiPredicate<VillagerEntityMCA, BlockPos> predicate) {
+        super(create(moduleType));
+
+        this.onFinish = onFinish;
+        this.predicate = predicate;
+        this.poiType = poiType;
+        this.targetMemoryModuleType = moduleType;
+        this.onlyRunIfAdult = onlyRunIfAdult;
+        this.entityStatus = entityStatus;
+    }
+
+    private static ImmutableMap<MemoryModuleType<?>, MemoryModuleState> create(MemoryModuleType<GlobalPos> firstModule) {
+        ImmutableMap.Builder<MemoryModuleType<?>, MemoryModuleState> builder = ImmutableMap.builder();
+        builder.put(firstModule, MemoryModuleState.VALUE_ABSENT);
+        return builder.build();
     }
 
     @Override
-    protected void finishRunning(ServerWorld world, PathAwareEntity entity, long time) {
+    protected boolean shouldRun(ServerWorld serverWorld, VillagerEntityMCA pathAwareEntity) {
+        if (this.onlyRunIfAdult && pathAwareEntity.isBaby()) {
+            return false;
+        }
+        if (this.positionExpireTimeLimit == 0L) {
+            this.positionExpireTimeLimit = pathAwareEntity.world.getTime() + (long)serverWorld.random.nextInt(POSITION_EXPIRE_INTERVAL);
+            return false;
+        }
+        return serverWorld.getTime() >= this.positionExpireTimeLimit;
+    }
+
+
+    @Override
+    protected void run(ServerWorld serverWorld, VillagerEntityMCA villager, long l) {
+        this.positionExpireTimeLimit = l + POSITION_EXPIRE_INTERVAL + (long)serverWorld.getRandom().nextInt(POSITION_EXPIRE_INTERVAL);
+        PointOfInterestStorage pointOfInterestStorage = serverWorld.getPointOfInterestStorage();
+        this.foundPositionsToExpiry.long2ObjectEntrySet().removeIf(entry -> !entry.getValue().isAttempting(l));
+        Predicate<BlockPos> predicate = blockPos -> {
+            RetryMarker retryMarker = this.foundPositionsToExpiry.get(blockPos.asLong());
+            if (retryMarker != null) {
+                if (!retryMarker.shouldRetry(l)) {
+                    return false;
+                }
+                retryMarker.setAttemptTime(l);
+            }
+            return this.predicate.test(villager, blockPos);
+        };
+        Set<BlockPos> set = pointOfInterestStorage.getSortedPositions(this.poiType.getCompletionCondition(), predicate, villager.getBlockPos(), POI_SORTING_RADIUS, PointOfInterestStorage.OccupationStatus.HAS_SPACE).limit(MAX_POSITIONS_PER_RUN).collect(Collectors.toSet());
+        Path path = villager.getNavigation().findPathTo(set, this.poiType.getSearchDistance());
+        if (path != null && path.reachesTarget()) {
+            BlockPos blockPos2 = path.getTarget();
+            pointOfInterestStorage.getType(blockPos2).ifPresent(pointOfInterestType -> {
+                pointOfInterestStorage.getPosition(this.poiType.getCompletionCondition(), p -> p.equals(blockPos2), blockPos2, 1);
+                villager.getBrain().remember(this.targetMemoryModuleType, GlobalPos.create(serverWorld.getRegistryKey(), blockPos2));
+                this.entityStatus.ifPresent(byte_ -> serverWorld.sendEntityStatus(villager, byte_));
+                this.foundPositionsToExpiry.clear();
+                DebugInfoSender.sendPointOfInterest(serverWorld, blockPos2);
+            });
+        } else {
+            for (BlockPos blockPos2 : set) {
+                this.foundPositionsToExpiry.computeIfAbsent(blockPos2.asLong(), m -> new RetryMarker(villager.world.random, l));
+            }
+        }
+    }
+
+    @Override
+    protected void finishRunning(ServerWorld world, VillagerEntityMCA entity, long time) {
         super.finishRunning(world, entity, time);
 
-        consumer.accept(entity);
+        onFinish.accept(entity);
+    }
+
+    static class RetryMarker {
+        private static final int MIN_DELAY = 40;
+        private static final int ATTEMPT_DURATION = 400;
+        private final Random random;
+        private long previousAttemptAt;
+        private long nextScheduledAttemptAt;
+        private int currentDelay;
+
+        RetryMarker(Random random, long time) {
+            this.random = random;
+            this.setAttemptTime(time);
+        }
+
+        public void setAttemptTime(long time) {
+            this.previousAttemptAt = time;
+            int i = this.currentDelay + this.random.nextInt(MIN_DELAY) + MIN_DELAY;
+            this.currentDelay = Math.min(i, ATTEMPT_DURATION);
+            this.nextScheduledAttemptAt = time + (long)this.currentDelay;
+        }
+
+        public boolean isAttempting(long time) {
+            return time - this.previousAttemptAt < ATTEMPT_DURATION;
+        }
+
+        public boolean shouldRetry(long time) {
+            return time >= this.nextScheduledAttemptAt;
+        }
     }
 }

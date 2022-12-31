@@ -35,7 +35,7 @@ public class Building implements Serializable {
     private final Map<Identifier, List<BlockPos>> blocks = new HashMap<>();
 
     private String type = "building";
-    private String forcedType = null;
+    private boolean isTypeForced = false;
 
     private int size;
     private int pos0X, pos0Y, pos0Z;
@@ -89,8 +89,9 @@ public class Building implements Serializable {
             posY = center.getY();
             posZ = center.getZ();
         }
-        forcedType = v.contains("forced_type") ? v.getString("forced_type") : null;
-        type = forcedType != null ? forcedType : v.getString("type");
+
+        isTypeForced = v.getBoolean("isTypeForced");
+        type = v.getString("type");
 
         strictScan = v.getBoolean("strictScan");
 
@@ -115,9 +116,7 @@ public class Building implements Serializable {
         v.putInt("posX", posX);
         v.putInt("posY", posY);
         v.putInt("posZ", posZ);
-        if (forcedType != null) {
-            v.putString("forced_type", forcedType);
-        }
+        v.putBoolean("isTypeForced", isTypeForced);
         v.putString("type", type);
         v.putBoolean("strictScan", strictScan);
 
@@ -360,12 +359,7 @@ public class Building implements Serializable {
             size = interiorSize;
 
             //determine type
-            boolean assignedType = false;
-            if (!type.equals("blocked")) {
-                assignedType = determineType();
-            }
-
-            return assignedType ? validationResult.SUCCESS : validationResult.INVALID_TYPE;
+            return isTypeForced() || determineType() ? validationResult.SUCCESS : validationResult.INVALID_TYPE;
         }
     }
 
@@ -374,8 +368,7 @@ public class Building implements Serializable {
         boolean assignedType = false;
 
         for (BuildingType bt : API.getVillagePool()) {
-            final boolean checkingForcedType = forcedType != null && forcedType.equalsIgnoreCase(bt.name());
-            if ((checkingForcedType || bt.priority() > bestPriority) && size >= bt.size()) {
+            if ((bt.priority() > bestPriority) && size >= bt.size()) {
                 //get an overview of the satisfied blocks
                 Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
                 boolean valid = bt.getGroups().entrySet().stream().noneMatch(e -> !available.containsKey(e.getKey()) || available.get(e.getKey()).size() < e.getValue());
@@ -383,12 +376,6 @@ public class Building implements Serializable {
                     bestPriority = bt.priority();
                     type = bt.name();
                     assignedType = true;
-
-                    if (checkingForcedType) {
-                        break;
-                    }
-                } else if (checkingForcedType) {
-                    assignedType = false;
                 }
             }
         }
@@ -399,8 +386,8 @@ public class Building implements Serializable {
         return type;
     }
 
-    public String getForcedType() {
-        return forcedType;
+    public boolean isTypeForced() {
+        return isTypeForced;
     }
 
     public BuildingType getBuildingType() {
@@ -411,8 +398,8 @@ public class Building implements Serializable {
         this.type = type;
     }
 
-    public void setForcedType(String type) {
-        this.forcedType = type;
+    public void setTypeForced(boolean forced) {
+        this.isTypeForced = forced;
     }
 
     public Map<Identifier, List<BlockPos>> getBlocks() {
