@@ -231,7 +231,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     }
 
     public Building.validationResult processBuilding(BlockPos pos) {
-        return processBuilding(pos, false, false);
+        return processBuilding(pos, false, true);
     }
 
     //checks weather the given block contains a grouped building block, e.g., a town bell or gravestone
