@@ -5,16 +5,17 @@ import com.google.gson.JsonParser;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.ptg3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
-import okhttp3.*;
-import org.jetbrains.annotations.NotNull;
+import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class PTG3 {
-    static final OkHttpClient client = new OkHttpClient();
-
     private static final String url = "http://snoweagle.tk/chat";
 
     private static final int MAX_MEMORY = 10;
@@ -30,7 +31,7 @@ public class PTG3 {
         return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
     }
 
-    public static void answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg, Consumer<String> consumer) {
+    public static String answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         String playerName = player.getName().asString();
         String villagerName = villager.getName().asString();
 
@@ -80,30 +81,35 @@ public class PTG3 {
         }
 
         // build http request
-        HttpUrl.Builder httpBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
-        httpBuilder.addQueryParameter("prompt", sb.toString());
-        httpBuilder.addQueryParameter("player", variables.get("player"));
-        httpBuilder.addQueryParameter("villager", variables.get("villager"));
+        Map<String, String> params = new HashMap<>();
+        params.put("prompt", sb.toString());
+        params.put("player", variables.get("player"));
+        params.put("villager", variables.get("villager"));
 
-        Request request = new Request.Builder().url(httpBuilder.build()).build();
+        // encode and create url
+        String encodedURL = params.keySet().stream()
+                .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&", url + "?", ""));
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            // receive
+            HttpURLConnection con = (HttpURLConnection)(new URL(encodedURL)).openConnection();
+            con.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.toString());
+            InputStream response = con.getInputStream();
+            String body = IOUtils.toString(response, StandardCharsets.UTF_8);
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                ResponseBody body = response.body();
-                if (body != null) {
-                    JsonObject map = JsonParser.parseString(body.string()).getAsJsonObject();
-                    String message = map.get("answer").getAsString().trim().replace("\n", "");
-                    pastDialogue.add(villagerName + ": " + message);
-                    consumer.accept(message);
-                }
-            }
-        });
+            // parse json
+            JsonObject map = JsonParser.parseString(body).getAsJsonObject();
+            String message = map.get("answer").getAsString().trim().replace("\n", "");
+
+            // remember
+            pastDialogue.add(villagerName + ": " + message);
+
+            return message;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "(AI broke, please send latest.log to dev)";
+        }
     }
 
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {

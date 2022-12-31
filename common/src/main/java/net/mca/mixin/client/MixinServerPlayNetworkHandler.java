@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 import static net.mca.entity.VillagerLike.VILLAGER_NAME;
 
@@ -43,8 +44,8 @@ public class MixinServerPlayNetworkHandler {
                 for (VillagerEntityMCA villager : entities) {
                     String name = normalize(villager.getTrackedValue(VILLAGER_NAME));
                     if (search.contains(name)) {
-                        PTG3.answer(player, villager, msg, (response) -> {
-                            villager.conversationManager.addMessage(player, new LiteralText(response));
+                        CompletableFuture.runAsync(() -> {
+                            villager.conversationManager.addMessage(player, new LiteralText(PTG3.answer(player, villager, msg)));
                         });
                         talked = true;
                         break;
@@ -55,8 +56,8 @@ public class MixinServerPlayNetworkHandler {
                 if (!talked) {
                     for (VillagerEntityMCA villager : entities) {
                         if (PTG3.inConversationWith(villager, player)) {
-                            PTG3.answer(player, villager, msg, (response) -> {
-                                villager.conversationManager.addMessage(player, new LiteralText(response));
+                            CompletableFuture.runAsync(() -> {
+                                villager.conversationManager.addMessage(player, new LiteralText(PTG3.answer(player, villager, msg)));
                             });
                             break;
                         }
