@@ -114,10 +114,6 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 entity.getResidency().setWorkplace(player);
                 return true;
             }
-            case "sethangout" -> {
-                entity.getResidency().setHangout(player);
-                return true;
-            }
             case "trade" -> {
                 entity.getInteractions().stopInteracting();
                 prepareOffersFor(player);
@@ -236,18 +232,22 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 });
             }
             case "location" -> {
-                //choose a random arg from the default pool
-                if (arg.length() == 0) {
-                    arg = Config.getInstance().structuresInRumors.get(entity.getRandom().nextInt(Config.getInstance().structuresInRumors.size()));
-                }
+                if (Config.getInstance().structuresInRumors.size() > 0) {
+                    //choose a random arg from the default pool
+                    if (arg.length() == 0) {
+                        arg = Config.getInstance().structuresInRumors.get(entity.getRandom().nextInt(Config.getInstance().structuresInRumors.size()));
+                    }
 
-                //slightly randomly the search center
-                Identifier identifier = new Identifier(arg);
-                BlockPos pos = FuzzyPositions.localFuzz(entity.getRandom(), 1024, 0).add(entity.getBlockPos());
-                Optional<BlockPos> position = WorldUtils.getClosestStructurePosition((ServerWorld)entity.world, pos, identifier, 64);
-                if (position.isPresent()) {
-                    String posString = position.get().getX() + "," + position.get().getY() + "," + position.get().getZ();
-                    entity.sendChatMessage(player, "dialogue.location." + identifier.getPath(), posString);
+                    //slightly randomly the search center
+                    Identifier identifier = new Identifier(arg);
+                    BlockPos pos = FuzzyPositions.localFuzz(entity.getRandom(), 1024, 0).add(entity.getBlockPos());
+                    Optional<BlockPos> position = WorldUtils.getClosestStructurePosition((ServerWorld)entity.world, pos, identifier, 64);
+                    if (position.isPresent()) {
+                        String posString = position.get().getX() + "," + position.get().getY() + "," + position.get().getZ();
+                        entity.sendChatMessage(player, "dialogue.location." + identifier.getPath(), posString);
+                    } else {
+                        entity.sendChatMessage(player, "dialogue.location.forgot");
+                    }
                 } else {
                     entity.sendChatMessage(player, "dialogue.location.forgot");
                 }

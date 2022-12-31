@@ -1,7 +1,7 @@
 package net.mca.network.s2c;
 
 import net.mca.ClientProxy;
-import net.mca.client.gui.Constraint;
+import net.mca.entity.interaction.Constraint;
 import net.mca.cobalt.network.Message;
 import net.mca.entity.ai.relationship.RelationshipState;
 

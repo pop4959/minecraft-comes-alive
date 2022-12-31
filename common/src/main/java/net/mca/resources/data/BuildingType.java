@@ -19,6 +19,7 @@ public final class BuildingType implements Serializable {
 
     private final String name;
     private final int size;
+    private final int margin;
     private final String color;
     private final int priority;
     private final boolean visible;
@@ -33,12 +34,13 @@ public final class BuildingType implements Serializable {
     private final boolean noBeds;
 
     public BuildingType() {
-        this("?", 0, "ffffffff", 0, true, false);
+        this("?", 0, 0, "ffffffff", 0, true, false);
     }
 
-    public BuildingType(String name, int size, String color, int priority, boolean visible, boolean noBeds) {
+    public BuildingType(String name, int size, int margin, String color, int priority, boolean visible, boolean noBeds) {
         this.name = name;
         this.size = size;
+        this.margin = margin;
         this.color = color;
         this.priority = priority;
         this.visible = visible;
@@ -150,5 +152,9 @@ public final class BuildingType implements Serializable {
 
     public boolean noBeds() {
         return noBeds;
+    }
+
+    public int getMargin() {
+        return margin;
     }
 }

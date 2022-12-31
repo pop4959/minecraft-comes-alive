@@ -274,6 +274,7 @@
   {
     "name": "graveyard",
     "size": 0,
+    "margin": 8,
     "color": "ffff00ff",
     "visible": true,
     "priority": 0,
@@ -289,6 +290,7 @@
   {
     "name": "townCenter",
     "size": 0,
+    "margin": 8,
     "color": "ffff00ff",
     "visible": false,
     "priority": 0,

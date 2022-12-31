@@ -7,14 +7,18 @@ import net.minecraft.server.world.ServerWorld;
 
 import java.util.function.Predicate;
 
-public class ShoutTask extends Task<VillagerEntityMCA> {
+public class SayTask extends Task<VillagerEntityMCA> {
     private final String phrase;
     private final int interval;
     private final Predicate<VillagerEntityMCA> condition;
 
     private long lastShout;
 
-    public ShoutTask(String phrase, int interval, Predicate<VillagerEntityMCA> condition) {
+    public SayTask(String phrase) {
+        this(phrase, 0, (v) -> true);
+    }
+
+    public SayTask(String phrase, int interval, Predicate<VillagerEntityMCA> condition) {
         super(ImmutableMap.of());
         this.phrase = phrase;
         this.interval = interval;

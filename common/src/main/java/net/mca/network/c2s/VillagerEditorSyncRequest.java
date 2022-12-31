@@ -125,7 +125,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
             syncFamilyTree(player, entity, villagerData);
 
             if (entity instanceof VillagerEntityMCA villager) {
-                villager.getResidency().getHomeBuilding().ifPresent(b -> b.updateResident(villager));
+                villager.getResidency().getHomeVillage().ifPresent(b -> b.updateResident(villager));
             }
         }
     }

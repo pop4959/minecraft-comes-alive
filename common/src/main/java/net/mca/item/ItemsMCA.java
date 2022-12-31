@@ -48,7 +48,7 @@ public interface ItemsMCA {
     RegistrySupplier<Item> MATCHMAKERS_RING = register("matchmakers_ring", () -> new MatchmakersRingItem(baseProps().maxCount(2)));
 
     RegistrySupplier<Item> VILLAGER_EDITOR = register("villager_editor", () -> new VillagerEditorItem(baseProps()));
-    RegistrySupplier<Item> STAFF_OF_LIFE = register("staff_of_life", () -> new StaffOfLifeItem(baseProps().maxDamage(5)));
+    RegistrySupplier<Item> STAFF_OF_LIFE = register("staff_of_life", () -> new StaffOfLifeItem(baseProps().maxDamage(10)));
     RegistrySupplier<Item> WHISTLE = register("whistle", () -> new WhistleItem(baseProps()));
     RegistrySupplier<Item> BLUEPRINT = register("blueprint", () -> new BlueprintItem(baseProps()));
     RegistrySupplier<Item> FAMILY_TREE = register("family_tree", () -> new FamilyTreeItem(baseProps()));
@@ -76,6 +76,7 @@ public interface ItemsMCA {
             .addSimplePages(10)));
 
     RegistrySupplier<Item> BOOK_FAMILY = register("book_family", () -> new ExtendedWrittenBookItem(baseProps(), new Book("family")
+            .setBackground(MCA.locate("textures/gui/books/family.png"))
             .addPage(new TitlePage("family"))
             .addSimplePages(8)));
 
@@ -116,9 +117,9 @@ public interface ItemsMCA {
             .addPage(new TitlePage("cult_0", Formatting.DARK_RED))
             .addPage(new CenteredTextPage("cult_0", 0))
             .addPage(new CenteredTextPage("cult_0", 1))
-            //.addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), "cult_0", 3))
             .addPage(new CenteredTextPage("cult_0", 2))
-            .addPage(new CenteredTextPage("cult_0", 3))));
+            .addPage(new CenteredTextPage("cult_0", 3))
+            .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), ""))));
 
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));
@@ -138,6 +139,14 @@ public interface ItemsMCA {
     RegistrySupplier<Item> SLANTED_HEADSTONE = register("slanted_headstone", () -> new BlockItem(BlocksMCA.SLANTED_HEADSTONE.get(), baseProps()));
     RegistrySupplier<Item> CROSS_HEADSTONE = register("cross_headstone", () -> new BlockItem(BlocksMCA.CROSS_HEADSTONE.get(), baseProps()));
     RegistrySupplier<Item> WALL_HEADSTONE = register("wall_headstone", () -> new BlockItem(BlocksMCA.WALL_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> COBBLESTONE_UPRIGHT_HEADSTONE = register("cobblestone_upright_headstone", () -> new BlockItem(BlocksMCA.COBBLESTONE_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> COBBLESTONE_SLANTED_HEADSTONE = register("cobblestone_slanted_headstone", () -> new BlockItem(BlocksMCA.COBBLESTONE_SLANTED_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> WOODEN_UPRIGHT_HEADSTONE = register("wooden_upright_headstone", () -> new BlockItem(BlocksMCA.WOODEN_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> WOODEN_SLANTED_HEADSTONE = register("wooden_slanted_headstone", () -> new BlockItem(BlocksMCA.WOODEN_SLANTED_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> GOLDEN_UPRIGHT_HEADSTONE = register("golden_upright_headstone", () -> new BlockItem(BlocksMCA.GOLDEN_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> GOLDEN_SLANTED_HEADSTONE = register("golden_slanted_headstone", () -> new BlockItem(BlocksMCA.GOLDEN_SLANTED_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> DEEPSLATE_UPRIGHT_HEADSTONE = register("deepslate_upright_headstone", () -> new BlockItem(BlocksMCA.DEEPSLATE_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> DEEPSLATE_SLANTED_HEADSTONE = register("deepslate_slanted_headstone", () -> new BlockItem(BlocksMCA.DEEPSLATE_SLANTED_HEADSTONE.get(), baseProps()));
 
     RegistrySupplier<Item> SCYTHE = register("scythe", () -> new ScytheItem(baseProps()));
 

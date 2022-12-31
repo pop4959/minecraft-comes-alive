@@ -8,6 +8,7 @@ import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.*;
 import net.mca.entity.ai.brain.VillagerBrain;
 import net.mca.entity.ai.brain.VillagerTasksMCA;
+import net.mca.entity.ai.pathfinder.VillagerNavigation;
 import net.mca.entity.ai.relationship.*;
 import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
@@ -34,6 +35,7 @@ import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -91,7 +93,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import static net.mca.client.model.CommonVillagerModel.getVillager;
@@ -421,6 +426,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (target instanceof PlayerEntity) {
             pardonPlayers((PlayerEntity)target);
         }
+    }
+
+    @Override
+    public float getPathfindingPenalty(PathNodeType nodeType) {
+        return super.getPathfindingPenalty(nodeType);
     }
 
     /**
@@ -974,14 +984,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
                 village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
-                village.get().markDirty(servRef);
             }
         }
 
         residency.leaveHome();
     }
-
-
 
     @Override
     public MoveControl getMoveControl() {

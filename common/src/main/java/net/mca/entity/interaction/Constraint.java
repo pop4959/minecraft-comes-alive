@@ -1,4 +1,4 @@
-package net.mca.client.gui;
+package net.mca.entity.interaction;
 
 import net.mca.MCA;
 import net.mca.ProfessionsMCA;
@@ -88,6 +88,9 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntit
 
     VILLAGE_HAS_SPACE("village_has_space", (villager, player) -> PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isPresent()),
     NOT_VILLAGE_HAS_SPACE("!village_has_space", (villager, player) -> PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).filter(Village::hasSpace).isEmpty()),
+
+    HAS_VILLAGE("has_village", (villager, player) -> villager instanceof VillagerEntityMCA mcaVillager && mcaVillager.getResidency().getHomeVillage().isPresent()),
+    NOT_HAS_VILLAGE("!has_village", (villager, player) -> villager instanceof VillagerEntityMCA mcaVillager && mcaVillager.getResidency().getHomeVillage().isEmpty()),
 
     HIT_BY("hit_by", (villager, player) -> {
         if (villager instanceof VillagerEntityMCA v) {

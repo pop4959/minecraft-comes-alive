@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public interface BlockEntityTypesMCA {
-
     DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(MCA.MOD_ID, Registry.BLOCK_ENTITY_TYPE_KEY);
 
     RegistrySupplier<BlockEntityType<TombstoneBlock.Data>> TOMBSTONE = register("tombstone", TombstoneBlock.Data::new, List.of(
@@ -25,7 +24,15 @@ public interface BlockEntityTypesMCA {
             BlocksMCA.UPRIGHT_HEADSTONE,
             BlocksMCA.SLANTED_HEADSTONE,
             BlocksMCA.CROSS_HEADSTONE,
-            BlocksMCA.WALL_HEADSTONE
+            BlocksMCA.WALL_HEADSTONE,
+            BlocksMCA.COBBLESTONE_UPRIGHT_HEADSTONE,
+            BlocksMCA.COBBLESTONE_SLANTED_HEADSTONE,
+            BlocksMCA.WOODEN_UPRIGHT_HEADSTONE,
+            BlocksMCA.WOODEN_SLANTED_HEADSTONE,
+            BlocksMCA.GOLDEN_UPRIGHT_HEADSTONE,
+            BlocksMCA.GOLDEN_SLANTED_HEADSTONE,
+            BlocksMCA.DEEPSLATE_UPRIGHT_HEADSTONE,
+            BlocksMCA.DEEPSLATE_SLANTED_HEADSTONE
     ));
 
     static void bootstrap() {

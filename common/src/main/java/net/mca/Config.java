@@ -92,7 +92,7 @@ public final class Config implements Serializable {
 
     //village behavior
     public int guardSpawnRate = 6;
-    public float taxesFactor = 1.5f;
+    public float taxesFactor = 0.5f;
     public int taxSeason = 168000;
     public int marriageChance = 5;
     public int adventurerAtInnChance = 5;
@@ -112,6 +112,7 @@ public final class Config implements Serializable {
     public List<String> villagerInteractionItemBlacklist = List.of(
             "minecraft:bucket"
     );
+    public boolean enableAutoScanByDefault = false;
 
     //gifts
     public int giftDesaturationQueueLength = 16;
@@ -168,8 +169,8 @@ public final class Config implements Serializable {
             .put("minecraft:spider", 0)
             .put("minecraft:skeleton", 0)
             .put("minecraft:slime", 0)
-            .put(MCA.MOD_ID + "female_zombie_villager", 3)
-            .put(MCA.MOD_ID + "male_zombie_villager", 3)
+            .put(MCA.MOD_ID + ":female_zombie_villager", 3)
+            .put(MCA.MOD_ID + ":male_zombie_villager", 3)
             .build();
 
     public List<String> villagerPathfindingBlacklist = List.of(
@@ -236,6 +237,9 @@ public final class Config implements Serializable {
 
     public Map<String, Boolean> enabledTraits = new HashMap<>();
 
+    public Map<String, Float> taxesMap = Map.of(
+            "minecraft:diamond", 10.0f
+    );
 
     public static File getConfigFile() {
         return new File("./config/mca.json");
@@ -270,13 +274,11 @@ public final class Config implements Serializable {
             return config;
         } catch (JsonSyntaxException e) {
             MCA.LOGGER.error("");
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
-            MCA.LOGGER.error("Fix errors, or delete file to reset");
             e.printStackTrace();
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             MCA.LOGGER.error("");
-            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }

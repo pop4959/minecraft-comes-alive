@@ -1,6 +1,6 @@
 package net.mca.network.c2s;
 
-import net.mca.client.gui.Constraint;
+import net.mca.entity.interaction.Constraint;
 import net.mca.cobalt.network.Message;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerLike;

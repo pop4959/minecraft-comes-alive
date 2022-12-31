@@ -60,12 +60,12 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
     }
 
     @Inject(method = "scale(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;F)V", at = @At("TAIL"), cancellable = true)
-    private void injectScale(AbstractClientPlayerEntity villager, MatrixStack matrices, float f, CallbackInfo ci) {
-        if (MCAClient.useGeneticsRenderer(villager.getUuid())) {
-            float height = CommonVillagerModel.getVillager(villager).getRawScaleFactor();
-            float width = CommonVillagerModel.getVillager(villager).getHorizontalScaleFactor();
+    private void injectScale(AbstractClientPlayerEntity player, MatrixStack matrices, float f, CallbackInfo ci) {
+        if (MCAClient.useGeneticsRenderer(player.getUuid())) {
+            float height = CommonVillagerModel.getVillager(player).getRawScaleFactor();
+            float width = CommonVillagerModel.getVillager(player).getHorizontalScaleFactor();
             matrices.scale(width, height, width);
-            if (CommonVillagerModel.getVillager(villager).getAgeState() == AgeState.BABY && !villager.hasVehicle()) {
+            if (CommonVillagerModel.getVillager(player).getAgeState() == AgeState.BABY && !player.hasVehicle()) {
                 matrices.translate(0, 0.6F, 0);
             }
             ci.cancel();

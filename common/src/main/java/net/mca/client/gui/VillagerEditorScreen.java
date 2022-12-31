@@ -62,8 +62,8 @@ public class VillagerEditorScreen extends Screen {
 
     private List<String> filteredClothing = new LinkedList<>();
     private List<String> filteredHair = new LinkedList<>();
-    private static HashMap<String, ClothingList.Clothing> clothing;
-    private static HashMap<String, HairList.Hair> hair;
+    private static HashMap<String, ClothingList.Clothing> clothing = new HashMap<>();
+    private static HashMap<String, HairList.Hair> hair = new HashMap<>();
     private Gender filterGender = Gender.NEUTRAL;
     private String searchString = "";
     private int hoveredClothingId;
@@ -87,8 +87,7 @@ public class VillagerEditorScreen extends Screen {
         this.allowPlayerModel = allowPlayerModel;
         this.allowVillagerModel = allowVillagerModel;
 
-        if (clothing == null) {
-            clothing = new HashMap<>();
+        if (clothing.isEmpty()) {
             NetworkHandler.sendToServer(new SkinListRequest());
         }
 
@@ -129,20 +128,20 @@ public class VillagerEditorScreen extends Screen {
         int bw = 22;
         ButtonWidget current = addDrawableChild(new ButtonWidget(width / 2 + bw * 2, y, DATA_WIDTH - bw * 4, 20, content.get(), b -> {
         }));
-        addDrawableChild(new ButtonWidget(width / 2, y, bw, 20, Text.literal("-1"), b -> {
-            onClick.accept(-1);
+        addDrawableChild(new ButtonWidget(width / 2, y, bw, 20, Text.literal("-5"), b -> {
+            onClick.accept(-5);
             current.setMessage(content.get());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + bw, y, bw, 20, Text.literal("-10"), b -> {
-            onClick.accept(-10);
+        addDrawableChild(new ButtonWidget(width / 2 + bw, y, bw, 20, Text.literal("-50"), b -> {
+            onClick.accept(-50);
             current.setMessage(content.get());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw * 2, y, bw, 20, Text.literal("+10"), b -> {
-            onClick.accept(10);
+        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw * 2, y, bw, 20, Text.literal("+50"), b -> {
+            onClick.accept(50);
             current.setMessage(content.get());
         }));
-        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw, y, bw, 20, Text.literal("+1"), b -> {
-            onClick.accept(1);
+        addDrawableChild(new ButtonWidget(width / 2 + DATA_WIDTH - bw, y, bw, 20, Text.literal("+5"), b -> {
+            onClick.accept(5);
             current.setMessage(content.get());
         }));
         return y + 22;
@@ -378,10 +377,10 @@ public class VillagerEditorScreen extends Screen {
                 assert client != null;
                 assert client.player != null;
                 Memories player = villager.getVillagerBrain().getMemoriesForPlayer(client.player);
-                y = integerChanger(y, player::modHearts, () -> Text.literal(player.getHearts() + " hearts"));
+                y = integerChanger(y, player::modHearts, () -> Text.translatable("gui.blueprint.reputation", player.getHearts()));
 
                 //mood
-                integerChanger(y, v -> villager.getVillagerBrain().modifyMoodValue(v), () -> Text.literal(villager.getVillagerBrain().getMoodValue() + " mood"));
+                integerChanger(y, v -> villager.getVillagerBrain().modifyMoodValue(v), () -> Text.translatable("gui.interact.label.mood", villager.getVillagerBrain().getMoodValue()));
             }
             case "clothing", "hair" -> {
                 filterGender = villager.getGenetics().getGender();
