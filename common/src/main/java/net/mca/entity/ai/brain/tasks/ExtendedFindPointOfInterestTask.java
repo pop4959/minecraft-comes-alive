@@ -97,19 +97,15 @@ public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
                 this.entityStatus.ifPresent(byte_ -> serverWorld.sendEntityStatus(villager, byte_));
                 this.foundPositionsToExpiry.clear();
                 DebugInfoSender.sendPointOfInterest(serverWorld, blockPos2);
+
+                // on finish callback
+                onFinish.accept(villager);
             });
         } else {
             for (BlockPos blockPos2 : set) {
                 this.foundPositionsToExpiry.computeIfAbsent(blockPos2.asLong(), m -> new RetryMarker(villager.world.random, l));
             }
         }
-    }
-
-    @Override
-    protected void finishRunning(ServerWorld world, VillagerEntityMCA entity, long time) {
-        super.finishRunning(world, entity, time);
-
-        onFinish.accept(entity);
     }
 
     static class RetryMarker {
