@@ -36,6 +36,7 @@
 * Villager with family or friends will now spawn a gravestone if none was found
 * Updated most textures to SoyTutta
 * Updated and added additional headstones
+* Fixed blocked buildings
 
 # 7.3.21
 
