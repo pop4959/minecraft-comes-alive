@@ -155,12 +155,12 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 - 48;
                 by = height / 2;
-                addDrawableChild(new TooltipButtonWidget(bx - 50, by + 5, 96, 20, Text.translatable("gui.blueprint.addRoom"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx - 50, by + 5, 96, 20, "gui.blueprint.addRoom", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     close();
                 }));
-                addDrawableChild(new TooltipButtonWidget(bx + 50, by + 5, 96, 20, Text.translatable("gui.blueprint.addBuilding"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx + 50, by + 5, 96, 20, "gui.blueprint.addBuilding", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     close();
@@ -184,7 +184,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 } else {
                     text.formatted(Formatting.GRAY).formatted(Formatting.STRIKETHROUGH);
                 }
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, Text.translatable("gui.blueprint.autoScan.tooltip"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.AUTO_SCAN));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     village.toggleAutoScan();
@@ -193,14 +193,14 @@ public class BlueprintScreen extends ExtendedScreen {
                 by += 22;
 
                 //restrict access
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.restrictAccess"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.restrictAccess", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FORCE_TYPE, "blocked"));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
                 //add whole building
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.addBuilding"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addBuilding", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));

@@ -9,17 +9,16 @@ import net.minecraft.text.Text;
 
 public class TooltipButtonWidget extends ButtonWidget {
     public TooltipButtonWidget(int x, int y, int width, int height, String message, PressAction onPress) {
-        super(x, y, width, height, Text.translatable(message), onPress, (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
-        {
+        super(x, y, width, height, Text.translatable(message), onPress, (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) -> {
             assert MinecraftClient.getInstance().currentScreen != null;
             MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack, FlowingText.wrap(Text.translatable(message + ".tooltip"), 160), mx, my);
         });
     }
-    public TooltipButtonWidget(int x, int y, int width, int height, MutableText message, PressAction onPress) {
-        super(x, y, width, height, message, onPress, (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) ->
-        {
+
+    public TooltipButtonWidget(int x, int y, int width, int height, MutableText message, MutableText tooltip, PressAction onPress) {
+        super(x, y, width, height, message, onPress, (ButtonWidget buttonWidget, MatrixStack matrixStack, int mx, int my) -> {
             assert MinecraftClient.getInstance().currentScreen != null;
-            MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack, FlowingText.wrap(Text.translatable(message.getString() + ".tooltip"), 160), mx, my);
+            MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack, FlowingText.wrap(tooltip, 160), mx, my);
         });
     }
 }
