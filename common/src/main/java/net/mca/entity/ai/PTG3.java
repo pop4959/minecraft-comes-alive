@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static net.minecraft.util.Util.NIL_UUID;
+
 public class PTG3 {
     private static final String url = "http://snoweagle.tk/chat";
 
@@ -115,6 +117,6 @@ public class PTG3 {
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
         return villager.distanceTo(player) < CONVERSATION_DISTANCE
                 && villager.world.getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME
-                && lastInteraction.get(player.getUuid()).equals(villager.getUuid());
+                && lastInteraction.getOrDefault(player.getUuid(), NIL_UUID).equals(villager.getUuid());
     }
 }
