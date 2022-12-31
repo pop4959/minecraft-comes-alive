@@ -139,6 +139,14 @@ public interface ItemsMCA {
     RegistrySupplier<Item> SLANTED_HEADSTONE = register("slanted_headstone", () -> new BlockItem(BlocksMCA.SLANTED_HEADSTONE.get(), baseProps()));
     RegistrySupplier<Item> CROSS_HEADSTONE = register("cross_headstone", () -> new BlockItem(BlocksMCA.CROSS_HEADSTONE.get(), baseProps()));
     RegistrySupplier<Item> WALL_HEADSTONE = register("wall_headstone", () -> new BlockItem(BlocksMCA.WALL_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> COBBLESTONE_UPRIGHT_HEADSTONE = register("cobblestone_upright_headstone", () -> new BlockItem(BlocksMCA.COBBLESTONE_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> COBBLESTONE_SLANTED_HEADSTONE = register("cobblestone_slanted_headstone", () -> new BlockItem(BlocksMCA.COBBLESTONE_SLANTED_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> WOODEN_UPRIGHT_HEADSTONE = register("wooden_upright_headstone", () -> new BlockItem(BlocksMCA.WOODEN_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> WOODEN_SLANTED_HEADSTONE = register("wooden_slanted_headstone", () -> new BlockItem(BlocksMCA.WOODEN_SLANTED_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> GOLDEN_UPRIGHT_HEADSTONE = register("golden_upright_headstone", () -> new BlockItem(BlocksMCA.GOLDEN_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> GOLDEN_SLANTED_HEADSTONE = register("golden_slanted_headstone", () -> new BlockItem(BlocksMCA.GOLDEN_SLANTED_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> DEEPSLATE_UPRIGHT_HEADSTONE = register("deepslate_upright_headstone", () -> new BlockItem(BlocksMCA.DEEPSLATE_UPRIGHT_HEADSTONE.get(), baseProps()));
+    RegistrySupplier<Item> DEEPSLATE_SLANTED_HEADSTONE = register("deepslate_slanted_headstone", () -> new BlockItem(BlocksMCA.DEEPSLATE_SLANTED_HEADSTONE.get(), baseProps()));
 
     RegistrySupplier<Item> SCYTHE = register("scythe", () -> new ScytheItem(baseProps()));
 
