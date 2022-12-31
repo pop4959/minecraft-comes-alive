@@ -2,6 +2,17 @@
   "silent": true,
   "answers": [
     {
+      "name": "rock_paper_scissor",
+      "constraints": "!adult",
+      "results": [
+        {
+          "actions": {
+            "next": "rock_paper_scissor"
+          }
+        }
+      ]
+    },
+    {
       "name": "hire",
       "constraints": "adventurer",
       "results": [

@@ -37,6 +37,7 @@
 * Updated most textures to SoyTutta
 * Updated and added additional headstones
 * Fixed blocked buildings
+* Added rock paper scissor dialogue options for children
 
 # 7.3.21
 
