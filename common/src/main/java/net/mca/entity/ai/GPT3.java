@@ -3,7 +3,7 @@ package net.mca.entity.ai;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.entity.ai.ptg3Modules.*;
+import net.mca.entity.ai.gpt3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.commons.io.IOUtils;
 
@@ -15,7 +15,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PTG3 {
+import static net.minecraft.util.Util.NIL_UUID;
+
+public class GPT3 {
     private static final String url = "http://snoweagle.tk/chat";
 
     private static final int MAX_MEMORY = 10;
@@ -115,6 +117,6 @@ public class PTG3 {
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
         return villager.distanceTo(player) < CONVERSATION_DISTANCE
                 && villager.world.getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME
-                && lastInteraction.get(player.getUuid()).equals(villager.getUuid());
+                && lastInteraction.getOrDefault(player.getUuid(), NIL_UUID).equals(villager.getUuid());
     }
 }
