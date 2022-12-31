@@ -17,7 +17,7 @@ public class InteractionDialogueResponse implements Message {
     public final List<String> answers;
 
     public InteractionDialogueResponse(Question question, ServerPlayerEntity player, VillagerEntityMCA villager) {
-        this.question = question.getId();
+        this.question = question.getName();
         this.answers = question.getValidAnswers(player, villager);
     }
 

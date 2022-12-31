@@ -23,8 +23,6 @@ import java.util.*;
 public class Dialogues extends JsonDataLoader {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "dialogues");
 
-    private final Random random = new Random();
-
     private static Dialogues INSTANCE;
 
     public static Dialogues getInstance() {
@@ -32,7 +30,6 @@ public class Dialogues extends JsonDataLoader {
     }
 
     private final Map<String, Question> questions = new HashMap<>();
-    private final Map<String, List<Question>> questionGroups = new HashMap<>();
 
     public Dialogues() {
         super(Resources.GSON, "dialogues");
@@ -49,27 +46,17 @@ public class Dialogues extends JsonDataLoader {
         String id = identifier.getPath().substring(identifier.getPath().lastIndexOf('/') + 1);
         Question q = Question.fromJson(id, element.getAsJsonObject());
 
-        this.questions.put(id, q);
+        // Merge questions to allow injections
+        if (this.questions.containsKey(id)) {
+            q.merge(this.questions.get(id));
+        }
+        q.getAnswers().sort(Comparator.comparingInt(Answer::getPriority));
 
-        this.questionGroups.computeIfAbsent(q.getGroup(), x -> new LinkedList<>());
-        this.questionGroups.get(q.getGroup()).add(q);
+        this.questions.put(id, q);
     }
 
     public Question getQuestion(String i) {
         return questions.get(i);
-    }
-
-    public Question getRandomQuestion(String i) {
-        if (questions.containsKey(i)) {
-            return questions.get(i);
-        } else {
-            List<Question> questions = this.questionGroups.get(i);
-            if (questions == null) {
-                return null;
-            } else {
-                return questions.get(random.nextInt(questions.size()));
-            }
-        }
     }
 
     //selects a specific answer while being in given question

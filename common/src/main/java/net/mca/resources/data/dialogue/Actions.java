@@ -25,22 +25,21 @@ public class Actions {
     static {
         register("next", JsonHelper::asString, id -> (villager, player) -> {
             if (id != null) {
-                Question newQuestion = Dialogues.getInstance().getRandomQuestion(id);
+                Question newQuestion = Dialogues.getInstance().getQuestion(id);
                 if (newQuestion != null) {
                     if (newQuestion.isAuto()) {
-                        // this is basically a placeholder and fires an answer automatically
-                        // use cases are n to 1 links or to split file size
-                        Dialogues.getInstance().selectAnswer(villager, player, newQuestion.getId(), newQuestion.getAnswers().get(0).getName());
+                        // fire an random answer automatically
+                        Dialogues.getInstance().selectAnswer(villager, player, newQuestion.getName(), newQuestion.getRandomAnswer().getName());
                         return;
                     } else {
                         // a silent message might be a question the player asks one self and should not be spoken by the villager
-                        TranslatableText text = villager.getTranslatable(player, "dialogue." + id);
+                        TranslatableText text = villager.getTranslatable(player, Question.getTranslationKey(id));
                         NetworkHandler.sendToPlayer(new InteractionDialogueResponse(newQuestion, player, villager), player);
                         NetworkHandler.sendToPlayer(new InteractionDialogueQuestionResponse(newQuestion.isSilent(), text), player);
                     }
                 } else {
                     // we send nevertheless and assume it's a final question
-                    villager.sendChatMessage(player, "dialogue." + id);
+                    villager.sendChatMessage(player, Question.getTranslationKey(id));
                 }
 
                 // close screen
@@ -53,7 +52,7 @@ public class Actions {
         });
 
         register("say", JsonHelper::asString, id -> (villager, player) -> {
-            TranslatableText text = villager.getTranslatable(player, "dialogue." + id);
+            TranslatableText text = villager.getTranslatable(player, Question.getTranslationKey(id));
             NetworkHandler.sendToPlayer(new InteractionDialogueQuestionResponse(false, text), player);
         });
 

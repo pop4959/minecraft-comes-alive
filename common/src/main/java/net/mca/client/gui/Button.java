@@ -1,5 +1,7 @@
 package net.mca.client.gui;
 
+import net.mca.entity.interaction.Constraint;
+
 import java.util.Set;
 import java.util.stream.Stream;
 

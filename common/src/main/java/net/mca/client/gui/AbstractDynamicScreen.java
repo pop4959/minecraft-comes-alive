@@ -1,5 +1,6 @@
 package net.mca.client.gui;
 
+import net.mca.entity.interaction.Constraint;
 import net.mca.client.resources.Icon;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;

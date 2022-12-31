@@ -1,4 +1,4 @@
-package net.mca.client.gui;
+package net.mca.entity.interaction;
 
 import net.mca.MCA;
 import net.mca.ProfessionsMCA;
