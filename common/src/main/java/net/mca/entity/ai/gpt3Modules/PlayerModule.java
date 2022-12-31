@@ -1,4 +1,4 @@
-package net.mca.entity.ai.ptg3Modules;
+package net.mca.entity.ai.gpt3Modules;
 
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.advancement.Advancement;

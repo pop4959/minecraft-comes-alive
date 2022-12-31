@@ -2,7 +2,7 @@ package net.mca.mixin.client;
 
 import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.entity.ai.PTG3;
+import net.mca.entity.ai.GPT3;
 import net.mca.util.WorldUtils;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -45,7 +45,7 @@ public class MixinServerPlayNetworkHandler {
                     String name = normalize(villager.getTrackedValue(VILLAGER_NAME));
                     if (search.contains(name)) {
                         CompletableFuture.runAsync(() -> {
-                            villager.conversationManager.addMessage(player, new LiteralText(PTG3.answer(player, villager, msg)));
+                            villager.conversationManager.addMessage(player, new LiteralText(GPT3.answer(player, villager, msg)));
                         });
                         talked = true;
                         break;
@@ -55,9 +55,9 @@ public class MixinServerPlayNetworkHandler {
                 // continue convo
                 if (!talked) {
                     for (VillagerEntityMCA villager : entities) {
-                        if (PTG3.inConversationWith(villager, player)) {
+                        if (GPT3.inConversationWith(villager, player)) {
                             CompletableFuture.runAsync(() -> {
-                                villager.conversationManager.addMessage(player, new LiteralText(PTG3.answer(player, villager, msg)));
+                                villager.conversationManager.addMessage(player, new LiteralText(GPT3.answer(player, villager, msg)));
                             });
                             break;
                         }

@@ -3,7 +3,7 @@ package net.mca.entity.ai;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.entity.ai.ptg3Modules.*;
+import net.mca.entity.ai.gpt3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.commons.io.IOUtils;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static net.minecraft.util.Util.NIL_UUID;
 
-public class PTG3 {
+public class GPT3 {
     private static final String url = "http://snoweagle.tk/chat";
 
     private static final int MAX_MEMORY = 10;

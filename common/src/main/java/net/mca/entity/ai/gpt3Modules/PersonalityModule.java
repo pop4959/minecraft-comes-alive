@@ -1,11 +1,11 @@
-package net.mca.entity.ai.ptg3Modules;
+package net.mca.entity.ai.gpt3Modules;
 
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.List;
 
-import static net.mca.entity.ai.PTG3.translate;
+import static net.mca.entity.ai.GPT3.translate;
 
 public class PersonalityModule {
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
