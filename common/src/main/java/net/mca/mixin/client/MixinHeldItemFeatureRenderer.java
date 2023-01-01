@@ -1,4 +1,4 @@
-package net.mca.mixin;
+package net.mca.mixin.client;
 
 import net.mca.entity.VillagerLike;
 import net.minecraft.client.render.VertexConsumerProvider;

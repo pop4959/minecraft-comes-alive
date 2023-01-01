@@ -1,3 +1,7 @@
+# 7.4.1
+
+* Fixed GPT3 AI on dedicated servers
+
 # 7.4.0
 
 * Simplified Villages

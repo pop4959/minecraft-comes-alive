@@ -1,4 +1,4 @@
-package net.mca.mixin.client;
+package net.mca.mixin;
 
 import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;

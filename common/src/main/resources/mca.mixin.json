@@ -16,18 +16,18 @@
     "MixinPlayerInventory",
     "MixinProtoChunk",
     "MixinSensorType",
+    "MixinServerPlayNetworkHandler",
     "MixinServerWorld",
     "MixinVillagerEntity",
     "MixinVillagerProfession",
     "MixinZombieVillagerEntity"
   ],
   "client": [
-    "MixinArmorFeatureRenderer",
-    "MixinHeldItemFeatureRenderer",
-    "MixinLivingEntityRenderer",
-    "MixinPlayerEntityRenderer",
+    "client.MixinArmorFeatureRenderer",
     "client.MixinGameRenderer",
-    "client.MixinServerPlayNetworkHandler",
+    "client.MixinHeldItemFeatureRenderer",
+    "client.MixinLivingEntityRenderer",
+    "client.MixinPlayerEntityRenderer",
     "client.MixinTranslationStorage"
   ],
   "injectors": {
