@@ -12,16 +12,16 @@ import net.minecraft.entity.ai.brain.Brain;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.MultiTickTask;
-import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.ai.pathing.PathNode;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldEvents;
 import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,11 +66,17 @@ public class SmarterOpenDoorsTask extends MultiTickTask<LivingEntity> {
 
     public static boolean setOpen(@Nullable Entity entity, World world, BlockState state, BlockPos pos, boolean open) {
         if (state.contains(Properties.OPEN) && state.get(Properties.OPEN) != open) {
-            ((DoorBlock) state.getBlock()).setOpen(entity, world, state, pos, open);
+            world.setBlockState(pos, state.with(Properties.OPEN, open), Block.NOTIFY_LISTENERS | Block.REDRAW_ON_MAIN_THREAD);
+            world.emitGameEvent(entity, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
+            playOpenCloseSound(entity, world, pos, open);
             return true;
         } else {
             return false;
         }
+    }
+
+    private static void playOpenCloseSound(@Nullable Entity entity, World world, BlockPos pos, boolean open) {
+        world.playSound(entity, pos, open ? SoundEvents.BLOCK_WOODEN_DOOR_OPEN : SoundEvents.BLOCK_WOODEN_DOOR_CLOSE, SoundCategory.BLOCKS, 0.75F, world.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
     private void openDoor(ServerWorld world, LivingEntity entity, PathNode pathNode) {

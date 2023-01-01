@@ -1,3 +1,7 @@
+# 7.4.1
+
+* Fixed crash on 1.19.3
+
 # 7.4.0
 
 * Simplified Villages
