@@ -58,6 +58,7 @@ public class GPT3 {
         TraitsModule.apply(input, villager, player);
         RelationModule.apply(input, villager, player);
         VillageModule.apply(input, villager, player);
+        EnvironmentModule.apply(input, villager, player);
         PlayerModule.apply(input, villager, player);
         input.add("\n\n");
 

@@ -1,6 +1,7 @@
 # 7.4.1
 
 * Fixed GPT3 AI on dedicated servers
+* AI now has a sense of biome, weather and daytime
 
 # 7.4.0
 
