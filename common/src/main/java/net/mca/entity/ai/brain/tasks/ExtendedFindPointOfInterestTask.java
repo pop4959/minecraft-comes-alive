@@ -5,12 +5,16 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.mca.entity.VillagerEntityMCA;
+import net.minecraft.block.BedBlock;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.server.network.DebugInfoSender;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.random.Random;
@@ -89,6 +93,9 @@ public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
                 }
                 retryMarker.setAttemptTime(l);
             }
+            if (isBedOccupiedByOthers(serverWorld, blockPos, villager)) {
+                return false;
+            }
             return this.predicate.test(villager, blockPos);
         };
         Set<Pair<RegistryEntry<PointOfInterestType>, BlockPos>> set = pointOfInterestStorage.getSortedTypesAndPositions(this.poiType, predicate, villager.getBlockPos(), POI_SORTING_RADIUS, PointOfInterestStorage.OccupationStatus.HAS_SPACE).limit(MAX_POSITIONS_PER_RUN).collect(Collectors.toSet());
@@ -99,6 +106,7 @@ public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
                 pointOfInterestStorage.getPosition(this.poiType, (registryEntryx, otherPos) -> {
                     return otherPos.equals(blockPos2);
                 }, blockPos2, 1);
+
                 villager.getBrain().remember(this.targetMemoryModuleType, GlobalPos.create(serverWorld.getRegistryKey(), blockPos2));
                 this.entityStatus.ifPresent(byte_ -> serverWorld.sendEntityStatus(villager, byte_));
                 this.foundPositionsToExpiry.clear();
@@ -112,6 +120,12 @@ public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
                 this.foundPositionsToExpiry.computeIfAbsent(blockPos2.getSecond().asLong(), m -> new RetryMarker(villager.world.random, l));
             }
         }
+    }
+
+    //todo this check is not necessary in vanilla, but since the 1.19.2 port of 7.4.0 it is requires as occupied beds are used
+    private boolean isBedOccupiedByOthers(ServerWorld world, BlockPos pos, LivingEntity entity) {
+        BlockState blockState = world.getBlockState(pos);
+        return blockState.isIn(BlockTags.BEDS) && blockState.get(BedBlock.OCCUPIED) && !entity.isSleeping();
     }
 
     static class RetryMarker {
