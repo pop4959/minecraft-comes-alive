@@ -2,32 +2,32 @@ package net.mca.resources.data.dialogue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.mca.client.gui.Constraint;
+import net.mca.entity.interaction.Constraint;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.interaction.InteractionPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class Question {
-    private final String id;
-    private final String group;
+    private final String name;
     private final List<Answer> answers;
     private final boolean auto;
     private final boolean silent;
 
-    public Question(String id, String group, List<Answer> answers, boolean auto, boolean silent) {
-        this.id = id;
-        this.group = group;
+    private final Random random = new Random();
+
+    public Question(String id, List<Answer> answers, boolean auto, boolean silent) {
+        this.name = id;
         this.answers = answers;
         this.auto = auto;
         this.silent = silent;
     }
 
     public static Question fromJson(String id, JsonObject json) {
-        String group = json.has("group") ? json.get("group").getAsString() : null;
         boolean auto = json.has("auto") && json.get("auto").getAsBoolean();
         boolean silent = json.has("silent") && json.get("silent").getAsBoolean();
 
@@ -37,6 +37,7 @@ public class Question {
         }
 
         //sometimes the conditions are the same for all results
+        //todo assigned to Luke1000000: that's horseshit, improve
         if (json.has("baseConditions")) {
             int r = 0;
             for (JsonElement conditions : json.getAsJsonArray("baseConditions")) {
@@ -49,15 +50,11 @@ public class Question {
             }
         }
 
-        return new Question(id, group, answers, auto, silent);
+        return new Question(id, answers, auto, silent);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getGroup() {
-        return group;
+    public String getName() {
+        return name;
     }
 
     public List<Answer> getAnswers() {
@@ -102,5 +99,13 @@ public class Question {
 
     public boolean isSilent() {
         return silent;
+    }
+
+    public void merge(Question question) {
+        answers.addAll(question.getAnswers());
+    }
+
+    public Answer getRandomAnswer() {
+        return answers.get(random.nextInt(answers.size()));
     }
 }

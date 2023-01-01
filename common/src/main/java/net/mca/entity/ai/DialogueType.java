@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public enum DialogueType {
     ADULT(null),
+    ADULTP(ADULT),
     UNASSIGNED(ADULT),
     BABY(UNASSIGNED),
     CHILD(ADULT),
@@ -34,11 +35,15 @@ public enum DialogueType {
 
     public static final Map<String, DialogueType> MAP = Arrays.stream(VALUES).collect(Collectors.toMap(DialogueType::name, Function.identity()));
 
+    /**
+     * @return Returns the player-child variant
+     */
     public DialogueType toChild() {
         return switch (this) {
             case TODDLER -> TODDLERP;
             case CHILD -> CHILDP;
             case TEEN -> TEENP;
+            case ADULT -> ADULTP;
             default -> UNASSIGNED;
         };
     }
@@ -60,6 +65,7 @@ public enum DialogueType {
     }
 
     private static Optional<String> getPrefixedPhrase(DialogueType type, String prefix, String key) {
+        //first, test every dialogue type
         DialogueType t = type;
         while (t != null) {
             String s = prefix + "." + t.name().toLowerCase(Locale.ENGLISH) + "." + key;
@@ -68,10 +74,13 @@ public enum DialogueType {
             }
             t = t.fallback;
         }
+
+        //then test without type
         String s = prefix + "." + key;
         if (Language.getInstance().hasTranslation(s)) {
             return Optional.of(s);
         }
+
         return Optional.empty();
     }
 
@@ -111,6 +120,14 @@ public enum DialogueType {
         if (flags.containsKey("E")) {
             String personality = Personality.valueOf(flags.get("E")).name().toLowerCase(Locale.ROOT);
             Optional<String> p = getPrefixedPhrase(type, personality, key);
+            if (p.isPresent()) {
+                return p.get();
+            }
+        }
+
+        //then try gender
+        if (flags.containsKey("G")) {
+            Optional<String> p = getPrefixedPhrase(type, flags.get("G"), key);
             if (p.isPresent()) {
                 return p.get();
             }

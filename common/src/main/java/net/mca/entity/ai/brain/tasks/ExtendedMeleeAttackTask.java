@@ -2,6 +2,7 @@ package net.mca.entity.ai.brain.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import net.mca.entity.VillagerLike;
+import net.mca.entity.ai.Messenger;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -45,6 +46,13 @@ public class ExtendedMeleeAttackTask extends MultiTickTask<MobEntity> {
         }
         mobEntity.tryAttack(livingEntity);
         mobEntity.getBrain().remember(MemoryModuleType.ATTACK_COOLING_DOWN, true, interval);
+
+        // kill phrase
+        if (livingEntity.isDead() && mobEntity instanceof Messenger messenger) {
+            if (mobEntity.getRandom().nextFloat() < 0.3) {
+                messenger.sendChatToAllAround("villager.kill");
+            }
+        }
     }
 
     private boolean withinRange(LivingEntity attacker, LivingEntity target) {

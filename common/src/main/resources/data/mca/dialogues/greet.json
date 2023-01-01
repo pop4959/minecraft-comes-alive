@@ -1,5 +1,4 @@
 {
-  "group": "greet",
   "answers": [
     {
       "name": "short",
@@ -17,8 +16,8 @@
             }
           ],
           "actions": {
-            "say": "greet.success",
             "next": "main",
+            "say": "greet.success",
             "positive": 4
           }
         },
@@ -43,8 +42,8 @@
             }
           ],
           "actions": {
-            "say": "greet.fail",
             "next": "main",
+            "say": "greet.fail",
             "negative": 2
           }
         }
@@ -78,8 +77,8 @@
             }
           ],
           "actions": {
-            "say": "greet.success",
             "next": "main",
+            "say": "greet.success",
             "positive": 6
           }
         },
@@ -93,8 +92,8 @@
             }
           ],
           "actions": {
-            "say": "greet.fail",
             "next": "main",
+            "say": "greet.fail",
             "negative": 2
           }
         }
@@ -120,8 +119,8 @@
             }
           ],
           "actions": {
-            "say": "shake_hand.success",
             "next": "main",
+            "say": "shake_hand.success",
             "positive": 3
           }
         },
@@ -139,8 +138,8 @@
             }
           ],
           "actions": {
-            "say": "shake_hand.fail",
             "next": "main",
+            "say": "shake_hand.fail",
             "negative": 2
           }
         }

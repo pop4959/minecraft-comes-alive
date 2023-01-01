@@ -58,7 +58,7 @@ public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<Tombsto
 
         y += 5;
 
-        FlowingText name = entity.getOrCreateEntityName(n -> FlowingText.Factory.wrapLines(text, n, maxLineWidth - 10, block.getMaxNameHeight()));
+        FlowingText name = entity.getOrCreateEntityName(n -> FlowingText.Factory.wrapLines(text, n, maxLineWidth, block.getMaxNameHeight()));
 
         matrices.push();
         matrices.scale(name.scale(), name.scale(), name.scale());

@@ -33,21 +33,10 @@
     "constraints": ""
   },
   {
-    "identifier": "gui.button.sethangout",
-    "x": -90,
-    "y": 10,
-    "row": 2,
-    "width": 80,
-    "height": 20,
-    "notifyServer": true,
-    "targetServer": false,
-    "constraints": ""
-  },
-  {
     "identifier": "gui.button.gohome",
     "x": -90,
     "y": 10,
-    "row": 3,
+    "row": 2,
     "width": 80,
     "height": 20,
     "notifyServer": true,

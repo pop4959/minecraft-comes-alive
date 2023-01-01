@@ -8,6 +8,7 @@ import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.*;
 import net.mca.entity.ai.brain.VillagerBrain;
 import net.mca.entity.ai.brain.VillagerTasksMCA;
+import net.mca.entity.ai.pathfinder.VillagerNavigation;
 import net.mca.entity.ai.relationship.*;
 import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
@@ -34,6 +35,7 @@ import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -75,10 +77,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -113,6 +112,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private int despawnDelay;
     private int burned;
+
+    public final ConversationManager conversationManager = new ConversationManager(this);
 
     @Override
     public PlayerModel getPlayerModel() {
@@ -425,6 +426,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (target instanceof PlayerEntity) {
             pardonPlayers((PlayerEntity)target);
         }
+    }
+
+    @Override
+    public float getPathfindingPenalty(PathNodeType nodeType) {
+        return super.getPathfindingPenalty(nodeType);
     }
 
     /**
@@ -978,14 +984,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
             for (Map.Entry<UUID, Memories> entry : memories.entrySet()) {
                 village.get().pushHearts(entry.getKey(), entry.getValue().getHearts());
-                village.get().markDirty(servRef);
             }
         }
 
         residency.leaveHome();
     }
-
-
 
     @Override
     public MoveControl getMoveControl() {
@@ -1026,7 +1029,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getDeathSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1073,11 +1076,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 return getGenetics().getGender() == Gender.MALE ? mood.getSoundMale() : mood.getSoundFemale();
             }
 
-            return null;
+            return SoundsMCA.SILENT.get();
         } else if (Config.getInstance().useVanillaVoices) {
             return super.getAmbientSound();
         } else {
-            return null;
+            return SoundsMCA.SILENT.get();
         }
     }
 
@@ -1085,8 +1088,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     protected final SoundEvent getHurtSound(DamageSource cause) {
         if (Config.getInstance().useMCAVoices) {
             return getGenetics().getGender() == Gender.MALE ? SoundsMCA.VILLAGER_MALE_HURT.get() : SoundsMCA.VILLAGER_FEMALE_HURT.get();
-        } else {
+        } else if (Config.getInstance().useVanillaVoices) {
             return super.getHurtSound(cause);
+        } else {
+            return SoundsMCA.SILENT.get();
         }
     }
 

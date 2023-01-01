@@ -1,5 +1,5 @@
 {
-    "parent": "mca:block/monument_cross",
+    "parent": "mca:block/cross_headstone",
     "display": {
         "gui": {
             "rotation": [ 30, 225, 0 ],

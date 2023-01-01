@@ -3,7 +3,7 @@ package net.mca.entity.interaction.gifts;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.mca.client.gui.Constraint;
+import net.mca.entity.interaction.Constraint;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Chore;
 import net.mca.entity.ai.LongTermMemory;

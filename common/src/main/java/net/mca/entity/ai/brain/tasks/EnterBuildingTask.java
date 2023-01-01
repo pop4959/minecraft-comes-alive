@@ -39,13 +39,18 @@ public class EnterBuildingTask extends MultiTickTask<VillagerEntityMCA> {
     }
 
     protected Optional<BlockPos> getRandomPositionIn(Building b, World world) {
+        if (b.getBuildingType().grouped()) {
+            //todo randomize
+            return Optional.ofNullable(b.getCenter());
+        }
+
         Random r = world.getRandom();
         BlockPos pos0 = b.getPos0();
         BlockPos pos1 = b.getPos1();
         BlockPos diff = pos1.subtract(pos0);
         int margin = 2;
         for (int attempt = 0; attempt < 16; attempt++) {
-            //todo positions are too random and weird
+            //todo positions are too random and weird, they should be floor only, e.g. solid
             BlockPos p = pos0.add(new BlockPos(
                     r.nextInt(Math.max(1, diff.getX() - margin * 2)) + margin,
                     r.nextInt(Math.max(1, diff.getY() - margin * 2)) + margin,

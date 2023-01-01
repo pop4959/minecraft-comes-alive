@@ -317,14 +317,16 @@ public class InteractScreen extends AbstractDynamicScreen {
         return false;//villager.getVillagerBrain().getMemoriesForPlayer(player).isGiftPresent();
     }
 
-    public void setDialogue(String dialogue, List<String> answers, boolean silent) {
+    public void setDialogue(String dialogue, List<String> answers) {
         dialogQuestionId = dialogue;
         dialogAnswers = answers;
-        MutableText translatable = villager.getTranslatable(player, Question.getTranslationKey(dialogQuestionId));
-        dialogQuestionText = textRenderer.wrapLines(translatable, 160);
+    }
+
+    public void setLastPhrase(MutableText questionText, boolean silent) {
+        dialogQuestionText = textRenderer.wrapLines(questionText, 160);
 
         if (!silent) {
-            villager.sendChatMessage(translatable, player);
+            villager.sendChatMessage(questionText, player);
         }
     }
 

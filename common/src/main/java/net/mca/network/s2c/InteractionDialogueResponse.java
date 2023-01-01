@@ -15,12 +15,10 @@ public class InteractionDialogueResponse implements Message {
 
     public final String question;
     public final List<String> answers;
-    public final boolean silent;
 
     public InteractionDialogueResponse(Question question, ServerPlayerEntity player, VillagerEntityMCA villager) {
-        this.question = question.getId();
+        this.question = question.getName();
         this.answers = question.getValidAnswers(player, villager);
-        this.silent = question.isSilent();
     }
 
     @Override

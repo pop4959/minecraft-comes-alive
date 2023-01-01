@@ -52,13 +52,14 @@ public class ReportBuildingMessage implements Message {
                 if (building.isPresent()) {
                     if (action == Action.FORCE_TYPE) {
                         if (building.get().getType().equals(data)) {
+                            building.get().setTypeForced(false);
                             building.get().determineType();
                         } else {
-                            building.get().setForcedType(data);
+                            building.get().setTypeForced(true);
+                            building.get().setType(data);
                         }
                     } else {
                         village.get().removeBuilding(building.get().getId());
-                        village.get().markDirty(player.getWorld());
                     }
                 } else {
                     player.sendMessage(Text.translatable("blueprint.noBuilding"), true);

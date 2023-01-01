@@ -4,11 +4,10 @@ import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import net.mca.Config;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.relationship.EntityRelationship;
-import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.RelationshipState;
+import net.mca.item.BabyItem;
 import net.mca.network.s2c.OpenDestinyGuiRequest;
 import net.mca.network.s2c.ShowToastRequest;
-import net.mca.server.world.data.BabyTracker;
 import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -76,7 +75,7 @@ public class ServerInteractionManager {
         }
 
         if (playerData.hasMail()) {
-            playerData.showMailNotification(player);
+            PlayerSaveData.showMailNotification(player);
         }
     }
 
@@ -278,15 +277,9 @@ public class ServerInteractionManager {
         }
 
         // Ensure we don't already have a baby
-        BabyTracker tracker = BabyTracker.get(sender.getWorld());
-        BabyTracker.Pairing pairing = tracker.getPairing(sender.getUuid(), senderData.getPartnerUUID().orElse(null));
-        if (tracker.hasActiveBaby(sender.getUuid(), senderData.getPartnerUUID().orElse(null))) {
-            if (pairing.locateBaby(sender).getRight().wasFound()) {
-                failMessage(sender, Text.translatable("server.babyPresent"));
-            } else {
-                failMessage(sender, Text.translatable("server.babyLost"));
-                pairing.reconstructBaby(sender);
-            }
+        // todo add cooldown
+        if (false) {
+            failMessage(sender, Text.translatable("server.babyPresent"));
             return;
         }
 
@@ -302,11 +295,7 @@ public class ServerInteractionManager {
                 successMessage(sender, Text.translatable("server.procreationSuccessful"));
                 successMessage(spouse, Text.translatable("server.procreationSuccessful"));
 
-                pairing.addChild(s -> {
-                    s.setGender(Gender.getRandom());
-                    s.setOwner(sender);
-                    spouse.giveItemStack(s.createItem());
-                });
+                spouse.giveItemStack(BabyItem.createItem(spouse, sender, spouse.getRandom().nextLong()));
             }
         }, () -> failMessage(sender, Text.translatable("server.spouseNotPresent")));
     }

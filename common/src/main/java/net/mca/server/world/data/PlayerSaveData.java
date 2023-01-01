@@ -179,7 +179,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         if (Config.getInstance().enterVillageNotification && village.isVillage()) {
             self.sendMessage(Text.translatable("gui.village.welcome", village.getName()).formatted(Formatting.GOLD), true);
         }
-        village.deliverTaxes(world);
+        village.onEnter(world);
     }
 
     @Override

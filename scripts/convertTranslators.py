@@ -10,6 +10,10 @@ if __name__ == '__main__':
         "ALEJANDRO MARCELO PAUCAR CASTILLO": "Alejandro Castillo",
         "Raffox97 (Community volunteer)": "Raffox97",
         "Betancourt Guerrero Ramón": "Betancourt Ramón",
+        "Marco Antônio Gonçalves Aragão": "Marco Aragão",
+        "Sittinan Sarapoke (Zenozuki)": "Sittinan Sarapoke",
+        "Manuel Giménez González": "Manuel González",
+        "juan marcelo casas gonzales": "Juan Gonzales",
     }
 
     for m in members["data"]:

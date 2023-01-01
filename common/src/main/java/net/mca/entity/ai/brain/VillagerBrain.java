@@ -20,10 +20,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import javax.swing.text.html.Option;
+import java.util.*;
+
+import static net.mca.entity.ai.MemoryModuleTypeMCA.LAST_GRIEVE;
 
 /**
  * Handles memory and complex bodily functions. Such as walking, and not being a nitwit.
@@ -41,6 +41,10 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(CDataManager.Builder<E> builder) {
         return builder.addAll(MEMORIES, PERSONALITY, MOOD, MOVE_STATE, ACTIVE_CHORE, CHORE_ASSIGNING_PLAYER, PANICKING, WEAR_ARMOR);
     }
+
+    private final static long GRIEVE_COOLDOWN = 24000 * 7;
+
+    private final Random random = new Random();
 
     private final E entity;
 
@@ -211,6 +215,24 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
 
     public boolean getArmorWear() {
         return entity.getTrackedValue(WEAR_ARMOR);
+    }
+
+    public void setGrieving() {
+        entity.getBrain().remember(LAST_GRIEVE.get(), -GRIEVE_COOLDOWN);
+    }
+
+    public void justGrieved() {
+        entity.getBrain().remember(LAST_GRIEVE.get(), entity.world.getTime());
+    }
+
+    public boolean shouldGrieve() {
+        Optional<Long> memory = entity.getBrain().getOptionalMemory(LAST_GRIEVE.get());
+        if (memory.isPresent()) {
+            return entity.world.getTime() - memory.get() > GRIEVE_COOLDOWN;
+        } else {
+            entity.getBrain().remember(LAST_GRIEVE.get(), entity.world.getTime() - random.nextLong(GRIEVE_COOLDOWN));
+            return false;
+        }
     }
 
     /**

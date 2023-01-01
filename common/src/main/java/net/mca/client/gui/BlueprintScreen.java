@@ -155,7 +155,12 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 - 48;
                 by = height / 2;
-                addDrawableChild(new ButtonWidget(bx, by + 5, 96, 20, Text.translatable("gui.blueprint.addBuilding"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx - 50, by + 5, 96, 20, "gui.blueprint.addRoom", (b) -> {
+                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
+                    NetworkHandler.sendToServer(new GetVillageRequest());
+                    close();
+                }));
+                addDrawableChild(new TooltipButtonWidget(bx + 50, by + 5, 96, 20, "gui.blueprint.addBuilding", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     close();
@@ -170,7 +175,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 setPage("map");
                 break;
             case "advanced":
-                //add building
+                //auto-scan
                 bx = width / 2 + 180 - 64 - 16;
                 by = height / 2 - 56;
                 MutableText text = Text.translatable("gui.blueprint.autoScan");
@@ -179,7 +184,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 } else {
                     text.formatted(Formatting.GRAY).formatted(Formatting.STRIKETHROUGH);
                 }
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, Text.translatable("gui.blueprint.autoScan.tooltip"), (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.AUTO_SCAN));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     village.toggleAutoScan();
@@ -188,15 +193,15 @@ public class BlueprintScreen extends ExtendedScreen {
                 by += 22;
 
                 //restrict access
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.restrictAccess"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.restrictAccess", (b) -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FORCE_TYPE, "blocked"));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
-                //add room
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addRoom", (b) -> {
-                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
+                //add whole building
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addBuilding", (b) -> {
+                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22 * 3;
@@ -207,13 +212,12 @@ public class BlueprintScreen extends ExtendedScreen {
                         setPage("rename");
                     }));
                 }
-                by += 22;
             case "map":
                 //add building
                 bx = width / 2 + 180 - 64 - 16;
                 by = height / 2 - 56 + 22 * 3;
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.addBuilding"), (b) -> {
-                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addRoom", (b) -> {
+                    NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
@@ -384,6 +388,11 @@ public class BlueprintScreen extends ExtendedScreen {
         int y = height / 2 + 8;
         RectangleWidget.drawRectangle(transform, width / 2 - mapSize, y - mapSize, width / 2 + mapSize, y + mapSize, 0xffffff88);
 
+        //hint
+        if (!village.isAutoScan() && village.getBuildings().size() <= 1) {
+            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.autoScanDisabled"), width / 2, height / 2 + 90, 0xaaffffff);
+        }
+
         transform.push();
 
         RenderSystem.setShaderTexture(0, ICON_TEXTURES);
@@ -474,7 +483,7 @@ public class BlueprintScreen extends ExtendedScreen {
         }
 
         //residents
-        for (String name : hoverBuilding.getResidents().values()) {
+        for (String name : village.getResidents(hoverBuilding.getId())) {
             lines.add(Text.literal(name));
         }
 
@@ -550,8 +559,7 @@ public class BlueprintScreen extends ExtendedScreen {
         int maxPages = (int)Math.ceil(village.getPopulation() / 9.0);
         buttonPage.setMessage(Text.literal((pageNumber + 1) + "/" + maxPages));
 
-        List<Map.Entry<UUID, String>> villager = village.getBuildings().values().stream()
-                .flatMap(b -> b.getResidents().entrySet().stream())
+        List<Map.Entry<UUID, String>> villager = village.getResidentNames().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue()).toList();
 
         selectedVillager = null;

@@ -9,28 +9,21 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
 import net.minecraft.block.enums.BedPart;
-import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import net.minecraft.world.poi.PointOfInterest;
-import net.minecraft.world.poi.PointOfInterestStorage;
-import net.minecraft.world.poi.PointOfInterestTypes;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class Building implements Serializable, Iterable<UUID> {
+public class Building implements Serializable {
     @Serial
     private static final long serialVersionUID = -1106627083469687307L;
     public static final long SCAN_COOLDOWN = 4800;
@@ -38,11 +31,10 @@ public class Building implements Serializable, Iterable<UUID> {
             Direction.UP, Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
 
-    private final Map<UUID, String> residents = new HashMap<>();
     private final Map<Identifier, List<BlockPos>> blocks = new HashMap<>();
 
     private String type = "building";
-    private String forcedType = null;
+    private boolean isTypeForced = false;
 
     private int size;
     private int pos0X, pos0Y, pos0Z;
@@ -96,16 +88,11 @@ public class Building implements Serializable, Iterable<UUID> {
             posY = center.getY();
             posZ = center.getZ();
         }
-        forcedType = v.contains("forced_type") ? v.getString("forced_type") : null;
-        type = forcedType != null ? forcedType : v.getString("type");
+
+        isTypeForced = v.getBoolean("isTypeForced");
+        type = v.getString("type");
 
         strictScan = v.getBoolean("strictScan");
-
-        NbtList res = v.getList("residents", NbtElement.COMPOUND_TYPE);
-        for (int i = 0; i < res.size(); i++) {
-            NbtCompound c = res.getCompound(i);
-            residents.put(c.getUuid("uuid"), c.getString("name"));
-        }
 
         blocks.putAll(NbtHelper.toMap(v.getCompound("blocks2"),
                 Identifier::new,
@@ -128,18 +115,9 @@ public class Building implements Serializable, Iterable<UUID> {
         v.putInt("posX", posX);
         v.putInt("posY", posY);
         v.putInt("posZ", posZ);
-        if (forcedType != null) {
-            v.putString("forced_type", forcedType);
-        }
+        v.putBoolean("isTypeForced", isTypeForced);
         v.putString("type", type);
         v.putBoolean("strictScan", strictScan);
-
-        v.put("residents", NbtHelper.fromList(residents.entrySet(), resident -> {
-            NbtCompound entry = new NbtCompound();
-            entry.putUuid("uuid", resident.getKey());
-            entry.putString("name", resident.getValue());
-            return entry;
-        }));
 
         NbtCompound b = new NbtCompound();
         NbtHelper.fromMap(
@@ -159,50 +137,14 @@ public class Building implements Serializable, Iterable<UUID> {
         return v;
     }
 
-    public boolean hasFreeSpace() {
-        return getBedCount() > getResidents().size();
-    }
-
-    public boolean isCrowded() {
-        return getBedCount() < getResidents().size();
-    }
-
-    public Stream<BlockPos> findEmptyBed(ServerWorld world) {
-        return world.getPointOfInterestStorage().getInSquare(
-                        registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME),
-                        getCenter(),
-                        getPos0().getManhattanDistance(getPos1()),
-                        PointOfInterestStorage.OccupationStatus.ANY)
-                .filter(p -> {
-                    BlockState blockState = world.getBlockState(p.getPos());
-                    return blockState.isIn(BlockTags.BEDS) && !(Boolean)blockState.get(BedBlock.OCCUPIED);
-                })
-                .map(PointOfInterest::getPos)
-                .filter(this::containsPos);
-    }
-
-    public Optional<BlockPos> findClosestEmptyBed(ServerWorld world, BlockPos pos) {
-        return findEmptyBed(world).min(Comparator.comparingInt(a -> a.getManhattanDistance(pos)));
-    }
-
-    public void addResident(Entity e) {
-        if (!residents.containsKey(e.getUuid())) {
-            residents.put(e.getUuid(), e.getName().getString());
-        }
-    }
-
-    public void updateResident(Entity e) {
-        if (residents.containsKey(e.getUuid())) {
-            residents.put(e.getUuid(), e.getName().getString());
-        }
-    }
-
     public BlockPos getPos0() {
-        return new BlockPos(pos0X, pos0Y, pos0Z);
+        int margin = getBuildingType().getMargin();
+        return new BlockPos(pos0X, pos0Y, pos0Z).subtract(new Vec3i(margin, margin, margin));
     }
 
     public BlockPos getPos1() {
-        return new BlockPos(pos1X, pos1Y, pos1Z);
+        int margin = getBuildingType().getMargin();
+        return new BlockPos(pos1X, pos1Y, pos1Z).add(new Vec3i(margin, margin, margin));
     }
 
     public BlockPos getCenter() {
@@ -266,6 +208,12 @@ public class Building implements Serializable, Iterable<UUID> {
     }
 
     public validationResult validateBuilding(World world, Set<BlockPos> blocked) {
+        //validate grouped buildings differently
+        if (getBuildingType().grouped()) {
+            validateBlocks(world);
+            return getBlockPosStream().findAny().isEmpty() ? validationResult.TOO_SMALL : validationResult.SUCCESS;
+        }
+
         //clear old building
         blocks.clear();
         size = 0;
@@ -410,12 +358,7 @@ public class Building implements Serializable, Iterable<UUID> {
             size = interiorSize;
 
             //determine type
-            boolean assignedType = false;
-            if (!type.equals("blocked")) {
-                assignedType = determineType();
-            }
-
-            return assignedType ? validationResult.SUCCESS : validationResult.INVALID_TYPE;
+            return isTypeForced() || determineType() ? validationResult.SUCCESS : validationResult.INVALID_TYPE;
         }
     }
 
@@ -424,8 +367,7 @@ public class Building implements Serializable, Iterable<UUID> {
         boolean assignedType = false;
 
         for (BuildingType bt : API.getVillagePool()) {
-            final boolean checkingForcedType = forcedType != null && forcedType.equalsIgnoreCase(bt.name());
-            if ((checkingForcedType || bt.priority() > bestPriority) && size >= bt.size()) {
+            if ((bt.priority() > bestPriority) && size >= bt.size()) {
                 //get an overview of the satisfied blocks
                 Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
                 boolean valid = bt.getGroups().entrySet().stream().noneMatch(e -> !available.containsKey(e.getKey()) || available.get(e.getKey()).size() < e.getValue());
@@ -433,12 +375,6 @@ public class Building implements Serializable, Iterable<UUID> {
                     bestPriority = bt.priority();
                     type = bt.name();
                     assignedType = true;
-
-                    if (checkingForcedType) {
-                        break;
-                    }
-                } else if (checkingForcedType) {
-                    assignedType = false;
                 }
             }
         }
@@ -449,8 +385,8 @@ public class Building implements Serializable, Iterable<UUID> {
         return type;
     }
 
-    public String getForcedType() {
-        return forcedType;
+    public boolean isTypeForced() {
+        return isTypeForced;
     }
 
     public BuildingType getBuildingType() {
@@ -461,19 +397,8 @@ public class Building implements Serializable, Iterable<UUID> {
         this.type = type;
     }
 
-    public void setForcedType(String type) { this.forcedType = type; }
-
-    public Map<UUID, String> getResidents() {
-        return residents;
-    }
-
-    @Override
-    public Iterator<UUID> iterator() {
-        return residents.keySet().iterator();
-    }
-
-    public boolean hasResident(UUID id) {
-        return residents.containsKey(id);
+    public void setTypeForced(boolean forced) {
+        this.isTypeForced = forced;
     }
 
     public Map<Identifier, List<BlockPos>> getBlocks() {
@@ -508,6 +433,9 @@ public class Building implements Serializable, Iterable<UUID> {
     }
 
     public boolean containsPos(Vec3i pos) {
+        if (getBuildingType().grouped()) {
+            return pos.isWithinDistance(getCenter(), getBuildingType().getMargin());
+        }
         return pos.getX() >= pos0X && pos.getX() <= pos1X
                 && pos.getY() >= pos0Y && pos.getY() <= pos1Y
                 && pos.getZ() >= pos0Z && pos.getZ() <= pos1Z;
@@ -515,10 +443,6 @@ public class Building implements Serializable, Iterable<UUID> {
 
     public boolean isIdentical(Building b) {
         return pos0X == b.pos0X && pos1X == b.pos1X && pos0Y == b.pos0Y && pos1Y == b.pos1Y && pos0Z == b.pos0Z && pos1Z == b.pos1Z;
-    }
-
-    public int getBedCount() {
-        return getBlocksOfGroup(new Identifier("minecraft:beds")).size();
     }
 
     @Deprecated

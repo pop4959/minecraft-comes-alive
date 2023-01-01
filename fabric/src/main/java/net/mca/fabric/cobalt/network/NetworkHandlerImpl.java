@@ -12,12 +12,23 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NetworkHandlerImpl extends NetworkHandler.Impl {
+    private final Map<Message, Identifier> cache = new HashMap<>();
+
+    private Identifier getMessageIdentifier(Message msg) {
+        return cache.computeIfAbsent(msg, m -> getMessageIdentifier(m.getClass()));
+    }
+
+    private <T> Identifier getMessageIdentifier(Class<T> msg) {
+        return MCA.locate(msg.getSimpleName().toLowerCase());
+    }
+
     @Override
     public <T extends Message> void registerMessage(Class<T> msg) {
-        Identifier id = new Identifier(MCA.MOD_ID, msg.getName().toLowerCase(Locale.ENGLISH));
+        Identifier id = getMessageIdentifier(msg);
 
         ServerPlayNetworking.registerGlobalReceiver(id, (server, player, handler, buffer, responder) -> {
             Message m = Message.decode(buffer);
@@ -25,29 +36,32 @@ public class NetworkHandlerImpl extends NetworkHandler.Impl {
         });
 
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            ClientProxy.register(id, msg);
+            ClientProxy.register(id);
         }
     }
 
     @Override
-    public void sendToServer(Message m) {
+    public void sendToServer(Message msg) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        m.encode(buf);
-        ClientPlayNetworking.send(new Identifier(MCA.MOD_ID, m.getClass().getName().toLowerCase(Locale.ENGLISH)), buf);
+        msg.encode(buf);
+        ClientPlayNetworking.send(getMessageIdentifier(msg), buf);
     }
 
     @Override
-    public void sendToPlayer(Message m, ServerPlayerEntity e) {
+    public void sendToPlayer(Message msg, ServerPlayerEntity e) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        m.encode(buf);
-        ServerPlayNetworking.send(e, new Identifier(MCA.MOD_ID, m.getClass().getName().toLowerCase(Locale.ENGLISH)), buf);
+        msg.encode(buf);
+        ServerPlayNetworking.send(e, getMessageIdentifier(msg), buf);
     }
 
     // Fabric's APIs are not side-agnostic.
     // We punt this to a separate class file to keep it from being eager-loaded on a server environment.
     private static final class ClientProxy {
-        private ClientProxy() {throw new RuntimeException("new ClientProxy()");}
-        public static <T extends Message> void register(Identifier id, Class<T> msg) {
+        private ClientProxy() {
+            throw new RuntimeException("new ClientProxy()");
+        }
+
+        public static void register(Identifier id) {
             ClientPlayNetworking.registerGlobalReceiver(id, (client, ignore1, buffer, ignore2) -> {
                 Message m = Message.decode(buffer);
                 client.execute(m::receive);

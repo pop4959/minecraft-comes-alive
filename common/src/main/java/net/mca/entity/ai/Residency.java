@@ -1,7 +1,7 @@
 package net.mca.entity.ai;
 
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.server.world.data.Building;
 import net.mca.server.world.data.GraveyardManager;
 import net.mca.server.world.data.Village;
 import net.mca.server.world.data.VillageManager;
@@ -11,13 +11,13 @@ import net.mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.poi.PointOfInterestStorage;
+import net.minecraft.world.poi.PointOfInterestTypes;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -25,11 +25,10 @@ import java.util.stream.Stream;
  * Villagers need a place to live too.
  */
 public class Residency {
-    private static final CDataParameter<Integer> BUILDING = CParameter.create("buildings", -1);
-    private static final CDataParameter<BlockPos> HANGOUT = CParameter.create("hangoutPos", BlockPos.ORIGIN);
+    private static final CDataParameter<Integer> VILLAGE = CParameter.create("buildings", -1);
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(CDataManager.Builder<E> builder) {
-        return builder.addAll(BUILDING, HANGOUT);
+        return builder.addAll(VILLAGE);
     }
 
     private final VillagerEntityMCA entity;
@@ -52,48 +51,32 @@ public class Residency {
         //todo: Implement proper logic for this in 7.4.0
     }
 
-    public BlockPos getHangout() {
-        return entity.getTrackedValue(HANGOUT);
-    }
-
-    public void setHangout(PlayerEntity player) {
-        entity.sendChatMessage(player, "interaction.sethangout.success");
-        entity.setTrackedValue(HANGOUT, player.getBlockPos());
-    }
-
-    public void setBuildingId(int id) {
-        entity.setTrackedValue(BUILDING, id);
-    }
-
     public Optional<Village> getHomeVillage() {
         VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-        return manager.getOrEmpty(manager.mapBuildingToVillage(entity.getTrackedValue(BUILDING)));
+        return manager.getOrEmpty(entity.getTrackedValue(VILLAGE));
     }
 
-    public Optional<Building> getHomeBuilding() {
-        Optional<Building> building = getHomeVillage().flatMap(v -> v.getBuilding(entity.getTrackedValue(BUILDING)));
-        if (building.isEmpty()) {
-            setHomeLess();
-        }
-        return building;
-    }
-
-    public void leaveHome() {
-        VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-        Optional<Village> village = getHomeVillage();
-        village.ifPresent(v -> {
-            Optional<Building> building = v.getBuilding(entity.getTrackedValue(BUILDING));
-            if (building.isPresent()) {
-                building.get().getResidents().remove(entity.getUuid());
-                manager.markDirty();
-            }
-            v.cleanReputation();
-            v.markDirty((ServerWorld)entity.world);
+    /**
+     * Joins the closest village, if in range
+     */
+    public void seekHome() {
+        entity.getResidency().getHomeVillage().ifPresentOrElse(v -> {
+            v.updateResident(entity);
+        }, () -> {
+            VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+            manager.findNearestVillage(entity).filter(Village::hasSpace).ifPresent(v -> {
+                v.updateResident(entity);
+                entity.setTrackedValue(VILLAGE, v.getId());
+            });
         });
     }
 
-    public Optional<GlobalPos> getHome() {
-        return getHomeBuilding().map(building -> GlobalPos.create(entity.world.getRegistryKey(), building.getCenter()));
+    public void leaveHome() {
+        Optional<Village> village = getHomeVillage();
+        village.ifPresent(v -> {
+            v.removeResident(entity);
+        });
+        entity.setTrackedValue(VILLAGE, -1);
     }
 
     public void tick() {
@@ -101,77 +84,44 @@ public class Residency {
             return;
         }
 
+        //report buildings close by
         if (entity.age % 600 == 0 && entity.doesProfessionRequireHome()) {
-            if (getHomeVillage().filter(v -> !v.isAutoScan()).isEmpty()) {
+            Optional<Village> village = getHomeVillage();
+            if (village.isEmpty() && Config.getInstance().enableAutoScanByDefault || village.filter(Village::isAutoScan).isPresent()) {
                 reportBuildings();
             }
 
-            //poor villager has no home
-            if (entity.getTrackedValue(BUILDING) == -1) {
-                Village.findNearest(entity).ifPresent(this::seekNewHome);
+            //seek a home
+            if (village.isEmpty()) {
+                seekHome();
             }
         }
 
-        //check if his village and building still exists
+        //slowly inject village boni
         if (entity.age % 1200 == 0) {
             getHomeVillage().ifPresentOrElse(village -> {
-                Optional<Building> building = village.getBuilding(entity.getTrackedValue(BUILDING));
-                if (building.filter(b -> b.hasResident(entity.getUuid()) && !b.isCrowded()).isEmpty()) {
-                    if (building.isPresent()) {
-                        setHomeLess();
-                    }
-                } else {
-                    //has a home location outside the building?
-                    Optional<GlobalPos> globalPos = entity.getMCABrain().getOptionalMemory(MemoryModuleType.HOME);
-                    if (globalPos.isPresent() && !building.get().containsPos(globalPos.get().getPos())) {
-                        setHomeLess();
-                        return;
-                    }
-
-                    //fetch mood from the village storage
-                    int mood = village.popMood((ServerWorld)entity.world);
-                    if (mood != 0) {
-                        entity.getVillagerBrain().modifyMoodValue(mood);
-                    }
-
-                    //fetch hearts
-                    entity.world.getPlayers().forEach(player -> {
-                        int rep = village.popHearts(player);
-                        if (rep != 0) {
-                            entity.getVillagerBrain().getMemoriesForPlayer(player).modHearts(rep);
-                        }
-                    });
-
-                    //update the reputation
-                    entity.world.getPlayers().forEach(player -> {
-                        //currently, only hearts are considered, maybe additional factors can affect that too
-                        int hearts = entity.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
-                        village.setReputation(player, entity, hearts);
-                    });
+                //fetch mood from the village storage
+                int mood = village.popMood();
+                if (mood != 0) {
+                    entity.getVillagerBrain().modifyMoodValue(mood);
                 }
-            }, this::setHomeLess);
+
+                //fetch hearts
+                entity.world.getPlayers().forEach(player -> {
+                    int rep = village.popHearts(player);
+                    if (rep != 0) {
+                        entity.getVillagerBrain().getMemoriesForPlayer(player).modHearts(rep);
+                    }
+                });
+
+                //update the reputation
+                entity.world.getPlayers().forEach(player -> {
+                    //currently, only hearts are considered, maybe additional factors can affect that too
+                    int hearts = entity.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
+                    village.setReputation(player, entity, hearts);
+                });
+            }, this::leaveHome);
         }
-    }
-
-    private void setHomeLess() {
-        Optional<Village> village = getHomeVillage();
-        village.ifPresent(buildings -> buildings.removeResident(this.entity));
-        setBuildingId(-1);
-        entity.getMCABrain().forget(MemoryModuleType.HOME);
-    }
-
-    private void setBuilding(Building b) {
-        List<BlockPos> group = b.getBlocksOfGroup(new Identifier("minecraft:beds"));
-        if (group.size() > 0) {
-            setBuilding(b, group.get(b.getResidents().size() % group.size()));
-        } else {
-            setBuilding(b, b.getCenter());
-        }
-    }
-
-    private void setBuilding(Building b, BlockPos p) {
-        setBuildingId(b.getId());
-        entity.getMCABrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.world.getRegistryKey(), p));
     }
 
     //report potential buildings within this villagers reach
@@ -193,54 +143,35 @@ public class Residency {
         GraveyardManager.get((ServerWorld)entity.world).reportToVillageManager(entity);
     }
 
-    private boolean seekNewHome(Village village) {
-        //choose the first building available, shuffled
-        List<Building> buildings = village.getBuildings().values().stream()
-                .filter(Building::hasFreeSpace).toList();
-
-        if (!buildings.isEmpty()) {
-            Building b = buildings.get(entity.getRandom().nextInt(buildings.size()));
-
-            //add to residents
-            setBuilding(b);
-            village.addResident(entity, b.getId());
-
-            return true;
+    public void setHome(ServerPlayerEntity player) {
+        if (!entity.doesProfessionRequireHome() || entity.getDespawnDelay() > 0) {
+            entity.sendChatMessage(player, "interaction.sethome.temporary");
         }
 
-        return false;
-    }
-
-    public void setHome(PlayerEntity player) {
-        // make sure the building is up-to-date
+        // also trigger a building refresh, because why not
         VillageManager manager = VillageManager.get((ServerWorld)player.world);
         manager.processBuilding(player.getBlockPos(), true, false);
 
+        seekHome();
+
         //check if a bed can be found
-        manager.findNearestVillage(player).ifPresentOrElse(village -> {
-            village.getBuildingAt(player.getBlockPos()).ifPresentOrElse(building -> {
-                if (!entity.doesProfessionRequireHome() || entity.getDespawnDelay() > 0) {
-                    entity.sendChatMessage(player, "interaction.sethome.temporary");
-                } else if (building.hasFreeSpace()) {
-                    entity.sendChatMessage(player, "interaction.sethome.success");
+        PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
+        Optional<BlockPos> position = pointOfInterestStorage.getPositions(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), (p) -> true, player.getBlockPos(), 16, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
+        if (position.isPresent()) {
+            entity.sendChatMessage(player, "interaction.sethome.success");
+            pointOfInterestStorage.getPosition(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), (p, q) -> true, position.get(), 1);
+            entity.getBrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.world.getRegistryKey(), position.get()));
+        } else {
+            getHomeVillage().map(v -> v.getBuildingAt(entity.getBlockPos())).filter(Optional::isPresent).map(Optional::get).filter(b -> b.getBuildingType().noBeds()).ifPresentOrElse(building -> {
+                entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
+            }, () -> {
+                entity.sendChatMessage(player, "interaction.sethome.bedfail");
+            });
+        }
+    }
 
-                    //remove from old home
-                    setHomeLess();
-
-                    //add to residents
-                    setBuilding(building, player.getBlockPos());
-                    village.addResident(entity, building.getId());
-                } else if (building.getBuildingType().noBeds()) {
-                    entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
-                } else if (building.getBedCount() == 0) {
-                    entity.sendChatMessage(player, "interaction.sethome.nobeds");
-                } else {
-                    entity.sendChatMessage(player, "interaction.sethome.bedfail");
-                }
-            }, () -> entity.sendChatMessage(player, "interaction.sethome.fail"));
-        }, () -> {
-            entity.sendChatMessage(player, "interaction.sethome.fail");
-        });
+    public Optional<GlobalPos> getHome() {
+        return entity.getMCABrain().getOptionalMemory(MemoryModuleType.HOME);
     }
 
     public void goHome(PlayerEntity player) {

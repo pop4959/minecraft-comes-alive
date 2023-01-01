@@ -1,3 +1,44 @@
+# 7.4.0
+
+* Simplified Villages
+    * Villager no longer rely on a village to find a home
+    * Buildings are no longer required and automatic scanning is disabled by default
+        * Frees a bit of CPU
+        * This can be toggled in the blueprint
+        * Manual tagging is possible too for more control
+    * Buildings do however grant buffs and upgrades to the community, boosting the mood and enhancing guards armor
+* Added special vision for Sirbens
+* Added PTG-3 based villager chat AI
+    * Enable in Config
+    * Speak their name once to start a conversation
+* Added more phrases
+    * Especially if you are a parent
+* Fewer crashes when crippling the Config
+* Improved dialogues
+    * Player Gender
+    * Added Greeting back
+    * Villager no longer welcome you if you are a Mayor or Monarch
+* Staff of Life now has 10 uses instead of 5
+* Fixed armor texture on female players
+* Fixed performance issue related to villager renderer
+* Fixed Turkish locale issues again
+* You can now start a village with a room (e.g. underground)
+* Added more phrases
+* Fixed villagers using the steve second layer
+* Villager can now open gates
+* Villager now prefer paths and dislike stepping on grass (potential unstable)
+* Improved grieving
+    * Villager will grieve when a close villager dies
+    * Villager will also grieve once a week at a graveyard
+* Improved taxes
+    * Tax items can now be configured
+* Fixed graveyards disappearing
+* Villager with family or friends will now spawn a gravestone if none was found
+* Updated most textures to SoyTutta
+* Updated and added additional headstones
+* Fixed blocked buildings
+* Added rock paper scissor dialogue options for children
+
 # 7.3.21
 
 * Added `percentageOfVanillaVillages` as a config value to randomly keep vanilla villages

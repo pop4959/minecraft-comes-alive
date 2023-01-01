@@ -10,7 +10,6 @@ import net.mca.entity.VillagerLike;
 import net.mca.item.BabyItem;
 import net.mca.item.ExtendedWrittenBookItem;
 import net.mca.network.s2c.*;
-import net.mca.server.world.data.BabyTracker;
 import net.mca.server.world.data.Village;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -19,8 +18,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
-
-import java.util.Optional;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -119,9 +116,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleVillageDataResponse(GetVillageResponse message) {
         Screen screen = client.currentScreen;
         if (screen instanceof BlueprintScreen gui) {
-            Village village = new Village();
-            village.load(message.getData());
-
+            Village village = new Village(message.getData(), null);
             gui.setVillage(village);
             gui.setRank(message.rank, message.reputation, message.isVillage, message.ids, message.tasks, message.buildingTypes);
         }
@@ -155,13 +150,16 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleDialogueResponse(InteractionDialogueResponse message) {
         Screen screen = client.currentScreen;
         if (screen instanceof InteractScreen gui) {
-            gui.setDialogue(message.question, message.answers, message.silent);
+            gui.setDialogue(message.question, message.answers);
         }
     }
 
     @Override
-    public void handleChildData(GetChildDataResponse message) {
-        BabyItem.CLIENT_STATE_CACHE.put(message.id, Optional.ofNullable(message.getData()).map(BabyTracker.ChildSaveState::new));
+    public void handleDialogueQuestionResponse(InteractionDialogueQuestionResponse message) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof InteractScreen gui) {
+            gui.setLastPhrase(message.getQuestionText(), message.silent);
+        }
     }
 
     @Override

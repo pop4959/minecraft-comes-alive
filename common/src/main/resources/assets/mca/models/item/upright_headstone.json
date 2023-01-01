@@ -1,5 +1,5 @@
 {
-    "parent": "mca:block/monument_upright",
+    "parent": "mca:block/upright_headstone",
     "display": {
         "gui": {
             "rotation": [ 30, 225, 0 ],

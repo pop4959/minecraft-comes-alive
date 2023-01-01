@@ -20,7 +20,8 @@ public class GetVillageRequest implements Message {
     @Override
     public void receive(ServerPlayerEntity player) {
         Optional<Village> village = Village.findNearest(player);
-        if (village.isPresent() && !village.get().getBuildings().isEmpty()) {
+        if (village.isPresent()) {
+            village.get().updateMaxPopulation();
             int reputation = village.get().getReputation(player);
             boolean isVillage = village.get().isVillage();
             Rank rank = Tasks.getRank(village.get(), player);

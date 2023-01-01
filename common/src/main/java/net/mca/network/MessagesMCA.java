@@ -25,8 +25,6 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(InteractionDialogueMessage.class);
         NetworkHandler.registerMessage(InteractionDialogueResponse.class);
         NetworkHandler.registerMessage(InteractionDialogueInitMessage.class);
-        NetworkHandler.registerMessage(GetChildDataRequest.class);
-        NetworkHandler.registerMessage(GetChildDataResponse.class);
         NetworkHandler.registerMessage(GetVillagerRequest.class);
         NetworkHandler.registerMessage(VillagerEditorSyncRequest.class);
         NetworkHandler.registerMessage(AnalysisResults.class);
@@ -46,5 +44,6 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(SkinListResponse.class);
         NetworkHandler.registerMessage(OpenDestinyGuiRequest.class);
         NetworkHandler.registerMessage(DamageItemMessage.class);
+        NetworkHandler.registerMessage(InteractionDialogueQuestionResponse.class);
     }
 }

@@ -41,8 +41,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
     public final Set<BlockPos> cache = ConcurrentHashMap.newKeySet();
 
-    public final Map<Integer, Integer> buildingToVillages = new HashMap<>();
-
     private final List<BlockPos> buildingQueue = new LinkedList<>();
 
     private int lastBuildingId;
@@ -74,20 +72,12 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
         NbtList villageList = nbt.getList("villages", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < villageList.size(); i++) {
-            Village village = new Village();
-            village.load(villageList.getCompound(i));
+            Village village = new Village(villageList.getCompound(i), world);
             if (village.getBuildings().isEmpty()) {
                 MCA.LOGGER.warn("Empty village detected (" + village.getName() + "), removing...");
                 markDirty();
             } else {
                 villages.put(village.getId(), village);
-            }
-        }
-
-        //create a mapping from building id to its village id
-        for (Village v : villages.values()) {
-            for (Building b : v.getBuildings().values()) {
-                buildingToVillages.put(b.getId(), v.getId());
             }
         }
     }
@@ -140,6 +130,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         nbt.putInt("lastVillageId", lastVillageId);
         nbt.put("villages", NbtHelper.fromList(villages.values(), Village::save));
         nbt.put("reapers", reapers.writeNbt());
+        nbt.put("babies", babies.writeNbt());
         return nbt;
     }
 
@@ -240,9 +231,10 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     }
 
     public Building.validationResult processBuilding(BlockPos pos) {
-        return processBuilding(pos, false, false);
+        return processBuilding(pos, false, true);
     }
 
+    //checks weather the given block contains a grouped building block, e.g., a town bell or gravestone
     private BuildingType getGroupedBuildingType(BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
         for (BuildingType bt : API.getVillagePool()) {
@@ -308,19 +300,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                 }
             }
 
-            //verify all poi buildings
-            village.getBuildings().values().stream()
-                    .filter(b -> enforce || world.getTime() - b.getLastScan() > Building.SCAN_COOLDOWN)
-                    .filter(b -> b.getBuildingType().grouped())
-                    .filter(b -> b.getCenter().getSquaredDistance(pos) < 1024.0)
-                    .forEach(b -> {
-                        b.validateBlocks(world);
-                        if (b.getBlockPosStream().findAny().isEmpty()) {
-                            toRemove.add(b.getId());
-                        }
-                    });
-
-            //remove buildings which became invalid for whatever reason
+            //remove buildings, which became invalid for whatever reason
             for (int id : toRemove) {
                 village.removeBuilding(id);
                 markDirty();
@@ -337,7 +317,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         //add a new building, if no overlap has been found or the player enforced a full add
         if (!found && !blocked.contains(pos)) {
             //create new village
-            Village village = optionalVillage.orElse(new Village(lastVillageId++));
+            Village village = optionalVillage.orElse(new Village(lastVillageId++, world));
 
             //create new building
             Building building = new Building(pos, strictScan);
@@ -364,7 +344,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
             building.setId(lastBuildingId++);
             village.getBuildings().put(building.getId(), building);
             village.calculateDimensions();
-            buildingToVillages.put(building.getId(), village.getId());
 
             //attempt to merge
             villages.values().stream()
@@ -392,15 +371,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         this.buildingCooldown = buildingCooldown;
     }
 
-    public int mapBuildingToVillage(Integer buildingId) {
-        return buildingToVillages.getOrDefault(buildingId, -1);
-    }
-
     public void merge(Village into, Village from) {
         into.merge(from);
-
-        for (Building b : from.getBuildings().values()) {
-            buildingToVillages.put(b.getId(), into.getId());
-        }
     }
 }

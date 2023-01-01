@@ -4,8 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import net.mca.entity.ai.Traits;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,10 +88,11 @@ public final class Config implements Serializable {
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
+    public boolean enableVillagerChatAI = false;
 
     //village behavior
     public int guardSpawnRate = 6;
-    public float taxesFactor = 1.5f;
+    public float taxesFactor = 0.5f;
     public int taxSeason = 168000;
     public int marriageChance = 5;
     public int adventurerAtInnChance = 5;
@@ -109,6 +112,7 @@ public final class Config implements Serializable {
     public List<String> villagerInteractionItemBlacklist = List.of(
             "minecraft:bucket"
     );
+    public boolean enableAutoScanByDefault = false;
 
     //gifts
     public int giftDesaturationQueueLength = 16;
@@ -165,8 +169,8 @@ public final class Config implements Serializable {
             .put("minecraft:spider", 0)
             .put("minecraft:skeleton", 0)
             .put("minecraft:slime", 0)
-            .put(MCA.MOD_ID + "female_zombie_villager", 3)
-            .put(MCA.MOD_ID + "male_zombie_villager", 3)
+            .put(MCA.MOD_ID + ":female_zombie_villager", 3)
+            .put(MCA.MOD_ID + ":male_zombie_villager", 3)
             .build();
 
     public List<String> villagerPathfindingBlacklist = List.of(
@@ -182,46 +186,47 @@ public final class Config implements Serializable {
     );
 
     public List<String> structuresInRumors = List.of(
-            "igloo",
-            "pyramid",
-            "ruined_portal_desert",
-            "ruined_portal_swamp",
-            "ruined_portal",
-            "ruined_portal_mountain",
-            "mansion",
-            "monument",
-            "shipwreck",
-            "shipwreck_beached",
-            "village_desert",
-            "village_taiga",
-            "village_snowy",
-            "village_plains",
-            "village_savanna",
-            "swamp_hut",
-            "mineshaft",
-            "jungle_pyramid",
-            "pillager_outpost"
+            "minecraft:igloo",
+            "minecraft:pyramid",
+            "minecraft:ruined_portal_desert",
+            "minecraft:ruined_portal_swamp",
+            "minecraft:ruined_portal",
+            "minecraft:ruined_portal_mountain",
+            "minecraft:mansion",
+            "minecraft:monument",
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached",
+            "minecraft:village_desert",
+            "minecraft:village_taiga",
+            "minecraft:village_snowy",
+            "minecraft:village_plains",
+            "minecraft:village_savanna",
+            "minecraft:swamp_hut",
+            "minecraft:mineshaft",
+            "minecraft:jungle_pyramid",
+            "minecraft:pillager_outpost"
     );
 
     public List<String> destinyLocations = List.of(
             "somewhere",
-            "shipwreck_beached",
-            "village_desert",
-            "village_taiga",
-            "village_snowy",
-            "village_plains",
-            "village_savanna"
+            "minecraft:shipwreck_beached",
+            "minecraft:village_desert",
+            "minecraft:village_taiga",
+            "minecraft:village_snowy",
+            "minecraft:village_plains",
+            "minecraft:village_savanna"
     );
 
     public Map<String, String> destinyLocationsToTranslationMap = Map.of(
             "default", "destiny.story.travelling",
-            "shipwreck_beached", "destiny.story.sailing"
+            "minecraft:shipwreck_beached", "destiny.story.sailing"
     );
 
     public Map<String, String> professionConversionsMap = Map.of();
 
     public Map<String, String> shaderLocationsMap = Map.of(
-            "color_blind", "minecraft:shaders/post/desaturate.json"
+            "color_blind", "minecraft:shaders/post/desaturate.json",
+            "sirben", "mca:shaders/post/sirben.json"
     );
 
     public Map<String, String> playerRendererBlacklist = Map.of(
@@ -230,12 +235,25 @@ public final class Config implements Serializable {
             "epicfight", "all"
     );
 
+    public Map<String, Boolean> enabledTraits = new HashMap<>();
+
+    public Map<String, Float> taxesMap = Map.of(
+            "minecraft:diamond", 10.0f
+    );
 
     public static File getConfigFile() {
         return new File("./config/mca.json");
     }
 
+    public void autocomplete() {
+        for (Traits.Trait trait : Traits.Trait.values()) {
+            enabledTraits.putIfAbsent(trait.name(), true);
+        }
+    }
+
     public void save() {
+        autocomplete();
+
         try (FileWriter writer = new FileWriter(getConfigFile())) {
             version = VERSION;
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -256,13 +274,11 @@ public final class Config implements Serializable {
             return config;
         } catch (JsonSyntaxException e) {
             MCA.LOGGER.error("");
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
-            MCA.LOGGER.error("Fix errors, or delete file to reset");
             e.printStackTrace();
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
             MCA.LOGGER.error("");
-            throw e;
         } catch (IOException e) {
             e.printStackTrace();
         }

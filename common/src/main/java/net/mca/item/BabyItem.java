@@ -1,13 +1,9 @@
 package net.mca.item;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import net.mca.ClientProxy;
 import net.mca.Config;
 import net.mca.advancement.criterion.CriterionMCA;
 import net.mca.cobalt.network.NetworkHandler;
-import net.mca.entity.Status;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerFactory;
 import net.mca.entity.VillagerLike;
@@ -15,9 +11,7 @@ import net.mca.entity.ai.Memories;
 import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.network.c2s.GetChildDataRequest;
 import net.mca.network.s2c.OpenGuiRequest;
-import net.mca.server.world.data.BabyTracker;
 import net.mca.util.WorldUtils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -30,31 +24,84 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
-public class BabyItem extends Item {
-    public static final LoadingCache<UUID, Optional<BabyTracker.ChildSaveState>> CLIENT_STATE_CACHE = CacheBuilder.newBuilder()
-            .expireAfterWrite(30, TimeUnit.SECONDS)
-            .build(CacheLoader.from(id -> {
-                NetworkHandler.sendToServer(new GetChildDataRequest(id));
-                return Optional.empty();
-            }));
+import static net.minecraft.util.Util.NIL_UUID;
 
+public class BabyItem extends Item {
     private final Gender gender;
 
     public BabyItem(Gender gender, Item.Settings properties) {
         super(properties);
         this.gender = gender;
+    }
+
+    public static ItemStack createItem(Entity mother, Entity father, long seed) {
+        Gender gender = Gender.getRandom();
+        ItemStack stack = (gender.binary() == Gender.MALE ? ItemsMCA.BABY_BOY : ItemsMCA.BABY_GIRL).get().getDefaultStack();
+
+        NbtCompound nbt = getNbt(stack);
+
+        nbt.putUuid("mother", mother.getUuid());
+        nbt.putUuid("father", father.getUuid());
+
+        nbt.putString("motherName", mother.getName().getString());
+        nbt.putString("fatherName", father.getName().getString());
+
+        VillagerLike<?> motherVillager = VillagerLike.toVillager(mother);
+        VillagerLike<?> fatherVillager = VillagerLike.toVillager(father);
+
+        // Create dummy child to generate genes and traits
+        VillagerEntityMCA child = VillagerFactory.newVillager(mother.world)
+                .withPosition(mother.getPos())
+                .withGender(gender)
+                .withAge(-AgeState.getMaxAge())
+                .build();
+
+        // Combine genes
+        child.getGenetics().combine(
+                motherVillager.getGenetics(),
+                fatherVillager.getGenetics(),
+                seed
+        );
+
+        // Inherit traits
+        child.getTraits().inherit(motherVillager.getTraits(), seed);
+        child.getTraits().inherit(fatherVillager.getTraits(), seed);
+
+        // Save child for later
+        NbtCompound compound = new NbtCompound();
+        child.writeCustomDataToNbt(compound);
+        nbt.put("child", compound);
+
+        // Make sure family tree entries exist
+        FamilyTree tree = FamilyTree.get((ServerWorld)mother.world);
+        tree.getOrCreate(mother);
+        tree.getOrCreate(father);
+
+        return stack;
+    }
+
+    public static NbtCompound getNbt(ItemStack stack) {
+        NbtCompound nbt = stack.getOrCreateNbt();
+        if (!nbt.contains("baby")) {
+            NbtCompound baby = stack.getOrCreateSubNbt("baby");
+            baby.putUuid("mother", NIL_UUID);
+            baby.putUuid("father", NIL_UUID);
+            baby.putString("motherName", "Unknown");
+            baby.putString("fatherName", "Unknown");
+            baby.putInt("age", 0);
+        }
+        return stack.getSubNbt("baby");
     }
 
     public Gender getGender() {
@@ -74,7 +121,7 @@ public class BabyItem extends Item {
                     count = stack.getOrCreateNbt().getInt("dropAttempts") + 1;
                 }
                 stack.getOrCreateNbt().putInt("dropAttempts", count);
-                CriterionMCA.BABY_DROPPED_CRITERION.trigger((ServerPlayerEntity) player, count);
+                CriterionMCA.BABY_DROPPED_CRITERION.trigger((ServerPlayerEntity)player, count);
                 player.sendMessage(Text.translatable("item.mca.baby.no_drop"), true);
             }
             return false;
@@ -89,61 +136,29 @@ public class BabyItem extends Item {
             return;
         }
 
-        // remove duplicates
-        if (entity instanceof ServerPlayerEntity player) {
-            if (world.getTime() % 20 == 0) {
-                Set<UUID> found = new HashSet<>();
-                for (int i = player.getInventory().size() - 1; i >= 0; i--) {
-                    ItemStack s = player.getInventory().getStack(i);
-                    final int sl = i;
-                    BabyTracker.getStateId(s).ifPresent(id -> {
-                        if (found.contains(id)) {
-                            player.getInventory().removeStack(sl);
-                        } else {
-                            found.add(id);
-                        }
-                    });
-                }
+        // use an anvil to rename your baby (in case of typos like I did)
+        if (stack.hasCustomName()) {
+            getNbt(stack).putString("babyName", stack.getName().getString());
+            stack.removeCustomName();
+
+            if (entity instanceof ServerPlayerEntity player) {
+                CriterionMCA.GENERIC_EVENT_CRITERION.trigger(player, "rename_baby");
             }
         }
 
         // update
-        if (BabyTracker.hasState(stack)) {
-            Optional<BabyTracker.MutableChildSaveState> state = BabyTracker.getState(stack, (ServerWorld)world);
-            if (state.isPresent()) {
-
-                // use an anvil to rename your baby (in case of typos like I did)
-                if (stack.hasCustomName()) {
-                    state.get().setName(stack.getName().getString());
-                    state.get().writeToItem(stack);
-                    stack.removeCustomName();
-
-                    if (entity instanceof ServerPlayerEntity player) {
-                        CriterionMCA.GENERIC_EVENT_CRITERION.trigger(player, "rename_baby");
-                    }
-                }
-
-                if (state.get().getName().isPresent() && world.getTime() % 1200 == 0) {
-                    stack.getNbt().putInt("age", stack.getNbt().getInt("age") + 1200);
-                }
-            } else {
-                BabyTracker.invalidate(stack);
-            }
-        } else if (!stack.hasNbt() || !stack.getNbt().getBoolean("invalidated")) {
-            // legacy and items obtained by creative
-            BabyTracker.get((ServerWorld)world).getPairing(entity.getUuid(), entity.getUuid()).addChild(state -> {
-                state.setGender(gender);
-                state.setOwner(entity);
-                state.writeToItem(stack);
-            });
+        if (world.getTime() % 1200 == 0) {
+            getNbt(stack).putInt("age", getNbt(stack).getInt("age") + 1200);
         }
     }
 
     @Override
     public Text getName(ItemStack stack) {
-        return getClientCheckedState(stack).flatMap(BabyTracker.ChildSaveState::getName).map(s ->
-                (Text)Text.translatable(getTranslationKey(stack) + ".named", s)
-        ).orElseGet(() -> super.getName(stack));
+        if (getNbt(stack).contains("babyName")) {
+            return Text.translatable(getTranslationKey(stack) + ".named", getNbt(stack).getString("babyName"));
+        } else {
+            return super.getName(stack);
+        }
     }
 
     @Override
@@ -156,80 +171,64 @@ public class BabyItem extends Item {
 
     @Override
     public final TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-
         ItemStack stack = player.getStackInHand(hand);
 
         if (world.isClient) {
             return TypedActionResult.pass(stack);
         }
 
-        return BabyTracker.getState(stack, (ServerWorld)world).map(state -> {
-            // Right-clicking an unnamed baby allows you to name it
-            if (state.getName().isEmpty()) {
-                if (player instanceof ServerPlayerEntity serverPlayer) {
-                    NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), serverPlayer);
-                }
-
-                return TypedActionResult.pass(stack);
-            }
-
-            if (!isReadyToGrowUp(stack)) {
-                return TypedActionResult.pass(stack);
-            }
-
+        // Right-clicking an unnamed baby allows you to name it
+        if (!getNbt(stack).contains("babyName")) {
             if (player instanceof ServerPlayerEntity serverPlayer) {
-                // Name is good and we're ready to grow
-                birthChild(state, (ServerWorld)world, serverPlayer);
+                NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), serverPlayer);
             }
-            stack.decrement(1);
+            return TypedActionResult.pass(stack);
+        }
 
-            return TypedActionResult.success(stack);
-        }).orElseGet(() -> {
-            if (BabyTracker.getState(stack).isPresent()) {
-                world.sendEntityStatus(player, Status.PLAYER_CLOUD_EFFECT);
-                player.playSound(SoundEvents.UI_TOAST_OUT, 1, 1);
-                BabyTracker.invalidate(stack);
-                return TypedActionResult.fail(stack);
-            }
-            return TypedActionResult.fail(stack);
-        });
+        // Not old enough
+        if (!isReadyToGrowUp(stack)) {
+            return TypedActionResult.pass(stack);
+        }
+
+        // Name is good and we're ready to grow
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            birthChild(stack, (ServerWorld)world, serverPlayer);
+        }
+        stack.decrement(1);
+
+        return TypedActionResult.success(stack);
     }
 
-    protected VillagerEntityMCA birthChild(BabyTracker.ChildSaveState state, ServerWorld world, ServerPlayerEntity player) {
+    protected VillagerEntityMCA birthChild(ItemStack stack, ServerWorld world, ServerPlayerEntity player) {
         VillagerEntityMCA child = VillagerFactory.newVillager(world)
-                .withName(state.getName().orElse("Unnamed"))
                 .withPosition(player.getPos())
                 .withGender(gender)
                 .withAge(-AgeState.getMaxAge())
                 .build();
 
-        List<Entity> parents = state.getParents().map(world::getEntity).filter(Objects::nonNull).toList();
+        if (getNbt(stack).contains("child")) {
+            child.readCustomDataFromNbt(getNbt(stack).getCompound("child"));
 
-        Optional<Entity> mother = parents.stream().findFirst();
-        Optional<Entity> father = parents.stream().skip(1).findFirst();
-
-        // combine genes
-        child.getGenetics().combine(
-                mother.map(VillagerLike::toVillager).map(VillagerLike::getGenetics),
-                father.map(VillagerLike::toVillager).map(VillagerLike::getGenetics),
-                state.getSeed()
-        );
-
-        // inherit traits
-        mother.map(VillagerLike::toVillager).map(VillagerLike::getTraits).ifPresent(t -> child.getTraits().inherit(t, state.getSeed()));
-        father.map(VillagerLike::toVillager).map(VillagerLike::getTraits).ifPresent(t -> child.getTraits().inherit(t, state.getSeed()));
-
-        // assign parents
-        state.getParents().forEach(p ->
-                FamilyTree.get(world).getOrEmpty(p).ifPresent(parent ->
-                        child.getRelationships().getFamilyEntry().assignParent(parent)
-                )
-        );
+            child.setName(getNbt(stack).getString("babyName"));
+        }
 
         WorldUtils.spawnEntity(world, child, SpawnReason.BREEDING);
 
+        FamilyTree tree = FamilyTree.get(world);
+
+        // Assign parents
+        child.getRelationships().getFamilyEntry().removeMother();
+        child.getRelationships().getFamilyEntry().removeFather();
+        Stream.of("mother", "father").map(key -> getNbt(stack).getUuid(key)).forEach(uuid -> {
+            Optional.ofNullable(world.getEntity(uuid))
+                    .map(tree::getOrCreate)
+                    .or(() -> tree.getOrEmpty(uuid)).ifPresent(entry -> {
+                        child.getRelationships().getFamilyEntry().assignParent(entry);
+                    });
+        });
+
         // notify parents
-        Stream.concat(Stream.of(mother, father).filter(Optional::isPresent).map(Optional::get), Stream.of(player))
+        Stream.of("mother", "father").map(key -> world.getEntity(getNbt(stack).getUuid(key))).filter(Objects::nonNull)
                 .filter(e -> e instanceof ServerPlayerEntity)
                 .map(ServerPlayerEntity.class::cast)
                 .distinct()
@@ -242,99 +241,51 @@ public class BabyItem extends Item {
                     memories.setHearts(Config.getInstance().childInitialHearts);
                 });
 
-        BabyTracker.get(world).getPairing(state).removeChild(state);
-
         return child;
     }
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext flag) {
+        PlayerEntity player = ClientProxy.getClientPlayer();
+        int age = getNbt(stack).getInt("age") + (int)(world == null ? 0 : world.getTime() % 1200);
 
-        getClientState(stack).ifPresent(state -> {
-            PlayerEntity player = ClientProxy.getClientPlayer();
-            NbtCompound nbt = stack.getNbt();
+        // Name
+        if (getNbt(stack).contains("babyName")) {
+            final MutableText text = Text.literal(getNbt(stack).getString("babyName"));
+            tooltip.add(Text.translatable("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
 
-            assert nbt != null;
-            int age = nbt.getInt("age") + (int)(world == null ? 0 : world.getTime() % 1200);
+            if (age > 0) {
+                tooltip.add(Text.translatable("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
+            }
+        } else {
+            tooltip.add(Text.translatable("item.mca.baby.give_name").formatted(Formatting.YELLOW));
+        }
 
-            if (state.getName().isEmpty()) {
-                tooltip.add(Text.translatable("item.mca.baby.give_name").formatted(Formatting.YELLOW));
-            } else {
-                final MutableText text = Text.literal(state.getName().get());
-                tooltip.add(Text.translatable("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
+        tooltip.add(Text.literal(""));
 
-                if (age > 0) {
-                    tooltip.add(Text.translatable("item.mca.baby.age", StringHelper.formatTicks(age)).formatted(Formatting.GRAY));
+        // Parents
+        Stream.of("mother", "father").forEach(p -> {
+                    tooltip.add(Text.translatable("item.mca.baby." + p,
+                            player != null && getNbt(stack).getUuid(p).equals(player.getUuid())
+                                    ? Text.translatable("item.mca.baby.owner.you")
+                                    : getNbt(stack).getString(p + "Name")
+                    ).formatted(Formatting.GRAY));
                 }
-            }
+        );
 
-            tooltip.add(Text.literal(""));
+        // Ready to yeet
+        if (getNbt(stack).contains("babyName") && canGrow(age)) {
+            tooltip.add(Text.translatable("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
+        }
 
-            state.getOwner().ifPresent(owner ->
-                    tooltip.add(Text.translatable("item.mca.baby.owner",
-                            player != null && owner.getLeft().equals(player.getUuid())
-                    ? Text.translatable("item.mca.baby.owner.you")
-                    : owner.getRight()
-            ).formatted(Formatting.GRAY)));
-
-            if (state.getName().isPresent() && canGrow(age)) {
-                tooltip.add(Text.translatable("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
-            }
-
-            if (state.isInfected()) {
-                tooltip.add(Text.translatable("item.mca.baby.state.infected").formatted(Formatting.DARK_GREEN));
-            }
-        });
-    }
-
-    /**
-     * Callable on both sides. If a request is out for details, use that, otherwise keep using the stack's data.
-     */
-    private static Optional<BabyTracker.ChildSaveState> getClientCheckedState(ItemStack stack) {
-        return BabyTracker.getState(stack).map(state -> {
-            Optional<BabyTracker.ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(state.getId());
-
-            //noinspection OptionalAssignedToNull
-            if (loaded == null) {
-                return state;
-            }
-
-            if (loaded.isPresent()) {
-                BabyTracker.ChildSaveState l = loaded.get();
-                if (
-                        (state.getName().isPresent() && l.getName().isEmpty())
-                                || (state.getName().isPresent() && l.getName().isPresent() && !state.getName().get().contentEquals(l.getName().get()))
-                ) {
-                    CLIENT_STATE_CACHE.refresh(state.getId());
-                    return state;
-                }
-                return l;
-            }
-            return state;
-        });
-    }
-
-    /**
-     * Callable on the client only. Starts a request for the stack's data and returns an empty until resolution is complete.
-     */
-    private static Optional<BabyTracker.ChildSaveState> getClientState(ItemStack stack) {
-        return BabyTracker.getState(stack).flatMap(state -> {
-            try {
-                return CLIENT_STATE_CACHE.get(state.getId());
-            } catch (ExecutionException e) {
-                return Optional.of(state);
-            }
-        });
+        // Infected
+        if (getNbt(stack).getFloat("infectionProgress") > 0) {
+            tooltip.add(Text.translatable("item.mca.baby.state.infected").formatted(Formatting.DARK_GREEN));
+        }
     }
 
     public static boolean hasBeenInvalidated(ItemStack stack) {
-        //noinspection ConstantConditions
-        return (stack.hasNbt() && stack.getNbt().getBoolean("invalidated")) || BabyTracker.getStateId(stack).map(id -> {
-            Optional<BabyTracker.ChildSaveState> loaded = CLIENT_STATE_CACHE.getIfPresent(id);
-
-            //noinspection OptionalAssignedToNull
-            return loaded != null && loaded.isEmpty();
-        }).orElse(false);
+        return stack.getOrCreateNbt().contains("invalidated");
     }
 
     private static boolean canGrow(int age) {
