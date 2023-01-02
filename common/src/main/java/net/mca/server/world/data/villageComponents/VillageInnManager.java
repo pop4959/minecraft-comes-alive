@@ -22,11 +22,10 @@ public class VillageInnManager {
     private final Village village;
 
     public VillageInnManager(Village village) {
-        this.village= village;
+        this.village = village;
     }
 
-    //todo weird name, also implement as manager
-    public void inn(ServerWorld world) {
+    public void updateInn(ServerWorld world) {
         village.getBuildingsOfType("inn").forEach((b) -> {
             if (world.random.nextFloat() < Config.getInstance().adventurerAtInnChance / 100f) {
                 List<BlockPos> values = new ArrayList<>(b.getBlocks().values().stream().flatMap(Collection::stream).toList());

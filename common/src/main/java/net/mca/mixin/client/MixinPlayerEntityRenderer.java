@@ -1,4 +1,4 @@
-package net.mca.mixin;
+package net.mca.mixin.client;
 
 import net.mca.MCA;
 import net.mca.MCAClient;

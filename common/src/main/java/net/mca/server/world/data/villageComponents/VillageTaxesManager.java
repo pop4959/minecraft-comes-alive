@@ -116,7 +116,7 @@ public class VillageTaxesManager {
     }
 
     public void deliverTaxes(ServerWorld world) {
-        if (village.hasStoredResource()) {
+        if (village.hasStoredResource() && village.isLoaded(world)) {
             village.getBuildingsOfType("storage").forEach(building -> building.getBlocks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(p -> {

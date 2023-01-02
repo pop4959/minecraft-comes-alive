@@ -11,14 +11,16 @@ import java.util.stream.Collectors;
 public class VillageModule {
     private final static Map<String, String> nameExceptions = Map.of(
             "fishermansHut", "fisherman's hut",
-            "weavingMill", "weaving mill.",
-            "bigHouse", "big house.",
-            "musicStore", "music store.",
+            "weavingMill", "weaving mill",
+            "bigHouse", "big house",
+            "musicStore", "music store",
             "townCenter", "town center"
     );
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
-        input.add("$villager lives in a small, medieval village. "); // todo biome
+        String biome = villager.getWorld().getBiome(villager.getBlockPos()).getKey().map(v -> v.getValue().getPath()).orElse("plains");
+
+        input.add(String.format("$villager lives in a small, medieval village in a %s biom. ", biome.replace("_", " ")));
 
         villager.getResidency().getHomeVillage().ifPresent(v -> {
             String buildings = v.getBuildings().values().stream()

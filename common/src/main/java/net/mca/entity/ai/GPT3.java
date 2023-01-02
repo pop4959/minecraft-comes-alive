@@ -20,7 +20,7 @@ import static net.minecraft.util.Util.NIL_UUID;
 public class GPT3 {
     private static final String url = "http://snoweagle.tk/chat";
 
-    private static final int MAX_MEMORY = 10;
+    private static final int MAX_MEMORY = 12;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
     private static final int CONVERSATION_TIME = 20 * 60;
     private static final int CONVERSATION_DISTANCE = 16;
@@ -58,6 +58,7 @@ public class GPT3 {
         TraitsModule.apply(input, villager, player);
         RelationModule.apply(input, villager, player);
         VillageModule.apply(input, villager, player);
+        EnvironmentModule.apply(input, villager, player);
         PlayerModule.apply(input, villager, player);
         input.add("\n\n");
 

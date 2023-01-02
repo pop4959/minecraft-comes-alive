@@ -15,17 +15,17 @@ public class TraitsModule {
         put("lactose_intolerance", "$villager is intolerant to lactose.");
         put("coeliac_disease", "$villager has coeliac disease.");
         put("diabetes", "$villager has diabetes.");
-        put("sirben", "$villager has was unfortunately born as a Sirben.");
+        put("sirben", "$villager is unfortunately born as a Sirben.");
         put("dwarfism", "$villager has dwarfism.");
         put("albinism", "$villager is an albino.");
         put("heterochromia", "$villager has heterochromia.");
-        put("color_blind", "$villager is color blind.");
+        put("color_blind", "$villager is color-blind.");
         put("vegetarian", "$villager is a vegetarian.");
         put("bisexual", "$villager is bisexual.");
         put("homosexual", "$villager is homosexual.");
         put("left_handed", "$villager is left handed.");
         put("electrified", "$villager has been struck by lightning.");
-        put("rainbow", "$villager has very colorful hair.");
+        put("rainbow", "$villager has colorful hair.");
     }};
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {

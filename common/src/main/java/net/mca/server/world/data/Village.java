@@ -13,10 +13,10 @@ import net.minecraft.nbt.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.poi.PointOfInterestStorage;
-import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
 import javax.annotation.Nullable;
@@ -291,9 +291,9 @@ public class Village implements Iterable<Building> {
             cleanReputation();
         }
 
-        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time) {
+        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time && isLoaded(world)) {
             villageGuardsManager.spawnGuards(world);
-            villageInnManager.inn(world);
+            villageInnManager.updateInn(world);
             villageMarriageManager.marry(world);
             villageProcreationManager.procreate(world);
         }
@@ -463,5 +463,11 @@ public class Village implements Iterable<Building> {
 
     public VillageGuardsManager getVillageGuardsManager() {
         return villageGuardsManager;
+    }
+
+    // Check if village is loaded
+    public boolean isLoaded(ServerWorld world) {
+        Vec3i center = getCenter();
+        return world.isChunkLoaded(ChunkSectionPos.getSectionCoord(center.getX()), ChunkSectionPos.getSectionCoord(center.getZ()));
     }
 }
