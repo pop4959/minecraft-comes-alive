@@ -20,8 +20,8 @@ import static net.minecraft.util.Util.NIL_UUID;
 public class GPT3 {
     private static final String url = "http://snoweagle.tk/chat";
 
-    private static final int MAX_MEMORY = 12;
-    private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
+    private static final int MAX_MEMORY = 500;
+    private static final int MAX_MEMORY_TIME = 20 * 60 * 20;
     private static final int CONVERSATION_TIME = 20 * 60;
     private static final int CONVERSATION_DISTANCE = 16;
 
@@ -47,10 +47,10 @@ public class GPT3 {
 
         // remember phrase
         List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
-        pastDialogue.add(playerName + ": " + msg);
-        if (pastDialogue.size() > MAX_MEMORY) {
+        while (pastDialogue.stream().mapToInt(v -> (v.length() / 4) + 2).sum() > MAX_MEMORY) {
             pastDialogue.remove(0);
         }
+        pastDialogue.add(playerName + ": " + msg);
 
         // construct context
         List<String> input = new LinkedList<>();

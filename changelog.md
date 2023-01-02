@@ -4,6 +4,8 @@
 * AI now has a sense of biome, weather and daytime
 * Fixed crash on 1.19.3
 * Fixed a lag spike and improved overall village performance
+* Synced Patrons list
+* Fixed wrong baby name when placing from creative
 
 # 7.4.0
 
