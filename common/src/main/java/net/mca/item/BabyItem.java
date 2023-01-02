@@ -208,9 +208,9 @@ public class BabyItem extends Item {
 
         if (getNbt(stack).contains("child")) {
             child.readCustomDataFromNbt(getNbt(stack).getCompound("child"));
-
-            child.setName(getNbt(stack).getString("babyName"));
         }
+
+        child.setName(getNbt(stack).getString("babyName"));
 
         WorldUtils.spawnEntity(world, child, SpawnReason.BREEDING);
 
