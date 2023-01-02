@@ -6,6 +6,7 @@
 * Fixed a lag spike and improved overall village performance
 * Synced Patrons list
 * Fixed wrong baby name when placing from creative
+* Fixed 1.19.3 on Forge
 
 # 7.4.0
 
