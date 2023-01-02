@@ -1,4 +1,4 @@
-# 7.4.1
+# 7.4.0 rc 3
 
 * Fixed GPT3 AI on dedicated servers
 * AI now has a sense of biome, weather and daytime
@@ -8,7 +8,7 @@
 * Fixed wrong baby name when placing from creative
 * Fixed 1.19.3 on Forge
 
-# 7.4.0
+# 7.4.0 rc 1, 2
 
 * Simplified Villages
     * Villager no longer rely on a village to find a home
