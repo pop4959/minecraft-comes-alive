@@ -3,7 +3,6 @@ package net.mca.entity.ai.gpt3Modules;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.server.world.data.Building;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.world.biome.Biome;
 
 import java.util.List;
 import java.util.Map;
@@ -19,9 +18,9 @@ public class VillageModule {
     );
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
-        Biome.Category category = Biome.getCategory(villager.getWorld().getBiome(villager.getBlockPos()));
+        String biome = villager.getWorld().getBiome(villager.getBlockPos()).getKey().map(v -> v.getValue().getPath()).orElse("plains");
 
-        input.add(String.format("$villager lives in a small, medieval village in a %s biom. ", category.getName()));
+        input.add(String.format("$villager lives in a small, medieval village in a %s biom. ", biome.replace("_", " ")));
 
         villager.getResidency().getHomeVillage().ifPresent(v -> {
             String buildings = v.getBuildings().values().stream()
