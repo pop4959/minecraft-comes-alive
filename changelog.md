@@ -3,6 +3,7 @@
 * Fixed GPT3 AI on dedicated servers
 * AI now has a sense of biome, weather and daytime
 * Fixed crash on 1.19.3
+* Fixed a lag spike and improved overall village performance
 
 # 7.4.0
 

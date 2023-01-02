@@ -19,6 +19,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.Vec3i;
 
 import java.util.Collection;
 import java.util.List;
@@ -116,7 +118,7 @@ public class VillageTaxesManager {
     }
 
     public void deliverTaxes(ServerWorld world) {
-        if (village.hasStoredResource()) {
+        if (village.hasStoredResource() && village.isLoaded(world)) {
             village.getBuildingsOfType("storage").forEach(building -> building.getBlocks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(p -> {
