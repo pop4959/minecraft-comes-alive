@@ -3,7 +3,6 @@ package net.mca.entity.ai.brain.tasks;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.ai.brain.task.TaskTriggerer;
@@ -28,7 +27,7 @@ public class ExtendedForgetCompletedPointOfInterestTask {
         return TaskTriggerer.task((context) -> {
             return context.group(context.queryMemoryValue(poiPosModule)).apply(context, (poiPos) -> {
                 return (world, entity, time) -> {
-                    GlobalPos globalPos = (GlobalPos)context.getValue(poiPos);
+                    GlobalPos globalPos = context.getValue(poiPos);
                     BlockPos blockPos = globalPos.getPos();
                     if (world.getRegistryKey() == globalPos.getDimension() && blockPos.isWithinDistance(entity.getPos(), MAX_RANGE)) {
                         ServerWorld serverWorld = world.getServer().getWorld(globalPos.getDimension());
@@ -59,11 +58,4 @@ public class ExtendedForgetCompletedPointOfInterestTask {
         BlockState blockState = world.getBlockState(pos);
         return blockState.isIn(BlockTags.BEDS) && (Boolean)blockState.get(BedBlock.OCCUPIED) && !entity.isSleeping();
     }
-
-//    @Override
-//    protected void finishRunning(ServerWorld world, LivingEntity entity, long time) {
-//        super.finishRunning(world, entity, time);
-//
-//
-//    }
 }
