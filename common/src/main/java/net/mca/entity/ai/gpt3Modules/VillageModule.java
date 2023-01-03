@@ -14,7 +14,10 @@ public class VillageModule {
             "weavingMill", "weaving mill",
             "bigHouse", "big house",
             "musicStore", "music store",
-            "townCenter", "town center"
+            "townCenter", "town center",
+            "building", "",
+            "blocked", "",
+            "house", ""
     );
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
@@ -26,9 +29,12 @@ public class VillageModule {
             String buildings = v.getBuildings().values().stream()
                     .map(Building::getType)
                     .map(b -> nameExceptions.getOrDefault(b, b))
+                    .filter(s -> s.length() > 0)
                     .distinct()
                     .collect(Collectors.joining(", "));
-            input.add("The village has a " + buildings + ". ");
+            if (buildings.length() > 0) {
+                input.add("The village has a " + buildings + ". ");
+            }
         });
     }
 }
