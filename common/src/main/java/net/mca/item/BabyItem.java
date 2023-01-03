@@ -49,7 +49,7 @@ public class BabyItem extends Item {
         Gender gender = Gender.getRandom();
         ItemStack stack = (gender.binary() == Gender.MALE ? ItemsMCA.BABY_BOY : ItemsMCA.BABY_GIRL).get().getDefaultStack();
 
-        NbtCompound nbt = getNbt(stack);
+        NbtCompound nbt = getBabyNbt(stack);
 
         nbt.putUuid("mother", mother.getUuid());
         nbt.putUuid("father", father.getUuid());
@@ -91,7 +91,7 @@ public class BabyItem extends Item {
         return stack;
     }
 
-    public static NbtCompound getNbt(ItemStack stack) {
+    public static NbtCompound getBabyNbt(ItemStack stack) {
         NbtCompound nbt = stack.getOrCreateNbt();
         if (!nbt.contains("baby")) {
             NbtCompound baby = stack.getOrCreateSubNbt("baby");
@@ -138,7 +138,7 @@ public class BabyItem extends Item {
 
         // use an anvil to rename your baby (in case of typos like I did)
         if (stack.hasCustomName()) {
-            getNbt(stack).putString("babyName", stack.getName().getString());
+            getBabyNbt(stack).putString("babyName", stack.getName().getString());
             stack.removeCustomName();
 
             if (entity instanceof ServerPlayerEntity player) {
@@ -148,14 +148,14 @@ public class BabyItem extends Item {
 
         // update
         if (world.getTime() % 1200 == 0) {
-            getNbt(stack).putInt("age", getNbt(stack).getInt("age") + 1200);
+            getBabyNbt(stack).putInt("age", getBabyNbt(stack).getInt("age") + 1200);
         }
     }
 
     @Override
     public Text getName(ItemStack stack) {
-        if (getNbt(stack).contains("babyName")) {
-            return Text.translatable(getTranslationKey(stack) + ".named", getNbt(stack).getString("babyName"));
+        if (getBabyNbt(stack).contains("babyName")) {
+            return Text.translatable(getTranslationKey(stack) + ".named", getBabyNbt(stack).getString("babyName"));
         } else {
             return super.getName(stack);
         }
@@ -178,7 +178,7 @@ public class BabyItem extends Item {
         }
 
         // Right-clicking an unnamed baby allows you to name it
-        if (!getNbt(stack).contains("babyName")) {
+        if (!getBabyNbt(stack).contains("babyName")) {
             if (player instanceof ServerPlayerEntity serverPlayer) {
                 NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.BABY_NAME), serverPlayer);
             }
@@ -206,11 +206,11 @@ public class BabyItem extends Item {
                 .withAge(-AgeState.getMaxAge())
                 .build();
 
-        if (getNbt(stack).contains("child")) {
-            child.readCustomDataFromNbt(getNbt(stack).getCompound("child"));
+        if (getBabyNbt(stack).contains("child")) {
+            child.readCustomDataFromNbt(getBabyNbt(stack).getCompound("child"));
         }
 
-        child.setName(getNbt(stack).getString("babyName"));
+        child.setName(getBabyNbt(stack).getString("babyName"));
 
         WorldUtils.spawnEntity(world, child, SpawnReason.BREEDING);
 
@@ -219,7 +219,7 @@ public class BabyItem extends Item {
         // Assign parents
         child.getRelationships().getFamilyEntry().removeMother();
         child.getRelationships().getFamilyEntry().removeFather();
-        Stream.of("mother", "father").map(key -> getNbt(stack).getUuid(key)).forEach(uuid -> {
+        Stream.of("mother", "father").map(key -> getBabyNbt(stack).getUuid(key)).forEach(uuid -> {
             Optional.ofNullable(world.getEntity(uuid))
                     .map(tree::getOrCreate)
                     .or(() -> tree.getOrEmpty(uuid)).ifPresent(entry -> {
@@ -228,7 +228,7 @@ public class BabyItem extends Item {
         });
 
         // notify parents
-        Stream.of("mother", "father").map(key -> world.getEntity(getNbt(stack).getUuid(key))).filter(Objects::nonNull)
+        Stream.of("mother", "father").map(key -> world.getEntity(getBabyNbt(stack).getUuid(key))).filter(Objects::nonNull)
                 .filter(e -> e instanceof ServerPlayerEntity)
                 .map(ServerPlayerEntity.class::cast)
                 .distinct()
@@ -247,11 +247,11 @@ public class BabyItem extends Item {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext flag) {
         PlayerEntity player = ClientProxy.getClientPlayer();
-        int age = getNbt(stack).getInt("age") + (int)(world == null ? 0 : world.getTime() % 1200);
+        int age = getBabyNbt(stack).getInt("age") + (int)(world == null ? 0 : world.getTime() % 1200);
 
         // Name
-        if (getNbt(stack).contains("babyName")) {
-            final MutableText text = Text.literal(getNbt(stack).getString("babyName"));
+        if (getBabyNbt(stack).contains("babyName")) {
+            final MutableText text = Text.literal(getBabyNbt(stack).getString("babyName"));
             tooltip.add(Text.translatable("item.mca.baby.name", text.setStyle(text.getStyle().withColor(gender.getColor()))).formatted(Formatting.GRAY));
 
             if (age > 0) {
@@ -266,20 +266,20 @@ public class BabyItem extends Item {
         // Parents
         Stream.of("mother", "father").forEach(p -> {
                     tooltip.add(Text.translatable("item.mca.baby." + p,
-                            player != null && getNbt(stack).getUuid(p).equals(player.getUuid())
+                            player != null && getBabyNbt(stack).getUuid(p).equals(player.getUuid())
                                     ? Text.translatable("item.mca.baby.owner.you")
-                                    : getNbt(stack).getString(p + "Name")
+                                    : getBabyNbt(stack).getString(p + "Name")
                     ).formatted(Formatting.GRAY));
                 }
         );
 
         // Ready to yeet
-        if (getNbt(stack).contains("babyName") && canGrow(age)) {
+        if (getBabyNbt(stack).contains("babyName") && canGrow(age)) {
             tooltip.add(Text.translatable("item.mca.baby.state.ready").formatted(Formatting.DARK_GREEN));
         }
 
         // Infected
-        if (getNbt(stack).getFloat("infectionProgress") > 0) {
+        if (getBabyNbt(stack).getFloat("infectionProgress") > 0) {
             tooltip.add(Text.translatable("item.mca.baby.state.infected").formatted(Formatting.DARK_GREEN));
         }
     }
@@ -293,7 +293,6 @@ public class BabyItem extends Item {
     }
 
     private static boolean isReadyToGrowUp(ItemStack stack) {
-        //noinspection ConstantConditions
-        return stack.hasNbt() && canGrow(stack.getNbt().getInt("age"));
+        return stack.hasNbt() && canGrow(getBabyNbt(stack).getInt("age"));
     }
 }
