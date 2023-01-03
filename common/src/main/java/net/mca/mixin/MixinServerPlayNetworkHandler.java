@@ -45,7 +45,7 @@ public class MixinServerPlayNetworkHandler {
                     String name = normalize(villager.getTrackedValue(VILLAGER_NAME));
                     if (search.contains(name)) {
                         CompletableFuture.runAsync(() -> {
-                            villager.conversationManager.addMessage(player, Text.literal(GPT3.answer(player, villager, msg)));
+                            GPT3.answer(player, villager, msg).ifPresent(a -> villager.conversationManager.addMessage(player, Text.literal(a)));
                         });
                         talked = true;
                         break;
@@ -57,7 +57,7 @@ public class MixinServerPlayNetworkHandler {
                     for (VillagerEntityMCA villager : entities) {
                         if (GPT3.inConversationWith(villager, player)) {
                             CompletableFuture.runAsync(() -> {
-                                villager.conversationManager.addMessage(player, Text.literal(GPT3.answer(player, villager, msg)));
+                                GPT3.answer(player, villager, msg).ifPresent(a -> villager.conversationManager.addMessage(player, Text.literal(a)));
                             });
                             break;
                         }

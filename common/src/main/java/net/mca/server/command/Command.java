@@ -1,12 +1,14 @@
 package net.mca.server.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.mca.Config;
 import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
+import net.mca.entity.ai.GPT3;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
 import net.mca.server.world.data.PlayerSaveData;
@@ -17,6 +19,14 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class Command {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -31,6 +41,7 @@ public class Command {
                 .then(register("editor", Command::editor))
                 .then(register("destiny", Command::destiny))
                 .then(register("mail", Command::mail))
+                .then(register("verify").then(CommandManager.argument("email", StringArgumentType.greedyString()).executes(Command::verify)))
         );
     }
 
@@ -76,7 +87,35 @@ public class Command {
         return 0;
     }
 
-    private static int displayHelp(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int verify(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+
+        CompletableFuture.runAsync(() -> {
+            // build http request
+            Map<String, String> params = new HashMap<>();
+            params.put("email", StringArgumentType.getString(ctx, "email"));
+            assert player != null;
+            params.put("player", player.getName().getString());
+
+            // encode and create url
+            String encodedURL = params.keySet().stream()
+                    .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
+                    .collect(Collectors.joining("&", GPT3.URL + "verify?", ""));
+
+            GPT3.Answer request = GPT3.request(encodedURL);
+
+            if (request.answer().equals("success")) {
+                player.sendMessage(Text.translatable("command.verify.success").formatted(Formatting.GREEN));
+            } else if (request.answer().equals("failed")) {
+                player.sendMessage(Text.translatable("command.verify.failed").formatted(Formatting.RED));
+            } else {
+                player.sendMessage(Text.translatable("command.verify.crashed").formatted(Formatting.RED));
+            }
+        });
+        return 0;
+    }
+
+    private static int displayHelp(CommandContext<ServerCommandSource> ctx) {
         sendMessage(ctx.getSource().getPlayer(), Formatting.DARK_RED + "--- " + Formatting.GOLD + "PLAYER COMMANDS" + Formatting.DARK_RED + " ---");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca editor" + Formatting.GOLD + " - Choose your genetics and stuff.");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca propose <PlayerName>" + Formatting.GOLD + " - Proposes marriage to the given player.");

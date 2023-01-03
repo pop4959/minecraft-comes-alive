@@ -1,6 +1,7 @@
 import os
 
 import openai
+import patreon
 from fastapi import FastAPI
 from pyrate_limiter import Duration, Limiter, RequestRate, BucketFullException
 
@@ -10,15 +11,40 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 model = "text-curie-001"
 
-limiter = Limiter(RequestRate(800, Duration.HOUR))
+limiter = Limiter(RequestRate(500, Duration.HOUR))
+limiter_premium = Limiter(RequestRate(5000, Duration.HOUR))
+
+LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest! Also make sure to use the newest version for best results!)"
+
+creator_access_token = os.getenv("PATREON_API_KEY")
+
+api_client = patreon.API(creator_access_token)
+
+premium = set()
+
+
+@app.get("/verify")
+def verify(email: str, player: str):
+    user_response = api_client.fetch_page_of_pledges("4491801", 100).json_data[
+        "included"
+    ]
+    for u in user_response:
+        if (
+            u["type"] == "user"
+            and u["attributes"]["email"].lower().strip() == email.lower().strip()
+        ):
+            premium.add(player)
+            return {"answer": "success"}
+    return {"answer": "failed"}
 
 
 @app.get("/chat")
 def chat(prompt: str, player: str, villager: str):
     try:
+        lim = limiter_premium if player in premium else limiter
         for i in range(len(prompt) // 100 + 1):
-            limiter.try_acquire(player)
-        print(limiter.get_current_volume(player))
+            lim.try_acquire(player)
+        print(player, lim.get_current_volume(player), player in premium)
 
         response = openai.Completion.create(
             model=model,
@@ -28,9 +54,12 @@ def chat(prompt: str, player: str, villager: str):
             top_p=1,
             frequency_penalty=0.0,
             presence_penalty=0.6,
-            stop=[f"{player}:", f"{villager}:"]
+            stop=[f"{player}:", f"{villager}:"],
         )
 
         return {"answer": response["choices"][0]["text"]}
     except BucketFullException:
-        return {"answer": "(You exceeded your hourly rate, give the AI some rest! Also make sure to use the newest version for best results!)"}
+        if player in premium:
+            return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
+        else:
+            return {"answer": LIMIT_EXCEEDED, "error": "limit"}
