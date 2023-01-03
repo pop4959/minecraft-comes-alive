@@ -8,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.commons.io.IOUtils;
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static net.minecraft.util.Util.NIL_UUID;
 
 public class GPT3 {
-    private static final String URL = "http://snoweagle.tk/";
+    public static final String URL = "http://snoweagle.tk/";
 
     private static final int MAX_MEMORY = 400;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
@@ -130,16 +130,16 @@ public class GPT3 {
             pastDialogue.add(villagerName + ": " + message.answer);
             return Optional.ofNullable(message.answer);
         } else if (message.error.equals("limit")) {
-            MutableText styled = (new TranslatableText("mca.limit.patreon")).styled(s -> s
+            MutableText styled = (Text.translatable("mca.limit.patreon")).styled(s -> s
                     .withColor(Formatting.GOLD)
                     .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations#increase-conversation-limit"))
-                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("mca.limit.patreon.hover"))));
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("mca.limit.patreon.hover"))));
 
             player.sendMessage(styled, false);
         } else if (message.error.equals("limit_premium")) {
-            player.sendMessage(new TranslatableText("mca.limit.premium").formatted(Formatting.RED), false);
+            player.sendMessage(Text.translatable("mca.limit.premium").formatted(Formatting.RED), false);
         } else {
-            player.sendMessage(new TranslatableText("mca.ai_broken").formatted(Formatting.RED), false);
+            player.sendMessage(Text.translatable("mca.ai_broken").formatted(Formatting.RED), false);
         }
 
         return Optional.empty();

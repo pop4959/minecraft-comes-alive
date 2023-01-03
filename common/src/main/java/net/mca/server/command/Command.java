@@ -19,6 +19,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -93,7 +94,8 @@ public class Command {
             // build http request
             Map<String, String> params = new HashMap<>();
             params.put("email", StringArgumentType.getString(ctx, "email"));
-            params.put("player", player.getName().asString());
+            assert player != null;
+            params.put("player", player.getName().getString());
 
             // encode and create url
             String encodedURL = params.keySet().stream()
@@ -103,17 +105,17 @@ public class Command {
             GPT3.Answer request = GPT3.request(encodedURL);
 
             if (request.answer().equals("success")) {
-                player.sendSystemMessage(new TranslatableText("command.verify.success").formatted(Formatting.GREEN), Util.NIL_UUID);
+                player.sendMessage(Text.translatable("command.verify.success").formatted(Formatting.GREEN));
             } else if (request.answer().equals("failed")) {
-                player.sendSystemMessage(new TranslatableText("command.verify.failed").formatted(Formatting.RED), Util.NIL_UUID);
+                player.sendMessage(Text.translatable("command.verify.failed").formatted(Formatting.RED));
             } else {
-                player.sendSystemMessage(new TranslatableText("command.verify.crashed").formatted(Formatting.RED), Util.NIL_UUID);
+                player.sendMessage(Text.translatable("command.verify.crashed").formatted(Formatting.RED));
             }
         });
         return 0;
     }
 
-    private static int displayHelp(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int displayHelp(CommandContext<ServerCommandSource> ctx) {
         sendMessage(ctx.getSource().getPlayer(), Formatting.DARK_RED + "--- " + Formatting.GOLD + "PLAYER COMMANDS" + Formatting.DARK_RED + " ---");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca editor" + Formatting.GOLD + " - Choose your genetics and stuff.");
         sendMessage(ctx.getSource().getPlayer(), Formatting.WHITE + " /mca propose <PlayerName>" + Formatting.GOLD + " - Proposes marriage to the given player.");
