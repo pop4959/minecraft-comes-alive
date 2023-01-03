@@ -1,3 +1,7 @@
+# 7.4.0 rc 4
+
+* Fixed placing babies
+
 # 7.4.0 rc 3
 
 * Fixed GPT3 AI on dedicated servers
