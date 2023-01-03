@@ -10,7 +10,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 model = "text-curie-001"
 
-limiter = Limiter(RequestRate(800, Duration.HOUR))
+limiter = Limiter(RequestRate(1000, Duration.HOUR))
 
 
 @app.get("/chat")
