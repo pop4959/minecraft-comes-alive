@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static net.minecraft.util.Util.NIL_UUID;
 
 public class GPT3 {
-    private static final String URL = "http://snoweagle.tk/";
+    public static final String URL = "http://snoweagle.tk/";
 
     private static final int MAX_MEMORY = 400;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
