@@ -5,6 +5,11 @@ import com.google.gson.JsonParser;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.gpt3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
@@ -18,10 +23,10 @@ import java.util.stream.Collectors;
 import static net.minecraft.util.Util.NIL_UUID;
 
 public class GPT3 {
-    private static final String url = "http://snoweagle.tk/chat";
+    private static final String URL = "http://snoweagle.tk/";
 
-    private static final int MAX_MEMORY = 500;
-    private static final int MAX_MEMORY_TIME = 20 * 60 * 20;
+    private static final int MAX_MEMORY = 400;
+    private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
     private static final int CONVERSATION_TIME = 20 * 60;
     private static final int CONVERSATION_DISTANCE = 16;
 
@@ -33,7 +38,30 @@ public class GPT3 {
         return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
     }
 
-    public static String answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
+    public record Answer(String answer, String error) {
+    }
+
+    public static Answer request(String encodedURL) {
+        try {
+            // receive
+            HttpURLConnection con = (HttpURLConnection)(new URL(encodedURL)).openConnection();
+            con.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.toString());
+            InputStream response = con.getInputStream();
+            String body = IOUtils.toString(response, StandardCharsets.UTF_8);
+
+            // parse json
+            JsonObject map = JsonParser.parseString(body).getAsJsonObject();
+            String answer = map.has("answer") ? map.get("answer").getAsString().trim().replace("\n", "") : "";
+            String error = map.has("error") ? map.get("error").getAsString().trim().replace("\n", "") : null;
+
+            return new Answer(answer, error);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Answer(null, "unknown");
+        }
+    }
+
+    public static Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         String playerName = player.getName().asString();
         String villagerName = villager.getName().asString();
 
@@ -92,27 +120,29 @@ public class GPT3 {
         // encode and create url
         String encodedURL = params.keySet().stream()
                 .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&", url + "?", ""));
+                .collect(Collectors.joining("&", URL + "chat?", ""));
 
-        try {
-            // receive
-            HttpURLConnection con = (HttpURLConnection)(new URL(encodedURL)).openConnection();
-            con.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.toString());
-            InputStream response = con.getInputStream();
-            String body = IOUtils.toString(response, StandardCharsets.UTF_8);
+        // encode and create url
+        Answer message = request(encodedURL);
 
-            // parse json
-            JsonObject map = JsonParser.parseString(body).getAsJsonObject();
-            String message = map.get("answer").getAsString().trim().replace("\n", "");
-
+        if (message.error == null) {
             // remember
-            pastDialogue.add(villagerName + ": " + message);
+            pastDialogue.add(villagerName + ": " + message.answer);
+            return Optional.ofNullable(message.answer);
+        } else if (message.error.equals("limit")) {
+            MutableText styled = (new TranslatableText("mca.limit.patreon")).styled(s -> s
+                    .withColor(Formatting.GOLD)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations#increase-conversation-limit"))
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("mca.limit.patreon.hover"))));
 
-            return message;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "(AI broke, please send latest.log to dev)";
+            player.sendMessage(styled, false);
+        } else if (message.error.equals("limit_premium")) {
+            player.sendMessage(new TranslatableText("mca.limit.premium").formatted(Formatting.RED), false);
+        } else {
+            player.sendMessage(new TranslatableText("mca.ai_broken").formatted(Formatting.RED), false);
         }
+
+        return Optional.empty();
     }
 
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
