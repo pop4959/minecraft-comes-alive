@@ -1,12 +1,14 @@
 package net.mca.server.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.mca.Config;
 import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
+import net.mca.entity.ai.GPT3;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
 import net.mca.server.world.data.PlayerSaveData;
@@ -17,6 +19,13 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class Command {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -31,6 +40,7 @@ public class Command {
                 .then(register("editor", Command::editor))
                 .then(register("destiny", Command::destiny))
                 .then(register("mail", Command::mail))
+                .then(register("verify").then(CommandManager.argument("email", StringArgumentType.greedyString()).executes(Command::verify)))
         );
     }
 
@@ -73,6 +83,33 @@ public class Command {
         } else {
             ctx.getSource().getPlayer().sendMessage(Text.translatable("command.no_mail"));
         }
+        return 0;
+    }
+
+    private static int verify(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        ServerPlayerEntity player = ctx.getSource().getPlayer();
+
+        CompletableFuture.runAsync(() -> {
+            // build http request
+            Map<String, String> params = new HashMap<>();
+            params.put("email", StringArgumentType.getString(ctx, "email"));
+            params.put("player", player.getName().asString());
+
+            // encode and create url
+            String encodedURL = params.keySet().stream()
+                    .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
+                    .collect(Collectors.joining("&", GPT3.URL + "verify?", ""));
+
+            GPT3.Answer request = GPT3.request(encodedURL);
+
+            if (request.answer().equals("success")) {
+                player.sendSystemMessage(new TranslatableText("command.verify.success").formatted(Formatting.GREEN), Util.NIL_UUID);
+            } else if (request.answer().equals("failed")) {
+                player.sendSystemMessage(new TranslatableText("command.verify.failed").formatted(Formatting.RED), Util.NIL_UUID);
+            } else {
+                player.sendSystemMessage(new TranslatableText("command.verify.crashed").formatted(Formatting.RED), Util.NIL_UUID);
+            }
+        });
         return 0;
     }
 

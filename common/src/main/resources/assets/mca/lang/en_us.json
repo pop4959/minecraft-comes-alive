@@ -559,6 +559,9 @@
   "gui.villager_editor.customization_hint": "Use the comb, needle and thread and the potion of metamorphosis to customize.",
   "gui.villager_editor.model_hint": "(Customization only used for offspring)",
 
+  "command.verify.success": "Verified! Limit increased.",
+  "command.verify.failed": "Whoops, the given email is wrong.",
+  "command.verify.crashed": "Something went wrong...",
   "command.no_permission": "This command is disabled for users.",
   "command.only_one_destiny": "You already decided your destiny.",
   "command.no_mail": "You have no mails.",
@@ -736,5 +739,10 @@
   "subtitle.mca.villager.snoring": "Snoring",
   "subtitle.mca.villager.hurt": "Villager Hurt",
   "subtitle.mca.villager.angry": "Villager Angry",
-  "subtitle.mca.villager.celebrate": "Villager Celebrating"
+  "subtitle.mca.villager.celebrate": "Villager Celebrating",
+
+  "mca.ai_broken": "AI broke, please send latest.log to dev!",
+  "mca.limit.patreon": "You reached your hourly AI limit. Click here to open the tutorial on how to increase that limit!",
+  "mca.limit.premium": "You reached your hourly AI limit, even with your patreon subscription enabled! Please take a break.",
+  "mca.limit.patreon.hover": "Click me!"
 }

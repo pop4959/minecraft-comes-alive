@@ -1,3 +1,7 @@
+# 7.4.0
+
+* Added AI benefits for patrons
+
 # 7.4.0 rc 4
 
 * Fixed placing babies
