@@ -35,7 +35,7 @@ public class GPT3 {
     private static final Map<UUID, UUID> lastInteraction = new HashMap<>();
 
     public static String translate(String phrase) {
-        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
+        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
     }
 
     public record Answer(String answer, String error) {

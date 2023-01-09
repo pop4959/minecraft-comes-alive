@@ -15,5 +15,9 @@ public class PersonalityModule {
         if (villager.getProfession() != VillagerProfession.NONE) {
             input.add("$villager is a " + translate(villager.getProfession().getId()) + ". ");
         }
+
+        //todo age
+
+        //todo dialect
     }
 }
