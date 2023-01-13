@@ -1,6 +1,7 @@
 # 7.4.1
 
 * Improved AI
+* Improved compatibility with some datapacks
 
 # 7.4.0
 
