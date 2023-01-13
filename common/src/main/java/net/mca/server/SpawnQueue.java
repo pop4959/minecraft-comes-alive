@@ -10,6 +10,7 @@ import net.mca.entity.ai.relationship.Gender;
 import net.mca.server.world.data.Nationality;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -44,9 +45,7 @@ public class SpawnQueue {
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
                         .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                for (String tag : e.getScoreboardTags()) {
-                    villager.addScoreboardTag(tag);
-                }
+                copyPastaIntensifies(villager, e);
             } else {
                 villagerSpawnQueue.add(e);
             }
@@ -57,7 +56,7 @@ public class SpawnQueue {
 
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
-                ZombieVillagerEntityMCA z = ZombieVillagerFactory.newVillager(e.world)
+                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
                         .withName(e.hasCustomName() ? e.getName().getString() : null)
                         .withGender(Gender.getRandom())
                         .withPosition(e)
@@ -65,16 +64,26 @@ public class SpawnQueue {
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
                         .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                if (e.isPersistent()) {
-                    z.setPersistent();
-                }
-
-                for (String tag : e.getScoreboardTags()) {
-                    z.addScoreboardTag(tag);
-                }
+                copyPastaIntensifies(villager, e);
             } else {
                 zombieVillagerSpawnQueue.add(e);
             }
+        }
+    }
+
+    private void copyPastaIntensifies(PathAwareEntity villager, PathAwareEntity entity) {
+        if (entity.isPersistent()) {
+            villager.setPersistent();
+        }
+        if (entity.isInvulnerable()) {
+            villager.setInvulnerable(true);
+        }
+        if (entity.isAiDisabled()) {
+            villager.setAiDisabled(true);
+        }
+
+        for (String tag : entity.getScoreboardTags()) {
+            villager.addScoreboardTag(tag);
         }
     }
 
