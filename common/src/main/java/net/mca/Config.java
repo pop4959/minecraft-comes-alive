@@ -238,7 +238,7 @@ public final class Config implements Serializable {
     public Map<String, Boolean> enabledTraits = new HashMap<>();
 
     public Map<String, Float> taxesMap = Map.of(
-            "minecraft:diamond", 10.0f
+            "minecraft:emerald", 1.0f
     );
 
     public static File getConfigFile() {
