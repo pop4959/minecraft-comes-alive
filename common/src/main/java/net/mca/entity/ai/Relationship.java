@@ -11,6 +11,7 @@ import net.mca.entity.ai.relationship.CompassionateEntity;
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.RelationshipType;
+import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.entity.interaction.gifts.GiftSaturation;
 import net.mca.server.world.data.GraveyardManager;
@@ -45,6 +46,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     public static final Predicate IS_RELATIVE = (villager, player) -> villager.getRelationships().getFamilyEntry().isRelative(player);
     public static final Predicate IS_FAMILY = IS_MARRIED.or(IS_RELATIVE);
     public static final Predicate IS_PARENT = (villager, player) -> villager.getRelationships().getFamilyEntry().isParent(player);
+    public static final Predicate IS_KID = (villager, player) -> FamilyTree.get(villager.getRelationships().getWorld()).getOrEmpty(player).filter(n -> n.isParent(villager.getRelationships().getUUID())).isPresent();
     public static final Predicate IS_ORPHAN = (villager, player) -> villager.getRelationships().getFamilyEntry().getParents().allMatch(FamilyTreeNode::isDeceased);
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(CDataManager.Builder<E> builder) {

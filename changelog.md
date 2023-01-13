@@ -1,3 +1,7 @@
+# 7.4.1
+
+* Improved AI
+
 # 7.4.0
 
 * Added AI benefits for patrons

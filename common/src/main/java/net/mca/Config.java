@@ -88,7 +88,10 @@ public final class Config implements Serializable {
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
+
+    //AI
     public boolean enableVillagerChatAI = false;
+    public int villagerChatAIIntelligence = 4;
 
     //village behavior
     public int guardSpawnRate = 6;
