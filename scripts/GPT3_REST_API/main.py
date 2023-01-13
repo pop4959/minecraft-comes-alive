@@ -30,8 +30,8 @@ def verify(email: str, player: str):
     ]
     for u in user_response:
         if (
-            u["type"] == "user"
-            and u["attributes"]["email"].lower().strip() == email.lower().strip()
+                u["type"] == "user"
+                and u["attributes"]["email"].lower().strip() == email.lower().strip()
         ):
             premium.add(player)
             return {"answer": "success"}
@@ -52,8 +52,8 @@ def chat(prompt: str, player: str, villager: str):
             temperature=0.9,
             max_tokens=150,
             top_p=1,
-            frequency_penalty=0.0,
-            presence_penalty=0.6,
+            frequency_penalty=0.5,
+            presence_penalty=0.0,
             stop=[f"{player}:", f"{villager}:"],
         )
 
