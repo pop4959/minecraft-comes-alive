@@ -94,13 +94,16 @@ public class VillagerFactory {
         return this;
     }
 
-    public VillagerFactory spawn(SpawnReason reason) {
+    public VillagerEntityMCA spawn(SpawnReason reason) {
         if (position.isEmpty()) {
             MCA.LOGGER.info("Attempted to spawn villager without a position being set!");
         }
 
-        WorldUtils.spawnEntity(world, build(), reason);
-        return this;
+        VillagerEntityMCA villager = build();
+
+        WorldUtils.spawnEntity(world, villager, reason);
+
+        return villager;
     }
 
     public VillagerEntityMCA build() {

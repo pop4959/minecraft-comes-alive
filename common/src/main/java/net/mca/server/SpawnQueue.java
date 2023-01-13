@@ -2,6 +2,7 @@ package net.mca.server;
 
 import net.mca.Config;
 import net.mca.ducks.IVillagerEntity;
+import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerFactory;
 import net.mca.entity.ZombieVillagerEntityMCA;
 import net.mca.entity.ZombieVillagerFactory;
@@ -34,7 +35,7 @@ public class SpawnQueue {
 
             if (e.world.canSetBlock(e.getBlockPos())) {
                 e.discard();
-                VillagerFactory.newVillager(e.world)
+                VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
                         .withName(e.hasCustomName() ? e.getName().getString() : null)
                         .withGender(Gender.getRandom())
                         .withAge(e.getBreedingAge())
@@ -42,6 +43,10 @@ public class SpawnQueue {
                         .withType(e.getVillagerData().getType())
                         .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
                         .spawn(((IVillagerEntity)e).getSpawnReason());
+
+                for (String tag : e.getScoreboardTags()) {
+                    villager.addScoreboardTag(tag);
+                }
             } else {
                 villagerSpawnQueue.add(e);
             }
@@ -62,6 +67,10 @@ public class SpawnQueue {
 
                 if (e.isPersistent()) {
                     z.setPersistent();
+                }
+
+                for (String tag : e.getScoreboardTags()) {
+                    z.addScoreboardTag(tag);
                 }
             } else {
                 zombieVillagerSpawnQueue.add(e);
@@ -87,14 +96,14 @@ public class SpawnQueue {
         }
         if (Config.getInstance().overwriteOriginalVillagers
                 && (entity.getClass().equals(VillagerEntity.class) ||
-                    Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
+                Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
                 && shouldGetConverted(entity)
                 && !villagerSpawnQueue.contains(entity)) {
             return villagerSpawnQueue.add((VillagerEntity)entity);
         }
         if (Config.getInstance().overwriteOriginalZombieVillagers
                 && (entity.getClass().equals(ZombieVillagerEntity.class) ||
-                    Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
+                Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
                 && !zombieVillagerSpawnQueue.contains(entity)) {
             return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
         }
