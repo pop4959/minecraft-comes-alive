@@ -18,8 +18,8 @@ import java.util.*;
 public class Names extends JsonDataLoader {
     protected static final Identifier ID = MCA.locate("names");
 
-    public static final List<Map<Gender, WeightedPool<String>>> NAMES = new ArrayList<>();
     public static final Map<String, Map<Gender, WeightedPool<String>>> NAMES_MAP = new HashMap<>();
+    public static final List<String> REGION_NAMES = new LinkedList<>();
 
     public Names() {
         super(Resources.GSON, ID.getPath());
@@ -42,24 +42,26 @@ public class Names extends JsonDataLoader {
             map.put(gender, names);
         }
 
-        NAMES.clear();
-        Arrays.stream(NAMES_MAP.keySet().toArray()).sorted().forEach(n -> NAMES.add(NAMES_MAP.get((String)n)));
+        REGION_NAMES.clear();
+        Arrays.stream(NAMES_MAP.keySet().toArray()).sorted().forEach(n -> REGION_NAMES.add((String)n));
     }
 
     static Random random = new Random();
 
-    public static String pickCitizenName(@NotNull Gender gender, Entity entity) {
-        Map<Gender, WeightedPool<String>> countries;
+    public static String getCitizenNation(Entity entity) {
         if (Config.getInstance().useModernUSANamesOnly) {
-            countries = NAMES_MAP.get("modernusa");
+            return "modernusa";
         } else {
             int i = Nationality.get((ServerWorld)entity.getWorld()).getRegionId(entity.getBlockPos());
-            countries = NAMES.get(Math.floorMod(i, NAMES.size()));
+            return REGION_NAMES.get(Math.floorMod(i, REGION_NAMES.size()));
         }
-        return countries.get(gender.binary()).pickOne();
+    }
+
+    public static String pickCitizenName(@NotNull Gender gender, Entity entity) {
+        return NAMES_MAP.get(getCitizenNation(entity)).get(gender.binary()).pickOne();
     }
 
     public static String pickCitizenName(@NotNull Gender gender) {
-        return NAMES.get(random.nextInt(NAMES.size())).get(gender.binary()).pickOne();
+        return NAMES_MAP.get(REGION_NAMES.get(random.nextInt(REGION_NAMES.size()))).get(gender.binary()).pickOne();
     }
 }
