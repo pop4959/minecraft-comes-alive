@@ -415,7 +415,8 @@ public class VillagerTasksMCA {
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(float speed) {
         return ImmutableList.of(
-                Pair.of(2, new VillagerWalkTowardsTask(MemoryModuleType.HOME, speed, 1, 150, 1200)),
+                //Todo prevent villager with manually set home to give up, instead give a chat message
+                Pair.of(2, new VillagerWalkTowardsTask(MemoryModuleType.HOME, speed, 1, 256, 2400)),
                 Pair.of(3, new ExtendedForgetCompletedPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, (entity) -> {
                     // update villagers home/bed position
                     if (entity instanceof VillagerEntityMCA villager) {

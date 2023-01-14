@@ -67,6 +67,7 @@ public class Residency {
             manager.findNearestVillage(entity).filter(Village::hasSpace).ifPresent(v -> {
                 v.updateResident(entity);
                 entity.setTrackedValue(VILLAGE, v.getId());
+                entity.getResidency().seekHome();
             });
         });
     }
@@ -156,9 +157,17 @@ public class Residency {
 
         //check if a bed can be found
         PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
-        Optional<BlockPos> position = pointOfInterestStorage.getSortedPositions(PointOfInterestType.HOME.getCompletionCondition(), (p) -> true, player.getBlockPos(), 16, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
+        Optional<BlockPos> position = pointOfInterestStorage.getSortedPositions(PointOfInterestType.HOME.getCompletionCondition(), (p) -> true, player.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
         if (position.isPresent()) {
             entity.sendChatMessage(player, "interaction.sethome.success");
+
+            // Forget the old one
+            entity.getBrain().getOptionalMemory(MemoryModuleType.HOME).ifPresent(p -> {
+                entity.releaseTicketFor(MemoryModuleType.HOME);
+                entity.getBrain().forget(MemoryModuleType.HOME);
+            });
+
+            // Remember the new one
             pointOfInterestStorage.getPosition(PointOfInterestType.HOME.getCompletionCondition(), (p) -> true, position.get(), 1);
             entity.getBrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.world.getRegistryKey(), position.get()));
         } else {
@@ -175,6 +184,8 @@ public class Residency {
     }
 
     public void goHome(PlayerEntity player) {
+        entity.getVillagerBrain().setMoveState(MoveState.MOVE, player);
+        entity.getInteractions().stopInteracting();
         getHome().filter(p -> p.getDimension() == entity.world.getRegistryKey()).ifPresentOrElse(home -> {
             entity.moveTowards(home.getPos());
             entity.sendChatMessage(player, "interaction.gohome.success");
