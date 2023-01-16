@@ -4,6 +4,7 @@
 * Improved compatibility with some datapacks
 * Asking to go home now disabling following/staying
 * Improved and fixed set home and go home
+* Made all chances in the Config floats
 
 # 7.4.0
 

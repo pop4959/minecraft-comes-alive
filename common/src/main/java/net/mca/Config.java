@@ -47,12 +47,12 @@ public final class Config implements Serializable {
     public boolean showNotificationsAsChat = false;
     public int heartsToBeConsideredAsFriend = 40;
 
-    public int infectionChance = 5;
+    public float zombieBiteInfectionChance = 0.05f;
     public float infectionChanceDecreasePerLevel = 0.25f;
     public int infectionTime = 72000;
 
     //villager behavior
-    public int chanceToHaveTwins = 2;
+    public float twinBabyChance = 0.02f;
     public float marriageHeartsRequirement = 100;
     public float engagementHeartsRequirement = 50;
     public float bouquetHeartsRequirement = 10;
@@ -64,7 +64,7 @@ public final class Config implements Serializable {
     public int childInitialHearts = 100;
     public int greetHeartsThreshold = 75;
     public int greetAfterDays = 1;
-    public int immigrantChance = 20;
+    public float geneticImmigrantChance = 0.2f;
     public float traitChance = 0.25f;
     public float traitInheritChance = 0.5f;
     public boolean bypassTraitRestrictions = false;

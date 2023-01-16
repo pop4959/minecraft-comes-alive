@@ -201,6 +201,7 @@ public class VillagerTasksMCA {
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getCorePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new GreetPlayerTask()),
+                //todo move into staying and following, also make it load
                 Pair.of(0, new DeliverMessageTask()),
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
