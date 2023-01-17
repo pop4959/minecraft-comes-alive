@@ -463,4 +463,8 @@ public class Building implements Serializable {
     public void setLastScan(long lastScan) {
         this.lastScan = lastScan;
     }
+
+    public boolean isStrictScan() {
+        return strictScan;
+    }
 }
