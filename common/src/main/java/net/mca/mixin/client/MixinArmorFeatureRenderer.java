@@ -1,10 +1,9 @@
 package net.mca.mixin.client;
 
 import net.mca.MCAClient;
-import net.mca.client.model.PlayerEntityExtendedModel;
+import net.mca.client.model.PlayerArmorExtendedModel;
 import net.mca.client.model.VillagerEntityModelMCA;
 import net.minecraft.client.model.Dilation;
-import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
@@ -25,12 +24,12 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, A extend
     protected abstract boolean usesSecondLayer(EquipmentSlot slot);
 
     protected boolean mca$injectionActive;
-    protected A mca$leggingsModel = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.3F)));
-    protected A mca$bodyModel = createModel(VillagerEntityModelMCA.bodyData(new Dilation(0.55F)));
+    protected A mca$leggingsModel = createModel(0.5F);
+    protected A mca$bodyModel = createModel(1.0F);
 
-    private A createModel(ModelData data) {
+    private A createModel(float dilation) {
         //noinspection unchecked
-        return (A)new PlayerEntityExtendedModel<T>(TexturedModelData.of(data, 64, 32).createModel());
+        return (A)new PlayerArmorExtendedModel<T>(TexturedModelData.of(VillagerEntityModelMCA.armorData(new Dilation(dilation)), 64, 32).createModel());
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At("HEAD"))

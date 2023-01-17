@@ -6,24 +6,20 @@ import net.mca.entity.ai.relationship.VillagerDimensions;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 
 import static net.mca.client.model.VillagerEntityBaseModelMCA.BREASTS;
-import static net.mca.client.model.VillagerEntityModelMCA.BREASTPLATE;
 
-public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEntityModel<T> implements CommonVillagerModel<T> {
+public class PlayerArmorExtendedModel<T extends LivingEntity> extends BipedEntityModel<T> implements CommonVillagerModel<T> {
     public final ModelPart breasts;
-    public final ModelPart breastsWear;
 
     VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
     float breastSize;
 
-    public PlayerEntityExtendedModel(ModelPart root) {
-        super(root, false);
+    public PlayerArmorExtendedModel(ModelPart root) {
+        super(root);
         this.breasts = root.getChild(BREASTS);
-        this.breastsWear = root.getChild(BREASTPLATE);
     }
 
     @Override
@@ -33,26 +29,9 @@ public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEnt
         if (target instanceof PlayerEntityExtendedModel<T> playerTarget) {
             copyAttributes(playerTarget);
         }
-        if (target instanceof PlayerArmorExtendedModel<T> armorTarget) {
-            copyAttributes(armorTarget);
-        }
     }
 
     private void copyAttributes(PlayerEntityExtendedModel<T> target) {
-        target.leftPants.copyTransform(leftPants);
-        target.rightPants.copyTransform(rightPants);
-        target.leftSleeve.copyTransform(leftSleeve);
-        target.rightSleeve.copyTransform(rightSleeve);
-        target.jacket.copyTransform(jacket);
-        target.breastsWear.copyTransform(breastsWear);
-
-        copyCommonAttributes(target);
-
-        target.breasts.visible = breasts.visible;
-        target.breasts.copyTransform(breasts);
-    }
-
-    private void copyAttributes(PlayerArmorExtendedModel<T> target) {
         copyCommonAttributes(target);
 
         target.breasts.visible = breasts.visible;
@@ -86,7 +65,7 @@ public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEnt
 
     @Override
     public Iterable<ModelPart> getBreastParts() {
-        return ImmutableList.of(breasts, breastsWear);
+        return ImmutableList.of(breasts);
     }
 
     @Override

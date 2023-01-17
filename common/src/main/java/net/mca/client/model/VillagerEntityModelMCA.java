@@ -57,6 +57,13 @@ public class VillagerEntityModelMCA<T extends LivingEntity & VillagerLike<T>> ex
         return modelData;
     }
 
+    public static ModelData armorData(Dilation dilation) {
+        ModelData modelData = BipedEntityModel.getModelData(dilation, 0.0f);
+        ModelPartData root = modelData.getRoot();
+        root.addChild(BREASTS, newBreasts(dilation, 0), ModelTransform.NONE);
+        return modelData;
+    }
+
     @Override
     protected Iterable<ModelPart> getBodyParts() {
         return ImmutableList.of(body, rightArm, leftArm, rightLeg, leftLeg, bodyWear, leftLegwear, rightLegwear, leftArmwear, rightArmwear);

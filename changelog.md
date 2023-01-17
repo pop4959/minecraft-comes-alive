@@ -6,6 +6,7 @@
 * Improved and fixed set home and go home
 * Made all chances in the Config floats
 * Added nameTagDistance to control range of name-tags
+* Fixed Armor rendering issue
 
 # 7.4.0
 
