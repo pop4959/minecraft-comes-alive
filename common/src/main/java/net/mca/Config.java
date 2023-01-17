@@ -78,6 +78,7 @@ public final class Config implements Serializable {
     public float maleVillagerWidthFactor = 1.0f;
     public float femaleVillagerWidthFactor = 0.95f;
     public boolean showNameTags = true;
+    public float nameTagDistance = 5.0f;
     public boolean useMCAVoices = true;
     public boolean useVanillaVoices = false;
     public float interactionChanceFatigue = 1.0f;

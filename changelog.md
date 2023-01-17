@@ -5,6 +5,7 @@
 * Asking to go home now disabling following/staying
 * Improved and fixed set home and go home
 * Made all chances in the Config floats
+* Added nameTagDistance to control range of name-tags
 
 # 7.4.0
 

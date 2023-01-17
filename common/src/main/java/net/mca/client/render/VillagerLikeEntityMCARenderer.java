@@ -74,8 +74,9 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
     protected boolean hasLabel(T villager) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         return player != null
-                && player.squaredDistanceTo(villager) < 25
-                && Config.getInstance().showNameTags && !villager.isInvisibleTo(player);
+                && Config.getInstance().showNameTags
+                && player.squaredDistanceTo(villager) < Math.pow(Config.getInstance().nameTagDistance, 2.0f)
+                && !villager.isInvisibleTo(player);
     }
 
     @Override
