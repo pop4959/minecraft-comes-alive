@@ -59,6 +59,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
 
         if (entity.getTrackedValue(ACTIVE_CHORE) != Chore.NONE) {
             // find something to do
+            //todo here switch between rest and chore
             entity.getBrain().getFirstPossibleNonCoreActivity().ifPresent(activity -> {
                 if (!activity.equals(ActivityMCA.CHORE.get())) {
                     entity.getBrain().doExclusively(ActivityMCA.CHORE.get());
