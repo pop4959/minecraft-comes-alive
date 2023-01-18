@@ -43,6 +43,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -722,7 +723,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     //noinspection ConstantConditions
                     if (!findAndEquipToMain(i -> i.isFood()
                             && i.getItem().getFoodComponent().getHunger() > 0
-                            && i.getItem().getFoodComponent().getStatusEffects().stream().allMatch(e -> e.getFirst().getEffectType().isBeneficial()))) {
+                            && i.getItem().getFoodComponent().getStatusEffects().stream().noneMatch(e -> StatusEffectDangerSet.isDanger.contains(e.getFirst().getEffectType())))) {
                         heal(1); // natural regeneration
                     }
                 }

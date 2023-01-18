@@ -7,6 +7,7 @@
 * Made all chances in the Config floats
 * Added nameTagDistance to control range of name-tags
 * Fixed Armor rendering issue
+* Fixed server crash when trying to eat something with status effects
 
 # 7.4.0
 
