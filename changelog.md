@@ -8,6 +8,7 @@
 * Added nameTagDistance to control range of name-tags
 * Fixed Armor rendering issue
 * Fixed server crash when trying to eat something with status effects
+* Improved harvesting task
 
 # 7.4.0
 
