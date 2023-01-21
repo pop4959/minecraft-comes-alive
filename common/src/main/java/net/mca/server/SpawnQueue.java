@@ -89,11 +89,11 @@ public class SpawnQueue {
     }
 
     public static boolean shouldGetConverted(Entity entity) {
-        if (Config.getInstance().percentageOfVanillaVillages <= 0) {
+        if (Config.getInstance().fractionOfVanillaVillages <= 0) {
             return true;
         } else {
             int i = Nationality.get((ServerWorld)entity.getWorld()).getRegionId(entity.getBlockPos());
-            return Math.floorMod(i, 100) >= Config.getInstance().percentageOfVanillaVillages;
+            return Math.floorMod(i, 100) >= Config.getInstance().fractionOfVanillaVillages * 100.0;
         }
     }
 

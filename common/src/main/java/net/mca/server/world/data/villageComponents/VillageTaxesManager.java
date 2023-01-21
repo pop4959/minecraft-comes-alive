@@ -36,12 +36,12 @@ public class VillageTaxesManager {
     }
 
     public void taxes(ServerWorld world) {
-        double taxes = Config.getInstance().taxesFactor / 100.0 * village.getPopulation() * village.getTaxes() + world.random.nextDouble();
+        double taxes = Config.getInstance().taxesFactor * village.getPopulation() * village.getTaxes() + world.random.nextDouble();
         int moodImpact = 0;
 
         //response
         Text msg;
-        float r = village.getTaxes() / 100.0f + (world.random.nextFloat() - 0.5f) * world.random.nextFloat();
+        float r = village.getTaxes() + (world.random.nextFloat() - 0.5f) * world.random.nextFloat();
         if (village.getTaxes() == 0.0f) {
             msg = new TranslatableText("gui.village.taxes.no", village.getName()).formatted(Formatting.GREEN);
             moodImpact = 5;
@@ -94,7 +94,7 @@ public class VillageTaxesManager {
             Item item = Registry.ITEM.get(new Identifier(itemName));
 
             if (item == Items.AIR) {
-                throw new RuntimeException("The taxes map contains an invalid item %s!".formatted(itemName));
+                throw new RuntimeException("The taxes map contains an invalid item %s!" .formatted(itemName));
             }
 
             // pay the price

@@ -27,7 +27,7 @@ public class VillageInnManager {
 
     public void updateInn(ServerWorld world) {
         village.getBuildingsOfType("inn").forEach((b) -> {
-            if (world.random.nextFloat() < Config.getInstance().adventurerAtInnChance / 100f) {
+            if (world.random.nextFloat() < Config.getInstance().adventurerAtInnChancePerMinute) {
                 List<BlockPos> values = new ArrayList<>(b.getBlocks().values().stream().flatMap(Collection::stream).toList());
                 Collections.shuffle(values);
                 for (BlockPos p : values) {

@@ -95,18 +95,18 @@ public final class Config implements Serializable {
     public int villagerChatAIIntelligence = 4;
 
     //village behavior
-    public int guardSpawnRate = 6;
+    public float guardSpawnFraction = 0.175f;
     public float taxesFactor = 0.5f;
     public int taxSeason = 168000;
-    public int marriageChance = 5;
-    public int adventurerAtInnChance = 5;
-    public int childrenChance = 5;
+    public float marriageChancePerMinute = 0.05f;
+    public float adventurerAtInnChancePerMinute = 0.05f;
+    public float villagerProcreationChancePerMinute = 0.05f;
     public int bountyHunterInterval = 48000;
     public int bountyHunterHeartsInterval = -150;
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
-    public int percentageOfVanillaVillages = 0;
+    public float fractionOfVanillaVillages = 0;
     public int minimumBuildingsToBeConsideredAVillage = 3;
     public List<String> villagerDimensionBlacklist = List.of();
     public List<String> allowedSpawnReasons = List.of(
