@@ -404,7 +404,7 @@
   "gui.village.welcome": "Welcome to %s!",
   "gui.village.taxes": "%s paid their taxes!",
   "gui.village.taxes.no": "%s is happy not to pay taxes.",
-  "gui.village.taxes.more": "%s is glad to live in wealth thanks to the low taxes and paid an extra 25%.",
+  "gui.village.taxes.more": "%s is glad to live in wealth thanks to the low taxes and paid an extra 25%%.",
   "gui.village.taxes.happy": "%s is happy to have such fair taxes.",
   "gui.village.taxes.sad": "%s got sad, the taxes are too much for them.",
   "gui.village.taxes.angry": "%s got angry due to the high taxes.",
