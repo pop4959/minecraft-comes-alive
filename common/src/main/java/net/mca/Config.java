@@ -268,24 +268,28 @@ public final class Config implements Serializable {
     }
 
     public static Config loadOrCreate() {
-        try (FileReader reader = new FileReader(getConfigFile())) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            Config config = gson.fromJson(reader, Config.class);
-            if (config.version != VERSION) {
-                config = new Config();
+        File file = getConfigFile();
+        if (file.exists()) {
+            try (FileReader reader = new FileReader(file)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Config config = gson.fromJson(reader, Config.class);
+                if (config.version != VERSION) {
+                    config = new Config();
+                }
+                config.save();
+                return config;
+            } catch (JsonSyntaxException e) {
+                MCA.LOGGER.error("");
+                MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
+                MCA.LOGGER.error(e);
+                MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                MCA.LOGGER.error("");
+            } catch (IOException e) {
+                MCA.LOGGER.error(e);
             }
-            config.save();
-            return config;
-        } catch (JsonSyntaxException e) {
-            MCA.LOGGER.error("");
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
-            e.printStackTrace();
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            MCA.LOGGER.error("");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
         Config config = new Config();
         config.save();
         return config;
