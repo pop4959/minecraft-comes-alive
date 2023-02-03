@@ -89,17 +89,26 @@ public interface Messenger extends EntityWrapper {
         sendChatMessage(getTranslatable(target, phraseId, params), target);
     }
 
-    default void sendChatMessage(MutableText message, Entity receiver) {
-        // Infected villagers do not speak
+    default MutableText transformMessage(MutableText message) {
         if (isSpeechImpaired()) {
-            message = new TranslatableText(API.getRandomSentence("zombie", message.getString()));
+            // Infected villagers do not speak
+            return new TranslatableText(API.getRandomSentence("zombie", message.getString()));
         } else if (isToYoungToSpeak()) {
-            message = new TranslatableText(API.getRandomSentence("baby", message.getString()));
+            // Baby's can't speak either
+            return new TranslatableText(API.getRandomSentence("baby", message.getString()));
+        } else {
+            return message;
         }
+    }
+
+    default MutableText sendChatMessage(MutableText message, Entity receiver) {
+        message = transformMessage(message);
 
         receiver.sendSystemMessage(new LiteralText(Config.getInstance().villagerChatPrefix).append(asEntity().getDisplayName()).append(": ").append(message), this.asEntity().getUuid());
 
         playSpeechEffect();
+
+        return message;
     }
 
     default void sendEventMessage(Text message, PlayerEntity receiver) {
