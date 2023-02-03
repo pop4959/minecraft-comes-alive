@@ -12,7 +12,7 @@ import static net.mca.entity.ai.GPT3.translate;
 
 public class PersonalityModule {
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
-        input.add("This is a conversation with a " + translate(villager.getGenetics().getGender().name()) + " Minecraft villager named $villager and a Player named $playerName." + " ");
+        input.add("This is a conversation with a " + translate(villager.getGenetics().getGender().name()) + " Minecraft villager named $villager and the Player named $player." + " ");
 
         if (Config.getInstance().villagerChatAIIntelligence >= 1) {
             input.add("$villager is " + translate(villager.getVillagerBrain().getPersonality().name()) + " and " + translate(villager.getVillagerBrain().getMood().getName()) + ". ");

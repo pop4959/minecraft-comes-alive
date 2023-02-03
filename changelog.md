@@ -1,6 +1,8 @@
 # 7.4.1
 
-* Improved AI
+* Improved AI and interaction times
+* Villager will now be audible to all (nearby) players
+* Villager can now speak to you while following or staying
 * Improved compatibility with some datapacks
 * Asking to go home now disabling following/staying
 * Improved and fixed set home, restricted homes, blueprint home sync and go home

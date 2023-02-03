@@ -77,11 +77,11 @@ public class GPT3 {
 
         // remember phrase
         List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
-        int MEMORY = MAX_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
+        int MEMORY = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
         while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > MEMORY) {
             pastDialogue.remove(0);
         }
-        pastDialogue.add(playerName + ": " + msg);
+        pastDialogue.add("$player: " + msg);
 
         // construct context
         List<String> input = new LinkedList<>();
@@ -97,12 +97,11 @@ public class GPT3 {
         for (String s : pastDialogue) {
             input.add(s + "\n");
         }
-        input.add("$villager:");
+        input.add("$villager: ");
 
         // gather variables
         Map<String, String> variables = Map.of(
-                "playerName", playerName,
-                "player", "You",
+                "player", playerName,
                 "villager", villagerName
         );
 

@@ -78,6 +78,13 @@ public interface Messenger extends EntityWrapper {
         return new TranslatableText(genderString + personalityString + professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
+    default void sendChatToAllAround(MutableText phrase) {
+        for (PlayerEntity player : asEntity().world.getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
+            float dist = player.distanceTo(asEntity());
+            sendChatMessage(phrase.formatted(dist < 10 ? Formatting.WHITE : Formatting.GRAY), player);
+        }
+    }
+
     default void sendChatToAllAround(String phrase, Object... params) {
         for (PlayerEntity player : asEntity().world.getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
             float dist = player.distanceTo(asEntity());

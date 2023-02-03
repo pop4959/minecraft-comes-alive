@@ -196,6 +196,7 @@ public class VillagerTasksMCA {
                 Pair.of(0, new SmarterOpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
                 Pair.of(0, new WakeUpTask()),
+                Pair.of(0, new DeliverMessageTask()),
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(3, new InteractTask(speedModifier))
         );
@@ -204,8 +205,6 @@ public class VillagerTasksMCA {
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getCorePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new GreetPlayerTask()),
-                //todo move into staying and following, also make it load
-                Pair.of(0, new DeliverMessageTask()),
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
@@ -418,7 +417,8 @@ public class VillagerTasksMCA {
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(float speed) {
-        return ImmutableList.of(// try to reach the bed, and if not a set home, forget if out of range
+        return ImmutableList.of(
+                // try to reach the bed, and if not a set home, forget if out of range
                 Pair.of(2, new ExtendedWalkTowardsTask(MemoryModuleType.HOME, speed, 1, 192, 1200, (v) -> {
                     boolean forced = v.getBrain().getOptionalMemory(MemoryModuleTypeMCA.FORCED_HOME.get()).isPresent();
                     if (forced) {
@@ -427,7 +427,8 @@ public class VillagerTasksMCA {
                     return !forced;
                 }, (v) -> {
                     v.getResidency().seekHome();
-                })), //verify the bed, occupancies state and similar
+                })),
+                //verify the bed, occupancies state and similar
                 Pair.of(3, new ConditionalTask<>(Map.of(MemoryModuleTypeMCA.FORCED_HOME.get(), MemoryModuleState.VALUE_ABSENT),
                         new ExtendedForgetCompletedPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, (entity) -> {
                             // update villagers home/bed position
