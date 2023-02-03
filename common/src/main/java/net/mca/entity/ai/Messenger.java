@@ -96,10 +96,11 @@ public interface Messenger extends EntityWrapper {
 
     default MutableText transformMessage(MutableText message) {
         if (isSpeechImpaired()) {
-            message = Text.translatable(API.getRandomSentence("zombie", message.getString()));
+            return Text.translatable(API.getRandomSentence("zombie", message.getString()));
         } else if (isToYoungToSpeak()) {
-            message = Text.translatable(API.getRandomSentence("baby", message.getString()));
+            return Text.translatable(API.getRandomSentence("baby", message.getString()));
         }
+        return message;
     }
 
     default MutableText sendChatMessage(MutableText message, Entity receiver) {
