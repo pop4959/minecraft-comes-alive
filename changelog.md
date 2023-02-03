@@ -3,7 +3,7 @@
 * Improved AI
 * Improved compatibility with some datapacks
 * Asking to go home now disabling following/staying
-* Improved and fixed set home and go home
+* Improved and fixed set home, restricted homes, blueprint home sync and go home
 * Made all chances in the Config floats
 * Added nameTagDistance to control range of name-tags
 * Fixed Armor rendering issue
@@ -12,6 +12,7 @@
 * Fixed Sirben having the voice of god
 * Fixed config crash errors not being printed
 * Fixed compatibility with First Person mod and co
+* Fixed babies speaking fluent english
 
 # 7.4.0
 

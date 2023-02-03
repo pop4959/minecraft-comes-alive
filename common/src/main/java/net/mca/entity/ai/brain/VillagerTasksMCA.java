@@ -34,6 +34,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 
+import java.util.Map;
 import java.util.Optional;
 
 public class VillagerTasksMCA {
@@ -75,7 +76,9 @@ public class VillagerTasksMCA {
             MemoryModuleTypeMCA.WEARS_ARMOR.get(),
             MemoryModuleTypeMCA.SMALL_BOUNTY.get(),
             MemoryModuleTypeMCA.HIT_BY_PLAYER.get(),
-            MemoryModuleTypeMCA.LAST_GRIEVE.get()
+            MemoryModuleTypeMCA.LAST_GRIEVE.get(),
+            MemoryModuleTypeMCA.FORCED_HOME.get(),
+            MemoryModuleTypeMCA.LAST_CANT_FIND_HOME_PISSED_MOMENT.get()
     );
 
     public static final ImmutableList<SensorType<? extends Sensor<? super VillagerEntity>>> SENSOR_TYPES = ImmutableList.of(
@@ -415,15 +418,23 @@ public class VillagerTasksMCA {
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getRestPackage(float speed) {
-        return ImmutableList.of(
-                //Todo prevent villager with manually set home to give up, instead give a chat message
-                Pair.of(2, new VillagerWalkTowardsTask(MemoryModuleType.HOME, speed, 1, 256, 2400)),
-                Pair.of(3, new ExtendedForgetCompletedPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, (entity) -> {
-                    // update villagers home/bed position
-                    if (entity instanceof VillagerEntityMCA villager) {
-                        villager.getResidency().seekHome();
+        return ImmutableList.of(// try to reach the bed, and if not a set home, forget if out of range
+                Pair.of(2, new ExtendedWalkTowardsTask(MemoryModuleType.HOME, speed, 1, 192, 1200, (v) -> {
+                    boolean forced = v.getBrain().getOptionalMemory(MemoryModuleTypeMCA.FORCED_HOME.get()).isPresent();
+                    if (forced) {
+                        v.sendChatToAllAround("villager.cant_find_bed");
                     }
-                })),
+                    return !forced;
+                }, (v) -> {
+                    v.getResidency().seekHome();
+                })), //verify the bed, occupancies state and similar
+                Pair.of(3, new ConditionalTask<>(Map.of(MemoryModuleTypeMCA.FORCED_HOME.get(), MemoryModuleState.VALUE_ABSENT),
+                        new ExtendedForgetCompletedPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, (entity) -> {
+                            // update villagers home/bed position
+                            if (entity instanceof VillagerEntityMCA villager) {
+                                villager.getResidency().seekHome();
+                            }
+                        }))),
                 Pair.of(3, new SleepTask()),
                 Pair.of(5, new RandomTask<>(ImmutableMap.of(MemoryModuleType.HOME, MemoryModuleState.VALUE_ABSENT), ImmutableList.of(
                         Pair.of(new WalkHomeTask(speed), 1),

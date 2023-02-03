@@ -64,7 +64,7 @@ public class Residency {
             v.updateResident(entity);
         }, () -> {
             VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-            manager.findNearestVillage(entity).filter(Village::hasSpace).ifPresent(v -> {
+            manager.findNearestVillage(entity).ifPresent(v -> {
                 v.updateResident(entity);
                 entity.setTrackedValue(VILLAGE, v.getId());
                 entity.getResidency().seekHome();
@@ -170,7 +170,12 @@ public class Residency {
             // Remember the new one
             pointOfInterestStorage.getPosition(PointOfInterestType.HOME.getCompletionCondition(), (p) -> true, position.get(), 1);
             entity.getBrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.world.getRegistryKey(), position.get()));
+            entity.getBrain().remember(MemoryModuleTypeMCA.FORCED_HOME.get(), true);
+
+            seekHome();
         } else {
+            entity.getBrain().forget(MemoryModuleTypeMCA.FORCED_HOME.get());
+
             getHomeVillage().map(v -> v.getBuildingAt(entity.getBlockPos())).filter(Optional::isPresent).map(Optional::get).filter(b -> b.getBuildingType().noBeds()).ifPresentOrElse(building -> {
                 entity.sendChatMessage(player, "interaction.sethome.bedfail." + building.getBuildingType().name());
             }, () -> {
