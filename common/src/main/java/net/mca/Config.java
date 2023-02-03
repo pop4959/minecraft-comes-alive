@@ -211,7 +211,7 @@ public final class Config implements Serializable {
             "minecraft:pillager_outpost"
     );
 
-    public List<String> destinyLocations = List.of(
+    public List<String> destinySpawnLocations = List.of(
             "somewhere",
             "minecraft:shipwreck_beached",
             "minecraft:village_desert",
