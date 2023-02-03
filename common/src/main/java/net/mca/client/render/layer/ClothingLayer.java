@@ -15,7 +15,7 @@ public class ClothingLayer<T extends LivingEntity, M extends BipedEntityModel<T>
     }
 
     @Override
-    protected Identifier getSkin(T villager) {
+    public Identifier getSkin(T villager) {
         String v = CommonVillagerModel.getVillager(villager).isBurned() ? "burnt" : variant;
         return cached(CommonVillagerModel.getVillager(villager).getClothes() + v, clothes -> {
             Identifier id = new Identifier(CommonVillagerModel.getVillager(villager).getClothes());

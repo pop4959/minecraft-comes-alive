@@ -37,7 +37,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
     }
 
     @Nullable
-    protected Identifier getSkin(T villager) {
+    public Identifier getSkin(T villager) {
         return null;
     }
 
@@ -94,7 +94,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         model.render(transform, buffer, light, overlay, r, g, b, 1);
     }
 
-    protected final boolean canUse(Identifier texture) {
+    public final boolean canUse(Identifier texture) {
         return TEXTURE_EXIST_CACHE.computeIfAbsent(texture, s -> {
             return texture != null && MinecraftClient.getInstance().getResourceManager().containsResource(texture);
         });

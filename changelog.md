@@ -9,6 +9,9 @@
 * Fixed Armor rendering issue
 * Fixed server crash when trying to eat something with status effects
 * Improved harvesting task
+* Fixed Sirben having the voice of god
+* Fixed config crash errors not being printed
+* Fixed compatibility with First Person mod and co
 
 # 7.4.0
 
