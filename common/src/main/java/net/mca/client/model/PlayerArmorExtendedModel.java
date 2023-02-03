@@ -23,8 +23,8 @@ public class PlayerArmorExtendedModel<T extends LivingEntity> extends BipedEntit
     }
 
     @Override
-    public void setAttributes(BipedEntityModel<T> target) {
-        super.setAttributes(target);
+    public void copyBipedStateTo(BipedEntityModel<T> target) {
+        super.copyBipedStateTo(target);
 
         if (target instanceof PlayerEntityExtendedModel<T> playerTarget) {
             copyAttributes(playerTarget);
