@@ -3,6 +3,7 @@ package net.mca.server.world.data;
 import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.resources.API;
+import net.mca.resources.BuildingTypes;
 import net.mca.server.world.data.villageComponents.*;
 import net.mca.util.BlockBoxExtended;
 import net.mca.util.NbtHelper;
@@ -102,7 +103,10 @@ public class Village implements Iterable<Building> {
         NbtList b = v.getList("buildings", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < b.size(); i++) {
             Building building = new Building(b.getCompound(i));
-            buildings.put(building.getId(), building);
+
+            if (BuildingTypes.getInstance().getBuildingTypes().containsKey(building.getType())) {
+                buildings.put(building.getId(), building);
+            }
         }
 
         if (!buildings.isEmpty()) {
