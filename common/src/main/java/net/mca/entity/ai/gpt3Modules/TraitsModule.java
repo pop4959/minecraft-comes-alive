@@ -1,5 +1,6 @@
 package net.mca.entity.ai.gpt3Modules;
 
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Traits;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,8 +30,10 @@ public class TraitsModule {
     }};
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
-        for (Traits.Trait trait : villager.getTraits().getTraits()) {
-            input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name()) + ". "));
+        if (Config.getInstance().villagerChatAIIntelligence >= 1) {
+            for (Traits.Trait trait : villager.getTraits().getTraits()) {
+                input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name()) + ". "));
+            }
         }
     }
 }

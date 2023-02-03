@@ -11,8 +11,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 model = "text-curie-001"
 
-limiter = Limiter(RequestRate(500, Duration.HOUR))
-limiter_premium = Limiter(RequestRate(5000, Duration.HOUR))
+limiter = Limiter(RequestRate(600, Duration.HOUR))
+limiter_premium = Limiter(RequestRate(6000, Duration.HOUR))
 
 LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest! Also make sure to use the newest version for best results!)"
 
@@ -30,8 +30,8 @@ def verify(email: str, player: str):
     ]
     for u in user_response:
         if (
-            u["type"] == "user"
-            and u["attributes"]["email"].lower().strip() == email.lower().strip()
+                u["type"] == "user"
+                and u["attributes"]["email"].lower().strip() == email.lower().strip()
         ):
             premium.add(player)
             return {"answer": "success"}
@@ -52,8 +52,8 @@ def chat(prompt: str, player: str, villager: str):
             temperature=0.9,
             max_tokens=150,
             top_p=1,
-            frequency_penalty=0.0,
-            presence_penalty=0.6,
+            frequency_penalty=0.5,
+            presence_penalty=0.0,
             stop=[f"{player}:", f"{villager}:"],
         )
 

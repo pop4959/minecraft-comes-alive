@@ -33,6 +33,9 @@ public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEnt
         if (target instanceof PlayerEntityExtendedModel<T> playerTarget) {
             copyAttributes(playerTarget);
         }
+        if (target instanceof PlayerArmorExtendedModel<T> armorTarget) {
+            copyAttributes(armorTarget);
+        }
     }
 
     private void copyAttributes(PlayerEntityExtendedModel<T> target) {
@@ -43,6 +46,13 @@ public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEnt
         target.jacket.copyTransform(jacket);
         target.breastsWear.copyTransform(breastsWear);
 
+        copyCommonAttributes(target);
+
+        target.breasts.visible = breasts.visible;
+        target.breasts.copyTransform(breasts);
+    }
+
+    private void copyAttributes(PlayerArmorExtendedModel<T> target) {
         copyCommonAttributes(target);
 
         target.breasts.visible = breasts.visible;

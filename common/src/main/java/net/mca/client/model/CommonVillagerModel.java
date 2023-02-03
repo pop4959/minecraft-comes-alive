@@ -3,6 +3,7 @@ package net.mca.client.model;
 import net.mca.MCAClient;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerLike;
+import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.VillagerDimensions;
 import net.minecraft.client.model.ModelPart;

@@ -131,7 +131,7 @@ public class Pregnancy {
         Random random = mother.getRandom();
 
         //make sure this villager is registered in the family tree
-        boolean areTwins = random.nextInt(100) < Config.getInstance().chanceToHaveTwins;
+        boolean areTwins = random.nextFloat() < Config.getInstance().twinBabyChance;
         int count = areTwins ? 2 : 1;
 
         // advancement

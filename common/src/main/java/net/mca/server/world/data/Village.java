@@ -53,9 +53,9 @@ public class Village implements Iterable<Building> {
     public long lastMoveIn;
     private final int id;
 
-    private int taxes = 0;
-    private int populationThreshold = 75;
-    private int marriageThreshold = 50;
+    private float taxes = 0;
+    private float populationThreshold = 0.75f;
+    private float marriageThreshold = 0.5f;
 
     private boolean autoScan = Config.getInstance().enableAutoScanByDefault;
 
@@ -76,7 +76,7 @@ public class Village implements Iterable<Building> {
     public Village(NbtCompound v, @Nullable ServerWorld world) {
         id = v.getInt("id");
         name = v.getString("name");
-        taxes = v.getInt("taxes");
+        taxes = v.getFloat("taxesFloat");
         beds = v.getInt("beds");
         unspentHearts = NbtHelper.toMap(v.getCompound("unspentHearts"), UUID::fromString, i -> ((NbtInt)i).intValue());
         reputation = NbtHelper.toMap(v.getCompound("reputation"), UUID::fromString, i ->
@@ -85,8 +85,13 @@ public class Village implements Iterable<Building> {
         residentNames = NbtHelper.toMap(v.getCompound("residentNames"), UUID::fromString, NbtElement::asString);
         residentHomes = NbtHelper.toMap(v.getCompound("residentHomes"), UUID::fromString, i -> ((NbtLong)i).longValue());
         unspentMood = v.getInt("unspentMood");
-        populationThreshold = v.getInt("populationThreshold");
-        marriageThreshold = v.getInt("marriageThreshold");
+
+        if (v.contains("populationThresholdFloat")) {
+            populationThreshold = v.getFloat("populationThresholdFloat");
+        }
+        if (v.contains("marriageThresholdFloat")) {
+            marriageThreshold = v.getInt("marriageThresholdFloat");
+        }
         this.world = world;
 
         if (v.contains("autoScan")) {
@@ -175,27 +180,27 @@ public class Village implements Iterable<Building> {
         }).map(k -> residentNames.getOrDefault(k.getKey(), "Unknown")).collect(Collectors.toList())).orElseGet(List::of);
     }
 
-    public int getTaxes() {
+    public float getTaxes() {
         return taxes;
     }
 
-    public void setTaxes(int taxes) {
+    public void setTaxes(float taxes) {
         this.taxes = taxes;
     }
 
-    public int getPopulationThreshold() {
+    public float getPopulationThreshold() {
         return populationThreshold;
     }
 
-    public void setPopulationThreshold(int populationThreshold) {
+    public void setPopulationThreshold(float populationThreshold) {
         this.populationThreshold = populationThreshold;
     }
 
-    public int getMarriageThreshold() {
+    public float getMarriageThreshold() {
         return marriageThreshold;
     }
 
-    public void setMarriageThreshold(int marriageThreshold) {
+    public void setMarriageThreshold(float marriageThreshold) {
         this.marriageThreshold = marriageThreshold;
     }
 
@@ -406,7 +411,7 @@ public class Village implements Iterable<Building> {
         NbtCompound v = new NbtCompound();
         v.putInt("id", id);
         v.putString("name", name);
-        v.putInt("taxes", taxes);
+        v.putFloat("taxesFloat", taxes);
         v.putInt("beds", beds);
         v.put("unspentHearts", NbtHelper.fromMap(new NbtCompound(), unspentHearts, UUID::toString, NbtInt::of));
         v.put("reputation", NbtHelper.fromMap(new NbtCompound(), reputation, UUID::toString, i ->
@@ -415,8 +420,8 @@ public class Village implements Iterable<Building> {
         v.put("residentNames", NbtHelper.fromMap(new NbtCompound(), residentNames, Object::toString, NbtString::of));
         v.put("residentHomes", NbtHelper.fromMap(new NbtCompound(), residentHomes, Object::toString, NbtLong::of));
         v.putInt("unspentMood", unspentMood);
-        v.putInt("populationThreshold", populationThreshold);
-        v.putInt("marriageThreshold", marriageThreshold);
+        v.putFloat("populationThresholdFloat", populationThreshold);
+        v.putFloat("marriageThresholdFloat", marriageThreshold);
         v.put("buildings", NbtHelper.fromList(buildings.values(), Building::save));
         v.putBoolean("autoScan", autoScan);
         return v;

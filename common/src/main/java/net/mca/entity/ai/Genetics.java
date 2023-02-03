@@ -99,7 +99,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
         float temp = entity.asEntity().world.getBiome(entity.asEntity().getBlockPos()).value().getTemperature();
 
         // immigrants
-        if (random.nextInt(100) < Config.getInstance().immigrantChance) {
+        if (random.nextFloat() < Config.getInstance().geneticImmigrantChance) {
             temp = random.nextFloat() * 2 - 0.5F;
         }
 

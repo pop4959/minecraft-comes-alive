@@ -19,7 +19,7 @@ public class VillageMarriageManager {
 
     // if the amount of couples is low, let them marry
     public void marry(ServerWorld world) {
-        if (world.random.nextFloat() >= Config.getInstance().marriageChance / 100f) {
+        if (world.random.nextFloat() >= Config.getInstance().marriageChancePerMinute) {
             return;
         }
 
@@ -32,7 +32,7 @@ public class VillageMarriageManager {
                 .filter(v -> !v.getRelationships().isPromised())
                 .collect(Collectors.toList());
 
-        if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * village.getMarriageThreshold() / 100f) {
+        if (availableVillagers.size() <= 1 || availableVillagers.size() < allVillagers.size() * village.getMarriageThreshold()) {
             return; // The village is too small.
         }
 

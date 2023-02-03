@@ -1,5 +1,6 @@
 package net.mca.entity.ai.gpt3Modules;
 
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,10 +22,12 @@ public class PlayerModule {
     );
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
-        for (Map.Entry<Identifier, String> entry : advancements.entrySet()) {
-            Advancement advancement = Objects.requireNonNull(player.getServer()).getAdvancementLoader().get(entry.getKey());
-            if (player.getAdvancementTracker().getProgress(advancement).isDone()) {
-                input.add(entry.getValue() + " ");
+        if (Config.getInstance().villagerChatAIIntelligence >= 5) {
+            for (Map.Entry<Identifier, String> entry : advancements.entrySet()) {
+                Advancement advancement = Objects.requireNonNull(player.getServer()).getAdvancementLoader().get(entry.getKey());
+                if (player.getAdvancementTracker().getProgress(advancement).isDone()) {
+                    input.add(entry.getValue() + " ");
+                }
             }
         }
     }

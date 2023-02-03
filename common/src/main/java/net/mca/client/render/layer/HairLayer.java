@@ -21,7 +21,7 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
     }
 
     @Override
-    protected Identifier getSkin(T villager) {
+    public Identifier getSkin(T villager) {
         return cached(getVillager(villager).getHair(), Identifier::new);
     }
 

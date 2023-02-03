@@ -1,0 +1,9 @@
+{
+  "size": 0,
+  "color": "ffffffff",
+  "visible": false,
+  "priority": 1,
+  "blocks": {
+    "#minecraft:beds": 1
+  }
+}

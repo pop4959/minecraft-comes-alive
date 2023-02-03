@@ -33,7 +33,9 @@ public class FollowTask extends MultiTickTask<VillagerEntityMCA> {
             if (villager.getVillagerBrain().isPanicking() && villager.getBrain().getOptionalMemory(MemoryModuleType.HURT_BY_ENTITY).filter(livingEntity -> livingEntity == playerToFollow).isPresent()) {
                 villager.getBrain().forget(MemoryModuleTypeMCA.PLAYER_FOLLOWING.get());
             } else {
-                LookTargetUtil.walkTowards(villager, playerToFollow, villager.hasVehicle() ? 1.7f : 0.8f, 3);
+                float dist = villager.distanceTo(playerToFollow) - 2;
+                float speed = Math.min(1.0f, Math.max(0.6f, dist * 0.4f * 0.25f));
+                LookTargetUtil.walkTowards(villager, playerToFollow, (villager.hasVehicle() ? 1.7f : 0.8f) * speed, 2);
             }
         });
     }

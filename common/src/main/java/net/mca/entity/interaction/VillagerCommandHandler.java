@@ -239,15 +239,19 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     }
 
                     //slightly randomly the search center
-                    Identifier identifier = new Identifier(arg);
-                    BlockPos pos = FuzzyPositions.localFuzz(entity.getRandom(), 1024, 0).add(entity.getBlockPos());
-                    Optional<BlockPos> position = WorldUtils.getClosestStructurePosition((ServerWorld)entity.world, pos, identifier, 64);
-                    if (position.isPresent()) {
-                        String posString = position.get().getX() + "," + position.get().getY() + "," + position.get().getZ();
-                        entity.sendChatMessage(player, "dialogue.location." + identifier.getPath(), posString);
-                    } else {
-                        entity.sendChatMessage(player, "dialogue.location.forgot");
-                    }
+                    ServerWorld world = (ServerWorld)entity.world;
+                    String finalArg = arg;
+                    world.getServer().execute(() -> {
+                        Identifier identifier = new Identifier(finalArg);
+                        BlockPos pos = FuzzyPositions.localFuzz(entity.getRandom(), 1024, 0).add(entity.getBlockPos());
+                        Optional<BlockPos> position = WorldUtils.getClosestStructurePosition(world, pos, identifier, 64);
+                        if (position.isPresent()) {
+                            String posString = position.get().getX() + "," + position.get().getY() + "," + position.get().getZ();
+                            entity.sendChatMessage(player, "dialogue.location." + identifier.getPath(), posString);
+                        } else {
+                            entity.sendChatMessage(player, "dialogue.location.forgot");
+                        }
+                    });
                 } else {
                     entity.sendChatMessage(player, "dialogue.location.forgot");
                 }

@@ -3,7 +3,7 @@ package net.mca.server.world.data;
 import net.mca.Config;
 import net.mca.MCA;
 import net.mca.advancement.criterion.CriterionMCA;
-import net.mca.resources.API;
+import net.mca.resources.BuildingTypes;
 import net.mca.resources.data.BuildingType;
 import net.mca.server.ReaperSpawner;
 import net.mca.server.SpawnQueue;
@@ -237,7 +237,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     //checks weather the given block contains a grouped building block, e.g., a town bell or gravestone
     private BuildingType getGroupedBuildingType(BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
-        for (BuildingType bt : API.getVillagePool()) {
+        for (BuildingType bt : BuildingTypes.getInstance()) {
             if (bt.grouped() && bt.getBlockToGroup().containsKey(Registries.BLOCK.getId(block))) {
                 return bt;
             }

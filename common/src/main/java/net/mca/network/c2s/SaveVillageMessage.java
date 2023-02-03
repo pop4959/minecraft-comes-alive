@@ -12,9 +12,9 @@ public class SaveVillageMessage implements Message {
     private static final long serialVersionUID = -4830365225086158551L;
 
     private final int id;
-    private final int taxes;
-    private final int populationThreshold;
-    private final int marriageThreshold;
+    private final float taxes;
+    private final float populationThreshold;
+    private final float marriageThreshold;
 
     public SaveVillageMessage(Village village) {
         this.id = village.getId();

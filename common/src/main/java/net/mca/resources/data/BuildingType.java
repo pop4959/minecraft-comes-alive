@@ -1,5 +1,7 @@
 package net.mca.resources.data;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.mca.MCA;
 import net.mca.util.RegistryHelper;
 import net.minecraft.block.Block;
@@ -8,6 +10,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.math.BlockPos;
 
 import java.io.Serial;
@@ -24,6 +27,7 @@ public final class BuildingType implements Serializable {
     private final String color;
     private final int priority;
     private final boolean visible;
+    private final boolean noBeds;
     private final Map<String, Integer> blocks;
     private transient Map<Identifier, Identifier> blockToGroup;
     private transient Map<Identifier, Integer> groups;
@@ -32,20 +36,15 @@ public final class BuildingType implements Serializable {
     private final int iconV;
     private final boolean grouped;
     private final int mergeRange;
-    private final boolean noBeds;
 
     public BuildingType() {
-        this("?", 0, 0, "ffffffff", 0, true, false);
-    }
-
-    public BuildingType(String name, int size, int margin, String color, int priority, boolean visible, boolean noBeds) {
-        this.name = name;
-        this.size = size;
-        this.margin = margin;
-        this.color = color;
-        this.priority = priority;
-        this.visible = visible;
-        this.noBeds = noBeds;
+        this.name = "?";
+        this.size = 0;
+        this.margin = 0;
+        this.color = "ffffffff";
+        this.priority = 0;
+        this.visible = true;
+        this.noBeds = false;
         this.blocks = Map.of("#minecraft:beds", 1000000000);
         this.blockToGroup = null;
         this.icon = false;
@@ -53,6 +52,45 @@ public final class BuildingType implements Serializable {
         this.iconV = 0;
         this.grouped = false;
         this.mergeRange = 32;
+    }
+
+    public BuildingType(String name, JsonObject value) {
+        this.name = name;
+        this.size = JsonHelper.getInt(value, "size", 0);
+        this.margin = JsonHelper.getInt(value, "margin", 0);
+        this.color = JsonHelper.getString(value, "color", "ffffffff");
+        this.priority = JsonHelper.getInt(value, "priority", 0);
+        this.visible = JsonHelper.getBoolean(value, "visible", true);
+        this.noBeds = JsonHelper.getBoolean(value, "noBeds", false);
+
+        this.icon = JsonHelper.getBoolean(value, "icon", false);
+        this.iconU = JsonHelper.getInt(value, "iconU", 0);
+        this.iconV = JsonHelper.getInt(value, "iconV", 0);
+
+        this.grouped = JsonHelper.getBoolean(value, "grouped", false);
+        this.mergeRange = JsonHelper.getInt(value, "mergeRange", 0);
+
+        this.blocks = new HashMap<>();
+        if (JsonHelper.hasJsonObject(value, "blocks")) {
+            JsonObject blocks = JsonHelper.getObject(value, "blocks");
+            for (Map.Entry<String, JsonElement> entry : blocks.entrySet()) {
+                this.blocks.put(
+                        entry.getKey(),
+                        entry.getValue().getAsInt()
+                );
+            }
+        }
+
+        this.groups = new HashMap<>();
+        if (JsonHelper.hasJsonObject(value, "groups")) {
+            JsonObject blocks = JsonHelper.getObject(value, "groups");
+            for (Map.Entry<String, JsonElement> entry : blocks.entrySet()) {
+                this.groups.put(
+                        new Identifier(entry.getKey()),
+                        entry.getValue().getAsInt()
+                );
+            }
+        }
     }
 
     public String name() {

@@ -50,6 +50,9 @@ public enum Constraint implements BiPredicate<VillagerLike<?>, ServerPlayerEntit
     KIDS("kids", Relationship.IS_PARENT.asConstraint()),
     NOT_KIDS("!kids", Relationship.IS_PARENT.negate().asConstraint()),
 
+    PARENT("parent", Relationship.IS_KID.asConstraint()),
+    NOT_PARENT("!parent", Relationship.IS_KID.negate().asConstraint()),
+
     CLERIC("cleric", (villager, player) -> villager.getVillagerData().getProfession() == VillagerProfession.CLERIC),
     NOT_CLERIC("!cleric", (villager, player) -> villager.getVillagerData().getProfession() != VillagerProfession.CLERIC),
 

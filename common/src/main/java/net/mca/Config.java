@@ -47,12 +47,12 @@ public final class Config implements Serializable {
     public boolean showNotificationsAsChat = false;
     public int heartsToBeConsideredAsFriend = 40;
 
-    public int infectionChance = 5;
+    public float zombieBiteInfectionChance = 0.05f;
     public float infectionChanceDecreasePerLevel = 0.25f;
     public int infectionTime = 72000;
 
     //villager behavior
-    public int chanceToHaveTwins = 2;
+    public float twinBabyChance = 0.02f;
     public float marriageHeartsRequirement = 100;
     public float engagementHeartsRequirement = 50;
     public float bouquetHeartsRequirement = 10;
@@ -64,7 +64,7 @@ public final class Config implements Serializable {
     public int childInitialHearts = 100;
     public int greetHeartsThreshold = 75;
     public int greetAfterDays = 1;
-    public int immigrantChance = 20;
+    public float geneticImmigrantChance = 0.2f;
     public float traitChance = 0.25f;
     public float traitInheritChance = 0.5f;
     public boolean bypassTraitRestrictions = false;
@@ -78,6 +78,7 @@ public final class Config implements Serializable {
     public float maleVillagerWidthFactor = 1.0f;
     public float femaleVillagerWidthFactor = 0.95f;
     public boolean showNameTags = true;
+    public float nameTagDistance = 5.0f;
     public boolean useMCAVoices = true;
     public boolean useVanillaVoices = false;
     public float interactionChanceFatigue = 1.0f;
@@ -88,21 +89,24 @@ public final class Config implements Serializable {
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
+
+    //AI
     public boolean enableVillagerChatAI = false;
+    public int villagerChatAIIntelligence = 4;
 
     //village behavior
-    public int guardSpawnRate = 6;
+    public float guardSpawnFraction = 0.175f;
     public float taxesFactor = 0.5f;
     public int taxSeason = 168000;
-    public int marriageChance = 5;
-    public int adventurerAtInnChance = 5;
-    public int childrenChance = 5;
+    public float marriageChancePerMinute = 0.05f;
+    public float adventurerAtInnChancePerMinute = 0.05f;
+    public float villagerProcreationChancePerMinute = 0.05f;
     public int bountyHunterInterval = 48000;
     public int bountyHunterHeartsInterval = -150;
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
-    public int percentageOfVanillaVillages = 0;
+    public float fractionOfVanillaVillages = 0;
     public int minimumBuildingsToBeConsideredAVillage = 3;
     public List<String> villagerDimensionBlacklist = List.of();
     public List<String> allowedSpawnReasons = List.of(
@@ -207,7 +211,7 @@ public final class Config implements Serializable {
             "minecraft:pillager_outpost"
     );
 
-    public List<String> destinyLocations = List.of(
+    public List<String> destinySpawnLocations = List.of(
             "somewhere",
             "minecraft:shipwreck_beached",
             "minecraft:village_desert",
@@ -238,7 +242,7 @@ public final class Config implements Serializable {
     public Map<String, Boolean> enabledTraits = new HashMap<>();
 
     public Map<String, Float> taxesMap = Map.of(
-            "minecraft:diamond", 10.0f
+            "minecraft:emerald", 1.0f
     );
 
     public static File getConfigFile() {
@@ -264,24 +268,28 @@ public final class Config implements Serializable {
     }
 
     public static Config loadOrCreate() {
-        try (FileReader reader = new FileReader(getConfigFile())) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            Config config = gson.fromJson(reader, Config.class);
-            if (config.version != VERSION) {
-                config = new Config();
+        File file = getConfigFile();
+        if (file.exists()) {
+            try (FileReader reader = new FileReader(file)) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Config config = gson.fromJson(reader, Config.class);
+                if (config.version != VERSION) {
+                    config = new Config();
+                }
+                config.save();
+                return config;
+            } catch (JsonSyntaxException e) {
+                MCA.LOGGER.error("");
+                MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
+                MCA.LOGGER.error(e);
+                MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
+                MCA.LOGGER.error("");
+            } catch (IOException e) {
+                MCA.LOGGER.error(e);
             }
-            config.save();
-            return config;
-        } catch (JsonSyntaxException e) {
-            MCA.LOGGER.error("");
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            MCA.LOGGER.error("Minecraft Comes Alive config (mca.json) failed to launch!");
-            e.printStackTrace();
-            MCA.LOGGER.error("|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            MCA.LOGGER.error("");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
         Config config = new Config();
         config.save();
         return config;
