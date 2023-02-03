@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 public class VillageModule {
     private final static Map<String, String> nameExceptions = Map.of(
-            "fishermansHut", "fisherman's hut",
-            "weavingMill", "weaving mill",
-            "bigHouse", "big house",
-            "musicStore", "music store",
-            "townCenter", "town center",
+            "fishermans_hut", "fisherman's hut",
+            "weaving_mill", "weaving mill",
+            "big_house", "big house",
+            "music_store", "music store",
+            "town_enter", "town center",
             "building", "",
             "blocked", "",
             "house", ""

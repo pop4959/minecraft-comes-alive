@@ -21,7 +21,7 @@ public class Supporters extends JsonDataLoader {
     private final Map<String, List<String>> supporterGroups = new HashMap<>();
 
     public Supporters() {
-        super(Resources.GSON, "api/supporters");
+        super(Resources.GSON, ID.getPath());
         INSTANCE = this;
     }
 
