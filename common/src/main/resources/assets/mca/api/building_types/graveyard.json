@@ -1,0 +1,16 @@
+{
+  "size": 0,
+  "margin": 8,
+  "color": "ffff00ff",
+  "visible": true,
+  "priority": 0,
+  "blocks": {
+    "#mca:tombstones": 1
+  },
+  "icon": true,
+  "iconU": 0,
+  "iconV": 0,
+  "grouped": true,
+  "mergeRange": 32,
+  "minBlocks": 5
+}

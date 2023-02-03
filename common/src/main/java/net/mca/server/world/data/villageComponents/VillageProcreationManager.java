@@ -17,13 +17,13 @@ public class VillageProcreationManager {
 
     // if the population is low, find a couple and let them have a child
     public void procreate(ServerWorld world) {
-        if (world.random.nextFloat() >= Config.getInstance().childrenChance / 100F) {
+        if (world.random.nextFloat() >= Config.getInstance().villagerProcreationChancePerMinute) {
             return;
         }
 
         int population = village.getPopulation();
         int maxPopulation = village.getMaxPopulation();
-        if (population >= maxPopulation * village.getPopulationThreshold() / 100F) {
+        if (population >= maxPopulation * village.getPopulationThreshold()) {
             return;
         }
 

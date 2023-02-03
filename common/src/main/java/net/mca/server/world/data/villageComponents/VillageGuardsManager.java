@@ -20,7 +20,7 @@ public class VillageGuardsManager {
     }
 
     public void spawnGuards(ServerWorld world) {
-        int guardCapacity = village.getPopulation() / Config.getInstance().guardSpawnRate;
+        int guardCapacity = (int)Math.ceil(village.getPopulation() * Config.getInstance().guardSpawnFraction);
 
         // Count up the guards
         int guards = 0;
@@ -40,7 +40,7 @@ public class VillageGuardsManager {
 
         // Count all unloaded villagers against the guard limit
         // This is statistical and may not be accurate, but it's better than nothing
-        guards += Math.ceil((village.getPopulation() - guards - citizen) / (float)Config.getInstance().guardSpawnRate);
+        guards += Math.ceil((village.getPopulation() - guards - citizen) * Config.getInstance().guardSpawnFraction);
 
         // Spawn a new guard if we don't have enough
         if (nonGuards.size() > 0 && guards < guardCapacity) {

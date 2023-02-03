@@ -2,7 +2,7 @@ package net.mca.network.s2c;
 
 import net.mca.ClientProxy;
 import net.mca.network.NbtDataMessage;
-import net.mca.resources.API;
+import net.mca.resources.BuildingTypes;
 import net.mca.resources.Rank;
 import net.mca.resources.Tasks;
 import net.mca.resources.data.BuildingType;
@@ -32,7 +32,7 @@ public class GetVillageResponse extends NbtDataMessage {
         this.isVillage = isVillage;
         this.ids = ids;
         this.tasks = Tasks.getInstance().tasks;
-        this.buildingTypes = API.getVillagePool().getBuildingTypes();
+        this.buildingTypes = BuildingTypes.getInstance().getBuildingTypes();
     }
 
     @Override

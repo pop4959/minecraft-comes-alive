@@ -12,12 +12,16 @@ import net.minecraft.client.model.ModelData;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -105,22 +109,16 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
         model.leaningPitch = 0.0f;
         model.setAngles(player, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 
-        model.setVisible(false);
-
-        arm.visible = true;
-        arm.pitch = 0.0f;
-        arm.yaw = 0.0f;
-        arm.roll = 0.0f;
-
-        sleeve.visible = true;
-        sleeve.pitch = 0.0f;
-        sleeve.yaw = 0.0f;
-        sleeve.roll = 0.0f;
-
         model.applyVillagerDimensions(CommonVillagerModel.getVillager(player), player.isInSneakingPose());
 
-        layer.renderFinal(matrices, vertexConsumers, light, player, 0.0f);
+        Identifier skin = layer.getSkin(player);
+        if (layer.canUse(skin)) {
+            VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(skin));
 
-        model.setVisible(true);
+            arm.pitch = 0.0F;
+            arm.render(matrices, buffer, light, OverlayTexture.DEFAULT_UV);
+            sleeve.pitch = 0.0F;
+            sleeve.render(matrices, buffer, light, OverlayTexture.DEFAULT_UV);
+        }
     }
 }

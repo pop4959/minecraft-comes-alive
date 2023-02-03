@@ -26,6 +26,8 @@ public interface MemoryModuleTypeMCA {
     RegistrySupplier<MemoryModuleType<Integer>> SMALL_BOUNTY = register("small_bounty", Optional.of(Codec.INT));
     RegistrySupplier<MemoryModuleType<LivingEntity>> HIT_BY_PLAYER = register("hit_by_player", Optional.empty());
     RegistrySupplier<MemoryModuleType<Long>> LAST_GRIEVE = register("last_grieve", Optional.of(Codec.LONG));
+    RegistrySupplier<MemoryModuleType<Boolean>> FORCED_HOME = register("forced_home", Optional.of(Codec.BOOL));
+    RegistrySupplier<MemoryModuleType<Long>> LAST_CANT_FIND_HOME_PISSED_MOMENT = register("last_cant_find_home_pissed_moment", Optional.of(Codec.LONG));
 
     static void bootstrap() {
         MEMORY_MODULES.register();

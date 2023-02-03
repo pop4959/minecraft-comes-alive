@@ -75,7 +75,7 @@ public class ConversationManager {
 
         @Override
         public void deliver() {
-            this.entity.sendChatMessage(text, getReceiver());
+            this.entity.sendChatToAllAround(text);
             super.deliver();
         }
     }
@@ -90,7 +90,7 @@ public class ConversationManager {
 
         @Override
         public void deliver() {
-            this.entity.sendChatMessage((PlayerEntity)getReceiver(), text);
+            this.entity.sendChatToAllAround(text);
             super.deliver();
         }
     }

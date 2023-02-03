@@ -42,7 +42,7 @@ public class ReportBuildingMessage implements Message {
             case AUTO_SCAN -> villages.findNearestVillage(player).ifPresent(Village::toggleAutoScan);
             case FULL_SCAN -> villages.findNearestVillage(player).ifPresent(buildings ->
                     buildings.getBuildings().values().stream().toList().forEach(b ->
-                            villages.processBuilding(b.getCenter(), true, false)
+                            villages.processBuilding(b.getCenter(), true, b.isStrictScan())
                     )
             );
             case FORCE_TYPE, REMOVE -> {

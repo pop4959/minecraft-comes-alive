@@ -1,7 +1,7 @@
 package net.mca.server.world.data;
 
 import net.mca.Config;
-import net.mca.resources.API;
+import net.mca.resources.BuildingTypes;
 import net.mca.resources.data.BuildingType;
 import net.mca.util.NbtHelper;
 import net.minecraft.block.BedBlock;
@@ -312,7 +312,7 @@ public class Building implements Serializable {
         } else {
             //fetch all interesting block types
             Set<Identifier> blockTypes = new HashSet<>();
-            for (BuildingType bt : API.getVillagePool()) {
+            for (BuildingType bt : BuildingTypes.getInstance()) {
                 blockTypes.addAll(bt.getBlockToGroup().keySet());
             }
 
@@ -367,7 +367,7 @@ public class Building implements Serializable {
         int bestPriority = -1;
         boolean assignedType = false;
 
-        for (BuildingType bt : API.getVillagePool()) {
+        for (BuildingType bt : BuildingTypes.getInstance()) {
             if ((bt.priority() > bestPriority) && size >= bt.size()) {
                 //get an overview of the satisfied blocks
                 Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
@@ -391,7 +391,7 @@ public class Building implements Serializable {
     }
 
     public BuildingType getBuildingType() {
-        return API.getVillagePool().getBuildingType(type);
+        return BuildingTypes.getInstance().getBuildingType(type);
     }
 
     public void setType(String type) {
@@ -448,7 +448,7 @@ public class Building implements Serializable {
 
     @Deprecated
     public List<BlockPos> getBlocksOfGroup(Identifier i) {
-        Map<Identifier, List<BlockPos>> groups = API.getVillagePool().getBuildingType("?").getGroups(blocks);
+        Map<Identifier, List<BlockPos>> groups = BuildingTypes.getInstance().getBuildingType("?").getGroups(blocks);
         return groups.getOrDefault(i, new ArrayList<>());
     }
 
@@ -462,5 +462,9 @@ public class Building implements Serializable {
 
     public void setLastScan(long lastScan) {
         this.lastScan = lastScan;
+    }
+
+    public boolean isStrictScan() {
+        return strictScan;
     }
 }

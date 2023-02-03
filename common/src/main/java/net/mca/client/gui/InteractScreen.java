@@ -323,11 +323,13 @@ public class InteractScreen extends AbstractDynamicScreen {
     }
 
     public void setLastPhrase(MutableText questionText, boolean silent) {
-        dialogQuestionText = textRenderer.wrapLines(questionText, 160);
-
+        MutableText text;
         if (!silent) {
-            villager.sendChatMessage(questionText, player);
+            text = villager.sendChatMessage(questionText, player);
+        } else {
+            text = villager.transformMessage(questionText);
         }
+        dialogQuestionText = textRenderer.wrapLines(text, 160);
     }
 
     @Override

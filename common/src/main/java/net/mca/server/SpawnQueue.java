@@ -18,6 +18,7 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 public class SpawnQueue {
     private static final SpawnQueue INSTANCE = new SpawnQueue();
@@ -88,11 +89,11 @@ public class SpawnQueue {
     }
 
     public static boolean shouldGetConverted(Entity entity) {
-        if (Config.getInstance().percentageOfVanillaVillages <= 0) {
+        if (Config.getInstance().fractionOfVanillaVillages <= 0) {
             return true;
         } else {
             int i = Nationality.get((ServerWorld)entity.getWorld()).getRegionId(entity.getBlockPos());
-            return Math.floorMod(i, 100) >= Config.getInstance().percentageOfVanillaVillages;
+            return Math.floorMod(i, 100) >= Config.getInstance().fractionOfVanillaVillages * 100.0;
         }
     }
 
@@ -120,7 +121,7 @@ public class SpawnQueue {
     }
 
     private boolean handlesSpawnReason(SpawnReason reason) {
-        return Config.getInstance().allowedSpawnReasons.contains(reason.name().toLowerCase());
+        return Config.getInstance().allowedSpawnReasons.contains(reason.name().toLowerCase(Locale.ROOT));
     }
 
     public void convert(VillagerEntity villager) {

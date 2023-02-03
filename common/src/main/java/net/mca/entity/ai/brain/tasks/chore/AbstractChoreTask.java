@@ -22,13 +22,15 @@ public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
     protected static final int WALKING_THRESHOLD = 200;
 
     public AbstractChoreTask(Map<MemoryModuleType<?>, MemoryModuleState> requirements) {
-        super(requirements);
+        super(requirements, 400);
     }
 
     @Override
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
         int diff = Math.max(0, entity.age - lastAge);
         lastAge = entity.age;
+
+        // wander around
         if (failedTicks > 0) {
             failedTicks -= diff;
             walkingTicks += diff;
@@ -41,9 +43,6 @@ public abstract class AbstractChoreTask extends Task<VillagerEntityMCA> {
 
             return false;
         }
-
-        //long time = world.getTimeOfDay() % 24000;
-        //return time > 2000 && time < 12000;
 
         return villager == null || !villager.getVillagerBrain().isPanicking();
     }

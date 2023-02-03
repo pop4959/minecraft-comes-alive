@@ -46,6 +46,7 @@ public final class MCAQuilt implements ModInitializer {
         ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new QuiltDialogues());
         ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new QuiltTasks());
         ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new QuiltNames());
+        ResourceLoader.get(ResourceType.SERVER_DATA).registerReloader(new QuiltBuildingTypes());
 
         ServerWorldTickEvents.END.register((s, w) -> VillageManager.get(w).tick());
         ServerTickEvents.END.register(s -> ServerInteractionManager.getInstance().tick());

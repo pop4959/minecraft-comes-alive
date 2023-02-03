@@ -71,18 +71,18 @@ public class BlueprintScreen extends ExtendedScreen {
         NetworkHandler.sendToServer(new SaveVillageMessage(village));
     }
 
-    private void changeTaxes(int d) {
-        village.setTaxes(Math.max(0, Math.min(100, village.getTaxes() + d)));
+    private void changeTaxes(float d) {
+        village.setTaxes(Math.max(0.0f, Math.min(1.0f, village.getTaxes() + d)));
         saveVillage();
     }
 
-    private void changePopulationThreshold(int d) {
-        village.setPopulationThreshold(Math.max(0, Math.min(100, village.getPopulationThreshold() + d)));
+    private void changePopulationThreshold(float d) {
+        village.setPopulationThreshold(Math.max(0.0f, Math.min(1.0f, village.getPopulationThreshold() + d)));
         saveVillage();
     }
 
-    private void changeMarriageThreshold(int d) {
-        village.setMarriageThreshold(Math.max(0, Math.min(100, village.getMarriageThreshold() + d)));
+    private void changeMarriageThreshold(float d) {
+        village.setMarriageThreshold(Math.max(0.0f, Math.min(1.0f, village.getMarriageThreshold() + d)));
         saveVillage();
     }
 
@@ -146,7 +146,6 @@ public class BlueprintScreen extends ExtendedScreen {
                     }
                     by += 22;
                 }
-                by += 22;
             }
         }
 
@@ -281,15 +280,15 @@ public class BlueprintScreen extends ExtendedScreen {
                 break;
             case "rules":
                 //taxes
-                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 10 : -10), Text.translatable("gui.blueprint.tooltip.taxes"));
+                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 0.1f : -0.1f), Text.translatable("gui.blueprint.tooltip.taxes"));
                 toggleButtons(buttonTaxes, false);
 
                 //birth threshold
-                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 10 : -10), Text.translatable("gui.blueprint.tooltip.births"));
+                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 0.1f : -0.1f), Text.translatable("gui.blueprint.tooltip.births"));
                 toggleButtons(buttonBirths, false);
 
                 //marriage threshold
-                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 10 : -10), Text.translatable("gui.blueprint.tooltip.marriage"));
+                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 0.1f : -0.1f), Text.translatable("gui.blueprint.tooltip.marriage"));
                 toggleButtons(buttonMarriage, false);
                 break;
             case "rename":
@@ -579,9 +578,9 @@ public class BlueprintScreen extends ExtendedScreen {
     }
 
     private void renderRules(MatrixStack transform) {
-        buttonTaxes[0].setMessage(Text.literal(village.getTaxes() + "%"));
-        buttonMarriage[0].setMessage(Text.literal(village.getMarriageThreshold() + "%"));
-        buttonBirths[0].setMessage(Text.literal(village.getPopulationThreshold() + "%"));
+        buttonTaxes[0].setMessage(Text.literal((int)(village.getTaxes() * 100) + "%"));
+        buttonMarriage[0].setMessage(Text.literal((int)(village.getMarriageThreshold() * 100) + "%"));
+        buttonBirths[0].setMessage(Text.literal((int)(village.getPopulationThreshold() * 100) + "%"));
 
         //taxes
         drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.taxes"), width / 2, height / 2 + positionTaxes, 0xffffffff);

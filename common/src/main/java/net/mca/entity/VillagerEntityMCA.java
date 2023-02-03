@@ -611,7 +611,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (source.getSource() instanceof ZombieEntity
                     && getProfession() != ProfessionsMCA.GUARD.get()
                     && Config.getInstance().enableInfection
-                    && random.nextFloat() < Config.getInstance().infectionChance / 100.0
+                    && random.nextFloat() < Config.getInstance().zombieBiteInfectionChance
                     && random.nextFloat() > (getVillagerData().getLevel() - 1) * Config.getInstance().infectionChanceDecreasePerLevel) {
                 if (getResidency().getHomeVillage().filter(v -> v.hasBuilding("infirmary")).isEmpty() || random.nextBoolean()) {
                     setInfected(true);
@@ -717,7 +717,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     //noinspection ConstantConditions
                     if (!findAndEquipToMain(i -> i.isFood()
                             && i.getItem().getFoodComponent().getHunger() > 0
-                            && i.getItem().getFoodComponent().getStatusEffects().stream().allMatch(e -> e.getFirst().getEffectType().isBeneficial()))) {
+                            && i.getItem().getFoodComponent().getStatusEffects().stream().noneMatch(e -> StatusEffectDangerSet.isDanger.contains(e.getFirst().getEffectType())))) {
                         heal(1); // natural regeneration
                     }
                 }

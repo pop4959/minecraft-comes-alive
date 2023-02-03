@@ -3,6 +3,7 @@ package net.mca.entity.ai.brain.tasks;
 import com.google.common.collect.ImmutableMap;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.ConversationManager;
+import net.mca.entity.ai.MemoryModuleTypeMCA;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -10,18 +11,24 @@ import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Optional;
 
 public class DeliverMessageTask extends Task<VillagerEntityMCA> {
     private static final int MAX_COOLDOWN = 10;
-    private static final int TALKING_TIME = 200;
+    private static final int TALKING_TIME_MIN = 100;
+    private static final int TALKING_TIME_MAX = 500;
+    private static final long MIN_TIME_BETWEEN_SOUND = 20 * 60 * 5;
 
     private Optional<ConversationManager.Message> message = Optional.empty();
 
     private int cooldown;
 
     private int talked;
+
+    private long lastInteraction = Long.MIN_VALUE;
+    private Vec3d lastInteractionPos;
 
     public DeliverMessageTask() {
         super(ImmutableMap.of(
@@ -52,7 +59,17 @@ public class DeliverMessageTask extends Task<VillagerEntityMCA> {
 
     @Override
     protected boolean shouldKeepRunning(ServerWorld world, VillagerEntityMCA villager, long time) {
-        return talked < TALKING_TIME && !villager.getVillagerBrain().isPanicking() && !villager.isSleeping();
+        return talked < getMaxTalkingTime() && !villager.getVillagerBrain().isPanicking() && !villager.isSleeping();
+    }
+
+    private int getMaxTalkingTime() {
+        if (message.isPresent() && lastInteractionPos != null) {
+            Vec3d pos = message.get().getReceiver().getPos();
+            if (lastInteractionPos.isInRange(pos, 1.0)) {
+                return TALKING_TIME_MAX;
+            }
+        }
+        return TALKING_TIME_MIN;
     }
 
     @Override
@@ -64,8 +81,12 @@ public class DeliverMessageTask extends Task<VillagerEntityMCA> {
             }
 
             if (talked == 0) {
-                if (isWithinGreetingDistance(villager, m.getReceiver())) {
-                    villager.playWelcomeSound();
+                if (isWithinRange(villager, m.getReceiver())) {
+                    if (time - lastInteraction > MIN_TIME_BETWEEN_SOUND) {
+                        villager.playWelcomeSound();
+                    }
+                    lastInteraction = time;
+                    lastInteractionPos = m.getReceiver().getPos();
                     m.deliver();
                     talked = 1;
                 } else {
@@ -90,7 +111,11 @@ public class DeliverMessageTask extends Task<VillagerEntityMCA> {
         return villager.conversationManager.getCurrentMessage();
     }
 
-    private static boolean isWithinGreetingDistance(VillagerEntityMCA villager, Entity player) {
+    private static boolean isWithinRange(VillagerEntityMCA villager, Entity player) {
+        // Staying villagers can't reach you
+        if (villager.getBrain().getOptionalMemory(MemoryModuleTypeMCA.STAYING.get()).isPresent()) {
+            return true;
+        }
         return villager.getBlockPos().isWithinDistance(player.getBlockPos(), 3);
     }
 

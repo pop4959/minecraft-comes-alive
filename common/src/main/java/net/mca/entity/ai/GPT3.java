@@ -2,6 +2,7 @@ package net.mca.entity.ai;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.gpt3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -25,8 +26,9 @@ import static net.minecraft.util.Util.NIL_UUID;
 public class GPT3 {
     public static final String URL = "http://snoweagle.tk/";
 
-    private static final int MAX_MEMORY = 400;
-    private static final int MAX_MEMORY_TIME = 20 * 60 * 30;
+    private static final int MIN_MEMORY = 100;
+    private static final int MAX_MEMORY = 600;
+    private static final int MAX_MEMORY_TIME = 20 * 60 * 45;
     private static final int CONVERSATION_TIME = 20 * 60;
     private static final int CONVERSATION_DISTANCE = 16;
 
@@ -35,7 +37,7 @@ public class GPT3 {
     private static final Map<UUID, UUID> lastInteraction = new HashMap<>();
 
     public static String translate(String phrase) {
-        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT);
+        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
     }
 
     public record Answer(String answer, String error) {
@@ -75,10 +77,11 @@ public class GPT3 {
 
         // remember phrase
         List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
-        while (pastDialogue.stream().mapToInt(v -> (v.length() / 4) + 2).sum() > MAX_MEMORY) {
+        int MEMORY = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
+        while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > MEMORY) {
             pastDialogue.remove(0);
         }
-        pastDialogue.add(playerName + ": " + msg);
+        pastDialogue.add("$player: " + msg);
 
         // construct context
         List<String> input = new LinkedList<>();
@@ -94,7 +97,7 @@ public class GPT3 {
         for (String s : pastDialogue) {
             input.add(s + "\n");
         }
-        input.add("$villager:");
+        input.add("$villager: ");
 
         // gather variables
         Map<String, String> variables = Map.of(

@@ -76,6 +76,13 @@ public interface Messenger extends EntityWrapper {
         return Text.translatable(genderString + personalityString + professionString + "#T" + getDialogueType(target).name() + "." + phraseId, newParams);
     }
 
+    default void sendChatToAllAround(MutableText phrase) {
+        for (PlayerEntity player : asEntity().world.getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
+            float dist = player.distanceTo(asEntity());
+            sendChatMessage(phrase.formatted(dist < 10 ? Formatting.WHITE : Formatting.GRAY), player);
+        }
+    }
+
     default void sendChatToAllAround(String phrase, Object... params) {
         for (PlayerEntity player : asEntity().world.getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
             float dist = player.distanceTo(asEntity());
@@ -87,18 +94,23 @@ public interface Messenger extends EntityWrapper {
         sendChatMessage(getTranslatable(target, phraseId, params), target);
     }
 
-    default void sendChatMessage(MutableText message, Entity receiver) {
-        // Infected villagers do not speak
+    default MutableText transformMessage(MutableText message) {
         if (isSpeechImpaired()) {
             message = Text.translatable(API.getRandomSentence("zombie", message.getString()));
         } else if (isToYoungToSpeak()) {
             message = Text.translatable(API.getRandomSentence("baby", message.getString()));
         }
+    }
+
+    default MutableText sendChatMessage(MutableText message, Entity receiver) {
+        message = transformMessage(message);
 
         MutableText textToSend = Text.literal(Config.getInstance().villagerChatPrefix).append(asEntity().getDisplayName()).append(": ").append(message);
         receiver.sendMessage(textToSend);
 
         playSpeechEffect();
+
+        return message;
     }
 
     default void sendEventMessage(Text message, PlayerEntity receiver) {
