@@ -51,5 +51,6 @@ public final class MCAForge {
         event.addListener(new Dialogues());
         event.addListener(new Tasks());
         event.addListener(new Names());
+        event.addListener(new BuildingTypes());
     }
 }
