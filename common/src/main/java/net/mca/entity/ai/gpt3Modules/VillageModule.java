@@ -6,7 +6,6 @@ import net.mca.server.world.data.Building;
 import net.mca.server.world.data.Village;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,17 +56,6 @@ public class VillageModule {
                         .collect(Collectors.joining(", "));
                 if (buildings.length() > 0) {
                     input.add("The village has a " + buildings + ". ");
-                }
-            });
-        }
-
-        // Random friend
-        if (Config.getInstance().villagerChatAIIntelligence >= 3) {
-            village.ifPresent(v -> {
-                ArrayList<String> values = (ArrayList<String>)v.getResidentNames().values().stream().distinct().toList();
-                if (!values.isEmpty()) {
-                    String s = values.get(villager.getId() % values.size());
-                    input.add("$villager has a friend named " + s + ". ");
                 }
             });
         }

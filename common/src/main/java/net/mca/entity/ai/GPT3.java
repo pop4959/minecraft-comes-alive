@@ -3,6 +3,7 @@ package net.mca.entity.ai;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.gpt3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -64,84 +65,89 @@ public class GPT3 {
     }
 
     public static Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
-        String playerName = player.getName().asString();
-        String villagerName = villager.getName().asString();
+        try {
+            String playerName = player.getName().asString();
+            String villagerName = villager.getName().asString();
 
-        // forgot about last conversation if it's too long ago
-        long time = villager.world.getTime();
-        if (time > lastInteractions.getOrDefault(villager.getUuid(), 0L) + MAX_MEMORY_TIME) {
-            memory.remove(villager.getUuid());
-        }
-        lastInteractions.put(villager.getUuid(), time);
-        lastInteraction.put(player.getUuid(), villager.getUuid());
-
-        // remember phrase
-        List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
-        int MEMORY = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
-        while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > MEMORY) {
-            pastDialogue.remove(0);
-        }
-        pastDialogue.add("$player: " + msg);
-
-        // construct context
-        List<String> input = new LinkedList<>();
-        PersonalityModule.apply(input, villager, player);
-        TraitsModule.apply(input, villager, player);
-        RelationModule.apply(input, villager, player);
-        VillageModule.apply(input, villager, player);
-        EnvironmentModule.apply(input, villager, player);
-        PlayerModule.apply(input, villager, player);
-        input.add("\n\n");
-
-        // construct memory
-        for (String s : pastDialogue) {
-            input.add(s + "\n");
-        }
-        input.add("$villager: ");
-
-        // gather variables
-        Map<String, String> variables = Map.of(
-                "player", playerName,
-                "villager", villagerName
-        );
-
-        // add variables
-        StringBuilder sb = new StringBuilder();
-        for (String s : input) {
-            for (Map.Entry<String, String> entry : variables.entrySet()) {
-                s = s.replaceAll("\\$" + entry.getKey(), entry.getValue());
+            // forgot about last conversation if it's too long ago
+            long time = villager.world.getTime();
+            if (time > lastInteractions.getOrDefault(villager.getUuid(), 0L) + MAX_MEMORY_TIME) {
+                memory.remove(villager.getUuid());
             }
-            sb.append(s);
-        }
+            lastInteractions.put(villager.getUuid(), time);
+            lastInteraction.put(player.getUuid(), villager.getUuid());
 
-        // build http request
-        Map<String, String> params = new HashMap<>();
-        params.put("prompt", sb.toString());
-        params.put("player", variables.get("player"));
-        params.put("villager", variables.get("villager"));
+            // remember phrase
+            List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
+            int MEMORY = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
+            while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > MEMORY) {
+                pastDialogue.remove(0);
+            }
+            pastDialogue.add("$player: " + msg);
 
-        // encode and create url
-        String encodedURL = params.keySet().stream()
-                .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&", URL + "chat?", ""));
+            // construct context
+            List<String> input = new LinkedList<>();
+            PersonalityModule.apply(input, villager, player);
+            TraitsModule.apply(input, villager, player);
+            RelationModule.apply(input, villager, player);
+            VillageModule.apply(input, villager, player);
+            EnvironmentModule.apply(input, villager, player);
+            PlayerModule.apply(input, villager, player);
+            input.add("\n\n");
 
-        // encode and create url
-        Answer message = request(encodedURL);
+            // construct memory
+            for (String s : pastDialogue) {
+                input.add(s + "\n");
+            }
+            input.add("$villager: ");
 
-        if (message.error == null) {
-            // remember
-            pastDialogue.add(villagerName + ": " + message.answer);
-            return Optional.ofNullable(message.answer);
-        } else if (message.error.equals("limit")) {
-            MutableText styled = (new TranslatableText("mca.limit.patreon")).styled(s -> s
-                    .withColor(Formatting.GOLD)
-                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations#increase-conversation-limit"))
-                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("mca.limit.patreon.hover"))));
+            // gather variables
+            Map<String, String> variables = Map.of(
+                    "player", playerName,
+                    "villager", villagerName
+            );
 
-            player.sendMessage(styled, false);
-        } else if (message.error.equals("limit_premium")) {
-            player.sendMessage(new TranslatableText("mca.limit.premium").formatted(Formatting.RED), false);
-        } else {
+            // add variables
+            StringBuilder sb = new StringBuilder();
+            for (String s : input) {
+                for (Map.Entry<String, String> entry : variables.entrySet()) {
+                    s = s.replaceAll("\\$" + entry.getKey(), entry.getValue());
+                }
+                sb.append(s);
+            }
+
+            // build http request
+            Map<String, String> params = new HashMap<>();
+            params.put("prompt", sb.toString());
+            params.put("player", variables.get("player"));
+            params.put("villager", variables.get("villager"));
+
+            // encode and create url
+            String encodedURL = params.keySet().stream()
+                    .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
+                    .collect(Collectors.joining("&", URL + "chat?", ""));
+
+            // encode and create url
+            Answer message = request(encodedURL);
+
+            if (message.error == null) {
+                // remember
+                pastDialogue.add(villagerName + ": " + message.answer);
+                return Optional.ofNullable(message.answer);
+            } else if (message.error.equals("limit")) {
+                MutableText styled = (new TranslatableText("mca.limit.patreon")).styled(s -> s
+                        .withColor(Formatting.GOLD)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations#increase-conversation-limit"))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TranslatableText("mca.limit.patreon.hover"))));
+
+                player.sendMessage(styled, false);
+            } else if (message.error.equals("limit_premium")) {
+                player.sendMessage(new TranslatableText("mca.limit.premium").formatted(Formatting.RED), false);
+            } else {
+                player.sendMessage(new TranslatableText("mca.ai_broken").formatted(Formatting.RED), false);
+            }
+        } catch (Exception e) {
+            MCA.LOGGER.error(e);
             player.sendMessage(new TranslatableText("mca.ai_broken").formatted(Formatting.RED), false);
         }
 
