@@ -1,3 +1,7 @@
+# 7.4.3
+
+* Fixed crash when villagers have friends lol
+
 # 7.4.2
 
 * Fixed invalid task
