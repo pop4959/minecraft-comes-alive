@@ -15,6 +15,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
@@ -46,9 +49,9 @@ public class Residency {
 
     public void setWorkplace(ServerPlayerEntity player) {
         PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
-        pointOfInterestStorage.getPosition(PointOfInterestType.UNEMPLOYED.getCompletionCondition(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
+        pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.acquirableWorkstation(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
                     pointOfInterestStorage.getType(blockPos).ifPresent((pointOfInterestType) -> {
-                        pointOfInterestStorage.getPosition(PointOfInterestType.UNEMPLOYED.getCompletionCondition(), (blockPos2) -> {
+                        pointOfInterestStorage.getPosition(VillagerProfession.NONE.acquirableWorkstation(), (registryEntry, blockPos2) -> {
                             return blockPos2.equals(blockPos);
                         }, blockPos, 1);
 
@@ -63,13 +66,16 @@ public class Residency {
                         entity.getBrain().remember(MemoryModuleType.JOB_SITE, globalPos);
                         player.getWorld().sendEntityStatus(entity, (byte)14);
                         MinecraftServer minecraftServer = player.getWorld().getServer();
-                        Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension()))
-                                .flatMap(world -> world.getPointOfInterestStorage().getType(globalPos.getPos()))
-                                .flatMap(poiType -> Registry.VILLAGER_PROFESSION.stream().filter(profession -> profession.getWorkStation() == poiType).findFirst())
-                                .ifPresent(profession -> {
-                                    entity.setVillagerData(entity.getVillagerData().withProfession(profession));
-                                    entity.reinitializeBrain(player.getWorld());
-                                });
+                        Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension())).flatMap((world) -> {
+                            return world.getPointOfInterestStorage().getType(globalPos.getPos());
+                        }).flatMap((registryEntry) -> {
+                            return Registry.VILLAGER_PROFESSION.stream().filter((profession) -> {
+                                return profession.heldWorkstation().test(registryEntry);
+                            }).findFirst();
+                        }).ifPresent((profession) -> {
+                            entity.setVillagerData(entity.getVillagerData().withProfession(profession));
+                            entity.reinitializeBrain(player.getWorld());
+                        });
 
                         // Success
                         entity.sendChatMessage(player, "interaction.setworkplace.success");
