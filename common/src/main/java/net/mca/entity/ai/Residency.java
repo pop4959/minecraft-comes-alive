@@ -49,7 +49,7 @@ public class Residency {
 
     public void setWorkplace(ServerPlayerEntity player) {
         PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
-        pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.getCompletionCondition(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
+        pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.acquirableWorkstation(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
                     pointOfInterestStorage.getType(blockPos).ifPresent((pointOfInterestType) -> {
                         pointOfInterestStorage.getPosition(VillagerProfession.NONE.acquirableWorkstation(), (registryEntry, blockPos2) -> {
                             return blockPos2.equals(blockPos);

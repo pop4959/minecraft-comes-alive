@@ -149,10 +149,6 @@ public class GPT3 {
         } catch (Exception e) {
             MCA.LOGGER.error(e);
             player.sendMessage(Text.translatable("mca.ai_broken").formatted(Formatting.RED), false);
-            }
-        } catch (Exception e) {
-            MCA.LOGGER.error(e);
-            player.sendMessage(new TranslatableText("mca.ai_broken").formatted(Formatting.RED), false);
         }
 
         return Optional.empty();
