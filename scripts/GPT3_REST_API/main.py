@@ -49,11 +49,10 @@ def chat(prompt: str, player: str, villager: str):
         response = openai.Completion.create(
             model=model,
             prompt=prompt,
-            temperature=0.9,
+            temperature=0.95,
             max_tokens=150,
-            top_p=1,
-            frequency_penalty=0.5,
-            presence_penalty=0.0,
+            frequency_penalty=0.6,
+            presence_penalty=0.6,
             stop=[f"{player}:", f"{villager}:"],
         )
 
