@@ -11,6 +11,6 @@
   "iconU": 0,
   "iconV": 0,
   "grouped": true,
-  "mergeRange": 32,
-  "minBlocks": 5
+  "mergeRange": 24,
+  "minBlocks": 3
 }
