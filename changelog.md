@@ -1,3 +1,7 @@
+# 7.4.4
+
+* Fixed missing skin color on hands
+
 # 7.4.3
 
 * Fixed crash when villagers have friends lol

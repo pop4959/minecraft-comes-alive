@@ -46,7 +46,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         return null;
     }
 
-    protected float[] getColor(T villager, float tickDelta) {
+    public float[] getColor(T villager, float tickDelta) {
         return DEFAULT_COLOR;
     }
 
