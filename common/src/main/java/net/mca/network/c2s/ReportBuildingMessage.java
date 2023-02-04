@@ -2,7 +2,6 @@ package net.mca.network.c2s;
 
 import net.mca.cobalt.network.Message;
 import net.mca.server.world.data.Building;
-import net.mca.server.world.data.GraveyardManager;
 import net.mca.server.world.data.Village;
 import net.mca.server.world.data.VillageManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -35,9 +34,6 @@ public class ReportBuildingMessage implements Message {
             case ADD, ADD_ROOM -> {
                 Building.validationResult result = villages.processBuilding(player.getBlockPos(), true, action == Action.ADD_ROOM);
                 player.sendMessage(new TranslatableText("blueprint.scan." + result.name().toLowerCase(Locale.ENGLISH)), true);
-
-                // also add tombstones
-                GraveyardManager.get(player.getWorld()).reportToVillageManager(player);
             }
             case AUTO_SCAN -> villages.findNearestVillage(player).ifPresent(Village::toggleAutoScan);
             case FULL_SCAN -> villages.findNearestVillage(player).ifPresent(buildings ->
