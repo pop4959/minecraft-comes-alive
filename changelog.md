@@ -2,6 +2,7 @@
 
 * Fixed invalid task
 * Player in destiny now become invisible instead of spectator
+* Decreased village merging radius
 
 # 7.4.1
 

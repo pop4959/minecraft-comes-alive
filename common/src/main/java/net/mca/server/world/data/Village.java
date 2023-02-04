@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 public class Village implements Iterable<Building> {
     private static final int MOVE_IN_COOLDOWN = 1200;
     public final static int PLAYER_BORDER_MARGIN = 32;
-    public final static int BORDER_MARGIN = 75;
-    public final static int MERGE_MARGIN = 80;
+    public final static int BORDER_MARGIN = 48;
+    public final static int MERGE_MARGIN = 64;
     private static final long BED_SYNC_TIME = 200;
 
     @Nullable
