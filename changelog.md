@@ -1,6 +1,7 @@
 # 7.4.2
 
 * Fixed invalid task
+* Player in destiny now become invisible instead of spectator
 
 # 7.4.1
 

@@ -9,6 +9,8 @@ import net.mca.item.BabyItem;
 import net.mca.network.s2c.OpenDestinyGuiRequest;
 import net.mca.network.s2c.ShowToastRequest;
 import net.mca.server.world.data.PlayerSaveData;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.BaseText;
@@ -16,7 +18,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
-import net.minecraft.world.GameMode;
 
 import java.util.*;
 
@@ -60,9 +61,7 @@ public class ServerInteractionManager {
             if (Config.getInstance().launchIntoDestiny) {
                 launchDestiny(player);
 
-                if (player.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-                    player.changeGameMode(GameMode.SPECTATOR);
-                }
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 60));
             } else if (Config.getInstance().allowDestinyCommandOnce) {
                 NetworkHandler.sendToPlayer(new ShowToastRequest(
                         "server.destinyNotSet.title",
