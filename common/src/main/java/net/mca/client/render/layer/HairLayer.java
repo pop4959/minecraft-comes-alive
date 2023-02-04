@@ -46,7 +46,7 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
     }
 
     @Override
-    protected float[] getColor(T villager, float tickDelta) {
+    public float[] getColor(T villager, float tickDelta) {
         if (getVillager(villager).getTraits().hasTrait(Traits.Trait.RAINBOW)) {
             return getRainbow(villager, tickDelta);
         }
