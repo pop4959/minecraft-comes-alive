@@ -1,3 +1,7 @@
+# 7.4.2
+
+* Fixed invalid task
+
 # 7.4.1
 
 * Improved AI and interaction times
