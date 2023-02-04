@@ -11,12 +11,12 @@ import net.mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestTypes;
@@ -69,7 +69,7 @@ public class Residency {
                         Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension())).flatMap((world) -> {
                             return world.getPointOfInterestStorage().getType(globalPos.getPos());
                         }).flatMap((registryEntry) -> {
-                            return Registry.VILLAGER_PROFESSION.stream().filter((profession) -> {
+                            return Registries.VILLAGER_PROFESSION.stream().filter((profession) -> {
                                 return profession.heldWorkstation().test(registryEntry);
                             }).findFirst();
                         }).ifPresent((profession) -> {
