@@ -4,6 +4,7 @@
 * Player in destiny now become invisible instead of spectator
 * Decreased village merging radius
 * Graveyards with only 1 or 2 headstones are not shown on the map anymore
+* Improved setting work place
 
 # 7.4.1
 
