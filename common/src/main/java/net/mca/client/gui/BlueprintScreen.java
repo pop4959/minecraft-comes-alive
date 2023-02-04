@@ -416,6 +416,8 @@ public class BlueprintScreen extends ExtendedScreen {
         for (Building building : village.getBuildings().values()) {
             BuildingType bt = getBuildingType(building.getType());
 
+            if (bt.getMinBlocks() > 0 && bt.getMinBlocks() > building.getBlockCount()) continue;
+
             if (bt.isIcon()) {
                 BlockPos c = building.getCenter();
                 drawBuildingIcon(transform, c.getX(), c.getZ(), bt.iconU(), bt.iconV());

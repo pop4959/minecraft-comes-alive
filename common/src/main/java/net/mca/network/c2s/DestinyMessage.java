@@ -4,12 +4,12 @@ import net.mca.Config;
 import net.mca.cobalt.network.Message;
 import net.mca.util.WorldUtils;
 import net.mca.util.compat.FuzzyPositionsCompat;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 
 import java.io.Serial;
@@ -37,8 +37,8 @@ public class DestinyMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        if (isClosing && player.isSpectator()) {
-            player.changeGameMode(GameMode.SURVIVAL);
+        if (isClosing) {
+            player.removeStatusEffect(StatusEffects.INVISIBILITY);
         }
 
         if (Config.getInstance().allowDestinyTeleportation && location != null) {

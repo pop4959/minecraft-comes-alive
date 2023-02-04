@@ -11,10 +11,13 @@ import net.mca.util.network.datasync.CParameter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
@@ -44,11 +47,43 @@ public class Residency {
                 .orElse(BlockPos.ORIGIN);
     }
 
-    public void setWorkplace(PlayerEntity player) {
-        entity.sendChatMessage(player, "interaction.setworkplace.success");
-        entity.getBrain().forget(MemoryModuleType.JOB_SITE);
-        entity.getBrain().forget(MemoryModuleType.POTENTIAL_JOB_SITE);
-        //todo: Implement proper logic for this in 7.4.0
+    public void setWorkplace(ServerPlayerEntity player) {
+        PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
+        pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.acquirableWorkstation(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
+                    pointOfInterestStorage.getType(blockPos).ifPresent((pointOfInterestType) -> {
+                        pointOfInterestStorage.getPosition(VillagerProfession.NONE.acquirableWorkstation(), (registryEntry, blockPos2) -> {
+                            return blockPos2.equals(blockPos);
+                        }, blockPos, 1);
+
+                        // Forget current site
+                        entity.releaseTicketFor(MemoryModuleType.POTENTIAL_JOB_SITE);
+                        entity.getBrain().forget(MemoryModuleType.POTENTIAL_JOB_SITE);
+                        entity.releaseTicketFor(MemoryModuleType.JOB_SITE);
+                        entity.getBrain().forget(MemoryModuleType.JOB_SITE);
+
+                        // Set
+                        GlobalPos globalPos = GlobalPos.create(player.getWorld().getRegistryKey(), blockPos);
+                        entity.getBrain().remember(MemoryModuleType.JOB_SITE, globalPos);
+                        player.getWorld().sendEntityStatus(entity, (byte)14);
+                        MinecraftServer minecraftServer = player.getWorld().getServer();
+                        Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension())).flatMap((world) -> {
+                            return world.getPointOfInterestStorage().getType(globalPos.getPos());
+                        }).flatMap((registryEntry) -> {
+                            return Registry.VILLAGER_PROFESSION.stream().filter((profession) -> {
+                                return profession.heldWorkstation().test(registryEntry);
+                            }).findFirst();
+                        }).ifPresent((profession) -> {
+                            entity.setVillagerData(entity.getVillagerData().withProfession(profession));
+                            entity.reinitializeBrain(player.getWorld());
+                        });
+
+                        // Success
+                        entity.sendChatMessage(player, "interaction.setworkplace.success");
+                    });
+                },
+                () -> {
+                    entity.sendChatMessage(player, "interaction.setworkplace.failed");
+                });
     }
 
     public Optional<Village> getHomeVillage() {

@@ -420,6 +420,10 @@ public class Building implements Serializable {
         }
     }
 
+    public int getBlockCount() {
+        return blocks.values().stream().mapToInt(List::size).sum();
+    }
+
     public int getId() {
         return id;
     }

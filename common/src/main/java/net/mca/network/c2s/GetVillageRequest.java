@@ -6,6 +6,7 @@ import net.mca.network.s2c.GetVillageFailedResponse;
 import net.mca.network.s2c.GetVillageResponse;
 import net.mca.resources.Rank;
 import net.mca.resources.Tasks;
+import net.mca.server.world.data.GraveyardManager;
 import net.mca.server.world.data.Village;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -21,6 +22,7 @@ public class GetVillageRequest implements Message {
     public void receive(ServerPlayerEntity player) {
         Optional<Village> village = Village.findNearest(player);
         if (village.isPresent()) {
+            GraveyardManager.get(player.getWorld()).reportToVillageManager(player);
             village.get().updateMaxPopulation();
             int reputation = village.get().getReputation(player);
             boolean isVillage = village.get().isVillage();
