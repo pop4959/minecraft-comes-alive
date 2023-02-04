@@ -17,7 +17,7 @@ public class VillageModule {
             "weaving_mill", "weaving mill",
             "big_house", "big house",
             "music_store", "music store",
-            "town_enter", "town center",
+            "town_center", "town center",
             "building", "",
             "blocked", "",
             "house", ""
