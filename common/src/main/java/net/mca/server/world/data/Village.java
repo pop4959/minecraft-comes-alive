@@ -104,7 +104,7 @@ public class Village implements Iterable<Building> {
         for (int i = 0; i < b.size(); i++) {
             Building building = new Building(b.getCompound(i));
 
-            if (BuildingTypes.getInstance().getBuildingTypes().containsKey(building.getType())) {
+            if (world == null || BuildingTypes.getInstance().getBuildingTypes().containsKey(building.getType())) {
                 buildings.put(building.getId(), building);
             }
         }

@@ -1,6 +1,7 @@
 # 7.4.4
 
 * Fixed missing skin color on hands
+* Fixed blueprint on dedicated servers
 
 # 7.4.3
 
