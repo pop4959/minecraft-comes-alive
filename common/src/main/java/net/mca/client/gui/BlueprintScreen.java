@@ -650,7 +650,7 @@ public class BlueprintScreen extends ExtendedScreen {
         }
     }
 
-    public void setRank(Rank rank, int reputation, boolean isVillage, Set<String> completedTasks, Map<Rank, List<Task>> tasks, Map<String, BuildingType> buildingTypes) {
+    public void setVillageData(Rank rank, int reputation, boolean isVillage, Set<String> completedTasks, Map<Rank, List<Task>> tasks, Map<String, BuildingType> buildingTypes) {
         this.rank = rank;
         this.reputation = reputation;
         this.isVillage = isVillage;

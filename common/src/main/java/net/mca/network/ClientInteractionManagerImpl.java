@@ -118,7 +118,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         if (screen instanceof BlueprintScreen gui) {
             Village village = new Village(message.getData(), null);
             gui.setVillage(village);
-            gui.setRank(message.rank, message.reputation, message.isVillage, message.ids, message.tasks, message.buildingTypes);
+            gui.setVillageData(message.rank, message.reputation, message.isVillage, message.ids, message.tasks, message.buildingTypes);
         }
     }
 

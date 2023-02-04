@@ -115,10 +115,12 @@ public abstract class MixinPlayerEntityRenderer extends LivingEntityRenderer<Abs
         if (layer.canUse(skin)) {
             VertexConsumer buffer = vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(skin));
 
+            float[] color = layer.getColor(player, 0.0f);
+
             arm.pitch = 0.0F;
-            arm.render(matrices, buffer, light, OverlayTexture.DEFAULT_UV);
+            arm.render(matrices, buffer, light, OverlayTexture.DEFAULT_UV, color[0], color[1], color[2], 1.0f);
             sleeve.pitch = 0.0F;
-            sleeve.render(matrices, buffer, light, OverlayTexture.DEFAULT_UV);
+            sleeve.render(matrices, buffer, light, OverlayTexture.DEFAULT_UV, color[0], color[1], color[2], 1.0f);
         }
     }
 }
