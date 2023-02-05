@@ -32,7 +32,7 @@ public class GetVillageResponse extends NbtDataMessage {
         this.isVillage = isVillage;
         this.ids = ids;
         this.tasks = Tasks.getInstance().tasks;
-        this.buildingTypes = BuildingTypes.getInstance().getBuildingTypes();
+        this.buildingTypes = BuildingTypes.getInstance().getServerBuildingTypes();
     }
 
     @Override

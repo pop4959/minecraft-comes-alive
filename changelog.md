@@ -1,3 +1,7 @@
+# 7.4.5
+
+* Fixed blueprint again
+
 # 7.4.4
 
 * Fixed missing skin color on hands
