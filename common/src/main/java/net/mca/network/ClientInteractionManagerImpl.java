@@ -10,6 +10,7 @@ import net.mca.entity.VillagerLike;
 import net.mca.item.BabyItem;
 import net.mca.item.ExtendedWrittenBookItem;
 import net.mca.network.s2c.*;
+import net.mca.resources.BuildingTypes;
 import net.mca.server.world.data.Village;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -116,9 +117,11 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleVillageDataResponse(GetVillageResponse message) {
         Screen screen = client.currentScreen;
         if (screen instanceof BlueprintScreen gui) {
+            BuildingTypes.getInstance().setBuildingTypes(message.buildingTypes);
+
             Village village = new Village(message.getData(), null);
             gui.setVillage(village);
-            gui.setVillageData(message.rank, message.reputation, message.isVillage, message.ids, message.tasks, message.buildingTypes);
+            gui.setVillageData(message.rank, message.reputation, message.isVillage, message.ids, message.tasks);
         }
     }
 

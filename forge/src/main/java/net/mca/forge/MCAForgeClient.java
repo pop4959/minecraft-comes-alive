@@ -16,6 +16,7 @@ import net.mca.entity.EntitiesMCA;
 import net.mca.item.BabyItem;
 import net.mca.item.ItemsMCA;
 import net.mca.item.SirbenBabyItem;
+import net.mca.resources.ApiReloadListener;
 import net.mca.resources.Supporters;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
@@ -43,6 +44,7 @@ public final class MCAForgeClient {
         ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new MCAScreens());
         ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new ColorPaletteLoader());
         ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new Supporters());
+        ((ReloadableResourceManagerImpl) MinecraftClient.getInstance().getResourceManager()).registerReloader(new ApiReloadListener());
     }
 
     @SubscribeEvent

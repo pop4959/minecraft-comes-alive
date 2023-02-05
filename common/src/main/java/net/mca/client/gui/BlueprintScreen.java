@@ -9,6 +9,7 @@ import net.mca.network.c2s.GetVillageRequest;
 import net.mca.network.c2s.RenameVillageMessage;
 import net.mca.network.c2s.ReportBuildingMessage;
 import net.mca.network.c2s.SaveVillageMessage;
+import net.mca.resources.BuildingTypes;
 import net.mca.resources.Rank;
 import net.mca.resources.data.BuildingType;
 import net.mca.resources.data.tasks.Task;
@@ -58,11 +59,6 @@ public class BlueprintScreen extends ExtendedScreen {
     private int mouseY;
 
     private Map<Rank, List<Task>> tasks;
-    private Map<String, BuildingType> buildingTypes;
-
-    private BuildingType getBuildingType(String type) {
-        return buildingTypes.containsKey(type) ? buildingTypes.get(type) : new BuildingType();
-    }
 
     public BlueprintScreen() {
         super(Text.literal("Blueprint"));
@@ -246,7 +242,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 int x = width / 2 - 4 * size - 8;
                 int y = (int)(height / 2 - 2.0 * size);
                 catalogButtons.clear();
-                for (BuildingType bt : buildingTypes.values()) {
+                for (BuildingType bt : BuildingTypes.getInstance()) {
                     if (bt.visible()) {
                         TexturedButtonWidget widget = new TexturedButtonWidget(
                                 row * size + x + 10, col * size + y - 10, 20, 20, bt.iconU(), bt.iconV() + 20, 20, ICON_TEXTURES, 256, 256, button -> {
@@ -414,7 +410,7 @@ public class BlueprintScreen extends ExtendedScreen {
         //buildings
         List<Building> hoverBuildings = new LinkedList<>();
         for (Building building : village.getBuildings().values()) {
-            BuildingType bt = getBuildingType(building.getType());
+            BuildingType bt = BuildingTypes.getInstance().getBuildingType(building.getType());
 
             if (bt.getMinBlocks() > 0 && bt.getMinBlocks() > building.getBlockCount()) continue;
 
@@ -475,7 +471,7 @@ public class BlueprintScreen extends ExtendedScreen {
         List<Text> lines = new LinkedList<>();
 
         //name
-        BuildingType bt = getBuildingType(hoverBuilding.getType());
+        BuildingType bt = BuildingTypes.getInstance().getBuildingType(hoverBuilding.getType());
         lines.add(Text.translatable("buildingType." + bt.name()));
 
         //size
@@ -650,12 +646,11 @@ public class BlueprintScreen extends ExtendedScreen {
         }
     }
 
-    public void setVillageData(Rank rank, int reputation, boolean isVillage, Set<String> completedTasks, Map<Rank, List<Task>> tasks, Map<String, BuildingType> buildingTypes) {
+    public void setVillageData(Rank rank, int reputation, boolean isVillage, Set<String> completedTasks, Map<Rank, List<Task>> tasks) {
         this.rank = rank;
         this.reputation = reputation;
         this.isVillage = isVillage;
         this.completedTasks = completedTasks;
         this.tasks = tasks;
-        this.buildingTypes = buildingTypes;
     }
 }

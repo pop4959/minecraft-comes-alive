@@ -99,7 +99,9 @@ public class GPT3 {
             for (String s : pastDialogue) {
                 input.add(s + "\n");
             }
-            input.add("$villager: ");
+
+            //prompt
+            input.add("$villager:");
 
             // gather variables
             Map<String, String> variables = Map.of(

@@ -1,3 +1,9 @@
+# 7.4.5
+
+* Fixed blueprint again
+* Fixed babbling babies on dedicated servers
+* Fixed AI not always responding
+
 # 7.4.4
 
 * Fixed missing skin color on hands
