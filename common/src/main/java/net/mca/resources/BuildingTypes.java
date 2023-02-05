@@ -15,9 +15,10 @@ import java.util.Map;
 public class BuildingTypes extends JsonDataLoader implements Iterable<BuildingType> {
     protected static final Identifier ID = new Identifier(MCA.MOD_ID, "building_types");
 
-    private static BuildingTypes INSTANCE;
-
     private final Map<String, BuildingType> buildingTypes = new HashMap<>();
+    private final Map<String, BuildingType> buildingTypesClient = new HashMap<>();
+
+    private static BuildingTypes INSTANCE = new BuildingTypes();
 
     public BuildingTypes() {
         super(Resources.GSON, ID.getPath());
@@ -30,14 +31,25 @@ public class BuildingTypes extends JsonDataLoader implements Iterable<BuildingTy
             String name = pair.getKey().getPath();
             buildingTypes.put(name, new BuildingType(name, pair.getValue().getAsJsonObject()));
         }
+        setBuildingTypes(buildingTypes);
     }
 
-    public Map<String, BuildingType> getBuildingTypes() {
+    // Provide the client with building types
+    public void setBuildingTypes(Map<String, BuildingType> buildingTypes) {
+        buildingTypesClient.clear();
+        buildingTypesClient.putAll(buildingTypes);
+    }
+
+    public Map<String, BuildingType> getServerBuildingTypes() {
         return buildingTypes;
     }
 
+    public Map<String, BuildingType> getBuildingTypes() {
+        return buildingTypesClient;
+    }
+
     public BuildingType getBuildingType(String type) {
-        return buildingTypes.containsKey(type) ? buildingTypes.get(type) : new BuildingType();
+        return buildingTypesClient.containsKey(type) ? buildingTypesClient.get(type) : new BuildingType();
     }
 
     public static BuildingTypes getInstance() {
@@ -46,6 +58,6 @@ public class BuildingTypes extends JsonDataLoader implements Iterable<BuildingTy
 
     @Override
     public Iterator<BuildingType> iterator() {
-        return INSTANCE.buildingTypes.values().iterator();
+        return buildingTypesClient.values().iterator();
     }
 }
