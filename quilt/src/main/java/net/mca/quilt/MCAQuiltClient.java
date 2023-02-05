@@ -19,6 +19,7 @@ import net.mca.item.BabyItem;
 import net.mca.item.ItemsMCA;
 import net.mca.item.SirbenBabyItem;
 import net.mca.quilt.client.gui.QuiltMCAScreens;
+import net.mca.quilt.resources.ApiIdentifiableReloadListener;
 import net.mca.quilt.resources.QuiltColorPaletteLoader;
 import net.mca.quilt.resources.QuiltSupportersLoader;
 import net.minecraft.client.MinecraftClient;
@@ -63,6 +64,7 @@ public final class MCAQuiltClient extends ClientProxyAbstractImpl implements Cli
         ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltMCAScreens());
         ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltColorPaletteLoader());
         ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltSupportersLoader());
+        ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new ApiIdentifiableReloadListener());
 
         // TODO: Replace with an accesswidener or QSL equivalent when Quiltified FAPI is removed
         ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->

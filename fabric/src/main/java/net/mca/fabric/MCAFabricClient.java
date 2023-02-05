@@ -21,6 +21,7 @@ import net.mca.client.render.VillagerEntityMCARenderer;
 import net.mca.client.render.ZombieVillagerEntityMCARenderer;
 import net.mca.entity.EntitiesMCA;
 import net.mca.fabric.client.gui.FabricMCAScreens;
+import net.mca.fabric.resources.ApiIdentifiableReloadListener;
 import net.mca.fabric.resources.FabricColorPaletteLoader;
 import net.mca.fabric.resources.FabricSupportersLoader;
 import net.mca.item.BabyItem;
@@ -62,6 +63,7 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricMCAScreens());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricColorPaletteLoader());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricSupportersLoader());
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new ApiIdentifiableReloadListener());
 
         ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
                 BabyItem.hasBeenInvalidated(stack) ? 1 : 0
