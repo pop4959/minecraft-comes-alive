@@ -30,8 +30,8 @@ def verify(email: str, player: str):
     ]
     for u in user_response:
         if (
-                u["type"] == "user"
-                and u["attributes"]["email"].lower().strip() == email.lower().strip()
+            u["type"] == "user"
+            and u["attributes"]["email"].lower().strip() == email.lower().strip()
         ):
             premium.add(player)
             return {"answer": "success"}
@@ -62,3 +62,42 @@ def chat(prompt: str, player: str, villager: str):
             return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
         else:
             return {"answer": LIMIT_EXCEEDED, "error": "limit"}
+
+
+from transformers import AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoConfig
+from transformers import pipeline
+
+SENTIMENT_MODEL = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
+
+tokenizer = AutoTokenizer.from_pretrained(SENTIMENT_MODEL)
+config = AutoConfig.from_pretrained(SENTIMENT_MODEL)
+sentiment_model = AutoModelForSequenceClassification.from_pretrained(SENTIMENT_MODEL)
+
+
+def get_sentiment(text):
+    encoded_input = tokenizer(text, return_tensors="pt")
+    output = sentiment_model(**encoded_input)
+    scores = output[0][0].detach().numpy()
+    return scores[2] - scores[0]
+
+
+@app.get("/sentiment")
+def sentiment(prompt: str):
+    return {"result": float(get_sentiment(prompt))}
+
+
+CLASSIFY_MODEL = "facebook/bart-large-mnli"
+classifier = pipeline("zero-shot-classification", CLASSIFY_MODEL)
+
+
+@app.get("/classify")
+def classify(prompt: str, classes: str):
+    classes = [t.strip() for t in classes.split(",")]
+    probabilities = classifier(prompt, classes, multi_label=True)
+
+    results = {
+        label: float(score)
+        for (label, score) in zip(probabilities["labels"], probabilities["scores"])
+    }
+    return {"result": results}
