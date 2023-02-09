@@ -11,8 +11,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 model = "text-curie-001"
 
-limiter = Limiter(RequestRate(600, Duration.HOUR))
-limiter_premium = Limiter(RequestRate(6000, Duration.HOUR))
+limiter = Limiter(RequestRate(700, Duration.HOUR))
+limiter_premium = Limiter(RequestRate(7000, Duration.HOUR))
 
 LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest! Also make sure to use the newest version for best results!)"
 
