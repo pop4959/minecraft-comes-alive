@@ -91,12 +91,14 @@ public class Residency {
      * Joins the closest village, if in range
      */
     public void seekHome() {
-        VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-        manager.findNearestVillage(entity).ifPresent(v -> {
-            leaveHome();
-            v.updateResident(entity);
-            entity.setTrackedValue(VILLAGE, v.getId());
-        });
+        if (entity.requiresHome()) {
+            VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+            manager.findNearestVillage(entity).ifPresent(v -> {
+                leaveHome();
+                v.updateResident(entity);
+                entity.setTrackedValue(VILLAGE, v.getId());
+            });
+        }
     }
 
     public void leaveHome() {
@@ -108,12 +110,8 @@ public class Residency {
     }
 
     public void tick() {
-        if (!entity.requiresHome()) {
-            return;
-        }
-
         //report buildings close by
-        if (entity.age % 600 == 0 && entity.doesProfessionRequireHome()) {
+        if (entity.age % 600 == 0 && entity.requiresHome()) {
             Optional<Village> village = getHomeVillage();
             if (village.isEmpty() && Config.getInstance().enableAutoScanByDefault || village.filter(Village::isAutoScan).isPresent()) {
                 reportBuildings();
@@ -172,8 +170,9 @@ public class Residency {
     }
 
     public void setHome(ServerPlayerEntity player) {
-        if (!entity.doesProfessionRequireHome() || entity.getDespawnDelay() > 0) {
+        if (!entity.requiresHome()) {
             entity.sendChatMessage(player, "interaction.sethome.temporary");
+            return;
         }
 
         // also trigger a building refresh, because why not

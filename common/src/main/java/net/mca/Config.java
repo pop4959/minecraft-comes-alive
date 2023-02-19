@@ -101,6 +101,7 @@ public final class Config implements Serializable {
     public int taxSeason = 168000;
     public float marriageChancePerMinute = 0.05f;
     public float adventurerAtInnChancePerMinute = 0.05f;
+    public int adventurerStayTime = 4800;
     public float villagerProcreationChancePerMinute = 0.05f;
     public int bountyHunterInterval = 48000;
     public int bountyHunterHeartsInterval = -150;

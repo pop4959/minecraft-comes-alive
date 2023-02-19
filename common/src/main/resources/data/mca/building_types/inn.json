@@ -9,5 +9,6 @@
     "minecraft:smoker": 1
   },
   "iconU": 5,
-  "iconV": 1
+  "iconV": 1,
+  "noBeds": true
 }
