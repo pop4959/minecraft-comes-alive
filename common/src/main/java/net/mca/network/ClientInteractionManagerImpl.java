@@ -18,6 +18,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.Hand;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {

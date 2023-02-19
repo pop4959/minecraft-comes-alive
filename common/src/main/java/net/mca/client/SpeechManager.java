@@ -64,7 +64,7 @@ public class SpeechManager {
                 if (client.world != null && client.player != null) {
                     Collection<Identifier> keys = client.getSoundManager().getKeys();
                     if (keys.contains(sound)) {
-                        EntityTrackingSoundInstance instance = new EntityTrackingSoundInstance(new SoundEvent(sound), SoundCategory.NEUTRAL, 1.0f, pitch, villager, threadSafeRandom.nextLong());
+                        EntityTrackingSoundInstance instance = new EntityTrackingSoundInstance(SoundEvent.of(sound), SoundCategory.NEUTRAL, 1.0f, pitch, villager, threadSafeRandom.nextLong());
                         currentlyPlaying.put(sender, instance);
                         client.getSoundManager().play(instance);
                     }
