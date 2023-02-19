@@ -11,7 +11,6 @@ import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.network.s2c.VillagerMessage;
 import net.mca.resources.API;
 import net.mca.server.world.data.PlayerSaveData;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
@@ -108,16 +107,16 @@ public interface Messenger extends EntityWrapper {
     }
 
     default MutableText sendChatMessage(MutableText message, Entity receiver) {
-         message = transformMessage(message);
+        message = transformMessage(message);
 
         MutableText textToSend = Text.literal(Config.getInstance().villagerChatPrefix).append(asEntity().getDisplayName()).append(": ").append(message);
 
         //use custom packet to have access to sender UUID, and maybe future extra information
         VillagerMessage msg = new VillagerMessage(textToSend, asEntity().getUuid());
-        if (receiver instanceof ClientPlayerEntity) {
-            ClientProxy.getNetworkHandler().handleVillagerMessage(msg);
-        } else if (receiver instanceof ServerPlayerEntity serverPlayer) {
+        if (receiver instanceof ServerPlayerEntity serverPlayer) {
             NetworkHandler.sendToPlayer(msg, serverPlayer);
+        } else {
+            ClientProxy.getNetworkHandler().handleVillagerMessage(msg);
         }
 
         playSpeechEffect();

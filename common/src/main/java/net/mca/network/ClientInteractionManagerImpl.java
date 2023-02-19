@@ -230,7 +230,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleVillagerMessage(VillagerMessage message) {
         MutableText msg = message.getMessage();
-        SpeechManager.INSTANCE.onChatMessage(msg, message.getUuid());
+        //noinspection ResultOfMethodCallIgnored
+        msg.toString();
         client.getMessageHandler().onGameMessage(msg, false);
+        SpeechManager.INSTANCE.onChatMessage(msg, message.getUuid());
     }
 }

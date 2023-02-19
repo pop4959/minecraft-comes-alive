@@ -327,7 +327,6 @@ public class InteractScreen extends AbstractDynamicScreen {
         MutableText text;
         if (!silent) {
             text = villager.sendChatMessage(questionText, player);
-            SpeechManager.INSTANCE.onChatMessage(text, villager.asEntity().getUuid());
         } else {
             text = villager.transformMessage(questionText);
         }
