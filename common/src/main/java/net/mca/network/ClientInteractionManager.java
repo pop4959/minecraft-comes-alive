@@ -38,4 +38,6 @@ public interface ClientInteractionManager {
     void handleDialogueQuestionResponse(InteractionDialogueQuestionResponse response);
 
     void handleConfigResponse(ConfigResponse response);
+
+    void handleVillagerMessage(VillagerMessage message);
 }

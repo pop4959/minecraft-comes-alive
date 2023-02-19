@@ -2,6 +2,7 @@ package net.mca.network;
 
 import net.mca.Config;
 import net.mca.MCAClient;
+import net.mca.client.SpeechManager;
 import net.mca.client.book.Book;
 import net.mca.client.gui.*;
 import net.mca.entity.EntitiesMCA;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.registry.Registry;
 
@@ -223,5 +225,12 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleConfigResponse(ConfigResponse message) {
         Config.setServerConfig(message.getConfig());
+    }
+
+    @Override
+    public void handleVillagerMessage(VillagerMessage message) {
+        MutableText msg = message.getMessage();
+        SpeechManager.INSTANCE.onChatMessage(msg, message.getUuid());
+        client.getMessageHandler().onGameMessage(msg, false);
     }
 }

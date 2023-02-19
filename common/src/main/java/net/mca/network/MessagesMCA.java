@@ -47,5 +47,6 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(InteractionDialogueQuestionResponse.class);
         NetworkHandler.registerMessage(ConfigRequest.class);
         NetworkHandler.registerMessage(ConfigResponse.class);
+        NetworkHandler.registerMessage(VillagerMessage.class);
     }
 }
