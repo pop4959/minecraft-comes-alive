@@ -178,13 +178,13 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "hire_short" -> {
                 payEmeralds(player, 5);
-                entity.makeMercenary(player);
+                entity.makeMercenary();
                 entity.setDespawnDelay(24000 * 3);
                 return true;
             }
             case "hire_long" -> {
                 payEmeralds(player, 10);
-                entity.makeMercenary(player);
+                entity.makeMercenary();
                 entity.setDespawnDelay(24000 * 7);
                 return true;
             }
