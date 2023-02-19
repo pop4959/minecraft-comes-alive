@@ -1,5 +1,6 @@
 package net.mca.client;
 
+import net.mca.entity.CommonSpeechManager;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Genetics;
 import net.mca.util.LimitedLinkedHashMap;
@@ -20,19 +21,16 @@ import java.util.UUID;
 public class SpeechManager implements ClientChatListener {
     public static final SpeechManager INSTANCE = new SpeechManager();
 
-    public String lastResolvedKey;
-    public LimitedLinkedHashMap<Text, String> translations = new LimitedLinkedHashMap<>(100);
-
-    public LimitedLinkedHashMap<UUID, EntityTrackingSoundInstance> currentlyPlaying = new LimitedLinkedHashMap<>(10);
+    private final LimitedLinkedHashMap<UUID, EntityTrackingSoundInstance> currentlyPlaying = new LimitedLinkedHashMap<>(10);
 
     @Override
     public void onChatMessage(MessageType type, Text message, UUID sender) {
-        if (SpeechManager.INSTANCE.translations.containsKey(message)) {
-            speak(SpeechManager.INSTANCE.translations.get(message), sender);
+        if (CommonSpeechManager.INSTANCE.translations.containsKey(message)) {
+            speak(CommonSpeechManager.INSTANCE.translations.get(message), sender);
         } else {
             for (Text sibling : message.getSiblings()) {
-                if (SpeechManager.INSTANCE.translations.containsKey(sibling)) {
-                    speak(SpeechManager.INSTANCE.translations.get(sibling), sender);
+                if (CommonSpeechManager.INSTANCE.translations.containsKey(sibling)) {
+                    speak(CommonSpeechManager.INSTANCE.translations.get(sibling), sender);
                 }
             }
         }

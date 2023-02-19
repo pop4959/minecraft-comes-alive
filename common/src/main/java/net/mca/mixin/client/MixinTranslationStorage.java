@@ -1,6 +1,6 @@
 package net.mca.mixin.client;
 
-import net.mca.client.SpeechManager;
+import net.mca.entity.CommonSpeechManager;
 import net.mca.entity.ai.DialogueType;
 import net.mca.util.localization.PooledTranslationStorage;
 import net.minecraft.client.resource.language.TranslationStorage;
@@ -35,10 +35,10 @@ abstract class MixinTranslationStorage extends Language {
 
         Pair<String, String> unpooled = getPool().get(key);
         if (unpooled != null) {
-            SpeechManager.INSTANCE.lastResolvedKey = unpooled.getLeft();
+            CommonSpeechManager.INSTANCE.lastResolvedKey = unpooled.getLeft();
             info.setReturnValue(unpooled.getRight());
         } else {
-            SpeechManager.INSTANCE.lastResolvedKey = null;
+            CommonSpeechManager.INSTANCE.lastResolvedKey = null;
             info.setReturnValue(translations.getOrDefault(key, key));
         }
     }
