@@ -13,7 +13,6 @@ public class GeneSliderWidget extends SliderWidget {
         super(x, y, width, height, text, value);
         this.updateMessage();
         this.callback = callback;
-        setTooltip(Tooltip.of(Text.translatable("gui.test")));
     }
 
     @Override
