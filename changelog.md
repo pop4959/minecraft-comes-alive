@@ -9,6 +9,7 @@
 * You can now set the home properly when changing the village
 * Adventurers no longer move in
 * Cooldown for being hurt messages
+* Added rumors, destiny and spawning to threads, decreasing lag and potentially fixing some timeouts
 
 # 7.4.5
 

@@ -1,6 +1,7 @@
 package net.mca.server;
 
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.ducks.IVillagerEntity;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerFactory;
@@ -16,9 +17,8 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.Registry;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SpawnQueue {
     private static final SpawnQueue INSTANCE = new SpawnQueue();
@@ -27,48 +27,52 @@ public class SpawnQueue {
         return INSTANCE;
     }
 
-    private final List<VillagerEntity> villagerSpawnQueue = new LinkedList<>();
-    private final List<ZombieVillagerEntity> zombieVillagerSpawnQueue = new LinkedList<>();
+    private final ConcurrentLinkedQueue<VillagerEntity> villagerSpawnQueue = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<ZombieVillagerEntity> zombieVillagerSpawnQueue = new ConcurrentLinkedQueue<>();
 
     public void tick() {
         // lazy spawning of our villagers as they can't be spawned while loading
         if (!villagerSpawnQueue.isEmpty()) {
-            VillagerEntity e = villagerSpawnQueue.remove(0);
+            VillagerEntity e = villagerSpawnQueue.poll();
 
-            if (e.world.canSetBlock(e.getBlockPos())) {
-                e.discard();
-                VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
-                        .withAge(e.getBreedingAge())
-                        .withPosition(e)
-                        .withType(e.getVillagerData().getType())
-                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
-                        .spawn(((IVillagerEntity)e).getSpawnReason());
+            MCA.executorService.execute(() -> {
+                if (e.world.canSetBlock(e.getBlockPos())) {
+                    e.discard();
+                    VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
+                            .withName(e.hasCustomName() ? e.getName().getString() : null)
+                            .withGender(Gender.getRandom())
+                            .withAge(e.getBreedingAge())
+                            .withPosition(e)
+                            .withType(e.getVillagerData().getType())
+                            .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
+                            .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                copyPastaIntensifies(villager, e);
-            } else {
-                villagerSpawnQueue.add(e);
-            }
+                    copyPastaIntensifies(villager, e);
+                } else {
+                    villagerSpawnQueue.add(e);
+                }
+            });
         }
 
         if (!zombieVillagerSpawnQueue.isEmpty()) {
-            ZombieVillagerEntity e = zombieVillagerSpawnQueue.remove(0);
+            ZombieVillagerEntity e = zombieVillagerSpawnQueue.poll();
 
-            if (e.world.canSetBlock(e.getBlockPos())) {
-                e.discard();
-                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
-                        .withPosition(e)
-                        .withType(e.getVillagerData().getType())
-                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
-                        .spawn(((IVillagerEntity)e).getSpawnReason());
+            MCA.executorService.execute(() -> {
+                if (e.world.canSetBlock(e.getBlockPos())) {
+                    e.discard();
+                    ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
+                            .withName(e.hasCustomName() ? e.getName().getString() : null)
+                            .withGender(Gender.getRandom())
+                            .withPosition(e)
+                            .withType(e.getVillagerData().getType())
+                            .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
+                            .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                copyPastaIntensifies(villager, e);
-            } else {
-                zombieVillagerSpawnQueue.add(e);
-            }
+                    copyPastaIntensifies(villager, e);
+                } else {
+                    zombieVillagerSpawnQueue.add(e);
+                }
+            });
         }
     }
 

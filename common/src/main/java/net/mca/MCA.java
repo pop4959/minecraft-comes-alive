@@ -9,11 +9,15 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class MCA {
     public static final String MOD_ID = "mca";
     public static final Logger LOGGER = LogManager.getLogger();
     private static final Map<String, Boolean> modCacheMap = new HashMap<>();
+
+    public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public static Identifier locate(String id) {
         return new Identifier(MOD_ID, id);
