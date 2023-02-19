@@ -14,7 +14,7 @@ public enum MoodGroup {
     ),
     GENERAL(
             new MoodBuilder("depressed")
-                    .sounds(2, SoundsMCA.VILLAGER_MALE_CRY, SoundsMCA.VILLAGER_FEMALE_CRY)
+                    .sounds(4, SoundsMCA.VILLAGER_MALE_CRY, SoundsMCA.VILLAGER_FEMALE_CRY)
                     .particles(20, ParticleTypes.SPLASH)
                     .building("inn")
                     .color(Formatting.RED).build(),
@@ -47,14 +47,14 @@ public enum MoodGroup {
                     .building("inn")
                     .color(Formatting.DARK_GREEN).build(),
             new MoodBuilder("entertained")
-                    .sounds(2, SoundsMCA.VILLAGER_MALE_LAUGH, SoundsMCA.VILLAGER_FEMALE_LAUGH)
+                    .sounds(4, SoundsMCA.VILLAGER_MALE_LAUGH, SoundsMCA.VILLAGER_FEMALE_LAUGH)
                     .particles(20, ParticleTypes.HAPPY_VILLAGER)
                     .building("inn")
                     .color(Formatting.GREEN).build()
     ),
     SERIOUS(
             new MoodBuilder("infuriated")
-                    .sounds(2, SoundsMCA.VILLAGER_MALE_ANGRY, SoundsMCA.VILLAGER_FEMALE_ANGRY)
+                    .sounds(4, SoundsMCA.VILLAGER_MALE_ANGRY, SoundsMCA.VILLAGER_FEMALE_ANGRY)
                     .particles(20, ParticleTypes.ANGRY_VILLAGER)
                     .color(Formatting.RED).build(),
             new MoodBuilder("angry")
