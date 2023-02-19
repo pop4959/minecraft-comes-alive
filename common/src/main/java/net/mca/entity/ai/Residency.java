@@ -91,15 +91,11 @@ public class Residency {
      * Joins the closest village, if in range
      */
     public void seekHome() {
-        entity.getResidency().getHomeVillage().ifPresentOrElse(v -> {
+        VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+        manager.findNearestVillage(entity).ifPresent(v -> {
+            leaveHome();
             v.updateResident(entity);
-        }, () -> {
-            VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-            manager.findNearestVillage(entity).ifPresent(v -> {
-                v.updateResident(entity);
-                entity.setTrackedValue(VILLAGE, v.getId());
-                entity.getResidency().seekHome();
-            });
+            entity.setTrackedValue(VILLAGE, v.getId());
         });
     }
 

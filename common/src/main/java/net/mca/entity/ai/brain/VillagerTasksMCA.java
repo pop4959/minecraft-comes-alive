@@ -214,9 +214,7 @@ public class VillagerTasksMCA {
                 }, (entity, pos) -> {
                     // verify that this bed is not blocked
                     VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-                    return manager.findNearestVillage(entity).filter(v -> {
-                        return v.getBuildingAt(pos).filter(b -> b.getBuildingType().noBeds()).isPresent();
-                    }).isEmpty();
+                    return manager.findNearestVillage(entity).filter(v -> !v.isPositionValidBed(pos)).isEmpty();
                 })),
                 Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (villager) -> {
                     //report a town bell, the only building always added
