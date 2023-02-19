@@ -35,7 +35,6 @@ public final class BuildingType implements Serializable {
     private final int iconV;
     private final boolean grouped;
     private final int mergeRange;
-    private final int minBlocks;
 
     public BuildingType() {
         this.name = "?";
@@ -52,7 +51,6 @@ public final class BuildingType implements Serializable {
         this.iconV = 0;
         this.grouped = false;
         this.mergeRange = 32;
-        this.minBlocks = 0;
     }
 
     public BuildingType(String name, JsonObject value) {
@@ -70,7 +68,6 @@ public final class BuildingType implements Serializable {
 
         this.grouped = JsonHelper.getBoolean(value, "grouped", false);
         this.mergeRange = JsonHelper.getInt(value, "mergeRange", 0);
-        this.minBlocks = JsonHelper.getInt(value, "minBlocks", 0);
 
         this.blocks = new HashMap<>();
         if (JsonHelper.hasJsonObject(value, "blocks")) {
@@ -200,6 +197,6 @@ public final class BuildingType implements Serializable {
     }
 
     public int getMinBlocks() {
-        return minBlocks;
+        return blocks.values().stream().mapToInt(v -> v).sum();
     }
 }
