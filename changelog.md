@@ -4,6 +4,7 @@
 * Fixed reaction when lactose intolerant
 * Graveyards now print the minimum requirements correctly
 * Fixed some configs not being synced properly from the server
+* Improved whistle on sleeping villagers
 
 # 7.4.5
 

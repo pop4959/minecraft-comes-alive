@@ -22,6 +22,9 @@ public class CallToPlayerMessage implements Message {
     public void receive(ServerPlayerEntity player) {
         Entity e = player.getWorld().getEntity(uuid);
         if (e instanceof VillagerEntityMCA v) {
+            if (v.isSleeping()) {
+                v.wakeUp();
+            }
             v.setPosition(player.getX(), player.getY(), player.getZ());
         }
     }
