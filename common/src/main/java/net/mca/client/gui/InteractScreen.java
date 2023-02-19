@@ -17,7 +17,6 @@ import net.mca.resources.data.dialogue.Question;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.MessageType;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
@@ -328,7 +327,7 @@ public class InteractScreen extends AbstractDynamicScreen {
         MutableText text;
         if (!silent) {
             text = villager.sendChatMessage(questionText, player);
-            SpeechManager.INSTANCE.onChatMessage(MessageType.CHAT, text, villager.asEntity().getUuid());
+            SpeechManager.INSTANCE.onChatMessage(text, villager.asEntity().getUuid());
         } else {
             text = villager.transformMessage(questionText);
         }

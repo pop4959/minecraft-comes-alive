@@ -1,12 +1,15 @@
 package net.mca.util.localization;
 
 import net.mca.resources.PoolUtil;
+import net.minecraft.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
+import net.minecraft.util.math.random.Random;
 
 public class PooledTranslationStorage {
     private static final Pattern TRAILING_NUMBERS_PATTERN = Pattern.compile("/[0-9]+$");

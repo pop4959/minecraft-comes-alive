@@ -32,7 +32,6 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.village.VillagerProfession;
-import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
 import java.util.Map;
@@ -202,7 +201,7 @@ public class VillagerTasksMCA {
                 Pair.of(0, new DeliverMessageTask()),
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(3, new InteractTask(speedModifier)),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
                     // update villagers home/bed position
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
@@ -224,7 +223,7 @@ public class VillagerTasksMCA {
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
                     // update villagers home/bed position
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
@@ -234,7 +233,7 @@ public class VillagerTasksMCA {
                         return v.getBuildingAt(pos).filter(b -> b.getBuildingType().noBeds()).isPresent();
                     }).isEmpty();
                 })),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (villager) -> {
                     //report a town bell, the only building always added
                     villager.getBrain().getOptionalMemory(MemoryModuleType.MEETING_POINT).ifPresent(p -> {
                         if (villager.world.getRegistryKey() == p.getDimension()) {

@@ -27,7 +27,7 @@
     "client.MixinArmorFeatureRenderer",
     "client.MixinGameRenderer",
     "client.MixinHeldItemFeatureRenderer",
-    "client.MixinInGameHud",
+    "client.MixinMessageHandler",
     "client.MixinLivingEntityRenderer",
     "client.MixinPlayerEntityRenderer",
     "client.MixinTranslationStorage"

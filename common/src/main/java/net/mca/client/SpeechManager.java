@@ -5,32 +5,32 @@ import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Genetics;
 import net.mca.util.LimitedLinkedHashMap;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.ClientChatListener;
 import net.minecraft.client.sound.EntityTrackingSoundInstance;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.MessageType;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.random.Random;
 
 import java.util.Collection;
 import java.util.Locale;
 import java.util.UUID;
 
-public class SpeechManager implements ClientChatListener {
+public class SpeechManager {
     public static final SpeechManager INSTANCE = new SpeechManager();
 
     private final LimitedLinkedHashMap<UUID, EntityTrackingSoundInstance> currentlyPlaying = new LimitedLinkedHashMap<>(10);
 
-    @Override
-    public void onChatMessage(MessageType type, Text message, UUID sender) {
-        if (CommonSpeechManager.INSTANCE.translations.containsKey(message)) {
-            speak(CommonSpeechManager.INSTANCE.translations.get(message), sender);
+    private final Random threadSafeRandom = Random.createThreadSafe();
+
+    public void onChatMessage(Text message, UUID sender) {
+        if (CommonSpeechManager.INSTANCE.translations.containsKey(message.getContent())) {
+            speak(CommonSpeechManager.INSTANCE.translations.get(message.getContent()), sender);
         } else {
             for (Text sibling : message.getSiblings()) {
-                if (CommonSpeechManager.INSTANCE.translations.containsKey(sibling)) {
-                    speak(CommonSpeechManager.INSTANCE.translations.get(sibling), sender);
+                if (CommonSpeechManager.INSTANCE.translations.containsKey(sibling.getContent())) {
+                    speak(CommonSpeechManager.INSTANCE.translations.get(sibling.getContent()), sender);
                 }
             }
         }
@@ -64,7 +64,7 @@ public class SpeechManager implements ClientChatListener {
                 if (client.world != null && client.player != null) {
                     Collection<Identifier> keys = client.getSoundManager().getKeys();
                     if (keys.contains(sound)) {
-                        EntityTrackingSoundInstance instance = new EntityTrackingSoundInstance(new SoundEvent(sound), SoundCategory.NEUTRAL, 1.0f, pitch, villager);
+                        EntityTrackingSoundInstance instance = new EntityTrackingSoundInstance(new SoundEvent(sound), SoundCategory.NEUTRAL, 1.0f, pitch, villager, threadSafeRandom.nextLong());
                         currentlyPlaying.put(sender, instance);
                         client.getSoundManager().play(instance);
                     }
