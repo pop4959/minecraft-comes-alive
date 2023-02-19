@@ -584,7 +584,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // you can't hit babies!
         if (!Config.getInstance().canHurtBabies && !source.isUnblockable() && getAgeState() == AgeState.BABY) {
             if (source.getAttacker() instanceof PlayerEntity) {
-                Messenger.sendEventMessage(world, new TranslatableText("villager.baby_hit"));
+                sendEventMessage(new TranslatableText("villager.baby_hit"));
             }
             return super.damage(source, 0.0f);
         }

@@ -1,6 +1,7 @@
 package net.mca.util.localization;
 
 import net.mca.resources.PoolUtil;
+import net.minecraft.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ public class PooledTranslationStorage {
     private static final Pattern TRAILING_NUMBERS_PATTERN = Pattern.compile("/[0-9]+$");
     private static final Predicate<String> TRAILING_NUMBERS_PREDICATE = TRAILING_NUMBERS_PATTERN.asPredicate();
 
-    private final Map<String, List<String>> multiTranslations = new HashMap<>();
+    private final Map<String, List<Pair<String, String>>> multiTranslations = new HashMap<>();
 
     private final Random rand = new Random();
 
@@ -24,20 +25,22 @@ public class PooledTranslationStorage {
         if (TRAILING_NUMBERS_PREDICATE.test(key)) {
             multiTranslations
                 .computeIfAbsent(TRAILING_NUMBERS_PATTERN.matcher(key).replaceAll(""), k -> new ArrayList<>())
-                .add(value);
+                .add(new Pair<>(key, value));
         }
     }
 
     @NotNull
-    private List<String> getOptions(String key) {
+    private List<Pair<String, String>> getOptions(String key) {
         return multiTranslations.getOrDefault(key, Collections.emptyList());
     }
 
     @Nullable
-    public String get(String key) {
-        List<String> options = getOptions(key);
+    public Pair<String, String> get(String key) {
+        List<Pair<String, String>> options = getOptions(key);
         if (!options.isEmpty()) {
-            return TemplateSet.INSTANCE.replace(PoolUtil.pickOne(options, key, rand));
+            Pair<String, String> pair = PoolUtil.pickOne(options, new Pair<>(key, key), rand);
+            pair.setRight(TemplateSet.INSTANCE.replace(pair.getRight()));
+            return pair;
         }
         return null;
     }

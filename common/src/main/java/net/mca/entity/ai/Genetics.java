@@ -28,6 +28,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
     public static final GeneType SKIN = new GeneType("gene_skin");
     public static final GeneType FACE = new GeneType("gene_face");
     public static final GeneType VOICE = new GeneType("gene_voice");
+    public static final GeneType VOICE_TONE = new GeneType("gene_voice_tone");
 
     private static final CEnumParameter<Gender> GENDER = CParameter.create("gender", Gender.UNASSIGNED);
 

@@ -1,5 +1,10 @@
 # 7.4.5
 
+* Added optional AI voice acting
+* Fixed reaction when lactose intolerant
+
+# 7.4.5
+
 * Fixed blueprint again
 * Fixed babbling babies on dedicated servers
 * Fixed AI not always responding
