@@ -118,6 +118,7 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
             noDefault = true;
         } else if (profession == ProfessionsMCA.MERCENARY.get()) {
+            brain.setSchedule(SchedulesMCA.GUESTS);
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getMercenaryPackage(0.5f));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getGuardCorePackage(villager));
@@ -126,6 +127,7 @@ public class VillagerTasksMCA {
             brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage());
             noDefault = true;
         } else if (!villager.requiresHome()) {
+            brain.setSchedule(SchedulesMCA.GUESTS);
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());

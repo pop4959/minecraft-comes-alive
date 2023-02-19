@@ -42,8 +42,8 @@ public interface SchedulesMCA {
             .withActivity(14000, Activity.WORK)
             .build();
 
-    //IDLE Schedule for family members
-    Schedule FAMILY_IDLE = new ScheduleBuilder(new Schedule())
+    //Schedule for inn guests
+    Schedule GUESTS = new ScheduleBuilder(new Schedule())
             .withActivity(10, Activity.IDLE)
             .withActivity(12500, Activity.REST)
             .build();
