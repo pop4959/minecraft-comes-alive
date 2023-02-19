@@ -5,6 +5,8 @@
 * Graveyards now print the minimum requirements correctly
 * Fixed some configs not being synced properly from the server
 * Improved whistle on sleeping villagers
+* Restricted buildings no longer increase (visual) max population
+* You can now set the home properly when changing the village
 
 # 7.4.5
 
