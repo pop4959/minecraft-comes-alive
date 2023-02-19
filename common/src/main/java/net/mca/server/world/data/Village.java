@@ -252,6 +252,11 @@ public class Village implements Iterable<Building> {
         return residentNames.keySet().stream();
     }
 
+    // verify that this bed is not blocked
+    public boolean isPositionValidBed(BlockPos pos) {
+        return getBuildingAt(pos).filter(b -> b.getBuildingType().noBeds()).isEmpty();
+    }
+
     public List<VillagerEntityMCA> getResidents(ServerWorld world) {
         return getResidentsUUIDs()
                 .map(world::getEntity)
@@ -266,7 +271,7 @@ public class Village implements Iterable<Building> {
             int radius = (int)Math.sqrt(dimensions.getX() * dimensions.getX() + dimensions.getY() * dimensions.getY() + dimensions.getZ() * dimensions.getZ());
             beds = (int)world.getPointOfInterestStorage().getPositions(
                     registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME),
-                    (p) -> true, //todo add restricted areas
+                    this::isPositionValidBed,
                     new BlockPos(getCenter()),
                     radius + BORDER_MARGIN,
                     PointOfInterestStorage.OccupationStatus.ANY).count();

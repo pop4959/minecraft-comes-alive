@@ -2,6 +2,7 @@ package net.mca.network;
 
 import net.mca.Config;
 import net.mca.MCAClient;
+import net.mca.client.SpeechManager;
 import net.mca.client.book.Book;
 import net.mca.client.gui.*;
 import net.mca.entity.EntitiesMCA;
@@ -17,7 +18,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
 
 public class ClientInteractionManagerImpl implements ClientInteractionManager {
@@ -218,5 +218,19 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleDestinyGuiRequest(OpenDestinyGuiRequest message) {
         MCAClient.getDestinyManager().requestOpen(message.allowTeleportation);
+    }
+
+    @Override
+    public void handleConfigResponse(ConfigResponse message) {
+        Config.setServerConfig(message.getConfig());
+    }
+
+    @Override
+    public void handleVillagerMessage(VillagerMessage message) {
+        MutableText msg = message.getMessage();
+        //noinspection ResultOfMethodCallIgnored
+        msg.toString();
+        client.getMessageHandler().onGameMessage(msg, false);
+        SpeechManager.INSTANCE.onChatMessage(msg, message.getUuid());
     }
 }

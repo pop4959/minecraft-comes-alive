@@ -1,3 +1,17 @@
+# 7.4.6
+
+* Added optional AI voice acting
+* Fixed reaction when lactose intolerant
+* Graveyards now print the minimum requirements correctly
+* Fixed some configs not being synced properly from the server
+* Improved whistle on sleeping villagers
+* Restricted buildings no longer increase (visual) max population
+* You can now set the home properly when changing the village
+* Adventurers no longer move in
+* Cooldown for being hurt messages
+* Added rumors, destiny and spawning to threads, decreasing lag and potentially fixing some timeouts
+* Added Armourers Workshop compatibility
+
 # 7.4.5
 
 * Fixed blueprint again

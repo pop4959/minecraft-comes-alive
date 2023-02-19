@@ -1,5 +1,6 @@
 package net.mca.entity.ai;
 
+import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Formatting;
@@ -8,8 +9,8 @@ public class MoodBuilder {
     private final String name;
 
     private int soundInterval = 0;
-    private SoundEvent soundMale;
-    private SoundEvent soundFemale;
+    private RegistrySupplier<SoundEvent> soundMale;
+    private RegistrySupplier<SoundEvent> soundFemale;
     private int particleInterval = 0;
     private DefaultParticleType particle;
     private Formatting color = Formatting.WHITE;
@@ -19,7 +20,7 @@ public class MoodBuilder {
         this.name = name;
     }
 
-    public MoodBuilder sounds(int soundInterval, SoundEvent soundMale, SoundEvent soundFemale) {
+    public MoodBuilder sounds(int soundInterval, RegistrySupplier<SoundEvent> soundMale, RegistrySupplier<SoundEvent> soundFemale) {
         this.soundInterval = soundInterval;
         this.soundMale = soundMale;
         this.soundFemale = soundFemale;

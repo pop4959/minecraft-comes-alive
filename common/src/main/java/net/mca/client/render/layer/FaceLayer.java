@@ -3,8 +3,10 @@ package net.mca.client.render.layer;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.Traits;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 
@@ -16,9 +18,14 @@ public class FaceLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
     public FaceLayer(FeatureRendererContext<T, M> renderer, M model, String variant) {
         super(renderer, model);
         this.variant = variant;
+    }
 
+    @Override
+    public void render(MatrixStack transform, VertexConsumerProvider provider, int light, T villager, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         model.setVisible(false);
         model.head.visible = true;
+
+        super.render(transform, provider, light, villager, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
     }
 
     @Override

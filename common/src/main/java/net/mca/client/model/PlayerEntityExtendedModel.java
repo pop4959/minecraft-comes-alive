@@ -115,4 +115,21 @@ public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEnt
         super.setAngles(villager, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
         applyVillagerDimensions(CommonVillagerModel.getVillager(villager), villager.isInSneakingPose());
     }
+
+    public <M extends BipedEntityModel<T>> void copyVisibility(M model) {
+        head.visible = model.head.visible;
+        hat.visible = model.head.visible;
+        body.visible = model.body.visible;
+        jacket.visible = model.body.visible;
+        breasts.visible = model.body.visible;
+        breastsWear.visible = model.body.visible;
+        leftArm.visible = model.leftArm.visible;
+        leftSleeve.visible = model.leftArm.visible;
+        rightArm.visible = model.rightArm.visible;
+        rightSleeve.visible = model.rightArm.visible;
+        leftLeg.visible = model.leftLeg.visible;
+        leftPants.visible = model.leftLeg.visible;
+        rightLeg.visible = model.rightLeg.visible;
+        rightPants.visible = model.rightLeg.visible;
+    }
 }

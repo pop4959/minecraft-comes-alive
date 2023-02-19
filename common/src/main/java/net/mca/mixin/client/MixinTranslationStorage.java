@@ -1,9 +1,11 @@
 package net.mca.mixin.client;
 
+import net.mca.entity.CommonSpeechManager;
 import net.mca.entity.ai.DialogueType;
 import net.mca.util.localization.PooledTranslationStorage;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.util.Language;
+import net.minecraft.util.Pair;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,7 +17,6 @@ import java.util.Map;
 
 @Mixin(value = TranslationStorage.class, priority = 990)
 abstract class MixinTranslationStorage extends Language {
-
     @Shadow
     private @Final Map<String, String> translations;
 
@@ -32,10 +33,12 @@ abstract class MixinTranslationStorage extends Language {
     private void onGet(String key, CallbackInfoReturnable<String> info) {
         key = DialogueType.applyFallback(key);
 
-        String unpooled = getPool().get(key);
+        Pair<String, String> unpooled = getPool().get(key);
         if (unpooled != null) {
-            info.setReturnValue(unpooled);
+            CommonSpeechManager.INSTANCE.lastResolvedKey = unpooled.getLeft();
+            info.setReturnValue(unpooled.getRight());
         } else {
+            CommonSpeechManager.INSTANCE.lastResolvedKey = null;
             info.setReturnValue(translations.getOrDefault(key, key));
         }
     }

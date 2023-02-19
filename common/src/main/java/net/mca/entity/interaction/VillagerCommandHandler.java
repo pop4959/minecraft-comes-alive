@@ -1,6 +1,7 @@
 package net.mca.entity.interaction;
 
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.ProfessionsMCA;
 import net.mca.advancement.criterion.CriterionMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -178,13 +179,13 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "hire_short" -> {
                 payEmeralds(player, 5);
-                entity.makeMercenary(player);
+                entity.makeMercenary();
                 entity.setDespawnDelay(24000 * 3);
                 return true;
             }
             case "hire_long" -> {
                 payEmeralds(player, 10);
-                entity.makeMercenary(player);
+                entity.makeMercenary();
                 entity.setDespawnDelay(24000 * 7);
                 return true;
             }
@@ -241,7 +242,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     //slightly randomly the search center
                     ServerWorld world = (ServerWorld)entity.world;
                     String finalArg = arg;
-                    world.getServer().execute(() -> {
+                    MCA.executorService.execute(() -> {
                         Identifier identifier = new Identifier(finalArg);
                         BlockPos pos = FuzzyPositions.localFuzz(entity.getRandom(), 1024, 0).add(entity.getBlockPos());
                         Optional<BlockPos> position = WorldUtils.getClosestStructurePosition(world, pos, identifier, 64);

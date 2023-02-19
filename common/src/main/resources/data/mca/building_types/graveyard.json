@@ -5,12 +5,11 @@
   "visible": true,
   "priority": 0,
   "blocks": {
-    "#mca:tombstones": 1
+    "#mca:tombstones": 3
   },
   "icon": true,
   "iconU": 0,
   "iconV": 0,
   "grouped": true,
-  "mergeRange": 24,
-  "minBlocks": 3
+  "mergeRange": 24
 }

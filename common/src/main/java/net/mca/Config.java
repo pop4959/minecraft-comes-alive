@@ -16,6 +16,7 @@ public final class Config implements Serializable {
     private static final long serialVersionUID = 956221997003825933L;
 
     private static final Config INSTANCE = loadOrCreate();
+    private static Config serverConfig;
 
     public static Config getInstance() {
         return INSTANCE;
@@ -100,6 +101,7 @@ public final class Config implements Serializable {
     public int taxSeason = 168000;
     public float marriageChancePerMinute = 0.05f;
     public float adventurerAtInnChancePerMinute = 0.05f;
+    public int adventurerStayTime = 48000;
     public float villagerProcreationChancePerMinute = 0.05f;
     public int bountyHunterInterval = 48000;
     public int bountyHunterHeartsInterval = -150;
@@ -293,5 +295,17 @@ public final class Config implements Serializable {
         Config config = new Config();
         config.save();
         return config;
+    }
+
+    public static void setServerConfig(Config config) {
+        serverConfig = config;
+    }
+
+    public static Config getServerConfig() {
+        if (serverConfig == null) {
+            return Config.getInstance();
+        } else {
+            return serverConfig;
+        }
     }
 }
