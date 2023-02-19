@@ -219,4 +219,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     public void handleDestinyGuiRequest(OpenDestinyGuiRequest message) {
         MCAClient.getDestinyManager().requestOpen(message.allowTeleportation);
     }
+
+    @Override
+    public void handleConfigResponse(ConfigResponse message) {
+        Config.setServerConfig(message.getConfig());
+    }
 }

@@ -36,4 +36,6 @@ public interface ClientInteractionManager {
     void handleDestinyGuiRequest(OpenDestinyGuiRequest request);
 
     void handleDialogueQuestionResponse(InteractionDialogueQuestionResponse response);
+
+    void handleConfigResponse(ConfigResponse response);
 }

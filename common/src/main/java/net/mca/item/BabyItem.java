@@ -290,7 +290,7 @@ public class BabyItem extends Item {
     }
 
     private static boolean canGrow(int age) {
-        return age >= Config.getInstance().babyItemGrowUpTime;
+        return age >= Config.getServerConfig().babyItemGrowUpTime;
     }
 
     private static boolean isReadyToGrowUp(ItemStack stack) {

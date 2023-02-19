@@ -1,8 +1,9 @@
-# 7.4.5
+# 7.4.6
 
 * Added optional AI voice acting
 * Fixed reaction when lactose intolerant
 * Graveyards now print the minimum requirements correctly
+* Fixed some configs not being synced properly from the server
 
 # 7.4.5
 

@@ -16,6 +16,7 @@ public final class Config implements Serializable {
     private static final long serialVersionUID = 956221997003825933L;
 
     private static final Config INSTANCE = loadOrCreate();
+    private static Config serverConfig;
 
     public static Config getInstance() {
         return INSTANCE;
@@ -293,5 +294,17 @@ public final class Config implements Serializable {
         Config config = new Config();
         config.save();
         return config;
+    }
+
+    public static void setServerConfig(Config config) {
+        serverConfig = config;
+    }
+
+    public static Config getServerConfig() {
+        if (serverConfig == null) {
+            return Config.getInstance();
+        } else {
+            return serverConfig;
+        }
     }
 }
