@@ -25,7 +25,7 @@ public enum AgeState implements VillagerDimensions {
     private final float pitch;
 
     public static int getMaxAge() {
-        return Config.getInstance().villagerMaxAgeTime;
+        return Config.getServerConfig().villagerMaxAgeTime;
     }
 
     public static int getStageDuration() {

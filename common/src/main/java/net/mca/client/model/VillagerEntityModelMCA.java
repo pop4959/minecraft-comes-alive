@@ -123,4 +123,21 @@ public class VillagerEntityModelMCA<T extends LivingEntity & VillagerLike<T>> ex
         target.bodyWear.copyTransform(bodyWear);
         target.breastsWear.copyTransform(breastsWear);
     }
+
+    public <M extends BipedEntityModel<T>> void copyVisibility(M model) {
+        head.visible = model.head.visible;
+        hat.visible = model.head.visible;
+        body.visible = model.body.visible;
+        bodyWear.visible = model.body.visible;
+        breasts.visible = model.body.visible;
+        breastsWear.visible = model.body.visible;
+        leftArm.visible = model.leftArm.visible;
+        leftArmwear.visible = model.leftArm.visible;
+        rightArm.visible = model.rightArm.visible;
+        rightArmwear.visible = model.rightArm.visible;
+        leftLeg.visible = model.leftLeg.visible;
+        leftLegwear.visible = model.leftLeg.visible;
+        rightLeg.visible = model.rightLeg.visible;
+        rightLegwear.visible = model.rightLeg.visible;
+    }
 }

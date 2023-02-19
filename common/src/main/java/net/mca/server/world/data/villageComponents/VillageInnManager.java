@@ -60,21 +60,21 @@ public class VillageInnManager {
                 WanderingTraderEntity trader = EntityType.WANDERING_TRADER.spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (trader != null) {
                     name = trader.getName().getString();
-                    trader.setDespawnDelay(48000);
+                    trader.setDespawnDelay(Config.getInstance().adventurerStayTime);
                 }
             } else if (i == 1 && Config.getInstance().innSpawnsCultists) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
                     name = adventurer.getName().getString();
                     adventurer.setProfession(ProfessionsMCA.CULTIST.get());
-                    adventurer.setDespawnDelay(48000);
+                    adventurer.setDespawnDelay(Config.getInstance().adventurerStayTime);
                 }
             } else if (Config.getInstance().innSpawnsAdventurers) {
                 VillagerEntityMCA adventurer = Gender.getRandom().getVillagerType().spawn(world, null, null, null, blockPos, SpawnReason.EVENT, false, false);
                 if (adventurer != null) {
                     name = adventurer.getName().getString();
                     adventurer.setProfession(ProfessionsMCA.ADVENTURER.get());
-                    adventurer.setDespawnDelay(48000);
+                    adventurer.setDespawnDelay(Config.getInstance().adventurerStayTime);
                 }
             }
 

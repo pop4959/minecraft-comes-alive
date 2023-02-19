@@ -32,6 +32,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.village.VillagerProfession;
+import net.minecraft.world.poi.PointOfInterestType;
 import net.minecraft.world.poi.PointOfInterestTypes;
 
 import java.util.Map;
@@ -117,18 +118,22 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
             noDefault = true;
-        } else if (profession == ProfessionsMCA.ADVENTURER.get()) {
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
-            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
-            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
-            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
-            noDefault = true;
         } else if (profession == ProfessionsMCA.MERCENARY.get()) {
+            brain.setSchedule(SchedulesMCA.GUESTS);
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
             brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getMercenaryPackage(0.5f));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getGuardCorePackage(villager));
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
+            brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(0.5F));
             brain.setTaskList(ActivityMCA.CHORE.get(), VillagerTasksMCA.getChorePackage());
+            noDefault = true;
+        } else if (!villager.requiresHome()) {
+            brain.setSchedule(SchedulesMCA.GUESTS);
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getImportantCorePackage(0.5F));
+            brain.setTaskList(Activity.IDLE, VillagerTasksMCA.getAdventurerPackage(0.5f));
+            brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
+            brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getPanicPackage(0.5F));
+            brain.setTaskList(Activity.REST, VillagerTasksMCA.getRestPackage(0.5F));
             noDefault = true;
         } else if (age == AgeState.BABY) {
             brain.setSchedule(Schedule.VILLAGER_BABY);
@@ -144,8 +149,6 @@ public class VillagerTasksMCA {
             brain.setTaskList(Activity.WORK, VillagerTasksMCA.getGuardWorkPackage());
             brain.setTaskList(Activity.PANIC, VillagerTasksMCA.getGuardPanicPackage(0.5f));
             brain.setTaskList(Activity.RAID, VillagerTasksMCA.getGuardWorkPackage());
-        } else if (profession == ProfessionsMCA.OUTLAW.get() || profession == ProfessionsMCA.CULTIST.get()) {
-            brain.setSchedule(SchedulesMCA.getTypeSchedule(villager, true));
         } else {
             brain.setSchedule(SchedulesMCA.getTypeSchedule(villager));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getWorkingCorePackage(profession, 0.5F));
@@ -198,7 +201,20 @@ public class VillagerTasksMCA {
                 Pair.of(0, new WakeUpTask()),
                 Pair.of(0, new DeliverMessageTask()),
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
-                Pair.of(3, new InteractTask(speedModifier))
+                Pair.of(3, new InteractTask(speedModifier)),
+                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
+                    // update villagers home/bed position
+                    villager.getResidency().seekHome();
+                }, (entity, pos) -> {
+                    // verify that this bed is not blocked
+                    VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+                    if (entity.requiresHome()) {
+                        return manager.findNearestVillage(entity).filter(v -> !v.isPositionValidBed(pos)).isEmpty();
+                    } else {
+                        //villagers without the need of a home may only settle in inns
+                        return manager.findNearestVillage(entity).filter(v -> v.getBuildingAt(pos).filter(b -> b.getBuildingType().name().equals("inn")).isPresent()).isPresent();
+                    }
+                }))
         );
     }
 
@@ -208,7 +224,7 @@ public class VillagerTasksMCA {
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.HOME, MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
                     // update villagers home/bed position
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
@@ -218,7 +234,7 @@ public class VillagerTasksMCA {
                         return v.getBuildingAt(pos).filter(b -> b.getBuildingType().noBeds()).isPresent();
                     }).isEmpty();
                 })),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(PointOfInterestType.MEETING, MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (villager) -> {
                     //report a town bell, the only building always added
                     villager.getBrain().getOptionalMemory(MemoryModuleType.MEETING_POINT).ifPresent(p -> {
                         if (villager.world.getRegistryKey() == p.getDimension()) {

@@ -1,6 +1,7 @@
 package net.mca.network.c2s;
 
 import net.mca.Config;
+import net.mca.MCA;
 import net.mca.cobalt.network.Message;
 import net.mca.util.WorldUtils;
 import net.mca.util.compat.FuzzyPositionsCompat;
@@ -42,7 +43,7 @@ public class DestinyMessage implements Message {
         }
 
         if (Config.getInstance().allowDestinyTeleportation && location != null) {
-            player.getWorld().getServer().execute(() -> {
+            MCA.executorService.execute(() -> {
                 WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 128).ifPresent(pos -> {
                     player.getWorld().getWorldChunk(pos);
                     pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);

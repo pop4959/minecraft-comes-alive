@@ -3,6 +3,8 @@ package net.mca;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerLike;
+import net.mca.network.c2s.ConfigRequest;
+import net.mca.network.c2s.DamageItemMessage;
 import net.mca.network.c2s.PlayerDataRequest;
 import net.minecraft.client.MinecraftClient;
 
@@ -21,6 +23,7 @@ public class MCAClient {
 
     public static void onLogin() {
         playerDataRequests.clear();
+        NetworkHandler.sendToServer(new ConfigRequest());
     }
 
     public static boolean useGeneticsRenderer(UUID uuid) {

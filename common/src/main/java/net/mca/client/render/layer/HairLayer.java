@@ -3,8 +3,10 @@ package net.mca.client.render.layer;
 import net.mca.client.resources.ColorPalette;
 import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.Traits;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.util.DyeColor;
@@ -16,8 +18,16 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
     public HairLayer(FeatureRendererContext<T, M> renderer, M model) {
         super(renderer, model);
 
+
+    }
+
+    @Override
+    public void render(MatrixStack transform, VertexConsumerProvider provider, int light, T villager, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+        model.setVisible(true);
         this.model.leftLeg.visible = false;
         this.model.rightLeg.visible = false;
+
+        super.render(transform, provider, light, villager, limbAngle, limbDistance, tickDelta, animationProgress, headYaw, headPitch);
     }
 
     @Override

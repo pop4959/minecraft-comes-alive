@@ -45,5 +45,7 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(OpenDestinyGuiRequest.class);
         NetworkHandler.registerMessage(DamageItemMessage.class);
         NetworkHandler.registerMessage(InteractionDialogueQuestionResponse.class);
+        NetworkHandler.registerMessage(ConfigRequest.class);
+        NetworkHandler.registerMessage(ConfigResponse.class);
     }
 }

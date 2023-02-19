@@ -2,6 +2,8 @@ package net.mca.client.render.layer;
 
 import com.google.common.collect.Maps;
 import net.mca.MCAClient;
+import net.mca.client.model.PlayerEntityExtendedModel;
+import net.mca.client.model.VillagerEntityModelMCA;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -23,7 +25,6 @@ import java.util.function.Function;
 import static net.mca.client.model.CommonVillagerModel.getVillager;
 
 public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
-
     private static final float[] DEFAULT_COLOR = new float[] {1, 1, 1};
 
     private static final Map<String, Identifier> TEXTURE_CACHE = Maps.newHashMap();
@@ -66,6 +67,14 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
         if (villager instanceof PlayerEntity && !MCAClient.useVillagerRenderer(villager.getUuid())) {
             return;
+        }
+
+        //primarily restores compatibility with Armourers Workshop
+        if (model instanceof VillagerEntityModelMCA layer) {
+            layer.copyVisibility(getContextModel());
+        }
+        if (model instanceof PlayerEntityExtendedModel layer) {
+            layer.copyVisibility(getContextModel());
         }
 
         //copy the animation to this layers model

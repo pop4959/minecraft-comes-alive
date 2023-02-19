@@ -191,7 +191,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return false;
     }
 
-    default boolean doesProfessionRequireHome() {
+    default boolean requiresHome() {
         return false;
     }
 

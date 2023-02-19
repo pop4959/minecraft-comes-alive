@@ -20,12 +20,14 @@
     "MixinServerWorld",
     "MixinVillagerEntity",
     "MixinVillagerProfession",
-    "MixinZombieVillagerEntity"
+    "MixinZombieVillagerEntity",
+    "MixinTranslatableText"
   ],
   "client": [
     "client.MixinArmorFeatureRenderer",
     "client.MixinGameRenderer",
     "client.MixinHeldItemFeatureRenderer",
+    "client.MixinInGameHud",
     "client.MixinLivingEntityRenderer",
     "client.MixinPlayerEntityRenderer",
     "client.MixinTranslationStorage"

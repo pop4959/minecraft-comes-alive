@@ -114,6 +114,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private int burned;
 
     public final ConversationManager conversationManager = new ConversationManager(this);
+    private long lastHit = 0;
 
     @Override
     public PlayerModel getPlayerModel() {
@@ -303,8 +304,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public boolean doesProfessionRequireHome() {
-        return !ProfessionsMCA.needsNoHome.contains(getProfession());
+    public boolean requiresHome() {
+        return !ProfessionsMCA.needsNoHome.contains(getProfession()) && getDespawnDelay() <= 0;
     }
 
     @Override
@@ -538,6 +539,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             StatusEffectInstance statusEffect = player.getStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE);
+            //noinspection ConstantConditions
             int amplifier = statusEffect.getAmplifier();
 
             for (TradeOffer tradeOffer2 : this.getOffers()) {
@@ -579,7 +581,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // you can't hit babies!
         if (!Config.getInstance().canHurtBabies && !source.isUnblockable() && getAgeState() == AgeState.BABY) {
             if (source.getAttacker() instanceof PlayerEntity) {
-                Messenger.sendEventMessage(world, Text.translatable("villager.baby_hit"));
+                sendEventMessage(Text.translatable("villager.baby_hit"));
             }
             return super.damage(source, 0.0f);
         }
@@ -594,11 +596,14 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (!world.isClient) {
             //scream and loose hearts
             if (source.getAttacker() instanceof PlayerEntity player) {
-                if (!isGuard() || getSmallBounty() == 0) {
-                    if (getHealth() < getMaxHealth() / 2) {
-                        sendChatMessage(player, "villager.badly_hurt");
-                    } else {
-                        sendChatMessage(player, "villager.hurt");
+                if (world.getTime() - lastHit > 40) {
+                    lastHit = world.getTime();
+                    if (!isGuard() || getSmallBounty() == 0) {
+                        if (getHealth() < getMaxHealth() / 2) {
+                            sendChatMessage(player, "villager.badly_hurt");
+                        } else {
+                            sendChatMessage(player, "villager.hurt");
+                        }
                     }
                 }
 
@@ -952,6 +957,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             return;
         }
 
+        //convert
         if (cause.getAttacker() instanceof ZombieEntity || cause.getAttacker() instanceof ZombieVillagerEntity) {
             if (getInfectionProgress() >= BABBLING_THRESHOLD) {
                 RemovalReason reason = getRemovalReason();
@@ -962,8 +968,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             }
         }
 
+        //drop stuff
         InventoryUtils.dropAllItems(this, inventory);
 
+        //alert family and nearby villagers
         relations.onDeath(cause);
 
         //distribute the hearts across the other villagers
@@ -987,6 +995,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             }
         }
 
+        //move out
         residency.leaveHome();
     }
 
@@ -1201,8 +1210,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public void playSpeechEffect() {
         if (isSpeechImpaired()) {
             playSound(SoundEvents.ENTITY_ZOMBIE_AMBIENT, getSoundVolume(), getSoundPitch());
-        } else {
-            // playWelcomeSound();
         }
     }
 
@@ -1492,11 +1499,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         return this.despawnDelay;
     }
 
-    public boolean requiresHome() {
-        return getProfession() != ProfessionsMCA.ADVENTURER.get();
-    }
-
-    public void makeMercenary(ServerPlayerEntity player) {
+    public void makeMercenary() {
         setProfession(ProfessionsMCA.MERCENARY.get());
 
         inventory.addStack(new ItemStack(Items.IRON_SWORD));

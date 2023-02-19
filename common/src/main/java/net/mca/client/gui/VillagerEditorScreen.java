@@ -255,7 +255,8 @@ public class VillagerEditorScreen extends Screen {
             }
             case "head" -> {
                 //genes
-                y = doubleGeneSliders(y, Genetics.FACE, Genetics.VOICE);
+                y = doubleGeneSliders(y, Genetics.FACE);
+                y = doubleGeneSliders(y, Genetics.VOICE_TONE, Genetics.VOICE);
 
                 //hair
                 addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, Text.translatable("gui.villager_editor.randHair"), b -> {
