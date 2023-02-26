@@ -61,8 +61,8 @@ public class ServerInteractionManager {
             if (Config.getInstance().launchIntoDestiny) {
                 launchDestiny(player);
 
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 60));
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 60));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 3600));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.HEALTH_BOOST, 3600));
             } else if (Config.getInstance().allowDestinyCommandOnce) {
                 NetworkHandler.sendToPlayer(new ShowToastRequest(
                         "server.destinyNotSet.title",
