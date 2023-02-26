@@ -4,6 +4,7 @@ import net.mca.Config;
 import net.mca.resources.Rank;
 import net.mca.resources.Tasks;
 import net.mca.server.world.data.Village;
+import net.mca.util.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -116,7 +117,7 @@ public class VillageTaxesManager {
     }
 
     public void deliverTaxes(ServerWorld world) {
-        if (village.hasStoredResource() && village.isLoaded(world)) {
+        if (village.hasStoredResource() && WorldUtils.isChunkLoaded(world, village.getCenter())) {
             village.getBuildingsOfType("storage").forEach(building -> building.getBlocks().values().stream()
                     .flatMap(Collection::stream)
                     .forEach(p -> {

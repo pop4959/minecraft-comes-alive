@@ -5,12 +5,12 @@ import net.mca.ProfessionsMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.server.world.data.Village;
+import net.mca.util.WorldUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.BlockView;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class VillageInnManager {
     }
 
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
-        if (!world.isChunkLoaded(ChunkSectionPos.getSectionCoord(blockPos.getX()), ChunkSectionPos.getSectionCoord(blockPos.getZ()))) {
+        if (!WorldUtils.isChunkLoaded(world, blockPos)) {
             // prevent any additional retries
             return true;
         }

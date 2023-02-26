@@ -7,6 +7,7 @@ import net.mca.resources.BuildingTypes;
 import net.mca.server.world.data.villageComponents.*;
 import net.mca.util.BlockBoxExtended;
 import net.mca.util.NbtHelper;
+import net.mca.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestTypes;
@@ -294,6 +294,9 @@ public class Village implements Iterable<Building> {
     }
 
     public void tick(ServerWorld world, long time) {
+        // spread performance to avoid lag spikes
+        time += getId();
+
         boolean isTaxSeason = time % Config.getInstance().taxSeason == 0;
         boolean isVillageUpdateTime = time % MOVE_IN_COOLDOWN == 0;
 
@@ -305,7 +308,7 @@ public class Village implements Iterable<Building> {
             cleanReputation();
         }
 
-        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time && isLoaded(world)) {
+        if (isVillageUpdateTime && lastMoveIn + MOVE_IN_COOLDOWN < time && WorldUtils.isChunkLoaded(world, getCenter())) {
             villageGuardsManager.spawnGuards(world);
             villageInnManager.updateInn(world);
             villageMarriageManager.marry(world);
@@ -477,11 +480,5 @@ public class Village implements Iterable<Building> {
 
     public VillageGuardsManager getVillageGuardsManager() {
         return villageGuardsManager;
-    }
-
-    // Check if village is loaded
-    public boolean isLoaded(ServerWorld world) {
-        Vec3i center = getCenter();
-        return world.isChunkLoaded(ChunkSectionPos.getSectionCoord(center.getX()), ChunkSectionPos.getSectionCoord(center.getZ()));
     }
 }

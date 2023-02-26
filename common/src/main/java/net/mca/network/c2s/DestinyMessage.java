@@ -40,6 +40,7 @@ public class DestinyMessage implements Message {
     public void receive(ServerPlayerEntity player) {
         if (isClosing) {
             player.removeStatusEffect(StatusEffects.INVISIBILITY);
+            player.removeStatusEffect(StatusEffects.HEALTH_BOOST);
         }
 
         if (Config.getInstance().allowDestinyTeleportation && location != null) {
