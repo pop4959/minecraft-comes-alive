@@ -294,6 +294,9 @@ public class Village implements Iterable<Building> {
     }
 
     public void tick(ServerWorld world, long time) {
+        // spread performance to avoid lag spikes
+        time += getId();
+
         boolean isTaxSeason = time % Config.getInstance().taxSeason == 0;
         boolean isVillageUpdateTime = time % MOVE_IN_COOLDOWN == 0;
 
