@@ -176,7 +176,7 @@ public class GiftPredicate {
         register("advancement", (json, name) -> new Identifier(JsonHelper.asString(json, name)), id -> (villager, stack, player) -> {
             assert player != null;
             Advancement advancement = Objects.requireNonNull(player.getServer()).getAdvancementLoader().get(id);
-            return player.getAdvancementTracker().getProgress(advancement).isDone() ? 1.0f : 0.0f;
+            return (advancement != null && player.getAdvancementTracker().getProgress(advancement).isDone()) ? 1.0f : 0.0f;
         });
         register("constraints", (json, name) -> Constraint.fromStringList(JsonHelper.asString(json, name)), constraints -> (villager, stack, player) -> {
             Set<Constraint> c = Constraint.allMatching(villager, player);

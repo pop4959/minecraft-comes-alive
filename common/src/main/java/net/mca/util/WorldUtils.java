@@ -11,9 +11,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -66,5 +64,9 @@ public interface WorldUtils {
         } else {
             return Optional.empty();
         }
+    }
+
+    static boolean isChunkLoaded(World world, Vec3i pos) {
+        return world.isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()));
     }
 }

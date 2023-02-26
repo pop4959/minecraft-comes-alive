@@ -1,3 +1,10 @@
+# 7.4.7
+
+* Fixed villagers not spawning
+* Fixed not being invisible while in destiny
+* Fixed a crash when telling stories in certain modded environments
+* Syned translations
+
 # 7.4.6
 
 * Added optional AI voice acting

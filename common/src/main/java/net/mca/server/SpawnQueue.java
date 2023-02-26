@@ -1,7 +1,6 @@
 package net.mca.server;
 
 import net.mca.Config;
-import net.mca.MCA;
 import net.mca.ducks.IVillagerEntity;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerFactory;
@@ -9,6 +8,7 @@ import net.mca.entity.ZombieVillagerEntityMCA;
 import net.mca.entity.ZombieVillagerFactory;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.server.world.data.Nationality;
+import net.mca.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -35,44 +35,40 @@ public class SpawnQueue {
         if (!villagerSpawnQueue.isEmpty()) {
             VillagerEntity e = villagerSpawnQueue.poll();
 
-            MCA.executorService.execute(() -> {
-                if (e.world.canSetBlock(e.getBlockPos())) {
-                    e.discard();
-                    VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
-                            .withName(e.hasCustomName() ? e.getName().getString() : null)
-                            .withGender(Gender.getRandom())
-                            .withAge(e.getBreedingAge())
-                            .withPosition(e)
-                            .withType(e.getVillagerData().getType())
-                            .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
-                            .spawn(((IVillagerEntity)e).getSpawnReason());
+            if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
+                e.discard();
+                VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
+                        .withName(e.hasCustomName() ? e.getName().getString() : null)
+                        .withGender(Gender.getRandom())
+                        .withAge(e.getBreedingAge())
+                        .withPosition(e)
+                        .withType(e.getVillagerData().getType())
+                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
+                        .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                    copyPastaIntensifies(villager, e);
-                } else {
-                    villagerSpawnQueue.add(e);
-                }
-            });
+                copyPastaIntensifies(villager, e);
+            } else {
+                villagerSpawnQueue.add(e);
+            }
         }
 
         if (!zombieVillagerSpawnQueue.isEmpty()) {
             ZombieVillagerEntity e = zombieVillagerSpawnQueue.poll();
 
-            MCA.executorService.execute(() -> {
-                if (e.world.canSetBlock(e.getBlockPos())) {
-                    e.discard();
-                    ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
-                            .withName(e.hasCustomName() ? e.getName().getString() : null)
-                            .withGender(Gender.getRandom())
-                            .withPosition(e)
-                            .withType(e.getVillagerData().getType())
-                            .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
-                            .spawn(((IVillagerEntity)e).getSpawnReason());
+            if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
+                e.discard();
+                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
+                        .withName(e.hasCustomName() ? e.getName().getString() : null)
+                        .withGender(Gender.getRandom())
+                        .withPosition(e)
+                        .withType(e.getVillagerData().getType())
+                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
+                        .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                    copyPastaIntensifies(villager, e);
-                } else {
-                    zombieVillagerSpawnQueue.add(e);
-                }
-            });
+                copyPastaIntensifies(villager, e);
+            } else {
+                zombieVillagerSpawnQueue.add(e);
+            }
         }
     }
 
