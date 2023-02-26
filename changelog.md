@@ -1,3 +1,7 @@
+# 7.4.8
+
+* Fixed a crash
+
 # 7.4.7
 
 * Fixed villagers not spawning
