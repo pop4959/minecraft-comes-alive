@@ -17,8 +17,8 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 
+import java.util.LinkedList;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class SpawnQueue {
     private static final SpawnQueue INSTANCE = new SpawnQueue();
@@ -27,8 +27,8 @@ public class SpawnQueue {
         return INSTANCE;
     }
 
-    private final ConcurrentLinkedQueue<VillagerEntity> villagerSpawnQueue = new ConcurrentLinkedQueue<>();
-    private final ConcurrentLinkedQueue<ZombieVillagerEntity> zombieVillagerSpawnQueue = new ConcurrentLinkedQueue<>();
+    private final LinkedList<VillagerEntity> villagerSpawnQueue = new LinkedList<>();
+    private final LinkedList<ZombieVillagerEntity> zombieVillagerSpawnQueue = new LinkedList<>();
 
     public void tick() {
         // lazy spawning of our villagers as they can't be spawned while loading
