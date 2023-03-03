@@ -156,6 +156,7 @@ public final class Config implements Serializable {
     public boolean forceVillagerPlayerModel = false;
     public boolean allowLimitedPlayerEditor = true;
     public boolean allowFullPlayerEditor = false;
+    public boolean allowPlayerSizeAdjustment = true;
 
     public boolean useModernUSANamesOnly = false;
 
