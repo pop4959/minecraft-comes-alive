@@ -223,7 +223,7 @@ public class VillagerEditorScreen extends Screen {
             }
             case "body" -> {
                 //genes
-                if(!Config.getInstance().allowPlayerSizeAdjustment && villagerUUID.equals(playerUUID)){
+                if(!Config.getServerConfig().allowPlayerSizeAdjustment && villagerUUID.equals(playerUUID)){
                     y = doubleGeneSliders(y, Genetics.BREAST, Genetics.SKIN);
                     genetics.setGene(Genetics.SIZE, 0.80f);
                     genetics.setGene(Genetics.WIDTH, 0.80f);
