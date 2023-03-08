@@ -1,6 +1,7 @@
 # 7.4.8
 
 * Fixed a crash
+* Enabled toddler clothes
 
 # 7.4.7
 
