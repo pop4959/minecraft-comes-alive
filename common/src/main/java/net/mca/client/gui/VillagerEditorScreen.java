@@ -221,7 +221,13 @@ public class VillagerEditorScreen extends Screen {
             }
             case "body" -> {
                 //genes
-                y = doubleGeneSliders(y, Genetics.SIZE, Genetics.WIDTH, Genetics.BREAST, Genetics.SKIN);
+                if(!Config.getServerConfig().allowPlayerSizeAdjustment && villagerUUID.equals(playerUUID)){
+                    y = doubleGeneSliders(y, Genetics.BREAST, Genetics.SKIN);
+                    genetics.setGene(Genetics.SIZE, 0.80f);
+                    genetics.setGene(Genetics.WIDTH, 0.80f);
+                } else {
+                    y = doubleGeneSliders(y, Genetics.SIZE, Genetics.WIDTH, Genetics.BREAST, Genetics.SKIN);
+                }
 
                 //clothes
                 addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH / 2, 20, Text.translatable("gui.villager_editor.randClothing"), b -> {
