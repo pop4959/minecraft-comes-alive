@@ -81,9 +81,11 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
                 && !villager.isInvisibleTo(player);
     }
 
+    private static final Identifier TEXTURE = new Identifier("textures/entity/steve.png");
+
     @Override
-    public Identifier getTexture(T entity) {
-        return null;
+    public Identifier getTexture(T mobEntity) {
+        return TEXTURE;
     }
 
     @Override
