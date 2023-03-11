@@ -17,10 +17,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public class NetworkHandlerImpl extends NetworkHandler.Impl {
-    private final Map<Message, Identifier> cache = new HashMap<>();
+    private final Map<Class<?>, Identifier> cache = new HashMap<>();
 
     private Identifier getMessageIdentifier(Message msg) {
-        return cache.computeIfAbsent(msg, m -> getMessageIdentifier(m.getClass()));
+        return cache.computeIfAbsent(msg.getClass(), this::getMessageIdentifier);
     }
 
     private <T> Identifier getMessageIdentifier(Class<T> msg) {
