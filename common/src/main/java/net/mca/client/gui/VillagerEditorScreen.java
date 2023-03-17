@@ -717,10 +717,6 @@ public class VillagerEditorScreen extends Screen {
                 for (int x = 0; x < CLOTHES_H + y; x++) {
                     int index = clothingPage * CLOTHES_PER_PAGE + i;
                     if ((page.equals("clothing") ? filteredClothing : filteredHair).size() > index) {
-                        // TODO: 1.19.4
-                        //villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f + i * 17.0f;
-                        //villagerVisualization.limbDistance = 1.5f;
-
                         if (page.equals("clothing")) {
                             villagerVisualization.setClothes(filteredClothing.get(index));
                         } else {
