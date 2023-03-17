@@ -24,11 +24,11 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.boss.ServerBossBar;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -160,9 +160,9 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
     @Override
     public boolean damage(DamageSource source, float damage) {
         // Ignore wall damage, fire and explosion damage
-        if (source == world.getDamageSources().inWall() || source == world.getDamageSources().onFire() || source.isIn(DamageTypeTags.IS_EXPLOSION) || source == world.getDamageSources().inFire()) {
+        if (source.isOf(DamageTypes.IN_WALL) || source.isOf(DamageTypes.ON_FIRE) || source.isOf(DamageTypes.EXPLOSION) || source.isOf(DamageTypes.IN_FIRE)) {
             // Teleport out of any walls we may end up in
-            if (source == world.getDamageSources().inWall()) {
+            if (source.isOf(DamageTypes.IN_WALL)) {
                 requestTeleport(this.getX(), this.getY() + 3, this.getZ());
             }
             return false;

@@ -23,6 +23,7 @@ import net.minecraft.entity.ai.brain.BlockPosLookTarget;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.WalkTarget;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -163,7 +164,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
     @Override
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity with) {
-        if (cause != entity.world.getDamageSources().outOfWorld()) {
+        if (!cause.isOf(DamageTypes.OUT_OF_WORLD)) {
             int moodAffect = 5 * type.getProximityAmplifier();
             entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
             entity.getVillagerBrain().modifyMoodValue(-moodAffect);
