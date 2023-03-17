@@ -440,9 +440,6 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             if (floorType == ExtendedPathNodeType.DAMAGE_FIRE) {
                 pathNodeType = ExtendedPathNodeType.DAMAGE_FIRE;
             }
-            if (floorType == ExtendedPathNodeType.DAMAGE_CACTUS) {
-                pathNodeType = ExtendedPathNodeType.DAMAGE_CACTUS;
-            }
             if (floorType == ExtendedPathNodeType.DAMAGE_OTHER) {
                 pathNodeType = ExtendedPathNodeType.DAMAGE_OTHER;
             }
@@ -469,10 +466,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
                     if (l == 0 && n == 0) continue;
                     pos.set(x + l, y + m, z + n);
                     BlockState blockState = world.getBlockState(pos);
-                    if (blockState.isOf(Blocks.CACTUS)) {
-                        return ExtendedPathNodeType.DANGER_CACTUS;
-                    }
-                    if (blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
+                    if (blockState.isOf(Blocks.CACTUS) || blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
                         return ExtendedPathNodeType.DANGER_OTHER;
                     }
                     if (VillagerLandPathNodeMaker.inflictsFireDamage(blockState)) {
@@ -509,10 +503,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         if (blockState.isOf(Blocks.POWDER_SNOW)) {
             return ExtendedPathNodeType.POWDER_SNOW;
         }
-        if (blockState.isOf(Blocks.CACTUS)) {
-            return ExtendedPathNodeType.DAMAGE_CACTUS;
-        }
-        if (blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
+        if (blockState.isOf(Blocks.CACTUS) || blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
             return ExtendedPathNodeType.DAMAGE_OTHER;
         }
         if (blockState.isOf(Blocks.HONEY_BLOCK)) {

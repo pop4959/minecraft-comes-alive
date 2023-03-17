@@ -19,8 +19,6 @@ public enum ExtendedPathNodeType {
     UNPASSABLE_RAIL(-1.0F),
     DANGER_FIRE(8.0F),
     DAMAGE_FIRE(16.0F),
-    DANGER_CACTUS(8.0F),
-    DAMAGE_CACTUS(-1.0F),
     DANGER_OTHER(8.0F),
     DAMAGE_OTHER(-1.0F),
     DOOR_OPEN(0.0F),
