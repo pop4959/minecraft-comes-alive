@@ -74,7 +74,8 @@ public class ClothingList extends JsonDataLoader {
     public WeightedPool<String> getPool(VillagerLike<?> villager) {
         Gender gender = villager.getGenetics().getGender();
         return switch (villager.getAgeState()) {
-            case BABY, TODDLER -> getPool(gender, MCA.locate("baby").toString());
+            case BABY -> getPool(gender, MCA.locate("baby").toString());
+            case TODDLER -> getPool(gender, MCA.locate("toddler").toString());
             case CHILD, TEEN -> getPool(gender, MCA.locate("child").toString());
             default -> {
                 WeightedPool<String> pool = getPool(gender, villager.getVillagerData().getProfession());

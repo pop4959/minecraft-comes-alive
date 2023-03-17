@@ -33,7 +33,7 @@ public class SpawnQueue {
     public void tick() {
         // lazy spawning of our villagers as they can't be spawned while loading
         if (!villagerSpawnQueue.isEmpty()) {
-            VillagerEntity e = villagerSpawnQueue.poll();
+            VillagerEntity e = villagerSpawnQueue.remove();
 
             if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
                 e.discard();
