@@ -87,17 +87,19 @@ def sentiment(prompt: str):
     return {"result": float(get_sentiment(prompt))}
 
 
-CLASSIFY_MODEL = "facebook/bart-large-mnli"
-classifier = pipeline("zero-shot-classification", CLASSIFY_MODEL)
+ENABLE_CLASSIFIER = False
 
+if ENABLE_CLASSIFIER:
+    CLASSIFY_MODEL = "facebook/bart-large-mnli"
+    classifier = pipeline("zero-shot-classification", CLASSIFY_MODEL)
 
-@app.get("/classify")
-def classify(prompt: str, classes: str):
-    classes = [t.strip() for t in classes.split(",")]
-    probabilities = classifier(prompt, classes, multi_label=True)
+    @app.get("/classify")
+    def classify(prompt: str, classes: str):
+        classes = [t.strip() for t in classes.split(",")]
+        probabilities = classifier(prompt, classes, multi_label=True)
 
-    results = {
-        label: float(score)
-        for (label, score) in zip(probabilities["labels"], probabilities["scores"])
-    }
-    return {"result": results}
+        results = {
+            label: float(score)
+            for (label, score) in zip(probabilities["labels"], probabilities["scores"])
+        }
+        return {"result": results}
