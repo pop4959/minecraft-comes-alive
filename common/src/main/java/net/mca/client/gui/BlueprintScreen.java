@@ -323,10 +323,10 @@ public class BlueprintScreen extends ExtendedScreen {
 
         switch (page) {
             case "waiting":
-                drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.waiting"), width / 2, height / 2, 0xffaaaaaa);
+                drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.waiting"), width / 2, height / 2, 0xffaaaaaa);
                 break;
             case "empty":
-                drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2 - 20, 0xffaaaaaa);
+                drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2 - 20, 0xffaaaaaa);
                 break;
             case "map":
                 renderStats(transform);
@@ -357,9 +357,9 @@ public class BlueprintScreen extends ExtendedScreen {
         transform.push();
         transform.scale(2.0f, 2.0f, 2.0f);
         if (isVillage) {
-            drawCenteredText(transform, textRenderer, village.getName(), width / 4, height / 4 - 48, 0xffffffff);
+            drawCenteredTextWithShadow(transform, textRenderer, village.getName(), width / 4, height / 4 - 48, 0xffffffff);
         } else {
-            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.settlement"), width / 4, height / 4 - 48, 0xffffffff);
+            drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.settlement"), width / 4, height / 4 - 48, 0xffffffff);
         }
         transform.pop();
     }
@@ -385,7 +385,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
         //hint
         if (!village.isAutoScan() && village.getBuildings().size() <= 1) {
-            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.autoScanDisabled"), width / 2, height / 2 + 90, 0xaaffffff);
+            drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.autoScanDisabled"), width / 2, height / 2 + 90, 0xaaffffff);
         }
 
         transform.push();
@@ -513,11 +513,11 @@ public class BlueprintScreen extends ExtendedScreen {
         //title
         transform.push();
         transform.scale(2.0f, 2.0f, 2.0f);
-        drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.catalogFull"), width / 4, height / 4 - 52, 0xffffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.catalogFull"), width / 4, height / 4 - 52, 0xffffffff);
         transform.pop();
 
         //explanation
-        drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.catalogHint").formatted(Formatting.GRAY), width / 2, height / 2 - 82, 0xffffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.catalogHint").formatted(Formatting.GRAY), width / 2, height / 2 - 82, 0xffffffff);
 
         //building
         int x = width / 2 + 35;
@@ -565,7 +565,7 @@ public class BlueprintScreen extends ExtendedScreen {
             if (index < villager.size()) {
                 int y = height / 2 - 51 + i * 11;
                 boolean hover = isMouseWithin(width / 2 - 50, y - 1, 100, 11);
-                drawCenteredText(transform, textRenderer, Text.literal(villager.get(index).getValue()), width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
+                drawCenteredTextWithShadow(transform, textRenderer, Text.literal(villager.get(index).getValue()), width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
                 if (hover) {
                     selectedVillager = villager.get(index).getKey();
                 }
@@ -581,27 +581,27 @@ public class BlueprintScreen extends ExtendedScreen {
         buttonBirths[0].setMessage(Text.literal((int)(village.getPopulationThreshold() * 100) + "%"));
 
         //taxes
-        drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.taxes"), width / 2, height / 2 + positionTaxes, 0xffffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.taxes"), width / 2, height / 2 + positionTaxes, 0xffffffff);
         if (!rank.isAtLeast(Rank.MERCHANT)) {
-            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionTaxes + 15, 0xffffffff);
+            drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionTaxes + 15, 0xffffffff);
             toggleButtons(buttonTaxes, false);
         } else {
             toggleButtons(buttonTaxes, true);
         }
 
         //births
-        drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.birth"), width / 2, height / 2 + positionBirth, 0xffffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.birth"), width / 2, height / 2 + positionBirth, 0xffffffff);
         if (!rank.isAtLeast(Rank.NOBLE)) {
-            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionBirth + 15, 0xffffffff);
+            drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionBirth + 15, 0xffffffff);
             toggleButtons(buttonBirths, false);
         } else {
             toggleButtons(buttonBirths, true);
         }
 
         //marriages
-        drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.marriage"), width / 2, height / 2 + positionMarriage, 0xffffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.marriage"), width / 2, height / 2 + positionMarriage, 0xffffffff);
         if (!rank.isAtLeast(Rank.MAYOR)) {
-            drawCenteredText(transform, textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionMarriage + 15, 0xffffffff);
+            drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionMarriage + 15, 0xffffffff);
             toggleButtons(buttonMarriage, false);
         } else {
             toggleButtons(buttonMarriage, true);

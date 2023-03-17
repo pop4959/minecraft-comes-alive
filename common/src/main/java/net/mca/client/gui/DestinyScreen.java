@@ -53,13 +53,13 @@ public class DestinyScreen extends VillagerEditorScreen {
     @Override
     public void renderBackground(MatrixStack matrices) {
         assert MinecraftClient.getInstance().world != null;
-        renderBackgroundTexture((int)MinecraftClient.getInstance().world.getTime());
+        renderBackgroundTexture(matrices);
     }
 
     private void drawScaledText(MatrixStack transform, Text text, int x, int y, float scale) {
         transform.push();
         transform.scale(scale, scale, scale);
-        drawCenteredText(transform, textRenderer, text, (int)(x / scale), (int)(y / scale), 0xffffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, text, (int)(x / scale), (int)(y / scale), 0xffffffff);
         transform.pop();
     }
 

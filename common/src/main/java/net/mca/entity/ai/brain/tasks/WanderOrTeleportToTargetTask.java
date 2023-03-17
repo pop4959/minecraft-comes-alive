@@ -86,7 +86,7 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
     }
 
     private boolean isAreaSafe(ServerWorld world, Vec3d pos) {
-        return isAreaSafe(world, new BlockPos(pos));
+        return isAreaSafe(world, BlockPos.ofFloored(pos));
     }
 
     private boolean isAreaSafe(ServerWorld world, BlockPos pos) {

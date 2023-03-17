@@ -91,29 +91,29 @@ public class WhistleScreen extends Screen {
     public void render(MatrixStack transform, int sizeX, int sizeY, float offset) {
         renderBackground(transform);
 
-        drawCenteredText(transform, textRenderer, Text.translatable("gui.whistle.title"), width / 2, height / 2 - 100, 0xffffff);
+        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.whistle.title"), width / 2, height / 2 - 100, 0xffffff);
 
         if (loadingAnimationTicks != -1) {
             String loadingMsg = new String(new char[(loadingAnimationTicks / 5) % 4]).replace("\0", ".");
             drawTextWithShadow(transform, textRenderer, Text.translatable("gui.loading").append(Text.literal(loadingMsg)), width / 2 - 20, height / 2 - 10, 0xffffff);
         } else {
             if (keys.size() == 0) {
-                drawCenteredText(transform, textRenderer, Text.translatable("gui.whistle.noFamily"), width / 2, height / 2 + 50, 0xffffff);
+                drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.whistle.noFamily"), width / 2, height / 2 + 50, 0xffffff);
             } else {
-                drawCenteredText(transform, textRenderer, (selectedIndex + 1) + " / " + keys.size(), width / 2, height / 2 + 50, 0xffffff);
+                drawCenteredTextWithShadow(transform, textRenderer, (selectedIndex + 1) + " / " + keys.size(), width / 2, height / 2 + 50, 0xffffff);
             }
         }
 
-        drawDummy();
+        drawDummy(transform);
 
         super.render(transform, sizeX, sizeY, offset);
     }
 
-    private void drawDummy() {
+    private void drawDummy(MatrixStack transform) {
         final int posX = width / 2;
         int posY = height / 2 + 45;
         if (dummy != null) {
-            InventoryScreen.drawEntity(posX, posY, 60, 0, 0, dummy);
+            InventoryScreen.drawEntity(transform, posX, posY, 60, 0, 0, dummy);
         }
     }
 

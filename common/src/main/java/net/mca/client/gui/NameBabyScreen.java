@@ -59,7 +59,7 @@ public class NameBabyScreen extends Screen {
 
         setFocused(babyNameTextField);
 
-        drawCenteredText(transform, this.textRenderer, this.title, this.width / 2, 70, 16777215);
+        drawCenteredTextWithShadow(transform, this.textRenderer, this.title, this.width / 2, 70, 16777215);
 
         babyNameTextField.render(transform, width / 2 - 100, height / 2 - 20, scale);
 

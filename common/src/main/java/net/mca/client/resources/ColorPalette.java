@@ -1,8 +1,8 @@
 package net.mca.client.resources;
 
 import net.mca.MCA;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.HashMap;
@@ -36,9 +36,9 @@ public class ColorPalette {
         int color = data.colors[y * data.height + x];
 
         float[] result = new float[] {
-                NativeImage.getBlue(color) / 255F,
-                NativeImage.getGreen(color) / 255F,
-                NativeImage.getRed(color) / 255F
+                ColorHelper.Argb.getBlue(color) / 255F,
+                ColorHelper.Argb.getGreen(color) / 255F,
+                ColorHelper.Argb.getRed(color) / 255F
         };
 
         if (greenShift > 0) {

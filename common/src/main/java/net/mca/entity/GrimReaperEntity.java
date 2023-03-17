@@ -28,6 +28,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -159,9 +160,9 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
     @Override
     public boolean damage(DamageSource source, float damage) {
         // Ignore wall damage, fire and explosion damage
-        if (source == DamageSource.IN_WALL || source == DamageSource.ON_FIRE || source.isExplosive() || source == DamageSource.IN_FIRE) {
+        if (source == world.getDamageSources().inWall() || source == world.getDamageSources().onFire() || source.isIn(DamageTypeTags.IS_EXPLOSION) || source == world.getDamageSources().inFire()) {
             // Teleport out of any walls we may end up in
-            if (source == DamageSource.IN_WALL) {
+            if (source == world.getDamageSources().inWall()) {
                 requestTeleport(this.getX(), this.getY() + 3, this.getZ());
             }
             return false;

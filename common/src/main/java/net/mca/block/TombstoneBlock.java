@@ -225,7 +225,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {
-        return getDefaultState().with(Properties.HORIZONTAL_FACING, context.getPlayerFacing().getOpposite());
+        return getDefaultState().with(Properties.HORIZONTAL_FACING, context.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override

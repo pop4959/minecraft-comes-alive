@@ -7,7 +7,6 @@ import net.mca.util.InventoryUtils;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.item.ItemStack;
@@ -106,7 +105,7 @@ public class HuntingTask extends AbstractChoreTask {
             } else if (villager.squaredDistanceTo(target) <= 12.25F) {
                 villager.moveTowards(target.getBlockPos());
                 villager.swingHand(villager.getDominantHand());
-                target.damage(DamageSource.mob(villager), 6.0F);
+                target.damage(world.getDamageSources().mobAttack(villager), 6.0F);
                 villager.getMainHandStack().damage(1, villager, e -> e.sendEquipmentBreakStatus(e.getDominantSlot()));
             }
         }

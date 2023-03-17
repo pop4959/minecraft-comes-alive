@@ -53,7 +53,7 @@ public class LimitedVillagerEditorScreen extends VillagerEditorScreen {
         int y = height / 2 + 20;
         List<Text> wrap = FlowingText.wrap(Text.translatable("gui.villager_editor.customization_hint"), DATA_WIDTH);
         for (Text text : wrap) {
-            drawCenteredText(matrices, textRenderer, text, width / 2 + DATA_WIDTH / 2, y, 0xFFFFFFFF);
+            drawCenteredTextWithShadow(matrices, textRenderer, text, width / 2 + DATA_WIDTH / 2, y, 0xFFFFFFFF);
             y += 10;
         }
     }

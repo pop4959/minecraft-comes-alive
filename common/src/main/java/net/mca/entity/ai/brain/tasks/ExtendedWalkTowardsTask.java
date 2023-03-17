@@ -33,7 +33,7 @@ public class ExtendedWalkTowardsTask {
                                     Vec3d vec3d = null;
                                     int l = 0;
 
-                                    while (vec3d == null || (new BlockPos(vec3d)).getManhattanDistance(entity.getBlockPos()) > maxDistance) {
+                                    while (vec3d == null || (BlockPos.ofFloored(vec3d)).getManhattanDistance(entity.getBlockPos()) > maxDistance) {
                                         vec3d = NoPenaltyTargeting.findTo(entity, 15, 7, Vec3d.ofBottomCenter(globalPos.getPos()), 1.5707963705062866);
                                         ++l;
                                         if (l == 1000) {

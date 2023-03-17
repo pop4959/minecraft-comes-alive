@@ -49,6 +49,6 @@ public class PatrolVillageTask extends MultiTickTask<VillagerEntityMCA> {
             Vec3d targetPos = new Vec3d(x, box.getCenter().getY(), z);
 
             return NoPenaltyTargeting.findTo(villager, 32, 16, targetPos, Math.PI * 0.5);
-        }).map(BlockPos::new);
+        }).map(BlockPos::ofFloored);
     }
 }

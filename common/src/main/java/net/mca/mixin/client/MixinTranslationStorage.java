@@ -29,8 +29,8 @@ abstract class MixinTranslationStorage extends Language {
         return pool;
     }
 
-    @Inject(method = "get(Ljava/lang/String;)Ljava/lang/String;", at = @At("HEAD"), cancellable = true)
-    private void onGet(String key, CallbackInfoReturnable<String> info) {
+    @Inject(method = "get", at = @At("HEAD"), cancellable = true)
+    private void onGet(String key, String fallback, CallbackInfoReturnable<String> info) {
         key = DialogueType.applyFallback(key);
 
         Pair<String, String> unpooled = getPool().get(key);

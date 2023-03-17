@@ -144,7 +144,7 @@ public class FamilyTreeScreen extends Screen {
 
         Text label = selected == null ? title : Text.literal(selected.getName()).append("'s ").append(title);
 
-        drawCenteredText(matrices, textRenderer, label, width / 2, 10, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, label, width / 2, 10, 16777215);
 
         super.render(matrices, mouseX, mouseY, delta);
     }
@@ -311,7 +311,7 @@ public class FamilyTreeScreen extends Screen {
             for (int s = 0; s < label.size(); ++s) {
                 Text line = label.get(s);
                 if (line != null) {
-                    r.draw(line, k, l, -1, true, matrix4f, immediate, false, 0, 15728880);
+                    r.draw(line, k, l, -1, true, matrix4f, immediate, TextRenderer.TextLayerType.NORMAL, 0, 15728880);
                 }
 
                 if (s == 0) {

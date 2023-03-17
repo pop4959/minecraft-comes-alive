@@ -83,8 +83,8 @@ public class SpawnQueue {
             villager.setAiDisabled(true);
         }
 
-        for (String tag : entity.getScoreboardTags()) {
-            villager.addScoreboardTag(tag);
+        for (String tag : entity.getCommandTags()) {
+            villager.addCommandTag(tag);
         }
     }
 

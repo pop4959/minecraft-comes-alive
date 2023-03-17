@@ -101,7 +101,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         double feetY = this.getFeetY(new BlockPos(node.x, node.y, node.z));
         int maxYStep = 0;
         if (getPenalty(pathNodeTypeHead) >= 0.0f && pathNodeType != ExtendedPathNodeType.STICKY_HONEY) {
-            maxYStep = MathHelper.floor(Math.max(1.0f, this.entity.stepHeight));
+            maxYStep = MathHelper.floor(Math.max(1.0f, this.entity.getStepHeight()));
         }
 
         PathNode pathNode1 = this.getPathNode(node.x, node.y, node.z + 1, maxYStep, feetY, Direction.SOUTH, pathNodeType);
@@ -307,9 +307,9 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
     }
 
     @Override
-    public PathNodeType getNodeType(BlockView world, int x, int y, int z, MobEntity mob, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors) {
+    public PathNodeType getNodeType(BlockView world, int x, int y, int z, MobEntity mob) {
         // Placeholder, not used
-        return getExtendedNodeType(world, x, y, z, mob, sizeX, sizeY, sizeZ, canOpenDoors, canEnterOpenDoors).toVanilla();
+        return getExtendedNodeType(world, x, y, z, mob, entityBlockXSize, entityBlockYSize, entityBlockZSize, canOpenDoors, canEnterOpenDoors).toVanilla();
     }
 
     public ExtendedPathNodeType getExtendedNodeType(BlockView world, int x, int y, int z, MobEntity mob, int sizeX, int sizeY, int sizeZ, boolean canOpenDoors, boolean canEnterOpenDoors) {

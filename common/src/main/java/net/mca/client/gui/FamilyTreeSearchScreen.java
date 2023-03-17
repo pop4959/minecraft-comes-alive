@@ -40,7 +40,7 @@ public class FamilyTreeSearchScreen extends Screen {
         TextFieldWidget field = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - DATA_WIDTH / 2, height / 2 - 80, DATA_WIDTH, 18, Text.translatable("structure_block.structure_name")));
         field.setMaxLength(32);
         field.setChangedListener(this::searchVillager);
-        field.setTextFieldFocused(true);
+        field.setFocused(true);
         setFocused(field);
 
         addDrawableChild(new ButtonWidget(width / 2 - 44, height / 2 + 82, 88, 20, Text.translatable("gui.done"), sender -> {
@@ -73,7 +73,7 @@ public class FamilyTreeSearchScreen extends Screen {
 
         renderVillagers(matrices);
 
-        drawCenteredText(matrices, textRenderer, Text.translatable("gui.title.family_tree"), width / 2, height / 2 - 100, 16777215);
+        drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("gui.title.family_tree"), width / 2, height / 2 - 100, 16777215);
 
         super.render(matrices, mouseX, mouseY, delta);
     }
@@ -103,7 +103,7 @@ public class FamilyTreeSearchScreen extends Screen {
                     text = Text.translatable("gui.family_tree.child_of_2", left, right);
                 }
 
-                drawCenteredText(transform, textRenderer, text, width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
+                drawCenteredTextWithShadow(transform, textRenderer, text, width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
                 if (hover) {
                     selectedVillager = pair.getLeft();
                 }

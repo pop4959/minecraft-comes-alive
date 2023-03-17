@@ -689,9 +689,9 @@ public class VillagerEditorScreen extends Screen {
             int y = height / 2 + 70;
             if (villagerUUID.equals(playerUUID) && shouldUsePlayerModel()) {
                 assert MinecraftClient.getInstance().player != null;
-                InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
+                InventoryScreen.drawEntity(matrices, x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
             } else {
-                InventoryScreen.drawEntity(x, y, 60, x - mouseX, y - 50 - mouseY, villager);
+                InventoryScreen.drawEntity(matrices, x, y, 60, x - mouseX, y - 50 - mouseY, villager);
             }
 
             // hint for confused people
@@ -699,7 +699,7 @@ public class VillagerEditorScreen extends Screen {
                 matrices.push();
                 matrices.translate(x, y - 145, 0);
                 matrices.scale(0.5f, 0.5f, 0.5f);
-                drawCenteredText(matrices, textRenderer, Text.translatable("gui.villager_editor.model_hint"), 0, 0, 0xAAFFFFFF);
+                drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("gui.villager_editor.model_hint"), 0, 0, 0xAAFFFFFF);
                 matrices.pop();
             }
         }
@@ -733,7 +733,7 @@ public class VillagerEditorScreen extends Screen {
                             hoveredClothingId = index;
                         }
 
-                        InventoryScreen.drawEntity(cx, cy, (hoveredClothingId == index) ? 35 : 30,
+                        InventoryScreen.drawEntity(matrices, cx, cy, (hoveredClothingId == index) ? 35 : 30,
                                 -(mouseX - cx) / 2.0f, -(mouseY - cy - 64) / 2.0f, villagerVisualization);
                         i++;
                     } else {

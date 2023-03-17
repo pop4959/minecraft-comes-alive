@@ -68,6 +68,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
@@ -403,7 +404,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             target.setOnFireFor(i * 4);
         }
 
-        boolean damageDealt = target.damage(DamageSource.mob(this), damage);
+        boolean damageDealt = target.damage(world.getDamageSources().mobAttack(this), damage);
 
         //knockback and post damage stuff
         if (damageDealt) {
@@ -579,7 +580,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public final boolean damage(DamageSource source, float damageAmount) {
         // you can't hit babies!
-        if (!Config.getInstance().canHurtBabies && !source.isUnblockable() && getAgeState() == AgeState.BABY) {
+        // TODO: Verify the `isUnblockable` replacement for 1.19.4, ensure same behavior
+        if (!Config.getInstance().canHurtBabies && !source.isIn(DamageTypeTags.BYPASSES_SHIELD) && getAgeState() == AgeState.BABY) {
             if (source.getAttacker() instanceof PlayerEntity) {
                 sendEventMessage(Text.translatable("villager.baby_hit"));
             }
@@ -1449,7 +1451,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (isHolding(Items.CROSSBOW)) {
             this.shoot(this, 1.75F);
         } else if (isHolding(Items.BOW)) {
-            ItemStack itemStack = this.getArrowType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
+            ItemStack itemStack = this.getProjectileType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
             PersistentProjectileEntity persistentProjectileEntity = this.createArrowProjectile(itemStack, pullProgress);
             double x = target.getX() - this.getX();
             double y = target.getBodyY(0.3333333333333333D) - persistentProjectileEntity.getY();
@@ -1466,7 +1468,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public ItemStack getArrowType(ItemStack stack) {
+    public ItemStack getProjectileType(ItemStack stack) {
         if (stack.getItem() instanceof RangedWeaponItem) {
             Predicate<ItemStack> predicate = ((RangedWeaponItem)stack.getItem()).getHeldProjectiles();
             ItemStack itemStack = RangedWeaponItem.getHeldProjectile(this, predicate);

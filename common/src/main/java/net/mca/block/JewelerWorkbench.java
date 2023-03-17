@@ -80,7 +80,7 @@ public class JewelerWorkbench extends Block/* implements BlockEntityProvider*/ {
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {
-        return this.getDefaultState().with(FACING, context.getPlayerFacing().getOpposite());
+        return this.getDefaultState().with(FACING, context.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override

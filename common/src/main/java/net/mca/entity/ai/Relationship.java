@@ -163,7 +163,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
     @Override
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity with) {
-        if (!cause.isOutOfWorld()) {
+        if (cause != entity.world.getDamageSources().outOfWorld()) {
             int moodAffect = 5 * type.getProximityAmplifier();
             entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
             entity.getVillagerBrain().modifyMoodValue(-moodAffect);

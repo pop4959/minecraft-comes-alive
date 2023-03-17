@@ -6,7 +6,7 @@ import net.mca.cobalt.network.Message;
 import net.mca.util.WorldUtils;
 import net.mca.util.compat.FuzzyPositionsCompat;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.util.Identifier;
@@ -53,7 +53,7 @@ public class DestinyMessage implements Message {
 
                     ChunkPos chunkPos = new ChunkPos(pos);
                     player.getWorld().getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getId());
-                    player.networkHandler.requestTeleport(pos.getX(), pos.getY(), pos.getZ(), player.getYaw(), player.getPitch(), EnumSet.noneOf(PlayerPositionLookS2CPacket.Flag.class));
+                    player.networkHandler.requestTeleport(pos.getX(), pos.getY(), pos.getZ(), player.getYaw(), player.getPitch(), EnumSet.noneOf(PositionFlag.class));
 
                     //set spawn
                     player.setSpawnPoint(player.world.getRegistryKey(), pos, 0.0f, true, false);

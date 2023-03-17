@@ -590,13 +590,13 @@ public class VillagerTasksMCA {
     // Reference: VillagerTaskListProvider#createFreeFollowTask
     private static Pair<Integer, Task<LivingEntity>> getFullLookBehavior() {
         return Pair.of(5, new RandomTask<>(ImmutableList.of(
-                Pair.of(FollowMobTask.create(EntityType.CAT, 8.0F), 8),
-                Pair.of(FollowMobTask.create(EntityType.VILLAGER, 8.0F), 2),
-                Pair.of(FollowMobTask.create(EntityType.PLAYER, 8.0F), 2),
-                Pair.of(FollowMobTask.create(SpawnGroup.CREATURE, 8.0F), 1),
-                Pair.of(FollowMobTask.create(SpawnGroup.WATER_CREATURE, 8.0F), 1),
-                Pair.of(FollowMobTask.create(SpawnGroup.WATER_AMBIENT, 8.0F), 1),
-                Pair.of(FollowMobTask.create(SpawnGroup.MONSTER, 8.0F), 1),
+                Pair.of(LookAtMobTask.create(EntityType.CAT, 8.0F), 8),
+                Pair.of(LookAtMobTask.create(EntityType.VILLAGER, 8.0F), 2),
+                Pair.of(LookAtMobTask.create(EntityType.PLAYER, 8.0F), 2),
+                Pair.of(LookAtMobTask.create(SpawnGroup.CREATURE, 8.0F), 1),
+                Pair.of(LookAtMobTask.create(SpawnGroup.WATER_CREATURE, 8.0F), 1),
+                Pair.of(LookAtMobTask.create(SpawnGroup.WATER_AMBIENT, 8.0F), 1),
+                Pair.of(LookAtMobTask.create(SpawnGroup.MONSTER, 8.0F), 1),
                 Pair.of(new WaitTask(30, 60), 2)))
         );
     }
@@ -604,8 +604,8 @@ public class VillagerTasksMCA {
     // Reference: VillagerTaskListProvider#createBusyFollowTask
     private static Pair<Integer, Task<LivingEntity>> getMinimalLookBehavior() {
         return Pair.of(5, new RandomTask<>(ImmutableList.of(
-                Pair.of(FollowMobTask.create(EntityType.VILLAGER, 8.0F), 2),
-                Pair.of(FollowMobTask.create(EntityType.PLAYER, 8.0F), 2),
+                Pair.of(LookAtMobTask.create(EntityType.VILLAGER, 8.0F), 2),
+                Pair.of(LookAtMobTask.create(EntityType.PLAYER, 8.0F), 2),
                 Pair.of(new WaitTask(30, 60), 8)))
         );
     }

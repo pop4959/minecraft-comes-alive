@@ -295,7 +295,7 @@ public class InteractScreen extends AbstractDynamicScreen {
             int y = height / 2 - 35;
             for (String a : dialogAnswers) {
                 boolean hover = hoveringOver(width / 2 - 100, y - 3, 200, 10);
-                drawCenteredText(transform, textRenderer, Text.translatable(Question.getTranslationKey(dialogQuestionId, a)), width / 2, y, hover ? 0xFFD7D784 : 0xAAFFFFFF);
+                drawCenteredTextWithShadow(transform, textRenderer, Text.translatable(Question.getTranslationKey(dialogQuestionId, a)), width / 2, y, hover ? 0xFFD7D784 : 0xAAFFFFFF);
                 if (hover) {
                     dialogAnswerHover = a;
                 }

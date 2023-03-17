@@ -155,7 +155,7 @@ public class ChoppingTask extends AbstractChoreTask {
     }
 
     private boolean isValidTree(ServerWorld world, Vec3d pos) {
-        return isValidTree(world, new BlockPos(pos));
+        return isValidTree(world, BlockPos.ofFloored(pos));
     }
 
     private boolean isValidTree(ServerWorld world, BlockPos pos) {
