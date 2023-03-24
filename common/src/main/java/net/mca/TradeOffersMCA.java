@@ -43,8 +43,10 @@ public class TradeOffersMCA {
                                 new BuyForOneEmeraldFactory(ItemsMCA.BABY_GIRL.get(), 1, 1, 1),
                                 new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
                                 new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
-                                new SellItemFactory(ItemsMCA.BOOK_CULT_0.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_1.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_1.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_2.get(), 1, 1, 1, 1),
+                                new SellItemFactory(ItemsMCA.BOOK_CULT_2.get(), 1, 1, 1, 1),
                                 new SellItemFactory(ItemsMCA.BOOK_DEATH.get(), 1, 1, 1, 1),
                                 new SellItemFactory(ItemsMCA.BOOK_INFECTION.get(), 1, 1, 1, 1),
                                 new SellItemFactory(ItemsMCA.BOOK_SUPPORTERS.get(), 1, 1, 1, 1)

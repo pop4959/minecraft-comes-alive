@@ -2,6 +2,7 @@
 
 * Fixed a crash
 * Enabled toddler clothes
+* Extended Sirben lore
 
 # 7.4.7
 
