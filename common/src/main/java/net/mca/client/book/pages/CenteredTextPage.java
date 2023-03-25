@@ -10,6 +10,10 @@ public class CenteredTextPage extends TextPage {
         super(name, page);
     }
 
+    public CenteredTextPage(String content) {
+        super(content);
+    }
+
     @Override
     public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         //prepare page
