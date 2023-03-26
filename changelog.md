@@ -3,6 +3,7 @@
 * Fixed a crash
 * Enabled toddler clothes
 * Extended Sirben lore
+* 1.19.3+ chiseled bookshelves now support MCA books
 
 # 7.4.7
 
