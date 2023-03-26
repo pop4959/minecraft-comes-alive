@@ -114,6 +114,7 @@ public class SpawnQueue {
         if (Config.getInstance().overwriteOriginalZombieVillagers
                 && (entity.getClass().equals(ZombieVillagerEntity.class) ||
                 Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
+                && Config.getInstance().fractionOfVanillaZombies < ((ZombieVillagerEntity)entity).getRandom().nextFloat()
                 && !zombieVillagerSpawnQueue.contains(entity)) {
             return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
         }

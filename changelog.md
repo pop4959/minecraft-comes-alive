@@ -7,6 +7,7 @@
 * Golden apples can now cure children
     * Using an apple on non-infected villagers will work as a gift now
 * Fixed compatibility with Custom Trading Screen
+* Added `fractionOfVanillaZombies` Config flag
 
 # 7.4.7
 

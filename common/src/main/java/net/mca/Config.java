@@ -109,6 +109,7 @@ public final class Config implements Serializable {
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
     public float fractionOfVanillaVillages = 0;
+    public float fractionOfVanillaZombies = 0;
     public int minimumBuildingsToBeConsideredAVillage = 3;
     public List<String> villagerDimensionBlacklist = List.of();
     public List<String> allowedSpawnReasons = List.of(
