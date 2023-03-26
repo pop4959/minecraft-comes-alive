@@ -241,8 +241,8 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         }
 
         if (item == Items.GOLDEN_APPLE && entity.isBaby()) {
-            // increase age by 5 minutes
-            entity.growUp(1200 * 5);
+            // increase age by 20 minutes
+            entity.growUp(1200 * 20);
             stack.decrement(1);
             return true;
         }
