@@ -18,10 +18,11 @@
     "MixinSensorType",
     "MixinServerPlayNetworkHandler",
     "MixinServerWorld",
+    "MixinTranslatableText",
     "MixinVillagerEntity",
+    "MixinVillagerEntityInvoker",
     "MixinVillagerProfession",
-    "MixinZombieVillagerEntity",
-    "MixinTranslatableText"
+    "MixinZombieVillagerEntity"
   ],
   "client": [
     "client.MixinArmorFeatureRenderer",
