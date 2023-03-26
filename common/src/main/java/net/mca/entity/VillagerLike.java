@@ -82,18 +82,20 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                 getTraits().randomize();
             }
 
-            if (getGenetics().getGender() == Gender.UNASSIGNED) {
-                getGenetics().setGender(Gender.getRandom());
-            }
-
-            if (Strings.isNullOrEmpty(getTrackedValue(VILLAGER_NAME))) {
-                setName(Names.pickCitizenName(getGenetics().getGender(), asEntity()));
-            }
-
             initializeSkin(false);
 
             getVillagerBrain().randomize();
         }
+
+        if (getGenetics().getGender() == Gender.UNASSIGNED) {
+            getGenetics().setGender(Gender.getRandom());
+        }
+
+        if (Strings.isNullOrEmpty(getTrackedValue(VILLAGER_NAME))) {
+            setName(Names.pickCitizenName(getGenetics().getGender(), asEntity()));
+        }
+
+        validateClothes();
 
         asEntity().calculateDimensions();
     }

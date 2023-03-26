@@ -33,6 +33,7 @@ public final class Config implements Serializable {
     public boolean overwriteOriginalVillagers = true;
     public List<String> moddedVillagerWhitelist = List.of();
     public boolean overwriteOriginalZombieVillagers = true;
+    public boolean overwriteAllZombiesWithZombieVillagers = true;
     public List<String> moddedZombieVillagerWhitelist = List.of();
     public float babyZombieChance = 0.25f;
     public boolean villagerTagsHacks = true;
