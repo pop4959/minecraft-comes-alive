@@ -369,12 +369,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public int getReputation(PlayerEntity player) {
-        // TODO: Reputation
-        return super.getReputation(player);
-    }
-
-    @Override
     public boolean tryAttack(Entity target) {
         //player just get a beating
         attackedEntity(target);

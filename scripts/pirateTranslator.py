@@ -2,6 +2,7 @@ import json
 import os
 import urllib.parse
 import urllib.request
+from tqdm.contrib.concurrent import thread_map
 
 from tqdm import tqdm
 
@@ -28,8 +29,9 @@ def translate_all(path):
     phrases = load_json("../common/src/main/resources/assets/" + path + "/lang/en_us.json")
     new_phrases = {}
 
-    for i in tqdm(phrases):
-        new_phrases[i] = translate(phrases[i])
+    translated = thread_map(translate, phrases.values())
+    for i, key in enumerate(phrases):
+        new_phrases[key] = translated[i]
 
     os.makedirs("translated", exist_ok=True)
     save_json("translated/" + path + ".json", new_phrases)

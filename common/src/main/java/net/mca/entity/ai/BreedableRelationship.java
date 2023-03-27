@@ -84,36 +84,17 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         ItemStack stack = player.getMainHandStack();
 
         if (!stack.isEmpty() && !handleSpecialCaseGift(player, stack)) {
-            if (stack.getItem() == Items.GOLDEN_APPLE) {
-                entity.setInfected(false);
-                entity.eatFood(entity.world, stack);
-                stack.decrement(1);
-            } else if (stack.getItem() instanceof DyeItem dye) {
-                entity.setHairDye(dye.getColor());
-                stack.decrement(1);
-            } else if (stack.getItem() == Items.WET_SPONGE) {
-                entity.clearHairDye();
-                stack.decrement(1);
-            } else if (stack.getItem() == Items.NAME_TAG) {
-                if (stack.hasCustomName()) {
-                    entity.setCustomSkin(stack.getName().getString());
-                } else {
-                    entity.setCustomSkin("");
-                }
-                stack.decrement(1);
-            } else {
-                Optional<GiftType> gift = GiftType.bestMatching(entity, stack, player);
+            Optional<GiftType> gift = GiftType.bestMatching(entity, stack, player);
 
-                // gift is unknown
+            // gift is unknown
+            if (gift.isPresent()) {
+                acceptGift(stack, gift.get(), player, memory);
+            } else {
+                gift = handleDynamicGift(stack);
                 if (gift.isPresent()) {
                     acceptGift(stack, gift.get(), player, memory);
                 } else {
-                    gift = handleDynamicGift(stack);
-                    if (gift.isPresent()) {
-                        acceptGift(stack, gift.get(), player, memory);
-                    } else {
-                        rejectGift(player, "gift.fail");
-                    }
+                    rejectGift(player, "gift.fail");
                 }
             }
         }
@@ -230,9 +211,38 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
             return true;
         }
 
+        if (item == Items.GOLDEN_APPLE && entity.isInfected()) {
+            entity.setInfected(false);
+            entity.eatFood(entity.world, stack);
+            stack.decrement(1);
+            return true;
+        }
+
+        if (item instanceof DyeItem dye) {
+            entity.setHairDye(dye.getColor());
+            stack.decrement(1);
+            return true;
+        }
+
+        if (item == Items.WET_SPONGE) {
+            entity.clearHairDye();
+            stack.decrement(1);
+            return true;
+        }
+
+        if (item == Items.NAME_TAG) {
+            if (stack.hasCustomName()) {
+                entity.setCustomSkin(stack.getName().getString());
+            } else {
+                entity.setCustomSkin("");
+            }
+            stack.decrement(1);
+            return true;
+        }
+
         if (item == Items.GOLDEN_APPLE && entity.isBaby()) {
-            // increase age by 5 minutes
-            entity.growUp(1200 * 5);
+            // increase age by 20 minutes
+            entity.growUp(1200 * 20);
             stack.decrement(1);
             return true;
         }
