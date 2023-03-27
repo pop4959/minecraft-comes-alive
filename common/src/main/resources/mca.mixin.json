@@ -9,6 +9,7 @@
     "MixinCriteria",
     "MixinDefaultParticleType",
     "MixinEntityType",
+    "MixinGoatEntity",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinMilkBucketItem",

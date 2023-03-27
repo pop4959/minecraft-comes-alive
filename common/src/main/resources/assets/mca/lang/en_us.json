@@ -22,6 +22,8 @@
   "entity.mca.male_zombie_villager": "Male Zombie Villager",
   "entity.mca.female_zombie_villager": "Female Zombie Villager",
 
+  "entity.mca.ancient_cultist": "Ancient Cultist",
+
   "item.mca.scythe": "Scythe",
   "item.mca.scythe.tooltip": "Kill a villager and catch his soul, then right-click a tombstone to revive. But be careful, the fallen villager will rise as an undead.",
 
@@ -715,6 +717,9 @@
 
   "advancement.mca.friendly_fire": "Friendly Fire!",
   "advancement.mca.friendly_fire.description": "Off to the brig with that one!",
+
+  "advancement.mca.ancient_cultists": "Ancient Cultists",
+  "advancement.mca.ancient_cultists.description": "Explore the lore of the Sirbens and disturb the slumber of the ancient cultists.",
 
   "notify.spouseendedmarriage": "%1$s has ended their marriage with you.",
   "notify.child.grownup": "%1$s has grown into an adult!",
