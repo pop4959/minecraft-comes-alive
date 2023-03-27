@@ -10,6 +10,7 @@
 * Added `fractionOfVanillaZombies` Config flag
 * Added `overwriteAllZombiesWithZombieVillagers` Config flag
 * Fixed a few purple uninitialized skin bois
+* Fixed "monster" advancement
 
 # 7.4.7
 

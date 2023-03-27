@@ -16,9 +16,11 @@
   },
   "parent": "mca:root",
   "criteria": {
-    "iron": {
-      "trigger": "minecraft:impossible",
-      "conditions": {}
+    "baby_drop_attempts": {
+      "trigger": "mca:baby_dropped",
+      "conditions": {
+        "count": 1
+      }
     }
   }
 }
