@@ -232,7 +232,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
         if (item == Items.NAME_TAG) {
             if (stack.hasCustomName()) {
-                entity.setCustomSkin(stack.getName().asString());
+                entity.setCustomSkin(stack.getName().getString());
             } else {
                 entity.setCustomSkin("");
             }

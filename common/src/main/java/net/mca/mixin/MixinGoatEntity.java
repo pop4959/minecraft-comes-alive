@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
@@ -47,7 +47,7 @@ public abstract class MixinGoatEntity extends AnimalEntity {
                     ancientCultist.equipStack(EquipmentSlot.OFFHAND, new ItemStack(ItemsMCA.BOOK_CULT_ANCIENT.get()));
                     ancientCultist.setEquipmentDropChance(EquipmentSlot.OFFHAND, 1.0f);
 
-                    ancientCultist.setCustomName(new TranslatableText("entity.mca.ancient_cultist"));
+                    ancientCultist.setCustomName(Text.translatable("entity.mca.ancient_cultist"));
 
                     //advancement
                     ((ServerWorld)this.world).getPlayers().stream().filter(p -> p.distanceTo(this) < 30).forEach(p -> {
