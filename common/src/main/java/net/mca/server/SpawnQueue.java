@@ -15,9 +15,9 @@ import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 
@@ -86,7 +86,7 @@ public class SpawnQueue {
                         .withGender(Gender.getRandom())
                         .withPosition(e)
                         .withType(VillagerType.forBiome(e.world.getBiome(e.getBlockPos())))
-                        .withProfession(Registry.VILLAGER_PROFESSION.getRandom(e.getRandom()).map(RegistryEntry::value).orElse(VillagerProfession.NONE))
+                        .withProfession(Registries.VILLAGER_PROFESSION.getRandom(e.getRandom()).map(RegistryEntry::value).orElse(VillagerProfession.NONE))
                         .spawn(SpawnReason.NATURAL);
 
                 copyPastaIntensifies(villager, e);
