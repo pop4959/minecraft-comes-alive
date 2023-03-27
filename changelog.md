@@ -2,6 +2,15 @@
 
 * Fixed a crash
 * Enabled toddler clothes
+* Extended Sirben lore
+* 1.19.3+ chiseled bookshelves now support MCA books
+* Golden apples can now cure children
+    * Using an apple on non-infected villagers will work as a gift now
+* Fixed compatibility with Custom Trading Screen
+* Added `fractionOfVanillaZombies` Config flag
+* Added `overwriteAllZombiesWithZombieVillagers` Config flag
+* Fixed a few purple uninitialized skin bois
+* Fixed "monster" advancement
 
 # 7.4.7
 

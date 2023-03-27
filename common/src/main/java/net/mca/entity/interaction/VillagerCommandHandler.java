@@ -12,14 +12,12 @@ import net.mca.entity.ai.relationship.RelationshipState;
 import net.mca.entity.ai.relationship.family.FamilyTree;
 import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.item.ItemsMCA;
+import net.mca.mixin.MixinVillagerEntityInvoker;
 import net.mca.server.world.data.PlayerSaveData;
 import net.mca.util.WorldUtils;
 import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.ai.FuzzyPositions;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -30,9 +28,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.village.TradeOffer;
 import net.minecraft.village.VillagerProfession;
 
 import java.util.Comparator;
@@ -117,7 +113,8 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "trade" -> {
                 entity.getInteractions().stopInteracting();
-                prepareOffersFor(player);
+                MixinVillagerEntityInvoker invoker = (MixinVillagerEntityInvoker) this.entity;
+                invoker.invokeBeginTradeWith(player);
                 return false;
             }
             case "inventory" -> {
@@ -276,30 +273,5 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 }
             }
         }
-    }
-
-    public void prepareOffersFor(PlayerEntity player) {
-        int i = entity.getReputation(player);
-        if (i != 0) {
-            for (TradeOffer tradeOffer : entity.getOffers()) {
-                tradeOffer.increaseSpecialPrice(-MathHelper.floor(i * tradeOffer.getPriceMultiplier()));
-            }
-        }
-
-        if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            StatusEffectInstance effectInstance = player.getStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE);
-            if (effectInstance != null) {
-                int k = effectInstance.getAmplifier();
-
-                for (TradeOffer merchantOffer : entity.getOffers()) {
-                    double d0 = 0.3D + 0.0625D * k;
-                    int j = (int)Math.floor(d0 * merchantOffer.getOriginalFirstBuyItem().getCount());
-                    merchantOffer.increaseSpecialPrice(-Math.max(j, 1));
-                }
-            }
-        }
-
-        entity.setCustomer(player);
-        entity.sendOffers(player, entity.getDisplayName(), entity.getVillagerData().getLevel());
     }
 }

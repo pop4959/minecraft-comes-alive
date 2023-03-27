@@ -18,6 +18,7 @@ import net.mca.resources.Supporters;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.text.Text;
+import net.minecraft.text.Style;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -120,6 +121,33 @@ public interface ItemsMCA {
             .addPage(new CenteredTextPage("cult_0", 2))
             .addPage(new CenteredTextPage("cult_0", 3))
             .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), ""))));
+
+    RegistrySupplier<Item> BOOK_CULT_1 = register("book_cult_1", () -> new ExtendedWrittenBookItem(baseProps(), new Book("cult_1")
+            .setBackground(MCA.locate("textures/gui/books/cult.png"))
+            .setTextFormatting(Formatting.DARK_RED)
+            .addPage(new TitlePage("cult_1", Formatting.DARK_RED))
+            .addPage(new CenteredTextPage("cult_1", 0))
+            .addPage(new CenteredTextPage("cult_1", 1))
+            .addPage(new CenteredTextPage("cult_1", 2))
+            .addPage(new CenteredTextPage("cult_1", 3))
+            .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), ""))));
+
+    RegistrySupplier<Item> BOOK_CULT_2 = register("book_cult_2", () -> new ExtendedWrittenBookItem(baseProps(), new Book("cult_2")
+            .setBackground(MCA.locate("textures/gui/books/cult.png"))
+            .setTextFormatting(Formatting.DARK_RED)
+            .addPage(new TitlePage("cult_2", Formatting.DARK_RED))
+            .addPage(new CenteredTextPage("cult_2", 0))
+            .addPage(new CenteredTextPage("cult_2", 1))
+            .addPage(new CenteredTextPage("cult_2", 2))
+            .addPage(new CenteredTextPage("cult_2", 3))
+            .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/goat.png"), ""))));
+
+    RegistrySupplier<Item> BOOK_CULT_ANCIENT = register("book_cult_ancient", () -> new ExtendedWrittenBookItem(baseProps(), new Book("cult_ancient")
+            .setBackground(MCA.locate("textures/gui/books/cult.png"))
+            .setTextFormatting(Formatting.DARK_RED)
+            .addPage(new TitlePage("cult_ancient", Formatting.DARK_RED))
+            .addPage(new CenteredTextPage("We are the universe. We are everything you think isn't you. You are looking at us now, through your skin and your eyes. And why does the universe touch your skin, and throw light on you? To see you, player. To know you. And to be known. I shall tell you a story.")
+                    .setStyle(Style.EMPTY.withFont(new Identifier("minecraft", "alt"))))));
 
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));

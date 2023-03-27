@@ -9,6 +9,7 @@
     "MixinCriteria",
     "MixinDefaultParticleType",
     "MixinEntityType",
+    "MixinGoatEntity",
     "MixinHorseBaseEntity",
     "MixinMemoryModuleType",
     "MixinMilkBucketItem",
@@ -18,10 +19,11 @@
     "MixinSensorType",
     "MixinServerPlayNetworkHandler",
     "MixinServerWorld",
+    "MixinTranslatableText",
     "MixinVillagerEntity",
+    "MixinVillagerEntityInvoker",
     "MixinVillagerProfession",
-    "MixinZombieVillagerEntity",
-    "MixinTranslatableText"
+    "MixinZombieVillagerEntity"
   ],
   "client": [
     "client.MixinArmorFeatureRenderer",

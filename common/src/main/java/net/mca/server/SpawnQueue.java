@@ -12,10 +12,14 @@ import net.mca.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.village.VillagerProfession;
+import net.minecraft.village.VillagerType;
 
 import java.util.LinkedList;
 import java.util.Locale;
@@ -29,6 +33,7 @@ public class SpawnQueue {
 
     private final LinkedList<VillagerEntity> villagerSpawnQueue = new LinkedList<>();
     private final LinkedList<ZombieVillagerEntity> zombieVillagerSpawnQueue = new LinkedList<>();
+    private final LinkedList<ZombieEntity> zombieSpawnList = new LinkedList<>();
 
     public void tick() {
         // lazy spawning of our villagers as they can't be spawned while loading
@@ -68,6 +73,25 @@ public class SpawnQueue {
                 copyPastaIntensifies(villager, e);
             } else {
                 zombieVillagerSpawnQueue.add(e);
+            }
+        }
+
+        if (!zombieSpawnList.isEmpty()) {
+            ZombieEntity e = zombieSpawnList.poll();
+
+            if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
+                e.discard();
+                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
+                        .withName(e.hasCustomName() ? e.getName().getString() : null)
+                        .withGender(Gender.getRandom())
+                        .withPosition(e)
+                        .withType(VillagerType.forBiome(e.world.getBiome(e.getBlockPos())))
+                        .withProfession(Registry.VILLAGER_PROFESSION.getRandom(e.getRandom()).map(RegistryEntry::value).orElse(VillagerProfession.NONE))
+                        .spawn(SpawnReason.NATURAL);
+
+                copyPastaIntensifies(villager, e);
+            } else {
+                zombieSpawnList.add(e);
             }
         }
     }
@@ -114,8 +138,14 @@ public class SpawnQueue {
         if (Config.getInstance().overwriteOriginalZombieVillagers
                 && (entity.getClass().equals(ZombieVillagerEntity.class) ||
                 Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
+                && Config.getInstance().fractionOfVanillaZombies < ((ZombieVillagerEntity)entity).getRandom().nextFloat()
                 && !zombieVillagerSpawnQueue.contains(entity)) {
             return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
+        }
+        if (Config.getInstance().overwriteAllZombiesWithZombieVillagers
+                && entity.getClass().equals(ZombieEntity.class)
+                && !zombieSpawnList.contains(entity)) {
+            return zombieSpawnList.add((ZombieEntity)entity);
         }
         return false;
     }
