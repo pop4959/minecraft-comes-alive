@@ -14,7 +14,7 @@
     "announce_to_chat": true,
     "hidden": true
   },
-  "parent": "mca:root",
+  "parent": "mca:baby_smelted",
   "criteria": {
     "baby": {
       "trigger": "mca:rank",

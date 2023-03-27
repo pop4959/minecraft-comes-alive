@@ -2,15 +2,14 @@ package net.mca.client.book.pages;
 
 import net.mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class TextPage extends Page {
     protected final String content;
+    private Style style = Style.EMPTY;
     private List<OrderedText> cachedPage;
 
     public TextPage(String name, int page) {
@@ -23,12 +22,15 @@ public class TextPage extends Page {
 
     protected List<OrderedText> getCachedPage(ExtendedBookScreen screen) {
         if (cachedPage == null) {
-            StringVisitable stringVisitable = StringVisitable.plain(content);
+            StringVisitable stringVisitable = StringVisitable.styled(content, style);
             try {
-                stringVisitable = Text.Serializer.fromJson(content);
+                MutableText text = Text.Serializer.fromJson(content);
+                if (text != null) {
+                    text.fillStyle(style);
+                }
+                stringVisitable = text;
             } catch (Exception ignored) {
             }
-
             if (stringVisitable == null) {
                 cachedPage = new LinkedList<>();
             } else {
@@ -50,5 +52,10 @@ public class TextPage extends Page {
                 screen.getTextRenderer().draw(matrices, orderedText, x, (32.0f + m * 9.0f), 0);
             }
         }
+    }
+
+    public TextPage setStyle(Style style) {
+        this.style = style;
+        return this;
     }
 }
