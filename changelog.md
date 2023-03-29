@@ -1,3 +1,7 @@
+# 7.4.9
+
+* Added compat with Chunks fade in
+
 # 7.4.8
 
 * Fixed a crash
