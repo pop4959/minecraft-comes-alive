@@ -772,6 +772,10 @@ public class VillagerEditorScreen extends Screen {
             villager.readCustomDataFromNbt(villagerData);
             villagerBreedingAge = villagerData.getInt("Age");
             villager.setBreedingAge(villagerBreedingAge);
+            if (client != null && client.player != null) {
+                villager.setPos(client.player.getX(), client.player.getY(), client.player.getZ());
+                villagerVisualization.setPos(client.player.getX(), client.player.getY(), client.player.getZ());
+            }
             villager.calculateDimensions();
         }
         if (page.equals("loading")) {
