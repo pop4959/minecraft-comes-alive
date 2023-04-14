@@ -27,24 +27,6 @@ subprojects {
     assemble.finalizedBy(mergeJars)
 }
 
-forgix {
-    group = rootProject.group
-    mergedJarName = "${rootProject.name}-${rootProject.version}-universal.jar"
-    outputDir = "build/libs"
-
-    forge {
-        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-forge.jar"
-        mixin "mca.mixin.json"
-    }
-
-    fabric {
-        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-fabric.jar"
-    }
-
-    quilt {
-        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-quilt.jar"
-    }
-}
 
 def getAppVersion = { ->
     def stdout = new ByteArrayOutputStream()
@@ -87,5 +69,24 @@ allprojects {
 
     java {
         withSourcesJar()
+    }
+}
+
+forgix {
+    group = rootProject.group
+    mergedJarName = "${rootProject.name}-${rootProject.version}-universal.jar"
+    outputDir = "build/libs"
+
+    forge {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-forge.jar"
+        mixin "mca.mixin.json"
+    }
+
+    fabric {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-fabric.jar"
+    }
+
+    quilt {
+        jarLocation = "build/libs/${rootProject.name}-${rootProject.version}-quilt.jar"
     }
 }
