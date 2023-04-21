@@ -8,7 +8,6 @@ import net.mca.client.gui.immersiveLibrary.SkinCache;
 import net.mca.client.gui.immersiveLibrary.responses.*;
 import net.mca.client.gui.immersiveLibrary.types.Content;
 import net.mca.client.gui.widget.*;
-import net.mca.client.resources.ByteImage;
 import net.mca.client.resources.ClientUtils;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -19,6 +18,7 @@ import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
@@ -62,7 +62,8 @@ public class SkinLibraryScreen extends Screen {
 
     private ButtonWidget pageWidget;
 
-    private ByteImage currentImage;
+    private NativeImage currentImage;
+    private NativeImageBackedTexture backendTexture;
     private WorkspaceSettings settings;
     private boolean shouldUpload = true;
 
@@ -198,7 +199,9 @@ public class SkinLibraryScreen extends Screen {
             }
             case EDITOR -> {
                 if (shouldUpload) {
-                    MinecraftClient.getInstance().getTextureManager().registerTexture(CANVAS_IDENTIFIER, new NativeImageBackedTexture(ClientUtils.byteImageToNativeImage(currentImage)));
+                    backendTexture.upload();
+                    MinecraftClient.getInstance().getTextureManager().registerTexture(CANVAS_IDENTIFIER, backendTexture);
+                    shouldUpload = false;
                 }
 
                 //painting area
@@ -350,11 +353,11 @@ public class SkinLibraryScreen extends Screen {
 
     protected void mouseMoved(double x, double y, double deltaX, double deltaY) {
         if (isPanning) {
-            float ox = (float)(deltaX * (x1 - x0) / 64 / CANVAS_SCALE);
+            float ox = (float)(deltaX / 64 / CANVAS_SCALE);
             x0 -= ox;
             x1 -= ox;
 
-            float oy = (float)(deltaY * (y1 - y0) / 64 / CANVAS_SCALE);
+            float oy = (float)(deltaY / 64 / CANVAS_SCALE);
             y0 -= oy;
             y1 -= oy;
         }
@@ -387,14 +390,12 @@ public class SkinLibraryScreen extends Screen {
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (!isPanning) {
-            if (activeMouseButton >= 0) {
-                int x = (int)getPixelX();
-                int y = (int)getPixelY();
-                ClientUtils.bethlehemLine(lastPixelMouseX, lastPixelMouseY, x, y, this::paint);
-                lastPixelMouseX = x;
-                lastPixelMouseY = y;
-            }
+        if (!isPanning && activeMouseButton >= 0 && page == Page.EDITOR) {
+            int x = (int)getPixelX();
+            int y = (int)getPixelY();
+            ClientUtils.bethlehemLine(lastPixelMouseX, lastPixelMouseY, x, y, this::paint);
+            lastPixelMouseX = x;
+            lastPixelMouseY = y;
         }
 
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -459,12 +460,12 @@ public class SkinLibraryScreen extends Screen {
     }
 
     private void paint(int x, int y) {
-        if (validPixel(x, y)) {
+        if (page == Page.EDITOR && validPixel(x, y)) {
             if (activeMouseButton == 0) {
-                currentImage.setPixel(x, y, color.getRed(), color.getGreen(), color.getBlue(), 255);
+                currentImage.setColor(x, y, color.getColor());
                 shouldUpload = true;
             } else if (activeMouseButton == 1) {
-                currentImage.setPixel(x, y, 0, 0, 0, 0);
+                currentImage.setColor(x, y, 0);
                 shouldUpload = true;
             }
         }
@@ -615,7 +616,6 @@ public class SkinLibraryScreen extends Screen {
                 TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 60, height / 2 - 105, 120, 20,
                         Text.translatable("gui.skin_library.name")));
                 textFieldWidget.setMaxLength(1024);
-                textFieldWidget.setSuggestion("Name");
                 textFieldWidget.setText(settings.title);
                 textFieldWidget.setChangedListener(v -> {
                     settings.title = v;
@@ -824,8 +824,10 @@ public class SkinLibraryScreen extends Screen {
     }
 
     private void setSelectionPage(int p) {
-        selectionPage = Math.max(0, Math.min(getMaxPages() - 1, p));
-        pageWidget.setMessage(Text.literal((selectionPage + 1) + " / " + getMaxPages()));
+        if (pageWidget != null) {
+            selectionPage = Math.max(0, Math.min(getMaxPages() - 1, p));
+            pageWidget.setMessage(Text.literal((selectionPage + 1) + " / " + getMaxPages()));
+        }
     }
 
     private int getMaxPages() {
@@ -852,7 +854,8 @@ public class SkinLibraryScreen extends Screen {
 
         if (stream != null) {
             try {
-                currentImage = ByteImage.read(stream);
+                currentImage = NativeImage.read(stream);
+                backendTexture = new NativeImageBackedTexture(currentImage);
                 stream.close();
 
                 shouldUpload = true;
@@ -869,13 +872,18 @@ public class SkinLibraryScreen extends Screen {
             uploading = true;
             CompletableFuture.runAsync(() -> {
                 if (Auth.getToken() != null) {
-                    Response request = request(settings.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, ContentIdResponse.class, settings.contentid == -1 ? "content/mca" : "content/mca/%s".formatted(settings.contentid), Map.of(
-                            "token", Auth.getToken()
-                    ), Map.of(
-                            "title", settings.title,
-                            "meta", "{}",
-                            "data", new String(Base64.getEncoder().encode(currentImage.encode()))
-                    ));
+                    Response request = null;
+                    try {
+                        request = request(settings.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, ContentIdResponse.class, settings.contentid == -1 ? "content/mca" : "content/mca/%s".formatted(settings.contentid), Map.of(
+                                "token", Auth.getToken()
+                        ), Map.of(
+                                "title", settings.title,
+                                "meta", "{}",
+                                "data", new String(Base64.getEncoder().encode(currentImage.getBytes()))
+                        ));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     if (request instanceof ContentIdResponse response) {
                         reloadDatabase(() -> {
@@ -950,7 +958,7 @@ public class SkinLibraryScreen extends Screen {
 
         public int temperature;
         public double chance = 1.0;
-        public String title = "";
+        public String title = "Unnamed Asset";
         public String profession;
         public SkinType skinType;
 
@@ -1063,6 +1071,10 @@ public class SkinLibraryScreen extends Screen {
 
         public int getBlue() {
             return (int)(blue * 255);
+        }
+
+        public int getColor() {
+            return 0xFF000000 | getBlue() << 16 | getGreen() << 8 | getRed();
         }
     }
 }

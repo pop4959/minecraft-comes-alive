@@ -5,8 +5,6 @@ import com.google.gson.JsonSyntaxException;
 import net.mca.client.gui.immersiveLibrary.responses.ContentResponse;
 import net.mca.client.gui.immersiveLibrary.responses.Response;
 import net.mca.client.gui.immersiveLibrary.types.Content;
-import net.mca.client.resources.ByteImage;
-import net.mca.client.resources.ClientUtils;
 import net.mca.client.resources.SkinMeta;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
@@ -116,10 +114,9 @@ public class SkinCache {
         // Load texture
         try (FileInputStream stream = new FileInputStream(getFile(content.contentid() + ".png").getPath())) {
             // Load new
-            ByteImage image = ByteImage.read(stream);
-            NativeImage nativeImage = ClientUtils.byteImageToNativeImage(image);
+            NativeImage image = NativeImage.read(stream);
             Identifier identifier = new Identifier("immersive_library_mca", String.valueOf(content.contentid()));
-            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, new NativeImageBackedTexture(nativeImage));
+            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, new NativeImageBackedTexture(image));
             textureIdentifierCache.put(content.contentid(), identifier);
         } catch (IOException e) {
             e.printStackTrace();

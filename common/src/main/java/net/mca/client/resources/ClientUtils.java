@@ -1,20 +1,8 @@
 package net.mca.client.resources;
 
-import net.minecraft.client.texture.NativeImage;
-
 import java.util.function.BiConsumer;
 
 public class ClientUtils {
-    public static NativeImage byteImageToNativeImage(ByteImage image) {
-        NativeImage nativeImage = new NativeImage(image.getWidth(), image.getHeight(), false);
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                nativeImage.setColor(x, y, image.getABGR(x, y));
-            }
-        }
-        return nativeImage;
-    }
-
     public static void bethlehemLine(int x0, int y0, int x1, int y1, BiConsumer<Integer, Integer> callback) {
         int dx = Math.abs(x1 - x0);
         int dy = Math.abs(y1 - y0);
