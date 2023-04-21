@@ -53,12 +53,9 @@ public class ClothingList extends JsonDataLoader {
                 for (int i = 0; i < JsonHelper.getInt(object, "count", 1); i++) {
                     String identifier = String.format(key, i);
 
-                    Clothing c = new Clothing(identifier);
+                    Clothing c = new Clothing(identifier, object);
+
                     c.gender = gender;
-                    c.profession = JsonHelper.getString(object, "profession", null);
-                    c.chance = JsonHelper.getFloat(object, "chance", 1.0f);
-                    c.exclude = JsonHelper.getBoolean(object, "exclude", false);
-                    c.temperature = JsonHelper.getInt(object, "temperature", 0);
 
                     if (!clothing.containsKey(identifier) || !object.has("count")) {
                         clothing.put(identifier, c);
@@ -108,21 +105,56 @@ public class ClothingList extends JsonDataLoader {
     public static class Clothing extends ListEntry {
         @Nullable
         public String profession;
-        public float temperature;
+        public int temperature;
         public boolean exclude;
 
         public Clothing(String identifier) {
             super(identifier);
         }
+
+        public Clothing(String identifier, JsonObject object) {
+            super(identifier, object);
+
+            this.profession = JsonHelper.getString(object, "profession", null);
+            this.exclude = JsonHelper.getBoolean(object, "exclude", false);
+            this.temperature = JsonHelper.getInt(object, "temperature", 0);
+        }
+
+        @Override
+        public JsonObject toJson() {
+            JsonObject j = super.toJson();
+            j.addProperty("profession", profession);
+            j.addProperty("exclude", exclude);
+            j.addProperty("temperature", temperature);
+            return j;
+        }
     }
 
-    public static class ListEntry implements Serializable {
-        final String identifier;
+    public static abstract class ListEntry implements Serializable {
+        public final String identifier;
         public Gender gender;
         public float chance;
 
         public ListEntry(String identifier) {
             this.identifier = identifier;
+        }
+
+        public ListEntry(String identifier, JsonObject object) {
+            this.identifier = identifier;
+
+            this.gender = Gender.byId(JsonHelper.getInt(object, "gender", 0));
+            this.chance = JsonHelper.getFloat(object, "chance", 1.0f);
+        }
+
+        public String getPath() {
+            return (new Identifier(this.identifier)).getPath();
+        }
+
+        public JsonObject toJson() {
+            JsonObject j = new JsonObject();
+            j.addProperty("gender", gender.getId());
+            j.addProperty("chance", chance);
+            return j;
         }
     }
 }

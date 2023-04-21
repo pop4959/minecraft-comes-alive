@@ -5,13 +5,11 @@ import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.mca.ClientProxyAbstractImpl;
-import net.mca.Config;
-import net.mca.MCAClient;
-import net.mca.ParticleTypesMCA;
+import net.mca.*;
 import net.mca.block.BlockEntityTypesMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.particle.InteractionParticle;
@@ -85,6 +83,8 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
         BlockRenderLayerMap.INSTANCE.putBlock(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
 
         ClientTickEvents.START_CLIENT_TICK.register(MCAClient::tickClient);
+
+        KeyBindings.list.forEach(KeyBindingHelper::registerKeyBinding);
     }
 
     @Override

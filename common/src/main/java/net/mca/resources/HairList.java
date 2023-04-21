@@ -49,9 +49,7 @@ public class HairList extends JsonDataLoader {
 
                     HairList.Hair c = new HairList.Hair(identifier);
                     c.gender = gender;
-                    c.overlay = JsonHelper.getBoolean(object, "overlay", false);
                     c.chance = JsonHelper.getFloat(object, "chance", 1.0f);
-                    c.temperature = JsonHelper.getInt(object, "temperature", 0);
 
                     if (!hair.containsKey(identifier) || !object.has("count")) {
                         hair.put(identifier, c);
@@ -72,12 +70,13 @@ public class HairList extends JsonDataLoader {
     }
 
     public static class Hair extends ClothingList.ListEntry {
-        //todo unused since not synced by default
-        public boolean overlay;
-        public float temperature;
-
         public Hair(String identifier) {
             super(identifier);
         }
+
+        public Hair(String identifier, JsonObject object) {
+            super(identifier, object);
+        }
+
     }
 }

@@ -217,6 +217,10 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return getTrackedValue(HAIR);
     }
 
+    default void setHair(Identifier hair) {
+        setHair(hair.toString());
+    }
+
     default void setHair(String hair) {
         setTrackedValue(HAIR, hair);
     }

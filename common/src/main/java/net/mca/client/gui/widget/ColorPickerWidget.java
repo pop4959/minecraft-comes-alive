@@ -20,8 +20,8 @@ public class ColorPickerWidget extends ClickableWidget {
 
     private final DualConsumer<Double, Double> consumer;
     private final Identifier texture;
-    private double valueX;
-    private double valueY;
+    double valueX;
+    double valueY;
 
     public ColorPickerWidget(int x, int y, int width, int height, double valueX, double valueY, Identifier texture, DualConsumer<Double, Double> consumer) {
         super(x, y, width, height, Text.literal(""));
@@ -40,10 +40,10 @@ public class ColorPickerWidget extends ClickableWidget {
         RenderSystem.setShaderTexture(0, texture);
         DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, width, height);
 
+        WidgetUtils.drawRectangle(matrices, x, y, x + width, y + height, 0xaaffffff);
+
         RenderSystem.setShaderTexture(0, MCA_GUI_ICONS_TEXTURE);
         DrawableHelper.drawTexture(matrices, (int)(x + valueX * width) - 8, (int)(y + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
-
-        RectangleWidget.drawRectangle(matrices, x, y, x + width, y + height, 0xaaffffff);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ColorPickerWidget extends ClickableWidget {
         return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
     }
 
-    private void update(double mouseX, double mouseY) {
+    void update(double mouseX, double mouseY) {
         valueX = MathHelper.clamp((mouseX - x) / width, 0.0, 1.0);
         valueY = MathHelper.clamp((mouseY - y) / height, 0.0, 1.0);
         consumer.apply(valueX, valueY);

@@ -1,6 +1,7 @@
 package net.mca.client.render.layer;
 
 import com.google.common.collect.Maps;
+import net.mca.MCA;
 import net.mca.MCAClient;
 import net.mca.client.model.PlayerEntityExtendedModel;
 import net.mca.client.model.VillagerEntityModelMCA;
@@ -29,6 +30,11 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     private static final Map<String, Identifier> TEXTURE_CACHE = Maps.newHashMap();
     private static final Map<Identifier, Boolean> TEXTURE_EXIST_CACHE = Maps.newHashMap();
+
+    static {
+        // the temp image is used for temporary canvases and definitely exists
+        TEXTURE_EXIST_CACHE.put(MCA.locate("temp"), true);
+    }
 
     public final M model;
 
@@ -105,6 +111,9 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     public final boolean canUse(Identifier texture) {
         return TEXTURE_EXIST_CACHE.computeIfAbsent(texture, s -> {
+            if (texture != null && texture.getNamespace().equals("immersive_library_mca")) {
+                return true;
+            }
             return texture != null && MinecraftClient.getInstance().getResourceManager().getResource(texture).isPresent();
         });
     }

@@ -1,6 +1,7 @@
 package net.mca.forge;
 
 import net.mca.Config;
+import net.mca.KeyBindings;
 import net.mca.MCA;
 import net.mca.ParticleTypesMCA;
 import net.mca.block.BlockEntityTypesMCA;
@@ -29,6 +30,7 @@ import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -85,6 +87,11 @@ public final class MCAForgeClient {
         // - remove and replace at a later date instead, since Fabric still uses the older method afaik.
         //noinspection removal
         RenderLayers.setRenderLayer(BlocksMCA.INFERNAL_FLAME.get(), RenderLayer.getCutout());
+    }
+
+    @SubscribeEvent
+    public static void onKeyRegister(RegisterKeyMappingsEvent event) {
+        KeyBindings.list.forEach(event::register);
     }
 
     @SubscribeEvent

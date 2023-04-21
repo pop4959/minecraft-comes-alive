@@ -3,10 +3,8 @@ package net.mca.quilt;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
-import net.mca.ClientProxyAbstractImpl;
-import net.mca.Config;
-import net.mca.MCAClient;
-import net.mca.ParticleTypesMCA;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.mca.*;
 import net.mca.block.BlockEntityTypesMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.particle.InteractionParticle;
@@ -37,6 +35,7 @@ import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 import org.quiltmc.qsl.networking.api.client.ClientPlayConnectionEvents;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoader;
 
+@SuppressWarnings("unused")
 public final class MCAQuiltClient extends ClientProxyAbstractImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient(ModContainer container) {
@@ -87,6 +86,8 @@ public final class MCAQuiltClient extends ClientProxyAbstractImpl implements Cli
         BlockRenderLayerMap.put(RenderLayer.getCutout(), BlocksMCA.INFERNAL_FLAME.get());
 
         ClientTickEvents.START.register(MCAClient::tickClient);
+
+        KeyBindings.list.forEach(KeyBindingHelper::registerKeyBinding);
     }
 
     @Override

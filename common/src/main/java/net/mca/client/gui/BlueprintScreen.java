@@ -2,7 +2,7 @@ package net.mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.MCA;
-import net.mca.client.gui.widget.RectangleWidget;
+import net.mca.client.gui.widget.WidgetUtils;
 import net.mca.client.gui.widget.TooltipButtonWidget;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.c2s.GetVillageRequest;
@@ -381,7 +381,7 @@ public class BlueprintScreen extends ExtendedScreen {
     private void renderMap(MatrixStack transform) {
         int mapSize = 75;
         int y = height / 2 + 8;
-        RectangleWidget.drawRectangle(transform, width / 2 - mapSize, y - mapSize, width / 2 + mapSize, y + mapSize, 0xffffff88);
+        WidgetUtils.drawRectangle(transform, width / 2 - mapSize, y - mapSize, width / 2 + mapSize, y + mapSize, 0xffffff88);
 
         //hint
         if (!village.isAutoScan() && village.getBuildings().size() <= 1) {
@@ -404,7 +404,7 @@ public class BlueprintScreen extends ExtendedScreen {
         assert client != null;
         ClientPlayerEntity player = client.player;
         if (player != null) {
-            RectangleWidget.drawRectangle(transform, (int)player.getX() - 1, (int)player.getZ() - 1, (int)player.getX() + 1, (int)player.getZ() + 1, 0xffff00ff);
+            WidgetUtils.drawRectangle(transform, (int)player.getX() - 1, (int)player.getZ() - 1, (int)player.getX() + 1, (int)player.getZ() + 1, 0xffff00ff);
         }
 
         //buildings
@@ -426,7 +426,7 @@ public class BlueprintScreen extends ExtendedScreen {
             } else {
                 BlockPos p0 = building.getPos0();
                 BlockPos p1 = building.getPos1();
-                RectangleWidget.drawRectangle(transform, p0.getX(), p0.getZ(), p1.getX(), p1.getZ(), bt.getColor());
+                WidgetUtils.drawRectangle(transform, p0.getX(), p0.getZ(), p1.getX(), p1.getZ(), bt.getColor());
 
                 //icon
                 if (bt.visible()) {
