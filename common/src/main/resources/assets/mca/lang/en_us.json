@@ -373,8 +373,7 @@
   "gui.skin_library.name": "Name",
   "gui.skin_library.publish": "Publish",
 
-  "gui.skin_library.page.clothing": "Clothing",
-  "gui.skin_library.page.hair": "Hair",
+  "gui.skin_library.page.library": "Library",
   "gui.skin_library.page.editor_prepare": "Editor",
   "gui.skin_library.page.help": "Help",
   "gui.skin_library.page.login": "Login",

@@ -165,7 +165,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private void reloadDatabase() {
         reloadDatabase(() -> {
             if (page == Page.LOADING) {
-                setPage(Page.CLOTHING);
+                setPage(Page.LIBRARY);
             }
         });
     }
@@ -207,7 +207,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         switch (page) {
-            case CLOTHING, HAIR -> {
+            case LIBRARY -> {
                 NbtCompound nbt = new NbtCompound();
                 villagerVisualization.readCustomDataFromNbt(nbt);
                 villagerVisualization.setBreedingAge(0);
@@ -228,7 +228,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             villagerVisualization.setClothes(identifier);
 
                             int cx = width / 2 + (int)((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 40);
-                            int cy = height / 2 + 30 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
+                            int cy = height / 2 + 10 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
 
                             InventoryScreen.drawEntity(cx, cy, 26, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
 
@@ -325,7 +325,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                     //token accepted, save
                                     Auth.saveToken();
 
-                                    setPage(Page.CLOTHING);
+                                    setPage(Page.LIBRARY);
                                 } else {
                                     //token rejected, delete file
                                     Auth.clearToken();
@@ -535,10 +535,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     focusedContent = hoveredContent;
                     setPage(Page.DETAIL);
                 } else {
-                    if (page == Page.CLOTHING) {
+                    if (hoveredContent.hasTag("clothing")) {
                         previousScreen.getVillager().setClothes("immersive_library:" + hoveredContent.contentid());
                         MinecraftClient.getInstance().setScreen(previousScreen);
-                    } else if (page == Page.HAIR) {
+                    } else if (hoveredContent.hasTag("hair")) {
                         previousScreen.getVillager().setHair("immersive_library:" + hoveredContent.contentid());
                         MinecraftClient.getInstance().setScreen(previousScreen);
                     }
@@ -586,10 +586,9 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         clearChildren();
 
         // filters
-        if (page == Page.CLOTHING || page == Page.HAIR || page == Page.EDITOR_LOCKED || page == Page.EDITOR_PREPARE || page == Page.EDITOR_TYPE) {
+        if (page == Page.LIBRARY || page == Page.EDITOR_LOCKED || page == Page.EDITOR_PREPARE || page == Page.EDITOR_TYPE) {
             List<Page> b = new LinkedList<>();
-            b.add(Page.CLOTHING);
-            b.add(Page.HAIR);
+            b.add(Page.LIBRARY);
             b.add(Page.EDITOR_PREPARE);
             b.add(Page.HELP);
 
@@ -608,7 +607,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }
 
         switch (page) {
-            case CLOTHING, HAIR -> {
+            case LIBRARY -> {
                 //page
                 addDrawableChild(new ButtonWidget(width / 2 - 35 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> setSelectionPage(selectionPage - 1)));
                 pageWidget = addDrawableChild(new ButtonWidget(width / 2 - 35, height / 2 + 80, 70, 20, Text.literal(""), sender -> {
@@ -720,7 +719,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 addDrawableChild(new ButtonWidget(width / 2 - 50, height / 2 + 25, 100, 20,
                         Text.translatable("gui.skin_library.cancel"),
                         v -> {
-                            setPage(Page.CLOTHING);
+                            setPage(Page.LIBRARY);
                         }));
             }
             case DETAIL -> {
@@ -746,7 +745,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 addDrawableChild(new ButtonWidget(width / 2 - 50, height / 2 + 60, 100, 20,
                         Text.translatable("gui.skin_library.close"),
                         v -> {
-                            setPage(Page.CLOTHING);
+                            setPage(Page.LIBRARY);
                         }));
 
 
@@ -939,7 +938,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                 NetworkHandler.sendToServer(new AddCustomClothingMessage(e));
                             });
                         } else {
-                            NetworkHandler.sendToServer(new RemoveCustomClothingMessage(page == Page.CLOTHING ? RemoveCustomClothingMessage.Type.CLOTHING : RemoveCustomClothingMessage.Type.HAIR, new Identifier("immersive_library", String.valueOf(content.contentid()))));
+                            NetworkHandler.sendToServer(new RemoveCustomClothingMessage(content.hasTag("clothing") ? RemoveCustomClothingMessage.Type.CLOTHING : RemoveCustomClothingMessage.Type.HAIR, new Identifier("immersive_library", String.valueOf(content.contentid()))));
                         }
                         ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
                     }));
@@ -1051,7 +1050,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             y1 = 1.0f;
         }
 
-        if (page == Page.CLOTHING || page == Page.HAIR) {
+        if (page == Page.LIBRARY) {
             updateSearch();
         } else {
             rebuild();
@@ -1071,7 +1070,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // pre-filter the assets by string search and asset group
         List<LiteContent> untaggedFilteredContent = contents.stream()
                 .filter(v -> filteredString.isEmpty() || v.title().contains(filteredString))
-                .filter(v -> v.hasTag(page == Page.CLOTHING ? "clothing" : "hair"))
                 .toList();
 
         // extract all tags, count them and sort them
@@ -1260,7 +1258,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     public void skinListUpdatedCallback() {
         refreshServerContent();
 
-        if (page == Page.CLOTHING || page == Page.HAIR) {
+        if (page == Page.LIBRARY) {
             updateSearch();
         }
     }
@@ -1272,8 +1270,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     public enum Page {
-        CLOTHING,
-        HAIR,
+        LIBRARY,
         EDITOR_LOCKED,
         EDITOR_PREPARE,
         EDITOR_TYPE,
