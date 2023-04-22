@@ -1,19 +1,24 @@
 package net.mca.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.mca.util.localization.FlowingText;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class ExtendedSliderWidget<T> extends SliderWidget {
     private T oldValue;
     final Consumer<T> onApplyValue;
+    protected final Supplier<Text> tooltipSupplier;
 
-    public ExtendedSliderWidget(int x, int y, int width, int height, Text text, double value, Consumer<T> onApplyValue) {
+    public ExtendedSliderWidget(int x, int y, int width, int height, Text text, double value, Consumer<T> onApplyValue, Supplier<Text> tooltipSupplier) {
         super(x, y, width, height, text, value);
         this.onApplyValue = onApplyValue;
+        this.tooltipSupplier = tooltipSupplier;
     }
 
     protected double getOpticalValue() {
@@ -31,6 +36,10 @@ public abstract class ExtendedSliderWidget<T> extends SliderWidget {
         drawTexture(matrices, this.x + (int)(getOpticalValue() * (double)(this.width - 8)) + 4, this.y, 196, 46 + i, 4, 20);
 
         super.renderButton(matrices, mouseX, mouseY, delta);
+
+        if (this.isHovered()) {
+            this.renderTooltip(matrices, mouseX, mouseY);
+        }
     }
 
     @Override
@@ -40,5 +49,11 @@ public abstract class ExtendedSliderWidget<T> extends SliderWidget {
             oldValue = v;
             onApplyValue.accept(v);
         }
+    }
+
+    @Override
+    public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
+        assert MinecraftClient.getInstance().currentScreen != null;
+        MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, FlowingText.wrap(tooltipSupplier.get(), 160), mouseX, mouseY);
     }
 }

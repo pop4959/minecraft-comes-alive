@@ -3,10 +3,8 @@ package net.mca.client.gui.immersiveLibrary;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import net.mca.client.gui.immersiveLibrary.responses.ContentIdResponse;
-import net.mca.client.gui.immersiveLibrary.responses.ContentListResponse;
-import net.mca.client.gui.immersiveLibrary.responses.ErrorResponse;
-import net.mca.client.gui.immersiveLibrary.responses.Response;
+import net.mca.Config;
+import net.mca.client.gui.immersiveLibrary.responses.*;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -18,8 +16,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Api {
-    private static final String URL = "http://localhost:8000/v1/";
-
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapterFactory(new RecordTypeAdapterFactory())
             .create();
@@ -38,7 +34,7 @@ public class Api {
 
     public static Response request(HttpMethod httpMethod, Class<? extends Response> expectedAnswer, String url, Map<String, String> queryParams, Map<String, String> body) {
         try {
-            String fullUrl = URL + url;
+            String fullUrl = Config.getServerConfig().immersiveLibraryUrl + "/v1/" + url;
 
             // Append query params
             if (queryParams != null) {
@@ -87,6 +83,10 @@ public class Api {
         }
 
         System.out.println(request(HttpMethod.GET, ContentListResponse.class, "content/mca"));
+
+        System.out.println(request(HttpMethod.GET, UserResponse.class, "user/mca/me", Map.of(
+                "token", Auth.getToken()
+        )));
 
         System.out.println(request(HttpMethod.POST, ContentIdResponse.class, "content/mca", Map.of(
                 "token", Auth.getToken()

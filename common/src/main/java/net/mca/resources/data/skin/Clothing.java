@@ -1,6 +1,7 @@
 package net.mca.resources.data.skin;
 
 import com.google.gson.JsonObject;
+import net.mca.entity.ai.relationship.Gender;
 import net.minecraft.util.JsonHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,11 +11,12 @@ public class Clothing extends SkinListEntry {
     public int temperature;
     public boolean exclude;
 
-    public Clothing(String identifier, @Nullable String profession, int temperature, boolean exclude) {
+    public Clothing(String identifier, @Nullable String profession, int temperature, boolean exclude, Gender gender) {
         super(identifier);
         this.profession = profession;
         this.temperature = temperature;
         this.exclude = exclude;
+        this.gender = gender;
     }
 
     public Clothing(String identifier) {
