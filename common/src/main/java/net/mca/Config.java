@@ -123,7 +123,8 @@ public final class Config implements Serializable {
     public boolean enableAutoScanByDefault = false;
 
     //skin library
-    public String immersiveLibraryUrl = "http://localhost:8000"; // "https://vps-zap359452-1.zap-srv.com:8000"
+    public String immersiveLibraryUrl = "https://vps-zap359452-1.zap-srv.com:8000";
+    public boolean allowEveryoneToAddContentGlobally = false;
 
     //gifts
     public int giftDesaturationQueueLength = 16;

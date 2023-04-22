@@ -6,6 +6,8 @@ import net.mca.Config;
 import net.mca.MCA;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
+import net.mca.resources.data.skin.Clothing;
+import net.mca.server.CustomClothingManager;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -15,9 +17,9 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class ClothingList extends JsonDataLoader {
     protected static final Identifier ID = MCA.locate("skins/clothing");
@@ -92,7 +94,7 @@ public class ClothingList extends JsonDataLoader {
     }
 
     public WeightedPool<String> getPool(Gender gender, @Nullable String profession) {
-        return clothing.values().stream()
+        return Stream.concat(clothing.values().stream(), CustomClothingManager.getClothing().getEntries().values().stream())
                 .filter(c -> c.gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.gender == gender)
                 .filter(c -> c.profession == null || profession == null && !c.exclude || c.profession.equals(profession))
                 .collect(() -> new WeightedPool.Mutable<>("mca:missing"),
@@ -102,59 +104,4 @@ public class ClothingList extends JsonDataLoader {
                         });
     }
 
-    public static class Clothing extends ListEntry {
-        @Nullable
-        public String profession;
-        public int temperature;
-        public boolean exclude;
-
-        public Clothing(String identifier) {
-            super(identifier);
-        }
-
-        public Clothing(String identifier, JsonObject object) {
-            super(identifier, object);
-
-            this.profession = JsonHelper.getString(object, "profession", null);
-            this.exclude = JsonHelper.getBoolean(object, "exclude", false);
-            this.temperature = JsonHelper.getInt(object, "temperature", 0);
-        }
-
-        @Override
-        public JsonObject toJson() {
-            JsonObject j = super.toJson();
-            j.addProperty("profession", profession);
-            j.addProperty("exclude", exclude);
-            j.addProperty("temperature", temperature);
-            return j;
-        }
-    }
-
-    public static abstract class ListEntry implements Serializable {
-        public final String identifier;
-        public Gender gender;
-        public float chance;
-
-        public ListEntry(String identifier) {
-            this.identifier = identifier;
-        }
-
-        public ListEntry(String identifier, JsonObject object) {
-            this.identifier = identifier;
-
-            this.gender = Gender.byId(JsonHelper.getInt(object, "gender", 0));
-            this.chance = JsonHelper.getFloat(object, "chance", 1.0f);
-        }
-
-        public String getPath() {
-            return (new Identifier(this.identifier)).getPath();
-        }
-
-        public JsonObject toJson() {
-            JsonObject j = new JsonObject();
-            j.addProperty("gender", gender.getId());
-            j.addProperty("chance", chance);
-            return j;
-        }
-    }
 }

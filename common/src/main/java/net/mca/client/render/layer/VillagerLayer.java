@@ -111,7 +111,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     public final boolean canUse(Identifier texture) {
         return TEXTURE_EXIST_CACHE.computeIfAbsent(texture, s -> {
-            if (texture != null && texture.getNamespace().equals("immersive_library_mca")) {
+            if (texture != null && texture.getNamespace().equals("immersive_library")) {
                 return true;
             }
             return texture != null && MinecraftClient.getInstance().getResourceManager().getResource(texture).isPresent();

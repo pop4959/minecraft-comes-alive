@@ -337,6 +337,7 @@
   "gui.skin_library.load_image": "Load Image",
   "gui.skin_library.list_fetch_failed": "Failed to fetch list",
   "gui.skin_library.is_auth_failed": "Failed to check authentication",
+  "gui.skin_library.not_64": "Image is not 64 by 64 pixel.",
   "gui.skin_library.authenticating": "Authenticating",
   "gui.skin_library.authenticating_browser": "Complete authentication in your browser!",
   "gui.skin_library.search": "Search",
@@ -344,6 +345,15 @@
   "gui.skin_library.drop": "Drop an image here, enter a file path or URL to start.",
   "gui.skin_library.locked": "To publish skins, please log in first.",
   "gui.skin_library.already_uploading": "Already uploading, be patient.",
+  "gui.skin_library.subscribe": "Use that server wide!",
+  "gui.skin_library.like": "Like",
+  "gui.skin_library.delete": "Delete",
+  "gui.skin_library.details": "Details",
+  "gui.skin_library.add": "Add",
+  "gui.skin_library.close": "Close",
+
+  "gui.skin_library.meta.chance": "%d%% chance",
+  "gui.skin_library.meta.by": "By %s",
 
   "gui.skin_library.prepare": "What asset type do you want to create?",
   "gui.skin_library.prepare.hair": "Create hairstyle",
@@ -372,8 +382,8 @@
 
   "gui.skin_library.subscription_filter.library": "Library",
   "gui.skin_library.subscription_filter.library.tooltip": "Public library of skins",
-  "gui.skin_library.subscription_filter.player": "Player",
-  "gui.skin_library.subscription_filter.player.tooltip": "Your personal installed skins",
+  "gui.skin_library.subscription_filter.liked": "Liked",
+  "gui.skin_library.subscription_filter.liked.tooltip": "Your liked skins",
   "gui.skin_library.subscription_filter.global": "Global",
   "gui.skin_library.subscription_filter.global.tooltip": "Globally installed skins",
 
@@ -518,6 +528,8 @@
   "gui.button.call": "Call",
   "gui.button.familyTree": "Family Tree",
   "gui.button.armor": "Armor",
+  "gui.button.library": "Library",
+
   "gui.button.professions": "Professions",
   "gui.button.profession.none": "Villager",
   "gui.button.profession.guard": "Guard",
@@ -578,6 +590,7 @@
   "gui.villager_editor.female": "Female",
   "gui.villager_editor.masculine": "Masculine",
   "gui.villager_editor.feminine": "Feminine",
+  "gui.villager_editor.neutral": "Neutral",
   "gui.villager_editor.infection": "Infection",
   "gui.villager_editor.age": "Age",
   "gui.villager_editor.page": "Page %1$s",

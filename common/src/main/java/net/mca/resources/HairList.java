@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.mca.MCA;
 import net.mca.entity.ai.relationship.Gender;
+import net.mca.resources.data.skin.Hair;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class HairList extends JsonDataLoader {
     protected static final Identifier ID = MCA.locate("skins/hair");
 
-    public final HashMap<String, HairList.Hair> hair = new HashMap<>();
+    public final HashMap<String, Hair> hair = new HashMap<>();
 
     private static HairList INSTANCE;
 
@@ -47,7 +48,7 @@ public class HairList extends JsonDataLoader {
                 for (int i = 0; i < JsonHelper.getInt(object, "count", 1); i++) {
                     String identifier = String.format(key, i);
 
-                    HairList.Hair c = new HairList.Hair(identifier);
+                    Hair c = new Hair(identifier);
                     c.gender = gender;
                     c.chance = JsonHelper.getFloat(object, "chance", 1.0f);
 
@@ -67,16 +68,5 @@ public class HairList extends JsonDataLoader {
                         (a, b) -> {
                             a.entries.addAll(b.entries);
                         });
-    }
-
-    public static class Hair extends ClothingList.ListEntry {
-        public Hair(String identifier) {
-            super(identifier);
-        }
-
-        public Hair(String identifier, JsonObject object) {
-            super(identifier, object);
-        }
-
     }
 }

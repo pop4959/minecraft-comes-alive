@@ -212,8 +212,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleSkinListResponse(SkinListResponse message) {
         Screen screen = client.currentScreen;
-        if (screen instanceof VillagerEditorScreen gui) {
-            gui.setSkinList(message.getClothing(), message.getHair());
+        VillagerEditorScreen.setSkinList(message.getClothing(), message.getHair());
+        if (screen instanceof SkinListUpdateListener gui) {
+            gui.skinListUpdatedCallback();
         }
     }
 

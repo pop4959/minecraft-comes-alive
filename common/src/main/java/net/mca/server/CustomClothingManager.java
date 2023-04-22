@@ -2,31 +2,46 @@ package net.mca.server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.mca.resources.ClothingList;
-import net.mca.resources.HairList;
+import net.mca.MCA;
+import net.mca.resources.data.skin.Clothing;
+import net.mca.resources.data.skin.Hair;
+import net.mca.resources.data.skin.SkinListEntry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.PersistentState;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class CustomClothingManager {
-    public static Storage<ClothingList.Clothing> getClothing(MinecraftServer server, String user) {
-        return server.getOverworld().getPersistentStateManager()
-                .getOrCreate((nbt) -> new Storage<>(nbt, ClothingList.Clothing::new), Storage::new, "immersive_library_clothing_" + user);
+    static Storage<Clothing> CLOTHING_DUMMY = new Storage<>();
+    static Storage<Hair> HAIR_DUMMY = new Storage<>();
+
+    public static Storage<Clothing> getClothing() {
+        Optional<MinecraftServer> server = MCA.getServer();
+        if (server.isPresent()) {
+            return server.get().getOverworld().getPersistentStateManager()
+                    .getOrCreate((nbt) -> new Storage<>(nbt, Clothing::new), Storage::new, "immersive_library_clothing");
+        } else {
+            return CLOTHING_DUMMY;
+        }
     }
 
-    public static Storage<HairList.Hair> getHair(MinecraftServer server, String user) {
-        return server.getOverworld().getPersistentStateManager()
-                .getOrCreate((nbt) -> new Storage<>(nbt, HairList.Hair::new), Storage::new, "immersive_library_hair_" + user);
+    public static Storage<Hair> getHair() {
+        Optional<MinecraftServer> server = MCA.getServer();
+        if (server.isPresent()) {
+            return server.get().getOverworld().getPersistentStateManager()
+                    .getOrCreate((nbt) -> new Storage<>(nbt, Hair::new), Storage::new, "immersive_library_hair");
+        } else {
+            return HAIR_DUMMY;
+        }
     }
 
 
-    public static class Storage<T extends ClothingList.ListEntry> extends PersistentState {
-        final Map<Identifier, T> entries = new HashMap<>();
+    public static class Storage<T extends SkinListEntry> extends PersistentState {
+        final Map<String, T> entries = new HashMap<>();
 
         public Storage() {
         }
@@ -34,29 +49,31 @@ public class CustomClothingManager {
         public Storage(NbtCompound nbt, BiFunction<String, JsonObject, T> entryFromNbt) {
             Gson gson = new Gson();
             for (String identifier : nbt.getKeys()) {
-                entries.put(new Identifier(identifier), entryFromNbt.apply(identifier, gson.fromJson(nbt.getString(identifier), JsonObject.class)));
+                entries.put(identifier, entryFromNbt.apply(identifier, gson.fromJson(nbt.getString(identifier), JsonObject.class)));
             }
         }
 
         @Override
         public NbtCompound writeNbt(NbtCompound nbt) {
             NbtCompound c = new NbtCompound();
-            for (Map.Entry<Identifier, T> entry : entries.entrySet()) {
+            for (Map.Entry<String, T> entry : entries.entrySet()) {
                 c.putString(entry.getKey().toString(), entry.getValue().toJson().toString());
             }
             return c;
         }
 
-        public Map<Identifier, T> getEntries() {
+        public Map<String, T> getEntries() {
             return entries;
         }
 
-        public void addEntry(Identifier id, T entry) {
+        public void addEntry(String id, T entry) {
             entries.put(id, entry);
+            markDirty();
         }
 
-        public void removeEntry(Identifier id) {
+        public void removeEntry(String id) {
             entries.remove(id);
+            markDirty();
         }
     }
 }

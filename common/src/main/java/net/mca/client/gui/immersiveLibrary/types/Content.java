@@ -2,11 +2,12 @@ package net.mca.client.gui.immersiveLibrary.types;
 
 import java.util.Arrays;
 
-public record Content(int contentid, String username, int likes, String[] tags, String title, int version, String meta, String data) implements Tagged {
+public record Content(int contentid, int userid, String username, int likes, String[] tags, String title, int version, String meta, String data) implements Tagged {
     @Override
     public String toString() {
         return "Content{" +
                 "contentid=" + contentid +
+                "userid=" + userid +
                 ", username='" + username + '\'' +
                 ", likes=" + likes +
                 ", tags=" + Arrays.toString(tags) +
