@@ -50,5 +50,6 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(VillagerMessage.class);
         NetworkHandler.registerMessage(AddCustomClothingMessage.class);
         NetworkHandler.registerMessage(RemoveCustomClothingMessage.class);
+        NetworkHandler.registerMessage(CustomSkinsChangedMessage.class);
     }
 }

@@ -3,11 +3,14 @@ package net.mca.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.mca.MCA;
+import net.mca.cobalt.network.NetworkHandler;
+import net.mca.network.s2c.CustomSkinsChangedMessage;
 import net.mca.resources.data.skin.Clothing;
 import net.mca.resources.data.skin.Hair;
 import net.mca.resources.data.skin.SkinListEntry;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.PersistentState;
 
 import java.util.HashMap;
@@ -57,7 +60,7 @@ public class CustomClothingManager {
         public NbtCompound writeNbt(NbtCompound nbt) {
             NbtCompound c = new NbtCompound();
             for (Map.Entry<String, T> entry : entries.entrySet()) {
-                c.putString(entry.getKey().toString(), entry.getValue().toJson().toString());
+                c.putString(entry.getKey(), entry.getValue().toJson().toString());
             }
             return c;
         }
@@ -74,6 +77,17 @@ public class CustomClothingManager {
         public void removeEntry(String id) {
             entries.remove(id);
             markDirty();
+        }
+
+        @Override
+        public void markDirty() {
+            super.markDirty();
+
+            MCA.getServer().ifPresent(s -> {
+                for (ServerPlayerEntity player : s.getPlayerManager().getPlayerList()) {
+                    NetworkHandler.sendToPlayer(new CustomSkinsChangedMessage(), player);
+                }
+            });
         }
     }
 }

@@ -236,4 +236,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         client.getMessageHandler().onGameMessage(msg, false);
         SpeechManager.INSTANCE.onChatMessage(msg, message.getUuid());
     }
+
+    @Override
+    public void handleCustomSkinsChangedMessage(CustomSkinsChangedMessage message) {
+        VillagerEditorScreen.setSkinListOutdated();
+    }
 }

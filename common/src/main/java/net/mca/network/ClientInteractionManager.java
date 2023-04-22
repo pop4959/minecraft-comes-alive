@@ -40,4 +40,6 @@ public interface ClientInteractionManager {
     void handleConfigResponse(ConfigResponse response);
 
     void handleVillagerMessage(VillagerMessage message);
+
+    void handleCustomSkinsChangedMessage(CustomSkinsChangedMessage message);
 }

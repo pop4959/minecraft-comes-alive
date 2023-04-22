@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 public abstract class SkinListEntry implements Serializable {
     public final String identifier;
-    public Gender gender;
+    public Gender gender = Gender.NEUTRAL;
     public float chance;
 
     public SkinListEntry(String identifier) {

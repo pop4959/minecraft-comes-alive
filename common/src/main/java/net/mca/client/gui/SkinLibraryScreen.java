@@ -230,12 +230,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             int cx = width / 2 + (int)((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 40);
                             int cy = height / 2 + 10 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
 
-                            InventoryScreen.drawEntity(cx, cy, 26, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
-
                             if (Math.abs(cx - mouseX) <= 20 && Math.abs(cy - mouseY - 30) <= 30) {
                                 hoveredContent = c;
                                 renderTooltip(matrices, getMetaDataText(c), mouseX, mouseY);
                             }
+
+                            InventoryScreen.drawEntity(cx, cy, hoveredContent == c ? 30 : 26, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
                             i++;
                         } else {
                             break;
@@ -598,7 +598,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 b.add(Page.LOGIN);
             }
 
-            int x = width / 2 - 20;
+            int x = page == Page.LIBRARY ? width / 2 - 20 : width / 2 - 110;
             int w = 220 / b.size();
             for (Page page : b) {
                 addDrawableChild(new ButtonWidget(x, height / 2 - 110, w, 20, Text.translatable("gui.skin_library.page." + page.name().toLowerCase(Locale.ROOT)), sender -> setPage(page))).active = page != this.page;
@@ -651,7 +651,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                 }
                                 ((ToggleableButtonWidget)v).toggle = !((ToggleableButtonWidget)v).toggle;
                                 updateSearch();
-                            })).toggle = !selectedTags.contains(tag.getKey());
+                            })).toggle = selectedTags.contains(tag.getKey());
                     tx += w;
                     if (tx > width / 2 + 200) {
                         break;
@@ -951,8 +951,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 Text.translatable("✔"),
                 Text.translatable("gui.skin_library.like"),
                 v -> {
-                    setLike(content.contentid(), ((ToggleableTooltipButtonWidget)v).toggle);
                     ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
+                    setLike(content.contentid(), ((ToggleableTooltipButtonWidget)v).toggle);
                 }));
         widget.toggle = !isLiked(content);
         widgets.add(widget);
@@ -1224,6 +1224,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "like/mca/%s".formatted(contentid), Map.of(
                     "token", Auth.getToken()
             ));
+
+            if (add) {
+                getContentById(contentid).ifPresent(likedContent::add);
+            } else {
+                likedContent.removeIf(v -> v.contentid() == contentid);
+            }
         }
     }
 
