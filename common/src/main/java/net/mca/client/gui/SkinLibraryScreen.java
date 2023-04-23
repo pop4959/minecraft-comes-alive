@@ -983,7 +983,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         // subscribe
         if (isOp() || Config.getServerConfig().allowEveryoneToAddContentGlobally) {
-            ToggleableTooltipButtonWidget addWidget = addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
+            widgets.add(addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
+                    getServerContentById(content.contentid()).isEmpty(),
                     Text.translatable("+"),
                     Text.translatable("gui.skin_library.subscribe"),
                     v -> {
@@ -995,32 +996,28 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             NetworkHandler.sendToServer(new RemoveCustomClothingMessage(content.hasTag("clothing") ? RemoveCustomClothingMessage.Type.CLOTHING : RemoveCustomClothingMessage.Type.HAIR, new Identifier("immersive_library", String.valueOf(content.contentid()))));
                         }
                         ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
-                    }));
-            addWidget.toggle = getServerContentById(content.contentid()).isEmpty();
-            widgets.add(addWidget);
+                    })));
         }
 
         // like
-        ToggleableTooltipButtonWidget widget = addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
+        widgets.add(addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
+                isLiked(content),
                 Text.translatable("✔"),
                 Text.translatable("gui.skin_library.like"),
                 v -> {
                     ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
                     setLike(content.contentid(), ((ToggleableTooltipButtonWidget)v).toggle);
-                }));
-        widget.toggle = isLiked(content);
-        widgets.add(widget);
+                })));
 
         // delete
         if (advanced && canModifyContent(content)) {
-            TooltipButtonWidget deleteWidget = addDrawableChild(new TooltipButtonWidget(cx - 12 + 25, cy, w, 20,
+            widgets.add(addDrawableChild(new TooltipButtonWidget(cx - 12 + 25, cy, w, 20,
                     Text.translatable("X"),
                     Text.translatable("gui.skin_library.delete"),
                     v -> {
                         removeContent(content.contentid());
                         setPage(Page.LIBRARY);
-                    }));
-            widgets.add(deleteWidget);
+                    })));
         }
 
         // add the widgets

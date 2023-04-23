@@ -3,14 +3,12 @@ package net.mca.client.gui.widget;
 import net.minecraft.text.MutableText;
 
 public class ToggleableTooltipButtonWidget extends TooltipButtonWidget {
-    public boolean toggle = false;
+    public boolean toggle;
 
-    public ToggleableTooltipButtonWidget(int x, int y, int width, int height, String message, PressAction onPress) {
-        super(x, y, width, height, message, onPress);
-    }
-
-    public ToggleableTooltipButtonWidget(int x, int y, int width, int height, MutableText message, MutableText tooltip, PressAction onPress) {
+    public ToggleableTooltipButtonWidget(int x, int y, int width, int height, boolean toggle, MutableText message, MutableText tooltip, PressAction onPress) {
         super(x, y, width, height, message, tooltip, onPress);
+
+        this.toggle = toggle;
     }
 
     protected int getYImage(boolean hovered) {
