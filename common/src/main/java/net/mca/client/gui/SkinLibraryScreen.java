@@ -6,6 +6,7 @@ import net.mca.MCA;
 import net.mca.client.gui.immersiveLibrary.Api;
 import net.mca.client.gui.immersiveLibrary.Auth;
 import net.mca.client.gui.immersiveLibrary.SkinCache;
+import net.mca.client.gui.immersiveLibrary.Workspace;
 import net.mca.client.gui.immersiveLibrary.responses.*;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
 import net.mca.client.gui.immersiveLibrary.types.User;
@@ -31,7 +32,6 @@ import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -83,10 +83,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private ButtonWidget pageWidget;
 
-    private NativeImage currentImage;
-    private NativeImageBackedTexture backendTexture;
-    private WorkspaceSettings settings;
-    private boolean shouldUpload = true;
+    private Workspace workspace;
 
     private final ColorSelector color = new ColorSelector();
     private int activeMouseButton;
@@ -250,10 +247,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 drawTextBox(matrices, Text.translatable("gui.skin_library.prepare"));
             }
             case EDITOR -> {
-                if (shouldUpload) {
-                    backendTexture.upload();
-                    MinecraftClient.getInstance().getTextureManager().registerTexture(CANVAS_IDENTIFIER, backendTexture);
-                    shouldUpload = false;
+                if (workspace.dirty) {
+                    workspace.backendTexture.upload();
+                    MinecraftClient.getInstance().getTextureManager().registerTexture(CANVAS_IDENTIFIER, workspace.backendTexture);
+                    workspace.dirty = false;
                 }
 
                 //painting area
@@ -296,7 +293,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f;
                 villagerVisualization.limbDistance = 1.5f;
 
-                if (settings.skinType == SkinType.CLOTHING) {
+                if (workspace.skinType == SkinType.CLOTHING) {
                     villagerVisualization.setHair(EMPTY_IDENTIFIER);
                     villagerVisualization.setClothes(CANVAS_IDENTIFIER);
                 } else {
@@ -480,7 +477,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         // Fill-delete
         if (keyCode == GLFW.GLFW_KEY_F) {
-            fillDelete();
+            workspace.fillDelete((int)getPixelX(), (int)getPixelY());
             return true;
         }
 
@@ -585,78 +582,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    private void pickColor() {
-        int x = (int)getPixelX();
-        int y = (int)getPixelY();
-        if (validPixel(x, y)) {
-            color.setRGB(
-                    currentImage.getRed(x, y) / 255.0,
-                    currentImage.getGreen(x, y) / 255.0,
-                    currentImage.getBlue(x, y) / 255.0
-            );
-        }
-    }
-
-    private record FillTodo(int x, int y, int red, int green, int blue, int alpha) {
-
-    }
-
-    private void fillDeleteFunc(FillTodo entry, Queue<FillTodo> todo, int x, int y) {
-        if (x < 0 || y < 0 || x >= 64 || y >= 64) return;
-
-        FillTodo nextEntry = new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y));
-
-        if (Math.abs(nextEntry.red - entry.red) > settings.fillToolThreshold) return;
-        if (Math.abs(nextEntry.green - entry.green) > settings.fillToolThreshold) return;
-        if (Math.abs(nextEntry.blue - entry.blue) > settings.fillToolThreshold) return;
-        if (Math.abs(nextEntry.alpha - entry.alpha) > settings.fillToolThreshold) return;
-
-        todo.add(nextEntry);
-    }
-
-    private void fillDelete() {
-        int x = (int)getPixelX();
-        int y = (int)getPixelY();
-
-        Queue<FillTodo> todo = new LinkedList<>();
-        todo.add(new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y)));
-
-        while (!todo.isEmpty()) {
-            FillTodo entry = todo.poll();
-
-            if (currentImage.getOpacity(entry.x, entry.y) == 0) {
-                continue;
-            }
-
-            currentImage.setColor(entry.x, entry.y, 0);
-            shouldUpload = true;
-
-            for (int ox = -1; ox <= 1; ox++) {
-                for (int oy = -1; oy <= 1; oy++) {
-                    if (ox != 0 || oy != 0) {
-                        fillDeleteFunc(entry, todo, entry.x + ox, entry.y + oy);
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean validPixel(int x, int y) {
-        return x >= 0 && x < 64 && y >= 0 && y < 64;
-    }
-
-    private void paint(int x, int y) {
-        if (page == Page.EDITOR && validPixel(x, y)) {
-            if (activeMouseButton == 0) {
-                currentImage.setColor(x, y, color.getColor());
-                shouldUpload = true;
-            } else if (activeMouseButton == 1) {
-                currentImage.setColor(x, y, 0);
-                shouldUpload = true;
-            }
-        }
-    }
-
     private void drawTextBox(MatrixStack matrices, Text text) {
         List<Text> wrap = FlowingText.wrap(text, 220);
         int y = height / 2 - 20 - wrap.size() * 12;
@@ -664,6 +589,30 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         for (Text t : wrap) {
             drawCenteredText(matrices, textRenderer, t, width / 2, y, 0xFFFFFFFF);
             y += 12;
+        }
+    }
+
+    private void paint(int x, int y) {
+        if (page == SkinLibraryScreen.Page.EDITOR && workspace.validPixel(x, y)) {
+            if (activeMouseButton == 0) {
+                workspace.currentImage.setColor(x, y, color.getColor());
+                workspace.dirty = true;
+            } else if (activeMouseButton == 1) {
+                workspace.currentImage.setColor(x, y, 0);
+                workspace.dirty = true;
+            }
+        }
+    }
+
+    private void pickColor() {
+        int x = (int)getPixelX();
+        int y = (int)getPixelY();
+        if (workspace.validPixel(x, y)) {
+            color.setRGB(
+                    workspace.currentImage.getRed(x, y) / 255.0,
+                    workspace.currentImage.getGreen(x, y) / 255.0,
+                    workspace.currentImage.getBlue(x, y) / 255.0
+            );
         }
     }
 
@@ -773,29 +722,29 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2, 95, 20,
                         Text.translatable("gui.skin_library.prepare.hair"),
                         v -> {
-                            settings.skinType = SkinType.HAIR;
+                            workspace.skinType = SkinType.HAIR;
                             setPage(Page.EDITOR);
 
                             // make black and white
-                            if (settings.skinType == SkinType.HAIR) {
+                            if (workspace.skinType == SkinType.HAIR) {
                                 double maxLuminance = 0.0;
                                 for (int x = 0; x < 64; x++) {
                                     for (int y = 0; y < 64; y++) {
-                                        int r = currentImage.getRed(x, y);
-                                        int g = currentImage.getGreen(x, y);
-                                        int b = currentImage.getBlue(x, y);
+                                        int r = workspace.currentImage.getRed(x, y);
+                                        int g = workspace.currentImage.getGreen(x, y);
+                                        int b = workspace.currentImage.getBlue(x, y);
                                         double l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
                                         maxLuminance = Math.max(maxLuminance, l);
                                     }
                                 }
                                 for (int x = 0; x < 64; x++) {
                                     for (int y = 0; y < 64; y++) {
-                                        int r = currentImage.getRed(x, y);
-                                        int g = currentImage.getGreen(x, y);
-                                        int b = currentImage.getBlue(x, y);
-                                        int a = currentImage.getOpacity(x, y);
+                                        int r = workspace.currentImage.getRed(x, y);
+                                        int g = workspace.currentImage.getGreen(x, y);
+                                        int b = workspace.currentImage.getBlue(x, y);
+                                        int a = workspace.currentImage.getOpacity(x, y);
                                         int l = (int)((0.2126 * r + 0.7152 * g + 0.0722 * b + (255.0 - maxLuminance)) * 0.5 + 128);
-                                        currentImage.setColor(x, y, a << 24 | l << 16 | l << 8 | l);
+                                        workspace.currentImage.setColor(x, y, a << 24 | l << 16 | l << 8 | l);
                                     }
                                 }
 
@@ -806,7 +755,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 addDrawableChild(new ButtonWidget(width / 2 + 5, height / 2, 95, 20,
                         Text.translatable("gui.skin_library.prepare.clothing"),
                         v -> {
-                            settings.skinType = SkinType.CLOTHING;
+                            workspace.skinType = SkinType.CLOTHING;
                             setPage(Page.EDITOR);
                         }));
             }
@@ -874,10 +823,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 60, height / 2 - 105, 120, 20,
                         Text.translatable("gui.skin_library.name")));
                 textFieldWidget.setMaxLength(1024);
-                textFieldWidget.setText(settings.title);
+                textFieldWidget.setText(workspace.title);
                 textFieldWidget.setTextFieldFocused(false);
                 textFieldWidget.setChangedListener(v -> {
-                    settings.title = v;
+                    workspace.title = v;
                 });
 
                 // help
@@ -890,10 +839,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 // chance
                 addDrawableChild(new DoubleSliderWidget(width / 2 - 200, height / 2 - 80, 52, 20,
-                        settings.chance,
+                        workspace.chance,
                         0.0, 2.0,
                         v -> {
-                            settings.chance = v;
+                            workspace.chance = v;
                         },
                         v -> Text.translatable("gui.skin_library.meta.chance"),
                         () -> Text.translatable("gui.skin_library.meta.chance.tooltip")));
@@ -901,20 +850,20 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 //gender
                 addDrawableChild(CyclingButtonWidget.builder(Gender::getText)
                         .values(Gender.MALE, Gender.NEUTRAL, Gender.FEMALE)
-                        .initially(settings.gender)
+                        .initially(workspace.gender)
                         .omitKeyText()
                         .build(width / 2 - 147, height / 2 - 80, 52, 20, Text.literal(""), (button, gender) -> {
-                            this.settings.gender = gender;
+                            this.workspace.gender = gender;
                             updateSearch();
                         }));
 
                 // temperature
-                if (settings.skinType == SkinType.CLOTHING) {
+                if (workspace.skinType == SkinType.CLOTHING) {
                     addDrawableChild(new IntegerSliderWidget(width / 2 - 147, height / 2 - 60, 105, 20,
-                            settings.temperature,
+                            workspace.temperature,
                             -2, 2,
                             v -> {
-                                settings.temperature = v;
+                                workspace.temperature = v;
                             },
                             v -> Text.translatable("gui.skin_library.temperature." + (v + 2)),
                             () -> Text.translatable("gui.skin_library.temperature.tooltip")
@@ -922,7 +871,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 //profession
-                if (settings.skinType == SkinType.CLOTHING) {
+                if (workspace.skinType == SkinType.CLOTHING) {
                     int ox = 0;
                     int oy = 0;
                     List<ItemButtonWidget> widgets = new LinkedList<>();
@@ -931,11 +880,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         ItemButtonWidget widget = addDrawableChild(new ItemButtonWidget(width / 2 - 200 + ox * 21, height / 2 - 30 + oy * 21, 20, text,
                                 ProfessionIcons.ICONS.getOrDefault(profession.id(), Items.OAK_SAPLING.getDefaultStack()),
                                 v -> {
-                                    settings.profession = profession != VillagerProfession.NONE ? null : profession.id();
+                                    workspace.profession = profession != VillagerProfession.NONE ? null : profession.id();
                                     widgets.forEach(b -> b.active = true);
                                     v.active = false;
                                 }));
-                        widget.active = !Objects.equals(settings.profession, profession == VillagerProfession.NONE ? null : profession.id());
+                        widget.active = !Objects.equals(workspace.profession, profession == VillagerProfession.NONE ? null : profession.id());
                         widgets.add(widget);
                         ox++;
                         if (ox >= 5) {
@@ -947,7 +896,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 int y = height / 2 + 20;
 
-                if (settings.skinType == SkinType.CLOTHING) {
+                if (workspace.skinType == SkinType.CLOTHING) {
                     //hue
                     hueWidget = addDrawableChild(new HorizontalColorPickerWidget(width / 2 + 100, y, 100, 15,
                             color.hue / 360.0,
@@ -1009,10 +958,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 //fill tool strength
                 addDrawableChild(new IntegerSliderWidget(width / 2 + 100, y + 60, 100, 20,
-                        settings.fillToolThreshold,
+                        workspace.fillToolThreshold,
                         0, 32,
                         v -> {
-                            settings.fillToolThreshold = v;
+                            workspace.fillToolThreshold = v;
                         },
                         v -> Text.translatable("gui.skin_library.fillToolThreshold", +v),
                         () -> Text.translatable("gui.skin_library.fillToolThreshold.tooltip")
@@ -1255,19 +1204,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         if (stream != null) {
             try {
-                currentImage = NativeImage.read(stream);
-
-                if (currentImage.getWidth() != 64 || currentImage.getHeight() != 64) {
-                    setError(Text.translatable("gui.skin_library.not_64"));
-                    currentImage = null;
-                }
-
-                backendTexture = new NativeImageBackedTexture(currentImage);
+                NativeImage image = NativeImage.read(stream);
                 stream.close();
 
-                shouldUpload = true;
-                settings = new WorkspaceSettings();
-                setPage(Page.EDITOR_TYPE);
+                if (image.getWidth() != 64 || image.getHeight() != 64) {
+                    setError(Text.translatable("gui.skin_library.not_64"));
+                } else {
+                    workspace = new Workspace(image);
+
+                    setPage(Page.EDITOR_TYPE);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -1281,12 +1227,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 if (Auth.getToken() != null) {
                     Response request = null;
                     try {
-                        request = request(settings.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, ContentIdResponse.class, settings.contentid == -1 ? "content/mca" : "content/mca/%s".formatted(settings.contentid), Map.of(
+                        request = request(workspace.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, ContentIdResponse.class, workspace.contentid == -1 ? "content/mca" : "content/mca/%s".formatted(workspace.contentid), Map.of(
                                 "token", Auth.getToken()
                         ), Map.of(
-                                "title", settings.title,
-                                "meta", settings.toListEntry().toJson().toString(),
-                                "data", new String(Base64.getEncoder().encode(currentImage.getBytes()))
+                                "title", workspace.title,
+                                "meta", workspace.toListEntry().toJson().toString(),
+                                "data", new String(Base64.getEncoder().encode(workspace.currentImage.getBytes()))
                         ));
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -1297,8 +1243,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             int contentid = response.contentid();
 
                             // default tags
-                            setTag(contentid, settings.skinType.name().toLowerCase(Locale.ROOT), true);
-                            setTag(contentid, settings.profession == null ? "generic" : settings.profession, true);
+                            setTag(contentid, workspace.skinType.name().toLowerCase(Locale.ROOT), true);
+                            setTag(contentid, workspace.profession == null ? "generic" : workspace.profession, true);
 
                             // open detail page
                             getContentById(contentid).ifPresent(content -> {
@@ -1429,31 +1375,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         public static Text getText(SubscriptionFilter t) {
             return Text.translatable("gui.skin_library.subscription_filter." + t.name().toLowerCase(Locale.ROOT));
-        }
-    }
-
-    public static final class WorkspaceSettings {
-        public SkinType skinType;
-
-        public int contentid = -1;
-        public int temperature;
-        public double chance = 1.0;
-        public String title = "Unnamed Asset";
-        public String profession;
-        public Gender gender = Gender.NEUTRAL;
-
-        public int fillToolThreshold = 4;
-
-        public WorkspaceSettings() {
-
-        }
-
-        public SkinListEntry toListEntry() {
-            if (skinType == SkinType.CLOTHING) {
-                return new Clothing("immersive_library:" + contentid, profession, temperature, false, gender);
-            } else {
-                return new Hair("immersive_library:" + contentid);
-            }
         }
     }
 

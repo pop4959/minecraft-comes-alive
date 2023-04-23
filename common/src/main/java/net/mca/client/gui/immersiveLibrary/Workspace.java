@@ -1,0 +1,89 @@
+package net.mca.client.gui.immersiveLibrary;
+
+import net.mca.client.gui.SkinLibraryScreen;
+import net.mca.entity.ai.relationship.Gender;
+import net.mca.resources.data.skin.Clothing;
+import net.mca.resources.data.skin.Hair;
+import net.mca.resources.data.skin.SkinListEntry;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public final class Workspace {
+    public SkinLibraryScreen.SkinType skinType;
+
+    public int contentid = -1;
+    public int temperature;
+    public double chance = 1.0;
+    public String title = "Unnamed Asset";
+    public String profession;
+    public Gender gender = Gender.NEUTRAL;
+
+    public int fillToolThreshold = 4;
+
+    public NativeImage currentImage;
+    public NativeImageBackedTexture backendTexture;
+    public boolean dirty;
+
+
+    public Workspace(NativeImage image) {
+        this.currentImage = image;
+        this.backendTexture = new NativeImageBackedTexture(currentImage);
+        this.dirty = true;
+    }
+
+    public SkinListEntry toListEntry() {
+        if (skinType == SkinLibraryScreen.SkinType.CLOTHING) {
+            return new Clothing("immersive_library:" + contentid, profession, temperature, false, gender);
+        } else {
+            return new Hair("immersive_library:" + contentid);
+        }
+    }
+
+    private record FillTodo(int x, int y, int red, int green, int blue, int alpha) {
+
+    }
+
+    private void fillDeleteFunc(FillTodo entry, Queue<FillTodo> todo, int x, int y) {
+        if (x < 0 || y < 0 || x >= 64 || y >= 64) return;
+
+        FillTodo nextEntry = new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y));
+
+        if (Math.abs(nextEntry.red - entry.red) > fillToolThreshold) return;
+        if (Math.abs(nextEntry.green - entry.green) > fillToolThreshold) return;
+        if (Math.abs(nextEntry.blue - entry.blue) > fillToolThreshold) return;
+        if (Math.abs(nextEntry.alpha - entry.alpha) > fillToolThreshold) return;
+
+        todo.add(nextEntry);
+    }
+
+    public void fillDelete(int x, int y) {
+        Queue<FillTodo> todo = new LinkedList<>();
+        todo.add(new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y)));
+
+        while (!todo.isEmpty()) {
+            FillTodo entry = todo.poll();
+
+            if (currentImage.getOpacity(entry.x, entry.y) == 0) {
+                continue;
+            }
+
+            currentImage.setColor(entry.x, entry.y, 0);
+            dirty = true;
+
+            for (int ox = -1; ox <= 1; ox++) {
+                for (int oy = -1; oy <= 1; oy++) {
+                    if (ox != 0 || oy != 0) {
+                        fillDeleteFunc(entry, todo, entry.x + ox, entry.y + oy);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean validPixel(int x, int y) {
+        return x >= 0 && x < 64 && y >= 0 && y < 64;
+    }
+}
