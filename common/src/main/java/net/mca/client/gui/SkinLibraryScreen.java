@@ -56,6 +56,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.mca.client.gui.immersiveLibrary.Api.request;
 
@@ -80,6 +81,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private int selectionPage;
     private LiteContent focusedContent;
     private LiteContent hoveredContent;
+    private LiteContent deleteConfirmationContent;
     private Page page;
 
     private ButtonWidget pageWidget;
@@ -238,6 +240,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         }
                     }
                 }
+
+                if (!authenticated && (subscriptionFilter == SubscriptionFilter.LIKED || subscriptionFilter == SubscriptionFilter.SUBMISSIONS)) {
+                    drawTextBox(matrices, Text.translatable("gui.skin_library.like_locked"));
+                }
             }
             case EDITOR_LOCKED -> {
                 drawTextBox(matrices, Text.translatable("gui.skin_library.locked"));
@@ -247,6 +253,9 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             }
             case EDITOR_TYPE -> {
                 drawTextBox(matrices, Text.translatable("gui.skin_library.prepare"));
+            }
+            case DELETE -> {
+                drawTextBox(matrices, Text.translatable("gui.skin_library.delete_confirm"));
             }
             case EDITOR -> {
                 if (workspace.dirty) {
@@ -299,9 +308,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 //dummy
-                villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f;
-                villagerVisualization.limbDistance = 1.5f;
-
                 if (workspace.skinType == SkinType.CLOTHING) {
                     villagerVisualization.setHair(EMPTY_IDENTIFIER);
                     villagerVisualization.setClothes(CANVAS_IDENTIFIER);
@@ -361,9 +367,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             }
             case DETAIL -> {
                 //dummy
-                villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f;
-                villagerVisualization.limbDistance = 1.5f;
-
                 setDummyTexture(focusedContent);
 
                 int cx = width / 2;
@@ -403,6 +406,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             return List.of(
                     Text.literal(content.title()),
                     Text.translatable("gui.skin_library.meta.by", content.username()).formatted(Formatting.ITALIC),
+                    Text.translatable("gui.skin_library.meta.likes", content.likes()).formatted(Formatting.GRAY),
                     Text.translatable("gui.skin_library.gender", meta.getGender() == Gender.MALE ? Text.translatable("gui.villager_editor.masculine") : (meta.getGender() == Gender.FEMALE ? Text.translatable("gui.villager_editor.feminine") : Text.translatable("gui.villager_editor.neutral"))),
                     Text.translatable("gui.skin_library.profession", meta.getProfession() == null ? Text.translatable("entity.minecraft.villager") : Text.translatable("entity.minecraft.villager." + meta.getProfession())),
                     Text.translatable("gui.skin_library.temperature", Text.translatable("gui.skin_library.temperature." + (meta.getTemperature() + 2))),
@@ -473,31 +477,33 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        // Pan
-        if (keyCode == GLFW.GLFW_KEY_SPACE) {
-            isPanning = true;
-            return true;
-        }
+        if (page == Page.EDITOR) {
+            // Pan
+            if (keyCode == GLFW.GLFW_KEY_SPACE) {
+                isPanning = true;
+                return true;
+            }
 
-        // Reset viewport
-        if (keyCode == GLFW.GLFW_KEY_R) {
-            x0 = 0.0f;
-            x1 = 1.0f;
-            y0 = 0.0f;
-            y1 = 1.0f;
-            return true;
-        }
+            // Reset viewport
+            if (keyCode == GLFW.GLFW_KEY_R) {
+                x0 = 0.0f;
+                x1 = 1.0f;
+                y0 = 0.0f;
+                y1 = 1.0f;
+                return true;
+            }
 
-        // Fill-delete
-        if (keyCode == GLFW.GLFW_KEY_F) {
-            workspace.fillDelete((int)getPixelX(), (int)getPixelY());
-            return true;
-        }
+            // Fill-delete
+            if (keyCode == GLFW.GLFW_KEY_F) {
+                workspace.fillDelete((int)getPixelX(), (int)getPixelY());
+                return true;
+            }
 
-        // Color pick
-        if (keyCode == GLFW.GLFW_KEY_P) {
-            pickColor();
-            return true;
+            // Color pick
+            if (keyCode == GLFW.GLFW_KEY_P) {
+                pickColor();
+                return true;
+            }
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -568,10 +574,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 } else {
                     if (hoveredContent.hasTag("clothing")) {
                         previousScreen.getVillager().setClothes("immersive_library:" + hoveredContent.contentid());
-                        MinecraftClient.getInstance().setScreen(previousScreen);
+                        previousScreen.syncVillagerData();
+                        previousScreen.close();
                     } else if (hoveredContent.hasTag("hair")) {
                         previousScreen.getVillager().setHair("immersive_library:" + hoveredContent.contentid());
-                        MinecraftClient.getInstance().setScreen(previousScreen);
+                        previousScreen.syncVillagerData();
+                        previousScreen.close();
                     }
                 }
             }
@@ -662,7 +670,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 setSelectionPage(selectionPage);
 
                 //search
-                TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200 + 65, height / 2 - 110, 110, 16,
+                TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200 + 65, height / 2 - 110 + 2, 110, 16,
                         Text.translatable("gui.skin_library.search")));
                 textFieldWidget.setMaxLength(64);
                 textFieldWidget.setText(filteredString);
@@ -787,18 +795,17 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     tagNameWidget.setMaxLength(20);
 
                     //add tag
-                    addDrawableChild(new ButtonWidget(width / 2 - 100, height / 2 - 100, 40, 20, Text.translatable("gui.skin_library.add"), sender -> {
-                        String tag = tagNameWidget.getText().trim();
+                    addDrawableChild(new TooltipButtonWidget(width / 2 - 100, height / 2 - 100, 40, 20, "gui.skin_library.add", sender -> {
+                        String tag = tagNameWidget.getText().trim().toLowerCase(Locale.ROOT);
                         if (tag.length() > 0) {
                             setTag(focusedContent.contentid(), tag, true);
-                            focusedContent.tags().add(tag);
                             tagNameWidget.setText("");
                             rebuild();
                         }
                     }));
 
                     //controls
-                    drawControls(focusedContent, true, width / 2 + 100, height / 2 + 60);
+                    drawControls(focusedContent, true, width / 2 + 125, height / 2 + 60);
                 }
 
                 //close
@@ -820,7 +827,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                     Text.literal("X"),
                                     v -> {
                                         setTag(focusedContent.contentid(), tag, false);
-                                        focusedContent.tags().remove(tag);
+                                        rebuild();
                                     }));
                         }
                         addDrawableChild(new ButtonWidget(width / 2 - 200 + 20, ty, w, 20,
@@ -830,6 +837,19 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         ty += 20;
                     }
                 }
+            }
+            case DELETE -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 65, height / 2, 60, 20,
+                        Text.translatable("gui.skin_library.cancel"),
+                        v -> {
+                            setPage(Page.DETAIL);
+                        }));
+                addDrawableChild(new ButtonWidget(width / 2 + 5, height / 2, 60, 20,
+                        Text.translatable("gui.skin_library.delete"),
+                        v -> {
+                            removeContent(deleteConfirmationContent.contentid());
+                            setPage(Page.LIBRARY);
+                        }));
             }
             case EDITOR -> {
                 // name
@@ -865,7 +885,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         .values(Gender.MALE, Gender.NEUTRAL, Gender.FEMALE)
                         .initially(workspace.gender)
                         .omitKeyText()
-                        .build(width / 2 - 147, height / 2 - 80, 52, 20, Text.literal(""), (button, gender) -> {
+                        .build(width / 2 - 146, height / 2 - 80, 52, 20, Text.literal(""), (button, gender) -> {
                             this.workspace.gender = gender;
                             updateSearch();
                         }));
@@ -893,7 +913,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         ItemButtonWidget widget = addDrawableChild(new ItemButtonWidget(width / 2 - 200 + ox * 21, height / 2 - 30 + oy * 21, 20, text,
                                 ProfessionIcons.ICONS.getOrDefault(profession.id(), Items.OAK_SAPLING.getDefaultStack()),
                                 v -> {
-                                    workspace.profession = profession != VillagerProfession.NONE ? null : profession.id();
+                                    workspace.profession = profession == VillagerProfession.NONE ? null : profession.id();
                                     widgets.forEach(b -> b.active = true);
                                     v.active = false;
                                 }));
@@ -1013,14 +1033,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }
 
         // like
-        widgets.add(addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
-                isLiked(content),
-                Text.translatable("✔"),
-                Text.translatable("gui.skin_library.like"),
-                v -> {
-                    ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
-                    setLike(content.contentid(), ((ToggleableTooltipButtonWidget)v).toggle);
-                })));
+        if (authenticated) {
+            widgets.add(addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
+                    isLiked(content),
+                    Text.translatable("✔"),
+                    Text.translatable("gui.skin_library.like"),
+                    v -> {
+                        ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
+                        setLike(content.contentid(), ((ToggleableTooltipButtonWidget)v).toggle);
+                    })));
+        }
 
         // delete
         if (advanced && canModifyContent(content)) {
@@ -1028,8 +1050,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     Text.translatable("X"),
                     Text.translatable("gui.skin_library.delete"),
                     v -> {
-                        removeContent(content.contentid());
-                        setPage(Page.LIBRARY);
+                        deleteConfirmationContent = content;
+                        setPage(Page.DELETE);
                     })));
         }
 
@@ -1274,7 +1296,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private Optional<LiteContent> getContentById(int contentid) {
-        return content.stream().filter(v -> v.contentid() == contentid).findAny();
+        return Stream.concat(content.stream(), serverContent.stream()).filter(v -> v.contentid() == contentid).findAny();
     }
 
     private Optional<LiteContent> getServerContentById(int contentid) {
@@ -1286,6 +1308,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "tag/mca/%s/%s".formatted(contentid, tag), Map.of(
                     "token", Auth.getToken()
             ));
+            getContentById(contentid).ifPresent(c -> {
+                if (add) {
+                    c.tags().add(tag);
+                } else {
+                    c.tags().remove(tag);
+                }
+            });
         }
     }
 
@@ -1369,6 +1398,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         LOGIN,
         LOGOUT,
         DETAIL,
+        DELETE,
         LOADING
     }
 

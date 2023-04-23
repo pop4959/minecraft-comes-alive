@@ -9,7 +9,7 @@ public class SkinLocations {
         HEAD, HAT, RIGHT_LEG, BODY, RIGHT_ARM, LEFT_LEG, LEFT_ARM, JACKET, RIGHT_LEG_2, RIGHT_ARM_2, LEFT_LEG_2, LEFT_ARM_2;
 
         public Text getTranslation() {
-            return Text.translatable("gui.skin_library.element.left_arm_2." + name().toLowerCase(Locale.ROOT));
+            return Text.translatable("gui.skin_library.element." + name().toLowerCase(Locale.ROOT));
         }
     }
 

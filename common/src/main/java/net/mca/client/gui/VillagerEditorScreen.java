@@ -711,7 +711,6 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
             villagerVisualization.readCustomDataFromNbt(nbt);
             villagerVisualization.setBreedingAge(villager.getBreedingAge());
             villagerVisualization.calculateDimensions();
-            villagerVisualization.setName("");
 
             int i = 0;
             hoveredClothingId = -1;
@@ -719,9 +718,6 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                 for (int x = 0; x < CLOTHES_H + y; x++) {
                     int index = clothingPage * CLOTHES_PER_PAGE + i;
                     if ((page.equals("clothing") ? filteredClothing : filteredHair).size() > index) {
-                        villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f + i * 17.0f;
-                        villagerVisualization.limbDistance = 1.5f;
-
                         if (page.equals("clothing")) {
                             villagerVisualization.setClothes(filteredClothing.get(index));
                         } else {
@@ -789,7 +785,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
         NetworkHandler.sendToServer(new GetVillagerRequest(villagerUUID));
     }
 
-    void syncVillagerData() {
+    public void syncVillagerData() {
         NbtCompound nbt = villagerData;
         ((MobEntity)villager).writeCustomDataToNbt(nbt);
         nbt.putInt("Age", villagerBreedingAge);

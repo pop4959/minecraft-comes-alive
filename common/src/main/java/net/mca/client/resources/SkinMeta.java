@@ -8,10 +8,10 @@ public class SkinMeta {
     @Nullable
     private final String profession;
     private final int temperature;
-    private final Gender gender;
+    private final int gender;
     private final float chance;
 
-    public SkinMeta(@Nullable String profession, int temperature, Gender gender, float chance) {
+    public SkinMeta(@Nullable String profession, int temperature, int gender, float chance) {
         this.profession = profession;
         this.temperature = temperature;
         this.gender = gender;
@@ -28,7 +28,7 @@ public class SkinMeta {
     }
 
     public Gender getGender() {
-        return gender;
+        return Gender.byId(gender);
     }
 
     public float getChance() {
