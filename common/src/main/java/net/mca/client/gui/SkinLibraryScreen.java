@@ -827,9 +827,19 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         v -> Text.translatable("gui.skin_library.meta.chance"),
                         () -> Text.translatable("gui.skin_library.meta.chance.tooltip")));
 
+                //gender
+                addDrawableChild(CyclingButtonWidget.builder(Gender::getText)
+                        .values(Gender.MALE, Gender.NEUTRAL, Gender.FEMALE)
+                        .initially(settings.gender)
+                        .omitKeyText()
+                        .build(width / 2 - 147, height / 2 - 80, 52, 20, Text.literal(""), (button, gender) -> {
+                            this.settings.gender = gender;
+                            updateSearch();
+                        }));
+
                 // temperature
                 if (settings.skinType == SkinType.CLOTHING) {
-                    addDrawableChild(new IntegerSliderWidget(width / 2 - 147, height / 2 - 80, 52, 20,
+                    addDrawableChild(new IntegerSliderWidget(width / 2 - 147, height / 2 - 60, 105, 20,
                             settings.temperature,
                             -2, 2,
                             v -> {
@@ -839,26 +849,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             () -> Text.translatable("gui.skin_library.temperature.tooltip")
                     ));
                 }
-
-                // gender
-                addDrawableChild(new TooltipButtonWidget(width / 2 - 200, height / 2 - 60, 105 / 3, 20,
-                        Text.literal("M"),
-                        Text.translatable("gui.villager_editor.masculine"),
-                        v -> {
-                            settings.gender = Gender.MALE;
-                        }));
-                addDrawableChild(new TooltipButtonWidget(width / 2 - 200 + 105 / 3, height / 2 - 60, 105 / 3, 20,
-                        Text.literal("N"),
-                        Text.translatable("gui.villager_editor.neutral"),
-                        v -> {
-                            settings.gender = Gender.NEUTRAL;
-                        }));
-                addDrawableChild(new TooltipButtonWidget(width / 2 - 200 + 105 / 3 * 2, height / 2 - 60, 105 / 3, 20,
-                        Text.literal("F"),
-                        Text.translatable("gui.villager_editor.feminine"),
-                        v -> {
-                            settings.gender = Gender.FEMALE;
-                        }));
 
                 //profession
                 if (settings.skinType == SkinType.CLOTHING) {
