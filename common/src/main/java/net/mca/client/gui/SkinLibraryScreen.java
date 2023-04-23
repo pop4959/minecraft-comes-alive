@@ -13,6 +13,7 @@ import net.mca.client.gui.immersiveLibrary.types.User;
 import net.mca.client.gui.widget.*;
 import net.mca.client.resources.ClientUtils;
 import net.mca.client.resources.ProfessionIcons;
+import net.mca.client.resources.SkinLocations;
 import net.mca.client.resources.SkinMeta;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.EntitiesMCA;
@@ -286,9 +287,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 matrices.pop();
 
                 //hovered element
-                MutableText text = Text.translatable("gui.skin_library.element.left_left");
-                int textWidth = textRenderer.getWidth(text);
-                renderTooltip(matrices, text, width / 2 - textWidth / 2 - 12, height / 2 - 68);
+                int x = (int)getPixelX();
+                int y = (int)getPixelY();
+                if (x >= 0 && x < 64 && y >= 0 && y < 64) {
+                    SkinLocations.Part part = SkinLocations.LOOKUP[x][y];
+                    if (part != null) {
+                        Text text = part.getTranslation();
+                        int textWidth = textRenderer.getWidth(text);
+                        renderTooltip(matrices, text, width / 2 - textWidth / 2 - 12, height / 2 - 68);
+                    }
+                }
 
                 //dummy
                 villagerVisualization.limbAngle = System.currentTimeMillis() / 50.0f;
