@@ -354,6 +354,13 @@
   "gui.skin_library.add": "Add",
   "gui.skin_library.add.tooltip": "Tagging content helps user find and filter for specific assets.",
   "gui.skin_library.close": "Close",
+  "gui.skin_library.gender": "Gender: %s",
+  "gui.skin_library.profession": "Profession: %s",
+  "gui.skin_library.temperature": "Temperature: %s",
+  "gui.skin_library.chance_val": "Chance: %s",
+  "gui.skin_library.chance": "Chance",
+  "gui.skin_library.name": "Name",
+  "gui.skin_library.publish": "Publish",
 
   "gui.skin_library.meta.chance": "Chance",
   "gui.skin_library.meta.chance.tooltip": "Probability that this asset is used by villagers.",
@@ -388,14 +395,6 @@
   "gui.skin_library.element.right_arm_2": "Right arm 2",
   "gui.skin_library.element.left_leg_2": "Left leg 2",
   "gui.skin_library.element.left_arm_2": "Left arm 2",
-
-  "gui.skin_library.gender": "Gender: %s",
-  "gui.skin_library.profession": "Profession: %s",
-  "gui.skin_library.temperature": "Temperature: %s",
-  "gui.skin_library.chance_val": "Chance: %s",
-  "gui.skin_library.chance": "Chance",
-  "gui.skin_library.name": "Name",
-  "gui.skin_library.publish": "Publish",
 
   "gui.skin_library.page.library": "Library",
   "gui.skin_library.page.editor_prepare": "Editor",
