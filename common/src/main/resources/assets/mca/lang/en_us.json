@@ -388,7 +388,7 @@
   "gui.skin_library.page.login": "Login",
   "gui.skin_library.page.logout": "Logout",
 
-  "gui.skin_library.subscription_filter.library": "Library",
+  "gui.skin_library.subscription_filter.library": "Public",
   "gui.skin_library.subscription_filter.library.tooltip": "Public library of skins",
   "gui.skin_library.subscription_filter.liked": "Liked",
   "gui.skin_library.subscription_filter.liked.tooltip": "Your liked skins",

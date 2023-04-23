@@ -4,14 +4,12 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public class ToggleableButtonWidget extends ButtonWidget {
-    public boolean toggle = false;
+    public boolean toggle;
 
-    public ToggleableButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress) {
+    public ToggleableButtonWidget(int x, int y, int width, int height, boolean toggle, Text message, PressAction onPress) {
         super(x, y, width, height, message, onPress);
-    }
 
-    public ToggleableButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress, TooltipSupplier tooltipSupplier) {
-        super(x, y, width, height, message, onPress, tooltipSupplier);
+        this.toggle = toggle;
     }
 
     protected int getYImage(boolean hovered) {

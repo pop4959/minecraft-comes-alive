@@ -92,6 +92,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private float x0, x1, y0, y1;
     private boolean isPanning;
+    private boolean hasPanned;
     private double lastMouseX;
     private double lastMouseY;
 
@@ -455,6 +456,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             float oy = (float)(deltaY / 64 / CANVAS_SCALE);
             y0 -= oy;
             y1 -= oy;
+
+            hasPanned = true;
+        } else {
+            hasPanned = false;
         }
     }
 
@@ -572,9 +577,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         activeMouseButton = -1;
 
         if (button == 2) {
-            if (isPanning) {
-                isPanning = false;
-            } else {
+            isPanning = false;
+            if (!hasPanned && page == Page.EDITOR) {
                 pickColor();
             }
         }
@@ -675,6 +679,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     String str = "%d x %s".formatted(tag.getValue(), tag.getKey());
                     int w = textRenderer.getWidth(str) + 8;
                     addDrawableChild(new ToggleableButtonWidget(tx, height / 2 - 110 + 22, w, 20,
+                            selectedTags.contains(tag.getKey()),
                             Text.literal(str),
                             v -> {
                                 if (selectedTags.contains(tag.getKey())) {
@@ -684,7 +689,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                 }
                                 ((ToggleableButtonWidget)v).toggle = !((ToggleableButtonWidget)v).toggle;
                                 updateSearch();
-                            })).toggle = selectedTags.contains(tag.getKey());
+                            }));
                     tx += w;
                     if (tx > width / 2 + 200) {
                         break;
@@ -859,7 +864,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 // temperature
                 if (workspace.skinType == SkinType.CLOTHING) {
-                    addDrawableChild(new IntegerSliderWidget(width / 2 - 147, height / 2 - 60, 105, 20,
+                    addDrawableChild(new IntegerSliderWidget(width / 2 - 200, height / 2 - 60, 105, 20,
                             workspace.temperature,
                             -2, 2,
                             v -> {
@@ -984,16 +989,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // subscribe
         if (isOp() || Config.getServerConfig().allowEveryoneToAddContentGlobally) {
             widgets.add(addDrawableChild(new ToggleableTooltipButtonWidget(0, 0, w, 20,
-                    getServerContentById(content.contentid()).isEmpty(),
+                    getServerContentById(content.contentid()).isPresent(),
                     Text.translatable("+"),
                     Text.translatable("gui.skin_library.subscribe"),
                     v -> {
                         if (((ToggleableTooltipButtonWidget)v).toggle) {
+                            NetworkHandler.sendToServer(new RemoveCustomClothingMessage(content.hasTag("clothing") ? RemoveCustomClothingMessage.Type.CLOTHING : RemoveCustomClothingMessage.Type.HAIR, new Identifier("immersive_library", String.valueOf(content.contentid()))));
+                        } else {
                             toListEntry(content).ifPresent(e -> {
                                 NetworkHandler.sendToServer(new AddCustomClothingMessage(e));
                             });
-                        } else {
-                            NetworkHandler.sendToServer(new RemoveCustomClothingMessage(content.hasTag("clothing") ? RemoveCustomClothingMessage.Type.CLOTHING : RemoveCustomClothingMessage.Type.HAIR, new Identifier("immersive_library", String.valueOf(content.contentid()))));
                         }
                         ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
                     })));

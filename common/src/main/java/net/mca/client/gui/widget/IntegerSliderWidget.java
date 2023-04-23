@@ -26,7 +26,7 @@ public class IntegerSliderWidget extends ExtendedSliderWidget<Integer> {
 
     @Override
     Integer getValue() {
-        return (int)(value * (max - min) + min);
+        return (int)(value * (max - min + 1.0) + min - 0.5);
     }
 
     @Override

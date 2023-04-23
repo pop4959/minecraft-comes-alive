@@ -13,7 +13,7 @@ public class ToggleableTooltipButtonWidget extends TooltipButtonWidget {
 
     protected int getYImage(boolean hovered) {
         int i = 1;
-        if (!this.toggle) {
+        if (this.toggle) {
             i = 0;
         } else if (hovered) {
             i = 2;
