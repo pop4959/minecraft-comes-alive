@@ -360,7 +360,10 @@
   "gui.skin_library.prepare.hair": "Create hairstyle",
   "gui.skin_library.prepare.clothing": "Create Clothing",
 
-  "gui.skin_library.tool_help": "Controls:\nLeft mouse to paint\nRight mouse to delete\nMiddle mouse to pick color\nHold space to pan\nMousewheel to zoom\nClick to open help",
+  "gui.skin_library.fillToolThreshold": "Fill threshold",
+  "gui.skin_library.fillToolThreshold.tooltip": "Pressing F fill delete similar, adjacent pixels up to the given threshold.",
+
+  "gui.skin_library.tool_help": "Controls:\nLeft mouse to paint\nRight mouse to delete\nMiddle mouse to pick color\nHold space or mouse 3 to pan\nMousewheel to zoom\nF to clear similar pixels\nClick to open help",
 
   "gui.skin_library.temperature.0": "Cold",
   "gui.skin_library.temperature.1": "Chilly",

@@ -45,6 +45,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import org.lwjgl.glfw.GLFW;
 
+import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,6 +72,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private final List<LiteContent> serverContent = new ArrayList<>();
     private List<LiteContent> filteredContent = new ArrayList<>();
     private SubscriptionFilter subscriptionFilter = SubscriptionFilter.LIBRARY;
+
+    @Nullable
     private User currentUser;
 
     private int selectionPage;
@@ -203,14 +206,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        hoveredContent = null;
+
         switch (page) {
             case LIBRARY -> {
                 NbtCompound nbt = new NbtCompound();
                 villagerVisualization.readCustomDataFromNbt(nbt);
                 villagerVisualization.setBreedingAge(0);
                 villagerVisualization.calculateDimensions();
-
-                hoveredContent = null;
 
                 int i = 0;
                 for (int y = 0; y < CLOTHES_V; y++) {
@@ -460,16 +463,30 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        // Pan
         if (keyCode == GLFW.GLFW_KEY_SPACE) {
             isPanning = true;
             return true;
         }
 
+        // Reset viewport
         if (keyCode == GLFW.GLFW_KEY_R) {
             x0 = 0.0f;
             x1 = 1.0f;
             y0 = 0.0f;
             y1 = 1.0f;
+            return true;
+        }
+
+        // Fill-delete
+        if (keyCode == GLFW.GLFW_KEY_F) {
+            fillDelete();
+            return true;
+        }
+
+        // Color pick
+        if (keyCode == GLFW.GLFW_KEY_P) {
+            pickColor();
             return true;
         }
 
@@ -518,11 +535,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (page == Page.EDITOR) {
-            int x = (int)getPixelX();
-            int y = (int)getPixelY();
-
             if (button == 0 || button == 1) {
                 activeMouseButton = button;
+
+                int x = (int)getPixelX();
+                int y = (int)getPixelY();
 
                 if (!isPanning) {
                     paint(x, y);
@@ -531,14 +548,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 lastPixelMouseX = x;
                 lastPixelMouseY = y;
             } else if (button == 2) {
-                // pick color
-                if (validPixel(x, y)) {
-                    color.setRGB(
-                            currentImage.getRed(x, y) / 255.0,
-                            currentImage.getGreen(x, y) / 255.0,
-                            currentImage.getBlue(x, y) / 255.0
-                    );
-                }
+                isPanning = true;
             }
         } else {
             if (hoveredContent != null) {
@@ -564,7 +574,71 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         activeMouseButton = -1;
 
+        if (button == 2) {
+            if (isPanning) {
+                isPanning = false;
+            } else {
+                pickColor();
+            }
+        }
+
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    private void pickColor() {
+        int x = (int)getPixelX();
+        int y = (int)getPixelY();
+        if (validPixel(x, y)) {
+            color.setRGB(
+                    currentImage.getRed(x, y) / 255.0,
+                    currentImage.getGreen(x, y) / 255.0,
+                    currentImage.getBlue(x, y) / 255.0
+            );
+        }
+    }
+
+    private record FillTodo(int x, int y, int red, int green, int blue, int alpha) {
+
+    }
+
+    private void fillDeleteFunc(FillTodo entry, Queue<FillTodo> todo, int x, int y) {
+        if (x < 0 || y < 0 || x >= 64 || y >= 64) return;
+
+        FillTodo nextEntry = new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y));
+
+        if (Math.abs(nextEntry.red - entry.red) > settings.fillToolThreshold) return;
+        if (Math.abs(nextEntry.green - entry.green) > settings.fillToolThreshold) return;
+        if (Math.abs(nextEntry.blue - entry.blue) > settings.fillToolThreshold) return;
+        if (Math.abs(nextEntry.alpha - entry.alpha) > settings.fillToolThreshold) return;
+
+        todo.add(nextEntry);
+    }
+
+    private void fillDelete() {
+        int x = (int)getPixelX();
+        int y = (int)getPixelY();
+
+        Queue<FillTodo> todo = new LinkedList<>();
+        todo.add(new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y)));
+
+        while (!todo.isEmpty()) {
+            FillTodo entry = todo.poll();
+
+            if (currentImage.getOpacity(entry.x, entry.y) == 0) {
+                continue;
+            }
+
+            currentImage.setColor(entry.x, entry.y, 0);
+            shouldUpload = true;
+
+            for (int ox = -1; ox <= 1; ox++) {
+                for (int oy = -1; oy <= 1; oy++) {
+                    if (ox != 0 || oy != 0) {
+                        fillDeleteFunc(entry, todo, entry.x + ox, entry.y + oy);
+                    }
+                }
+            }
+        }
     }
 
     private boolean validPixel(int x, int y) {
@@ -720,7 +794,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                         int g = currentImage.getGreen(x, y);
                                         int b = currentImage.getBlue(x, y);
                                         int a = currentImage.getOpacity(x, y);
-                                        int l = (int)((0.2126 * r + 0.7152 * g + 0.0722 * b + (255.0 - maxLuminance)) * 0.25 + 255 * 0.75);
+                                        int l = (int)((0.2126 * r + 0.7152 * g + 0.0722 * b + (255.0 - maxLuminance)) * 0.5 + 128);
                                         currentImage.setColor(x, y, a << 24 | l << 16 | l << 8 | l);
                                     }
                                 }
@@ -746,7 +820,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             case DETAIL -> {
                 if (canModifyFocusedContent()) {
                     //tag name
-                    TextFieldWidget tagNameWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200, height / 2 - 100 + 2, 100, 16,
+                    TextFieldWidget tagNameWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200, height / 2 - 100 + 2, 95, 16,
                             Text.literal("New Tag Name")));
                     tagNameWidget.setMaxLength(20);
 
@@ -755,6 +829,9 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         String tag = tagNameWidget.getText().trim();
                         if (tag.length() > 0) {
                             setTag(focusedContent.contentid(), tag, true);
+                            focusedContent.tags().add(tag);
+                            tagNameWidget.setText("");
+                            rebuild();
                         }
                     }));
 
@@ -772,26 +849,20 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 //tags
                 int ty = height / 2 - 70;
-                for (Map.Entry<String, Long> tag : tags.entrySet()) {
-                    String str = tag.getKey();
+                for (String tag : focusedContent.tags()) {
                     // todo blacklisted tags could be a bit more smooth, maybe include professions
-                    if (!str.equals("clothing") && !str.equals("hair")) {
-                        int w = textRenderer.getWidth(str) + 10;
+                    if (!tag.equals("clothing") && !tag.equals("hair")) {
+                        int w = textRenderer.getWidth(tag) + 10;
                         if (canModifyFocusedContent()) {
-                            addDrawableChild(new ToggleableButtonWidget(width / 2 - 200, ty, w, 20,
+                            addDrawableChild(new ButtonWidget(width / 2 - 200, ty, 20, 20,
                                     Text.literal("X"),
                                     v -> {
-                                        if (selectedTags.contains(tag.getKey())) {
-                                            selectedTags.remove(tag.getKey());
-                                        } else {
-                                            selectedTags.add(tag.getKey());
-                                        }
-                                        v.active = !v.active;
-                                        updateSearch();
-                                    })).active = selectedTags.contains(tag.getKey());
+                                        setTag(focusedContent.contentid(), tag, false);
+                                        focusedContent.tags().remove(tag);
+                                    }));
                         }
                         addDrawableChild(new ButtonWidget(width / 2 - 200 + 20, ty, w, 20,
-                                Text.literal(str),
+                                Text.literal(tag),
                                 v -> {
                                 }));
                         ty += 20;
@@ -936,6 +1007,17 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             );
                         }));
 
+                //fill tool strength
+                addDrawableChild(new IntegerSliderWidget(width / 2 + 100, y + 60, 100, 20,
+                        settings.fillToolThreshold,
+                        0, 32,
+                        v -> {
+                            settings.fillToolThreshold = v;
+                        },
+                        v -> Text.translatable("gui.skin_library.fillToolThreshold", +v),
+                        () -> Text.translatable("gui.skin_library.fillToolThreshold.tooltip")
+                ));
+
                 // submit
                 addDrawableChild(new ButtonWidget(width / 2 - 50, height / 2 + 80, 100, 20,
                         Text.translatable("gui.skin_library.publish"),
@@ -986,7 +1068,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     Text.translatable("X"),
                     Text.translatable("gui.skin_library.delete"),
                     v -> {
-                        removeContent(content.userid());
+                        removeContent(content.contentid());
                         setPage(Page.LIBRARY);
                     }));
             widgets.add(deleteWidget);
@@ -1023,7 +1105,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private boolean isLiked(LiteContent content) {
-        return currentUser.likes().stream().anyMatch(c -> c.contentid() == content.contentid());
+        return currentUser != null && (currentUser.likes().stream().anyMatch(c -> c.contentid() == content.contentid()));
     }
 
     public void setPage(Page page) {
@@ -1103,18 +1185,18 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         switch (subscriptionFilter) {
             case LIBRARY -> {contents = content;}
             case GLOBAL -> {contents = serverContent;}
-            case LIKED -> {contents = currentUser.likes();}
-            case SUBMISSIONS -> {contents = currentUser.submissions();}
+            case LIKED -> {contents = currentUser != null ? currentUser.likes() : Collections.emptyList();}
+            case SUBMISSIONS -> {contents = currentUser != null ? currentUser.submissions() : Collections.emptyList();}
         }
 
         // pre-filter the assets by string search and asset group
         List<LiteContent> untaggedFilteredContent = contents.stream()
-                .filter(v -> (filteredString.isEmpty() || v.title().contains(filteredString)) || Arrays.stream(v.tags()).anyMatch(t -> t.contains(filteredString)))
+                .filter(v -> (filteredString.isEmpty() || v.title().contains(filteredString)) || v.tags().stream().anyMatch(t -> t.contains(filteredString)))
                 .toList();
 
         // extract all tags, count them and sort them
         tags = untaggedFilteredContent.stream()
-                .flatMap(v -> Arrays.stream(v.tags()))
+                .flatMap(v -> v.tags().stream())
                 .collect(Collectors.groupingBy(tag -> tag, Collectors.counting()))
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -1257,13 +1339,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     "token", Auth.getToken()
             ));
             content.removeIf(v -> v.contentid() == contentId);
-            currentUser.likes().removeIf(v -> v.contentid() == contentId);
-            //currentUser.submissions().removeIf(v -> v.contentid() == contentId);
+
+            if (currentUser != null) {
+                currentUser.likes().removeIf(v -> v.contentid() == contentId);
+                currentUser.submissions().removeIf(v -> v.contentid() == contentId);
+            }
         }
     }
 
     private void setLike(int contentid, boolean add) {
-        if (Auth.getToken() != null) {
+        if (Auth.getToken() != null && currentUser != null) {
             request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "like/mca/%s".formatted(contentid), Map.of(
                     "token", Auth.getToken()
             ));
@@ -1294,7 +1379,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 try {
                     int contentid = Integer.parseInt(entry.getKey().substring(18));
                     serverContent.add(getContentById(contentid).orElse(new LiteContent(
-                            contentid, -1, "unknown", -1, new String[] {type}, "unknown", -1
+                            contentid, -1, "unknown", -1, Set.of(type), "unknown", -1
                     )));
                 } catch (NumberFormatException ignored) {
 
@@ -1348,14 +1433,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     public static final class WorkspaceSettings {
-        public int contentid = -1;
+        public SkinType skinType;
 
+        public int contentid = -1;
         public int temperature;
         public double chance = 1.0;
         public String title = "Unnamed Asset";
         public String profession;
         public Gender gender = Gender.NEUTRAL;
-        public SkinType skinType;
+
+        public int fillToolThreshold = 4;
 
         public WorkspaceSettings() {
 

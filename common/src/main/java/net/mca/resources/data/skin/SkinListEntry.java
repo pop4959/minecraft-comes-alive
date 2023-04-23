@@ -29,7 +29,7 @@ public abstract class SkinListEntry implements Serializable {
 
     public JsonObject toJson() {
         JsonObject j = new JsonObject();
-        j.addProperty("gender", gender.getId());
+        j.addProperty("gender", gender == null ? Gender.NEUTRAL.getId() : gender.getId());
         j.addProperty("chance", chance);
         return j;
     }

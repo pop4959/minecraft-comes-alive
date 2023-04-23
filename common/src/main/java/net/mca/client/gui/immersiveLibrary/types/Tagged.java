@@ -3,7 +3,7 @@ package net.mca.client.gui.immersiveLibrary.types;
 import java.util.Set;
 
 public interface Tagged {
-    String[] tags();
+    Set<String> tags();
 
     default boolean hasTag(String filter) {
         for (String tag : tags()) {

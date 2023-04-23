@@ -26,7 +26,7 @@ public class Clothing extends SkinListEntry {
     public Clothing(String identifier, JsonObject object) {
         super(identifier, object);
 
-        this.profession = JsonHelper.getString(object, "profession", null);
+        this.profession = object.get("profession").isJsonNull() ? null : JsonHelper.getString(object, "profession", null);
         this.exclude = JsonHelper.getBoolean(object, "exclude", false);
         this.temperature = JsonHelper.getInt(object, "temperature", 0);
     }
