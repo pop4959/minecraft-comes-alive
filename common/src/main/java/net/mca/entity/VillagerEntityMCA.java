@@ -102,19 +102,43 @@ import java.util.function.Predicate;
 import static net.mca.client.model.CommonVillagerModel.getVillager;
 
 public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<VillagerEntityMCA>, NamedScreenHandlerFactory, CompassionateEntity<BreedableRelationship>, CrossbowUser {
+    final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
+
     private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", 0.0f);
-
     private static final CDataParameter<Integer> GROWTH_AMOUNT = CParameter.create("growthAmount", -AgeState.getMaxAge());
-
     private static final CDataManager<VillagerEntityMCA> DATA = createTrackedData(VillagerEntityMCA.class).build();
 
+    public final ConversationManager conversationManager = new ConversationManager(this);
+    private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
+    private final LongTermMemory longTermMemory = new LongTermMemory(this);
+    private final Genetics genetics = new Genetics(this);
+    private final Traits traits = new Traits(this);
+    private final Residency residency = new Residency(this);
+    private final BreedableRelationship relations = new BreedableRelationship(this);
+    private final VillagerCommandHandler interactions = new VillagerCommandHandler(this);
+    private final UpdatableInventory inventory = new UpdatableInventory(27);
+    private final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.UNASSIGNED);
+
+    private GameProfile gameProfile;
     private PlayerModel playerModel;
 
     private int despawnDelay;
     private int burned;
-
-    public final ConversationManager conversationManager = new ConversationManager(this);
     private long lastHit = 0;
+    private int prevGrowthAmount;
+    private boolean recalcDimensionsBlocked;
+
+    public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
+        return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
+                .add(Residency::createTrackedData)
+                .add(BreedableRelationship::createTrackedData);
+    }
+
+    public VillagerEntityMCA(EntityType<VillagerEntityMCA> type, World w, Gender gender) {
+        super(type, w);
+        inventory.addListener(this::onInvChange);
+        genetics.setGender(gender);
+    }
 
     @Override
     public PlayerModel getPlayerModel() {
@@ -138,46 +162,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
     }
 
-    public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
-        return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
-                .add(Residency::createTrackedData)
-                .add(BreedableRelationship::createTrackedData);
-    }
-
-    private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
-
-    private final LongTermMemory longTermMemory = new LongTermMemory(this);
-
-    final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
-
-    private final Genetics genetics = new Genetics(this);
-    private final Traits traits = new Traits(this);
-    private final Residency residency = new Residency(this);
-    private final BreedableRelationship relations = new BreedableRelationship(this);
-
-    private final VillagerCommandHandler interactions = new VillagerCommandHandler(this);
-    private final UpdatableInventory inventory = new UpdatableInventory(27);
-
-    private final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.UNASSIGNED);
-
-    private int prevGrowthAmount;
-
-    public VillagerEntityMCA(EntityType<VillagerEntityMCA> type, World w, Gender gender) {
-        super(type, w);
-        inventory.addListener(this::onInvChange);
-        genetics.setGender(gender);
-    }
-
     @Override
     protected void initDataTracker() {
         super.initDataTracker();
 
         getTypeDataManager().register(this);
     }
-
-    private boolean recalcDimensionsBlocked;
-
-    private GameProfile gameProfile;
 
     @Override
     public GameProfile getGameProfile() {
