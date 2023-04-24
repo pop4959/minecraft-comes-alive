@@ -1,4 +1,4 @@
-package net.mca.server;
+package net.mca.server.world.data;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
