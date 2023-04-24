@@ -13,9 +13,6 @@ import net.mca.client.render.TombstoneBlockEntityRenderer;
 import net.mca.client.render.VillagerEntityMCARenderer;
 import net.mca.client.render.ZombieVillagerEntityMCARenderer;
 import net.mca.entity.EntitiesMCA;
-import net.mca.item.BabyItem;
-import net.mca.item.ItemsMCA;
-import net.mca.item.SirbenBabyItem;
 import net.mca.quilt.client.gui.QuiltMCAScreens;
 import net.mca.quilt.resources.ApiIdentifiableReloadListener;
 import net.mca.quilt.resources.QuiltColorPaletteLoader;
@@ -27,7 +24,6 @@ import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
@@ -65,19 +61,7 @@ public final class MCAQuiltClient extends ClientProxyAbstractImpl implements Cli
         ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new QuiltSupportersLoader());
         ResourceLoader.get(ResourceType.CLIENT_RESOURCES).registerReloader(new ApiIdentifiableReloadListener());
 
-        // TODO: Replace with an accesswidener or QSL equivalent when Quiltified FAPI is removed
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
+        ModelPredicatesMCA.setup(ModelPredicateProviderRegistry::register);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 MCAClient.onLogin()

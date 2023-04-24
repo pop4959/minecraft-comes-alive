@@ -1,9 +1,6 @@
 package net.mca.forge;
 
-import net.mca.Config;
-import net.mca.KeyBindings;
-import net.mca.MCA;
-import net.mca.ParticleTypesMCA;
+import net.mca.*;
 import net.mca.block.BlockEntityTypesMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.gui.MCAScreens;
@@ -14,9 +11,6 @@ import net.mca.client.render.VillagerEntityMCARenderer;
 import net.mca.client.render.ZombieVillagerEntityMCARenderer;
 import net.mca.client.resources.ColorPaletteLoader;
 import net.mca.entity.EntitiesMCA;
-import net.mca.item.BabyItem;
-import net.mca.item.ItemsMCA;
-import net.mca.item.SirbenBabyItem;
 import net.mca.resources.ApiReloadListener;
 import net.mca.resources.Supporters;
 import net.minecraft.client.MinecraftClient;
@@ -28,7 +22,6 @@ import net.minecraft.client.render.entity.EntityRenderers;
 import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.resource.ReloadableResourceManagerImpl;
-import net.minecraft.util.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -69,19 +62,7 @@ public final class MCAForgeClient {
 
         BlockEntityRendererFactories.register(BlockEntityTypesMCA.TOMBSTONE.get(), TombstoneBlockEntityRenderer::new);
 
-        // todo java.util.ConcurrentModificationException occurred in computeIfAbsent
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
+        ModelPredicatesMCA.setup(ModelPredicateProviderRegistry::register);
 
         // TODO: Forge has made this deprecated in 1.19 and we're meant to use `render_type` in the model json
         // - remove and replace at a later date instead, since Fabric still uses the older method afaik.

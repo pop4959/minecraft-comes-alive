@@ -48,10 +48,6 @@ public class MCAClient {
                         .noneMatch(entry -> MCA.doesModExist(entry.getKey()));
     }
 
-    public static boolean renderArms(UUID uuid) {
-        return renderArms(uuid, "arms");
-    }
-
     public static void tickClient(MinecraftClient client) {
         destinyManager.tick(client);
 

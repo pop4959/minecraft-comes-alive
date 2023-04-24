@@ -31,6 +31,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
@@ -63,18 +64,7 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new FabricSupportersLoader());
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new ApiIdentifiableReloadListener());
 
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                BabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_BOY.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
-        ModelPredicateProviderRegistry.register(ItemsMCA.SIRBEN_BABY_GIRL.get(), new Identifier("invalidated"), (stack, world, entity, i) ->
-                SirbenBabyItem.hasBeenInvalidated(stack) ? 1 : 0
-        );
+        ModelPredicatesMCA.setup(ModelPredicateProviderRegistry::register);
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 MCAClient.onLogin()
