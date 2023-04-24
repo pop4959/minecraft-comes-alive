@@ -7,7 +7,7 @@ import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
 import net.mca.resources.data.skin.Clothing;
 import net.mca.resources.data.skin.Hair;
-import net.mca.server.CustomClothingManager;
+import net.mca.server.world.data.CustomClothingManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;

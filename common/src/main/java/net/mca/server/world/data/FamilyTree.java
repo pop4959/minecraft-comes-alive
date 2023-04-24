@@ -37,6 +37,7 @@ public class FamilyTree extends PersistentState {
         entries = NbtHelper.toMap(nbt, UUID::fromString, (id, element) -> new FamilyTreeNode(this, id, (NbtCompound)element));
 
         // Fixing the shift in relationships introduces by the promised update
+        // TODO the moment this code here causes any porting errors, remove it. By that time no old saves should exist anyways.
         UUID uuid = UUID.fromString("12341234-1234-1234-1234-123412341234");
         if (!entries.containsKey(uuid)) {
             entries.put(uuid, createEntry(uuid, "debug", Gender.NEUTRAL, false));

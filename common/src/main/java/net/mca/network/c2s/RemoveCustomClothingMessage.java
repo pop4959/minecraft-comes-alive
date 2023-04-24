@@ -1,7 +1,7 @@
 package net.mca.network.c2s;
 
 import net.mca.cobalt.network.Message;
-import net.mca.server.CustomClothingManager;
+import net.mca.server.world.data.CustomClothingManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 

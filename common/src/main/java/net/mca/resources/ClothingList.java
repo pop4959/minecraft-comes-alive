@@ -7,7 +7,7 @@ import net.mca.MCA;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.data.skin.Clothing;
-import net.mca.server.CustomClothingManager;
+import net.mca.server.world.data.CustomClothingManager;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;

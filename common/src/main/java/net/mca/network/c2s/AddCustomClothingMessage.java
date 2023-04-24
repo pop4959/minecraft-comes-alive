@@ -4,7 +4,7 @@ import net.mca.cobalt.network.Message;
 import net.mca.resources.data.skin.Clothing;
 import net.mca.resources.data.skin.Hair;
 import net.mca.resources.data.skin.SkinListEntry;
-import net.mca.server.CustomClothingManager;
+import net.mca.server.world.data.CustomClothingManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
