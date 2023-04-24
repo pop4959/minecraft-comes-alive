@@ -1,4 +1,4 @@
-package net.mca.entity.ai.relationship.family;
+package net.mca.server.world.data;
 
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;

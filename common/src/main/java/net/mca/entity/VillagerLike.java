@@ -14,7 +14,7 @@ import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.VillagerDimensions;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.entity.interaction.EntityCommandHandler;
 import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
