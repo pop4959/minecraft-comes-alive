@@ -1,3 +1,10 @@
+# 7.5.0
+
+* Added experimental Skin library, editor and uploader
+* Added civil registry, a log writing down all events in a village
+* Added the villager tracker, a compass being able to track the last known position of villagers
+* Fixed baby growth command
+
 # 7.4.9
 
 * Added compat with Chunks fade in

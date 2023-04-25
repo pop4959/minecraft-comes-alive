@@ -17,8 +17,8 @@ import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.Supporters;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.text.Text;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -151,6 +151,11 @@ public interface ItemsMCA {
 
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));
+
+    RegistrySupplier<Item> CIVIL_REGISTRY = register("civil_registry", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
+            .setBackground(MCA.locate("textures/gui/books/paper.png"))));
+
+    RegistrySupplier<Item> VILLAGER_TRACKER = register("villager_tracker", () -> new VillagerTrackerItem(baseProps().maxCount(1)));
 
     RegistrySupplier<Item> GOLD_DUST = register("gold_dust", () -> new Item(baseProps()));
     RegistrySupplier<Item> ROSE_GOLD_DUST = register("rose_gold_dust", () -> new Item(baseProps()));

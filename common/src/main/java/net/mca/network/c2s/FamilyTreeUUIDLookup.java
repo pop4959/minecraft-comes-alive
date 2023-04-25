@@ -1,16 +1,15 @@
 package net.mca.network.c2s;
 
+import net.mca.client.gui.FamilyTreeSearchScreen;
 import net.mca.cobalt.network.Message;
 import net.mca.cobalt.network.NetworkHandler;
+import net.mca.network.s2c.FamilyTreeUUIDResponse;
 import net.mca.server.world.data.FamilyTree;
 import net.mca.server.world.data.FamilyTreeNode;
-import net.mca.network.s2c.FamilyTreeUUIDResponse;
-import net.mca.resources.data.SerializablePair;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.Serial;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class FamilyTreeUUIDLookup implements Message {
@@ -26,11 +25,12 @@ public class FamilyTreeUUIDLookup implements Message {
     @Override
     public void receive(ServerPlayerEntity player) {
         FamilyTree tree = FamilyTree.get(player.getWorld());
-        List<SerializablePair<UUID, SerializablePair<String, String>>> list = tree.getAllWithName(search)
-                .map(entry -> new SerializablePair<>(entry.id(), new SerializablePair<>(
+        List<FamilyTreeSearchScreen.Entry> list = tree.getAllWithName(search)
+                .map(entry -> new FamilyTreeSearchScreen.Entry(
+                        entry.id(),
                         tree.getOrEmpty(entry.father()).map(FamilyTreeNode::getName).orElse(""),
-                        tree.getOrEmpty(entry.mother()).map(FamilyTreeNode::getName).orElse(""))))
-                .limit(100)
+                        tree.getOrEmpty(entry.mother()).map(FamilyTreeNode::getName).orElse("")))
+                .limit(16)
                 .collect(Collectors.toList());
         NetworkHandler.sendToPlayer(new FamilyTreeUUIDResponse(list), player);
     }

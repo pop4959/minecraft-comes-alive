@@ -93,6 +93,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
             case FAMILY_TREE:
                 client.setScreen(new FamilyTreeSearchScreen());
                 break;
+            case VILLAGER_TRACKER:
+                client.setScreen(new VillagerTrackerSearchScreen());
+                break;
             default:
         }
     }

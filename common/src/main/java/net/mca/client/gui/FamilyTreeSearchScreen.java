@@ -3,13 +3,13 @@ package net.mca.client.gui;
 import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.c2s.FamilyTreeUUIDLookup;
-import net.mca.resources.data.SerializablePair;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class FamilyTreeSearchScreen extends Screen {
     static final int DATA_WIDTH = 120;
 
-    private List<SerializablePair<UUID, SerializablePair<String, String>>> list = new LinkedList<>();
+    private List<Entry> list = new LinkedList<>();
     private ButtonWidget buttonPage;
     private int pageNumber;
 
@@ -25,6 +25,7 @@ public class FamilyTreeSearchScreen extends Screen {
 
     private int mouseX;
     private int mouseY;
+    private String currentVillagerName = "";
 
     public FamilyTreeSearchScreen() {
         super(Text.translatable("gui.family_tree.title"));
@@ -88,24 +89,22 @@ public class FamilyTreeSearchScreen extends Screen {
             if (index < list.size()) {
                 int y = height / 2 - 52 + i * 12;
                 boolean hover = isMouseWithin(width / 2 - 50, y - 1, 100, 12);
-                SerializablePair<UUID, SerializablePair<String, String>> pair = list.get(index);
-                String left = pair.getRight().getLeft();
-                String right = pair.getRight().getRight();
+                Entry entry = list.get(index);
 
                 Text text;
-                if (MCA.isBlankString(left) && MCA.isBlankString(right)) {
+                if (MCA.isBlankString(entry.mother) && MCA.isBlankString(entry.father)) {
                     text = Text.translatable("gui.family_tree.child_of_0");
-                } else if (MCA.isBlankString(left)) {
-                    text = Text.translatable("gui.family_tree.child_of_1", right);
-                } else if (MCA.isBlankString(right)) {
-                    text = Text.translatable("gui.family_tree.child_of_1", left);
+                } else if (MCA.isBlankString(entry.mother)) {
+                    text = Text.translatable("gui.family_tree.child_of_1", entry.father);
+                } else if (MCA.isBlankString(entry.father)) {
+                    text = Text.translatable("gui.family_tree.child_of_1", entry.mother);
                 } else {
-                    text = Text.translatable("gui.family_tree.child_of_2", left, right);
+                    text = Text.translatable("gui.family_tree.child_of_2", entry.father, entry.mother);
                 }
 
                 drawCenteredText(transform, textRenderer, text, width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
                 if (hover) {
-                    selectedVillager = pair.getLeft();
+                    selectedVillager = entry.uuid;
                 }
             } else {
                 break;
@@ -117,9 +116,10 @@ public class FamilyTreeSearchScreen extends Screen {
         if (!MCA.isBlankString(v)) {
             NetworkHandler.sendToServer(new FamilyTreeUUIDLookup(v));
         }
+        currentVillagerName = v;
     }
 
-    public void setList(List<SerializablePair<UUID, SerializablePair<String, String>>> list) {
+    public void setList(List<Entry> list) {
         this.list = list;
     }
 
@@ -130,9 +130,18 @@ public class FamilyTreeSearchScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (selectedVillager != null) {
-            client.setScreen(new FamilyTreeScreen(selectedVillager));
+            selectVillager(currentVillagerName, selectedVillager);
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    void selectVillager(String name, UUID villager) {
+        assert client != null;
+        client.setScreen(new FamilyTreeScreen(villager));
+    }
+
+    public record Entry(UUID uuid, String father, String mother) implements Serializable {
+
     }
 }

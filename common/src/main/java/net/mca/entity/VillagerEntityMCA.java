@@ -19,6 +19,7 @@ import net.mca.resources.Names;
 import net.mca.resources.Rank;
 import net.mca.resources.Tasks;
 import net.mca.server.world.data.Village;
+import net.mca.server.world.data.VillagerTrackerManager;
 import net.mca.util.InventoryUtils;
 import net.mca.util.network.datasync.CDataManager;
 import net.mca.util.network.datasync.CDataParameter;
@@ -127,6 +128,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private long lastHit = 0;
     private int prevGrowthAmount;
     private boolean recalcDimensionsBlocked;
+    private boolean interactedWith;
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
@@ -466,6 +468,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     }
                 } else {
                     playWelcomeSound();
+                    interactedWith = true;
                     return interactions.interactAt(player, pos, hand);
                 }
             }
@@ -732,6 +735,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (age % Config.getInstance().giftDesaturationReset == 0) {
                 getRelationships().getGiftSaturation().pop();
             }
+
+            // track the position from time to time
+            if (interactedWith && age % Config.getInstance().trackVillagerPositionEveryNTicks == 0) {
+                VillagerTrackerManager.update(this);
+            }
         }
     }
 
@@ -981,6 +989,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         //move out
         residency.leaveHome();
+
+        if (interactedWith) {
+            VillagerTrackerManager.update(this);
+        }
     }
 
     @Override
@@ -1363,6 +1375,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             this.despawnDelay = nbt.getInt("DespawnDelay");
         }
 
+        if (nbt.contains("InteractedWith")) {
+            this.interactedWith = nbt.getBoolean("InteractedWith");
+        }
+
         if (nbt.contains("clothes")) {
             validateClothes();
         }
@@ -1375,7 +1391,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         relations.writeToNbt(nbt);
         longTermMemory.writeToNbt(nbt);
         nbt.putInt("DespawnDelay", this.despawnDelay);
+        nbt.putBoolean("InteractedWith", this.interactedWith);
         InventoryUtils.saveToNBT(inventory, nbt);
+
+        if (interactedWith) {
+            VillagerTrackerManager.update(this);
+        }
     }
 
     @Override

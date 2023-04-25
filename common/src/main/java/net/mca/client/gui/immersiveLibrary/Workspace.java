@@ -60,6 +60,8 @@ public final class Workspace {
     }
 
     public void fillDelete(int x, int y) {
+        if (x < 0 || y < 0 || x >= 64 || y >= 64) return;
+
         Queue<FillTodo> todo = new LinkedList<>();
         todo.add(new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y)));
 

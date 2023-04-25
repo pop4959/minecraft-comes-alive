@@ -92,6 +92,10 @@ public final class Config implements Serializable {
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
 
+    //tracker
+    public boolean trackVillagerPosition = true;
+    public int trackVillagerPositionEveryNTicks = 200;
+
     //AI
     public boolean enableVillagerChatAI = false;
     public int villagerChatAIIntelligence = 4;

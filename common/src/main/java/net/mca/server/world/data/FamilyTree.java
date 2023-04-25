@@ -14,10 +14,7 @@ import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class FamilyTree extends PersistentState {
@@ -72,7 +69,7 @@ public class FamilyTree extends PersistentState {
     }
 
     public Stream<FamilyTreeNode> getAllWithName(String name) {
-        return entries.values().stream().filter(n -> n.getName().equals(name));
+        return entries.values().stream().filter(n -> n.getName().toLowerCase(Locale.ROOT).equals(name.toLowerCase(Locale.ROOT)));
     }
 
     @NotNull
