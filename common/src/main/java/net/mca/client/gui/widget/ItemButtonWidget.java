@@ -7,7 +7,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 public class ItemButtonWidget extends TooltipButtonWidget {
-    ItemStack item;
+    final ItemStack item;
 
     public ItemButtonWidget(int x, int y, int size, MutableText message, ItemStack item, PressAction onPress) {
         super(x, y, size, size, Text.literal(""), message, onPress);

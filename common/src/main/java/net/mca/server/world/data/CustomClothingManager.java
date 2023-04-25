@@ -19,8 +19,8 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 public class CustomClothingManager {
-    static Storage<Clothing> CLOTHING_DUMMY = new Storage<>();
-    static Storage<Hair> HAIR_DUMMY = new Storage<>();
+    static final Storage<Clothing> CLOTHING_DUMMY = new Storage<>();
+    static final Storage<Hair> HAIR_DUMMY = new Storage<>();
 
     public static Storage<Clothing> getClothing() {
         Optional<MinecraftServer> server = MCA.getServer();

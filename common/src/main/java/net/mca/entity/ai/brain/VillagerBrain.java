@@ -20,7 +20,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
 import static net.mca.entity.ai.MemoryModuleTypeMCA.LAST_GRIEVE;

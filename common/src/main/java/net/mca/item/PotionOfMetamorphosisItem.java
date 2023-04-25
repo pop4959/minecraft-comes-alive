@@ -51,7 +51,7 @@ public class PotionOfMetamorphosisItem extends TooltippedItem {
     }
 
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (entity instanceof VillagerLike villager && !entity.world.isClient) {
+        if (entity instanceof VillagerLike<?> villager && !entity.world.isClient) {
             villager.getGenetics().setGender(gender);
 
             common(entity);

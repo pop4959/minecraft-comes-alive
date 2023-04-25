@@ -22,18 +22,13 @@ import net.mca.fabric.client.gui.FabricMCAScreens;
 import net.mca.fabric.resources.ApiIdentifiableReloadListener;
 import net.mca.fabric.resources.FabricColorPaletteLoader;
 import net.mca.fabric.resources.FabricSupportersLoader;
-import net.mca.item.BabyItem;
-import net.mca.item.ItemsMCA;
-import net.mca.item.SirbenBabyItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.render.entity.ZombieVillagerEntityRenderer;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 
 public final class MCAFabricClient extends ClientProxyAbstractImpl implements ClientModInitializer {
     @Override

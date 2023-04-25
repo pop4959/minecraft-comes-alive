@@ -25,9 +25,9 @@ public class SkinCache {
 
     private static final Gson gson = new Gson();
 
-    static Set<Integer> requested = new HashSet<>();
-    static Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
-    static Map<Integer, SkinMeta> metaCache = new HashMap<>();
+    static final Set<Integer> requested = new HashSet<>();
+    static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
+    static final Map<Integer, SkinMeta> metaCache = new HashMap<>();
 
     private static File getFile(String key) {
         //noinspection ResultOfMethodCallIgnored

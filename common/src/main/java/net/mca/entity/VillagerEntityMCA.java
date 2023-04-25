@@ -321,22 +321,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public boolean isBaby() {
-        return super.isBaby();
-    }
-
-    @Override
     public void setCustomName(@Nullable Text name) {
         super.setCustomName(name);
 
         if (name != null) {
             setName(name.getString());
         }
-    }
-
-    @Override
-    public int getBreedingAge() {
-        return super.getBreedingAge();
     }
 
     @Override
@@ -911,11 +901,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             return -0.2;
         }
         return -0.35;
-    }
-
-    @Override
-    public double getMountedHeightOffset() {
-        return super.getMountedHeightOffset();
     }
 
     @Override

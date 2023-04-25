@@ -20,7 +20,7 @@ public class GetInteractDataRequest implements Message {
     @Serial
     private static final long serialVersionUID = -4363277735373237564L;
 
-    UUID uuid;
+    final UUID uuid;
 
     public GetInteractDataRequest(UUID villager) {
         this.uuid = villager;

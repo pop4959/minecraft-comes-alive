@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class KeyBindings {
-    public static List<KeyBinding> list = new LinkedList<>();
+    public static final List<KeyBinding> list = new LinkedList<>();
 
     public static final KeyBinding SKIN_LIBRARY = newKey("skin_library", GLFW.GLFW_KEY_U);
 

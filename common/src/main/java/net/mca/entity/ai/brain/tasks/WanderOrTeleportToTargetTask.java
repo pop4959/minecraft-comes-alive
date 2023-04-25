@@ -61,7 +61,7 @@ public class WanderOrTeleportToTargetTask extends WanderAroundTask {
         } else if (!this.canTeleportTo(world, entity, new BlockPos(x, y, z))) {
             return false;
         } else {
-            entity.requestTeleport((double)x + 0.5D, (double)y, (double)z + 0.5D);
+            entity.requestTeleport((double)x + 0.5D, y, (double)z + 0.5D);
             return true;
         }
     }

@@ -170,11 +170,6 @@ public final class FamilyTreeNode implements Serializable {
         //cancel relationship with previous partner
         if (!this.partner.equals(Util.NIL_UUID) && (newPartner == null || !this.partner.equals(newPartner.getUuid()))) {
             getRoot().getOrEmpty(this.partner).ifPresent(n -> {
-                if (n.relationshipState == RelationshipState.ENGAGED) {
-                    if (isPlayer) {
-                        //todo PlayerSaveData#sendLetterOfEngagement (Likely refactor to a new event, onEngagement, in 7.4.0)
-                    }
-                }
                 n.partner = Util.NIL_UUID;
                 n.relationshipState = RelationshipState.SINGLE;
             });

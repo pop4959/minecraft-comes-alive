@@ -2,7 +2,6 @@ package net.mca.client.gui.immersiveLibrary;
 
 import net.mca.Config;
 import net.minecraft.util.Util;
-import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nullable;
 import java.io.*;
@@ -12,7 +11,7 @@ import java.nio.file.Paths;
 import java.security.SecureRandom;
 
 public class Auth {
-    static SecureRandom random = new SecureRandom();
+    static final SecureRandom random = new SecureRandom();
 
     static String currentToken;
 

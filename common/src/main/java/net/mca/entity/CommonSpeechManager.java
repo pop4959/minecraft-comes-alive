@@ -7,5 +7,5 @@ public class CommonSpeechManager {
     public static final CommonSpeechManager INSTANCE = new CommonSpeechManager();
 
     public String lastResolvedKey;
-    public LimitedLinkedHashMap<TextContent, String> translations = new LimitedLinkedHashMap<>(100);
+    public final LimitedLinkedHashMap<TextContent, String> translations = new LimitedLinkedHashMap<>(100);
 }

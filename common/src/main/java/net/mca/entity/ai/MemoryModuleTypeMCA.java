@@ -11,7 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.Locale;
 import java.util.Optional;
 
 public interface MemoryModuleTypeMCA {

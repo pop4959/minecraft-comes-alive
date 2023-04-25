@@ -132,7 +132,7 @@ public class ServerInteractionManager {
         proposals.forEach((uuid -> {
             PlayerEntity player = sender.getWorld().getPlayerByUuid(uuid);
             if (player != null) {
-                infoMessage(sender, (MutableText)Text.literal("- ").append(Text.literal(player.getEntityName())));
+                infoMessage(sender, Text.literal("- ").append(Text.literal(player.getEntityName())));
             }
         }));
     }

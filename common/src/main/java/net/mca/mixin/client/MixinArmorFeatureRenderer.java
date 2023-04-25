@@ -24,8 +24,8 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, A extend
     protected abstract boolean usesInnerModel(EquipmentSlot slot);
 
     protected boolean mca$injectionActive;
-    protected A mca$leggingsModel = createModel(0.5F);
-    protected A mca$bodyModel = createModel(1.0F);
+    protected final A mca$leggingsModel = createModel(0.5F);
+    protected final A mca$bodyModel = createModel(1.0F);
 
     private A createModel(float dilation) {
         //noinspection unchecked

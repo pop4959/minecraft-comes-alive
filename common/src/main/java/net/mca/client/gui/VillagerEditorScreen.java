@@ -70,9 +70,9 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
     private String searchString = "";
     private int hoveredClothingId;
 
-    int CLOTHES_H = 8;
-    int CLOTHES_V = 2;
-    int CLOTHES_PER_PAGE = CLOTHES_H * CLOTHES_V;
+    final int CLOTHES_H = 8;
+    final int CLOTHES_V = 2;
+    final int CLOTHES_PER_PAGE = CLOTHES_H * CLOTHES_V;
 
     ButtonWidget widgetMasculine;
     ButtonWidget widgetFeminine;

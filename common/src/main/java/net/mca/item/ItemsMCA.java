@@ -11,7 +11,6 @@ import net.mca.client.book.pages.CenteredTextPage;
 import net.mca.client.book.pages.DynamicListPage;
 import net.mca.client.book.pages.ScribbleTextPage;
 import net.mca.client.book.pages.TitlePage;
-import net.mca.crafting.recipe.RecipesMCA;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.Supporters;
@@ -186,7 +185,6 @@ public interface ItemsMCA {
     static void bootstrap() {
         ITEMS.register();
         TagsMCA.Blocks.bootstrap();
-        RecipesMCA.bootstrap();
     }
 
     static RegistrySupplier<Item> register(String name, Supplier<Item> item) {

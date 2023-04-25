@@ -14,7 +14,7 @@ import java.util.Queue;
 public final class Workspace {
     public SkinLibraryScreen.SkinType skinType;
 
-    public int contentid = -1;
+    public final int contentid = -1;
     public int temperature;
     public double chance = 1.0;
     public String title = "Unnamed Asset";
@@ -23,8 +23,8 @@ public final class Workspace {
 
     public int fillToolThreshold = 4;
 
-    public NativeImage currentImage;
-    public NativeImageBackedTexture backendTexture;
+    public final NativeImage currentImage;
+    public final NativeImageBackedTexture backendTexture;
     public boolean dirty;
 
 

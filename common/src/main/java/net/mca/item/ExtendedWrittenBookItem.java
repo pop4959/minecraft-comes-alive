@@ -23,10 +23,6 @@ import java.util.List;
 public class ExtendedWrittenBookItem extends WrittenBookItem {
     private final Book book;
 
-    public ExtendedWrittenBookItem(Settings settings) {
-        this(settings, new Book("unknown"));
-    }
-
     public ExtendedWrittenBookItem(Settings settings, Book book) {
         super(settings);
         this.book = book;

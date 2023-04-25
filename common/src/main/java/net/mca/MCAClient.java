@@ -12,8 +12,8 @@ import java.util.*;
 
 public class MCAClient {
     public static VillagerEntityMCA fallbackVillager;
-    public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
-    public static Set<UUID> playerDataRequests = new HashSet<>();
+    public static final Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
+    public static final Set<UUID> playerDataRequests = new HashSet<>();
 
     private static final DestinyManager destinyManager = new DestinyManager();
 
