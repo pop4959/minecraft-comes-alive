@@ -10,14 +10,14 @@ import net.mca.entity.ai.brain.VillagerBrain;
 import net.mca.entity.ai.brain.VillagerTasksMCA;
 import net.mca.entity.ai.pathfinder.VillagerNavigation;
 import net.mca.entity.ai.relationship.*;
-import net.mca.server.world.data.FamilyTree;
-import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.entity.interaction.VillagerCommandHandler;
 import net.mca.item.ItemsMCA;
 import net.mca.network.c2s.InteractionVillagerMessage;
 import net.mca.resources.Names;
 import net.mca.resources.Rank;
 import net.mca.resources.Tasks;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.server.world.data.Village;
 import net.mca.server.world.data.VillagerTrackerManager;
 import net.mca.util.InventoryUtils;
@@ -77,7 +77,10 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -926,6 +929,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // deselect equipment as this messes with MobEntities equipment dropping
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             this.equipStack(slot, ItemStack.EMPTY);
+        }
+
+        //death message
+        if (!world.isClient) {
+            getResidency().getHomeVillage().flatMap(Village::getCivilRegistry).ifPresent(r -> r.addText(getDamageTracker().getDeathMessage()));
         }
 
         super.onDeath(cause);

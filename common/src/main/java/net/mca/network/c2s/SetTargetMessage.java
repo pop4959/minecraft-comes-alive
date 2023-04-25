@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 
-public class setTargetMessage implements Message {
+public class SetTargetMessage implements Message {
     @Serial
     private static final long serialVersionUID = 7257172480717481644L;
 
@@ -21,7 +21,7 @@ public class setTargetMessage implements Message {
     private final String targetName;
     private final String targetUUID;
 
-    public setTargetMessage(Identifier identifier, String targetName, UUID targetUUID) {
+    public SetTargetMessage(Identifier identifier, String targetName, UUID targetUUID) {
         this.itemIdentifier = identifier.toString();
         this.targetName = targetName;
         this.targetUUID = targetUUID.toString();

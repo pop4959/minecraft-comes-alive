@@ -42,4 +42,6 @@ public interface ClientInteractionManager {
     void handleVillagerMessage(VillagerMessage message);
 
     void handleCustomSkinsChangedMessage(CustomSkinsChangedMessage message);
+
+    void handleCivilRegistryResponse(CivilRegistryResponse response);
 }

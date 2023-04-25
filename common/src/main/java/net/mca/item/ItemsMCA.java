@@ -7,6 +7,7 @@ import net.mca.MCA;
 import net.mca.TagsMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.book.Book;
+import net.mca.client.book.CivilRegistryBook;
 import net.mca.client.book.pages.CenteredTextPage;
 import net.mca.client.book.pages.DynamicListPage;
 import net.mca.client.book.pages.ScribbleTextPage;
@@ -151,8 +152,8 @@ public interface ItemsMCA {
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));
 
-    RegistrySupplier<Item> CIVIL_REGISTRY = register("civil_registry", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
-            .setBackground(MCA.locate("textures/gui/books/paper.png"))));
+    RegistrySupplier<Item> CIVIL_REGISTRY = register("civil_registry", () -> new CivilRegistry(baseProps().maxCount(1), new CivilRegistryBook("civil_registry", null)
+            .setBackground(MCA.locate("textures/gui/books/supporters.png"))));
 
     RegistrySupplier<Item> VILLAGER_TRACKER = register("villager_tracker", () -> new VillagerTrackerItem(baseProps().maxCount(1)));
 

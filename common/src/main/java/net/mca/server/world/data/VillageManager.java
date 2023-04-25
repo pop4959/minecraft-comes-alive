@@ -201,6 +201,9 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
         //warn the player
         player.sendMessage(Text.translatable(sender.getPopulation() == 0 ? "events.bountyHuntersFinal" : "events.bountyHunters", sender.getName()).formatted(Formatting.RED), false);
+
+        //civil entry
+        sender.getCivilRegistry().ifPresent(r -> r.addText(Text.translatable("civil_registry.bounty_hunters", player.getName())));
     }
 
     private <T extends IllagerEntity> void spawnBountyHunter(EntityType<T> t, ServerPlayerEntity player) {

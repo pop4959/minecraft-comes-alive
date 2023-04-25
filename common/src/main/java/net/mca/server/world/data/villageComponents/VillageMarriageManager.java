@@ -5,6 +5,7 @@ import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Memories;
 import net.mca.server.world.data.Village;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,7 +15,7 @@ public class VillageMarriageManager {
     private final Village village;
 
     public VillageMarriageManager(Village village) {
-        this.village= village;
+        this.village = village;
     }
 
     // if the amount of couples is low, let them marry
@@ -54,6 +55,9 @@ public class VillageMarriageManager {
                     if (Config.getInstance().villagerMarriageNotification) {
                         village.broadCastMessage(world, "events.marry", suitor, mate);
                     }
+
+                    // civil entry
+                    village.getCivilRegistry().ifPresent(r -> r.addText(Text.translatable("events.marry", suitor.getName(), mate.getName())));
                 });
     }
 }

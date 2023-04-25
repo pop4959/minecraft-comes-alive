@@ -481,4 +481,8 @@ public class Village implements Iterable<Building> {
     public VillageGuardsManager getVillageGuardsManager() {
         return villageGuardsManager;
     }
+
+    public Optional<CivilRegistryManager> getCivilRegistry() {
+        return world != null ? Optional.of(CivilRegistryManager.get(world, this)) : Optional.empty();
+    }
 }

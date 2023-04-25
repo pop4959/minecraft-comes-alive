@@ -250,14 +250,6 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         }
     }
 
-    // todo: Implement for 7.4.0
-    public void sendEngagementLetter(String name) {
-        sendLetter(List.of(
-                String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",
-                        getFamilyEntry().getName(), name)
-        ));
-    }
-
     public void sendLetterOfCondolence(String name, String village) {
         sendLetter(List.of(
                 String.format("{ \"translate\": \"mca.letter.condolence\", \"with\": [\"%s\", \"%s\", \"%s\"] }",

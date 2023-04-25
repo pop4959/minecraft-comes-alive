@@ -818,6 +818,9 @@
   "notify.trading.disabled": "Trading is disabled by the server administrator.",
   "notify.playerMarriage.disabled": "Player marriage is disabled by the server administrator.",
 
+  "civil_registry.empty": "No village nearby.",
+  "civil_registry.bounty_hunters": "Bounty hunter has been sent after %s.",
+
   "subtitle.mca.reaper.scythe_out": "Drawing scythe",
   "subtitle.mca.reaper.scythe_swing": "Swinging scythe",
   "subtitle.mca.reaper.idle": "Evil laughter",

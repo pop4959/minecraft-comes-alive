@@ -1,50 +1,25 @@
 package net.mca.client.book.pages;
 
-import net.mca.client.gui.ExtendedBookScreen;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
+import java.util.LinkedList;
 import java.util.List;
 
-public class ListPage extends Page {
-    final Text title;
+public abstract class ListPage extends Page {
     final List<Text> text;
 
     int page;
 
-    public static final int entriesPerPage = 11;
-
-    public ListPage(Text title, List<Text> text) {
-        this.title = title;
+    public ListPage() {
+        this.text = new LinkedList<>();
+    }
+    public ListPage(List<Text> text) {
         this.text = text;
-    }
-
-    public ListPage(String title, List<Text> text) {
-        this(Text.translatable(title).formatted(Formatting.BLACK).formatted(Formatting.BOLD), text);
-    }
-
-    private static void drawCenteredText(MatrixStack matrices, TextRenderer textRenderer, Text text, int centerX, int y, int color) {
-        OrderedText orderedText = text.asOrderedText();
-        textRenderer.draw(matrices, orderedText, (float)(centerX - textRenderer.getWidth(orderedText) / 2), (float)y, color);
-    }
-
-    @Override
-    public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        drawCenteredText(matrices, screen.getTextRenderer(), title, screen.width / 2, 35, 0xFFFFFFFF);
-
-        int y = 48;
-        for (int i = page * entriesPerPage; i < Math.min(text.size(), (page + 1) * entriesPerPage); i++) {
-            drawCenteredText(matrices, screen.getTextRenderer(), text.get(i), screen.width / 2 - 4, y, 0xFFFFFFFF);
-            y += 10;
-        }
     }
 
     @Override
     public void open(boolean back) {
-        page = back ? (text.size() - 1) / entriesPerPage : 0;
+        page = back ? (text.size() - 1) / getEntriesPerPage() : 0;
     }
 
     @Override
@@ -59,11 +34,13 @@ public class ListPage extends Page {
 
     @Override
     public boolean nextPage() {
-        if (page < (text.size() - 1) / entriesPerPage) {
+        if (page < (text.size() - 1) / getEntriesPerPage()) {
             page++;
             return false;
         } else {
             return true;
         }
     }
+
+    abstract int getEntriesPerPage();
 }

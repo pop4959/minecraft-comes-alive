@@ -4,6 +4,7 @@ import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.client.SpeechManager;
 import net.mca.client.book.Book;
+import net.mca.client.book.CivilRegistryBook;
 import net.mca.client.gui.*;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -243,5 +244,15 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleCustomSkinsChangedMessage(CustomSkinsChangedMessage message) {
         VillagerEditorScreen.setSkinListOutdated();
+    }
+
+    @Override
+    public void handleCivilRegistryResponse(CivilRegistryResponse response) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof ExtendedBookScreen extendedBookScreen) {
+            if (extendedBookScreen.getBook() instanceof CivilRegistryBook civilRegistryBook) {
+                civilRegistryBook.receive(response.getIndex(), response.getLines());
+            }
+        }
     }
 }

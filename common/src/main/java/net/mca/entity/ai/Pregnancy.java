@@ -6,6 +6,7 @@ import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.item.BabyItem;
+import net.mca.server.world.data.Village;
 import net.mca.util.WorldUtils;
 import net.mca.util.network.datasync.CDataManager;
 import net.mca.util.network.datasync.CDataParameter;
@@ -15,6 +16,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 
 import java.util.Objects;
@@ -113,6 +115,9 @@ public class Pregnancy {
                 .filter(e -> e instanceof ServerPlayerEntity)
                 .map(ServerPlayerEntity.class::cast)
                 .forEach(CriterionMCA.FAMILY::trigger);
+
+        // civil entry
+        mother.getResidency().getHomeVillage().flatMap(Village::getCivilRegistry).ifPresent(r -> r.addText(Text.translatable("events.baby", mother.getName(), partner.getName())));
 
         return child;
     }

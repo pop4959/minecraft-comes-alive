@@ -51,6 +51,8 @@ public interface MessagesMCA {
         NetworkHandler.registerMessage(AddCustomClothingMessage.class);
         NetworkHandler.registerMessage(RemoveCustomClothingMessage.class);
         NetworkHandler.registerMessage(CustomSkinsChangedMessage.class);
-        NetworkHandler.registerMessage(setTargetMessage.class);
+        NetworkHandler.registerMessage(SetTargetMessage.class);
+        NetworkHandler.registerMessage(CivilRegistryPageRequest.class);
+        NetworkHandler.registerMessage(CivilRegistryResponse.class);
     }
 }
