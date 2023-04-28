@@ -5,6 +5,7 @@
 * Added the villager tracker, a compass being able to track the last known position of villagers
 * Fixed baby growth command
 * Move state and infection status are no longer on the gravestone
+* Fixed hugging being restricted to adults
 
 # 7.4.9
 
