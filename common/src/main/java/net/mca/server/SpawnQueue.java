@@ -35,63 +35,65 @@ public class SpawnQueue {
     private final LinkedList<ZombieVillagerEntity> zombieVillagerSpawnQueue = new LinkedList<>();
     private final LinkedList<ZombieEntity> zombieSpawnList = new LinkedList<>();
 
-    public void tick() {
-        // lazy spawning of our villagers as they can't be spawned while loading
-        if (!villagerSpawnQueue.isEmpty()) {
-            VillagerEntity e = villagerSpawnQueue.remove();
+    synchronized public void tick() {
+        synchronized (this) {
+            // lazy spawning of our villagers as they can't be spawned while loading
+            if (!villagerSpawnQueue.isEmpty()) {
+                VillagerEntity e = villagerSpawnQueue.remove();
 
-            if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
-                e.discard();
-                VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
-                        .withAge(e.getBreedingAge())
-                        .withPosition(e)
-                        .withType(e.getVillagerData().getType())
-                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
-                        .spawn(((IVillagerEntity)e).getSpawnReason());
+                if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
+                    e.discard();
+                    VillagerEntityMCA villager = VillagerFactory.newVillager(e.world)
+                            .withName(e.hasCustomName() ? e.getName().getString() : null)
+                            .withGender(Gender.getRandom())
+                            .withAge(e.getBreedingAge())
+                            .withPosition(e)
+                            .withType(e.getVillagerData().getType())
+                            .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel(), e.getOffers())
+                            .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                copyPastaIntensifies(villager, e);
-            } else {
-                villagerSpawnQueue.add(e);
+                    copyPastaIntensifies(villager, e);
+                } else {
+                    villagerSpawnQueue.add(e);
+                }
             }
-        }
 
-        if (!zombieVillagerSpawnQueue.isEmpty()) {
-            ZombieVillagerEntity e = zombieVillagerSpawnQueue.poll();
+            if (!zombieVillagerSpawnQueue.isEmpty()) {
+                ZombieVillagerEntity e = zombieVillagerSpawnQueue.poll();
 
-            if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
-                e.discard();
-                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
-                        .withPosition(e)
-                        .withType(e.getVillagerData().getType())
-                        .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
-                        .spawn(((IVillagerEntity)e).getSpawnReason());
+                if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
+                    e.discard();
+                    ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
+                            .withName(e.hasCustomName() ? e.getName().getString() : null)
+                            .withGender(Gender.getRandom())
+                            .withPosition(e)
+                            .withType(e.getVillagerData().getType())
+                            .withProfession(e.getVillagerData().getProfession(), e.getVillagerData().getLevel())
+                            .spawn(((IVillagerEntity)e).getSpawnReason());
 
-                copyPastaIntensifies(villager, e);
-            } else {
-                zombieVillagerSpawnQueue.add(e);
+                    copyPastaIntensifies(villager, e);
+                } else {
+                    zombieVillagerSpawnQueue.add(e);
+                }
             }
-        }
 
-        if (!zombieSpawnList.isEmpty()) {
-            ZombieEntity e = zombieSpawnList.poll();
+            if (!zombieSpawnList.isEmpty()) {
+                ZombieEntity e = zombieSpawnList.poll();
 
-            if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
-                e.discard();
-                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
-                        .withName(e.hasCustomName() ? e.getName().getString() : null)
-                        .withGender(Gender.getRandom())
-                        .withPosition(e)
-                        .withType(VillagerType.forBiome(e.world.getBiome(e.getBlockPos())))
-                        .withProfession(Registry.VILLAGER_PROFESSION.getRandom(e.getRandom()).map(RegistryEntry::value).orElse(VillagerProfession.NONE))
-                        .spawn(SpawnReason.NATURAL);
+                if (WorldUtils.isChunkLoaded(e.world, e.getBlockPos())) {
+                    e.discard();
+                    ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(e.world)
+                            .withName(e.hasCustomName() ? e.getName().getString() : null)
+                            .withGender(Gender.getRandom())
+                            .withPosition(e)
+                            .withType(VillagerType.forBiome(e.world.getBiome(e.getBlockPos())))
+                            .withProfession(Registry.VILLAGER_PROFESSION.getRandom(e.getRandom()).map(RegistryEntry::value).orElse(VillagerProfession.NONE))
+                            .spawn(SpawnReason.NATURAL);
 
-                copyPastaIntensifies(villager, e);
-            } else {
-                zombieSpawnList.add(e);
+                    copyPastaIntensifies(villager, e);
+                } else {
+                    zombieSpawnList.add(e);
+                }
             }
         }
     }
@@ -122,30 +124,32 @@ public class SpawnQueue {
     }
 
     public boolean addVillager(Entity entity) {
-        if (entity instanceof IVillagerEntity villagerEntity && !handlesSpawnReason(villagerEntity.getSpawnReason())) {
-            return false;
-        }
-        if (Config.getInstance().villagerDimensionBlacklist.contains(entity.getEntityWorld().getRegistryKey().getValue().toString())) {
-            return false;
-        }
-        if (Config.getInstance().overwriteOriginalVillagers
-                && (entity.getClass().equals(VillagerEntity.class) ||
-                Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
-                && shouldGetConverted(entity)
-                && !villagerSpawnQueue.contains(entity)) {
-            return villagerSpawnQueue.add((VillagerEntity)entity);
-        }
-        if (Config.getInstance().overwriteOriginalZombieVillagers
-                && (entity.getClass().equals(ZombieVillagerEntity.class) ||
-                Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
-                && Config.getInstance().fractionOfVanillaZombies < ((ZombieVillagerEntity)entity).getRandom().nextFloat()
-                && !zombieVillagerSpawnQueue.contains(entity)) {
-            return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
-        }
-        if (Config.getInstance().overwriteAllZombiesWithZombieVillagers
-                && entity.getClass().equals(ZombieEntity.class)
-                && !zombieSpawnList.contains(entity)) {
-            return zombieSpawnList.add((ZombieEntity)entity);
+        synchronized (this) {
+            if (entity instanceof IVillagerEntity villagerEntity && !handlesSpawnReason(villagerEntity.getSpawnReason())) {
+                return false;
+            }
+            if (Config.getInstance().villagerDimensionBlacklist.contains(entity.getEntityWorld().getRegistryKey().getValue().toString())) {
+                return false;
+            }
+            if (Config.getInstance().overwriteOriginalVillagers
+                    && (entity.getClass().equals(VillagerEntity.class) ||
+                    Config.getInstance().moddedVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof VillagerEntity)
+                    && shouldGetConverted(entity)
+                    && !villagerSpawnQueue.contains(entity)) {
+                return villagerSpawnQueue.add((VillagerEntity)entity);
+            }
+            if (Config.getInstance().overwriteOriginalZombieVillagers
+                    && (entity.getClass().equals(ZombieVillagerEntity.class) ||
+                    Config.getInstance().moddedZombieVillagerWhitelist.contains(Registry.ENTITY_TYPE.getId(entity.getType()).toString()) && entity instanceof ZombieVillagerEntity)
+                    && Config.getInstance().fractionOfVanillaZombies < ((ZombieVillagerEntity)entity).getRandom().nextFloat()
+                    && !zombieVillagerSpawnQueue.contains(entity)) {
+                return zombieVillagerSpawnQueue.add((ZombieVillagerEntity)entity);
+            }
+            if (Config.getInstance().overwriteAllZombiesWithZombieVillagers
+                    && entity.getClass().equals(ZombieEntity.class)
+                    && !zombieSpawnList.contains(entity)) {
+                return zombieSpawnList.add((ZombieEntity)entity);
+            }
         }
         return false;
     }
@@ -155,6 +159,8 @@ public class SpawnQueue {
     }
 
     public void convert(VillagerEntity villager) {
-        villagerSpawnQueue.add(villager);
+        synchronized (this) {
+            villagerSpawnQueue.add(villager);
+        }
     }
 }
