@@ -4,6 +4,7 @@
 * Added civil registry, a log writing down all events in a village
 * Added the villager tracker, a compass being able to track the last known position of villagers
 * Fixed baby growth command
+* Move state and infection status are no longer on the gravestone
 
 # 7.4.9
 

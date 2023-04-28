@@ -395,7 +395,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         public void setEntity(@Nullable Entity entity) {
             entityData = Optional.ofNullable(entity).map(e -> new EntityData(
                     writeEntityToNbt(e),
-                    e.getDisplayName(),
+                    e.getName(),
                     EntityRelationship.of(e).map(EntityRelationship::getGender).orElse(Gender.MALE)
             ));
             computedName = null;
