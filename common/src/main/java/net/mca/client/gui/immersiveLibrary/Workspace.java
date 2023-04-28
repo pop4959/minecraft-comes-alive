@@ -1,6 +1,8 @@
 package net.mca.client.gui.immersiveLibrary;
 
 import net.mca.client.gui.SkinLibraryScreen;
+import net.mca.client.gui.immersiveLibrary.types.LiteContent;
+import net.mca.client.resources.SkinMeta;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.data.skin.Clothing;
 import net.mca.resources.data.skin.Hair;
@@ -14,7 +16,7 @@ import java.util.Queue;
 public final class Workspace {
     public SkinLibraryScreen.SkinType skinType;
 
-    public final int contentid = -1;
+    public int contentid = -1;
     public int temperature;
     public double chance = 1.0;
     public String title = "Unnamed Asset";
@@ -32,6 +34,20 @@ public final class Workspace {
         this.currentImage = image;
         this.backendTexture = new NativeImageBackedTexture(currentImage);
         this.dirty = true;
+    }
+
+    public Workspace(NativeImage image, SkinMeta meta, LiteContent content) {
+        this(image);
+
+        this.contentid = content.contentid();
+        this.title = content.title();
+
+        this.skinType = content.hasTag("clothing") ? SkinLibraryScreen.SkinType.CLOTHING : SkinLibraryScreen.SkinType.HAIR;
+
+        this.chance = meta.getChance();
+        this.gender = meta.getGender();
+        this.profession = meta.getProfession();
+        this.temperature = meta.getTemperature();
     }
 
     public SkinListEntry toListEntry() {

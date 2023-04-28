@@ -12,7 +12,6 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -27,6 +26,7 @@ public class SkinCache {
 
     static final Set<Integer> requested = new HashSet<>();
     static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
+    static final Map<Integer, NativeImage> images = new HashMap<Integer, NativeImage>();
     static final Map<Integer, SkinMeta> metaCache = new HashMap<>();
 
     private static File getFile(String key) {
@@ -122,16 +122,21 @@ public class SkinCache {
             Identifier identifier = new Identifier("immersive_library", String.valueOf(contentid));
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, new NativeImageBackedTexture(image));
             textureIdentifiers.put(contentid, identifier);
+            images.put(contentid, image);
         } catch (IOException e) {
             e.printStackTrace();
             enforceSync(contentid);
         }
     }
 
-    @Nullable
-    public static SkinMeta getMeta(LiteContent content) {
+    public static Optional<SkinMeta> getMeta(LiteContent content) {
         sync(content);
-        return metaCache.get(content.contentid());
+        return Optional.ofNullable(metaCache.get(content.contentid()));
+    }
+
+    public static Optional<NativeImage> getImage(LiteContent content) {
+        sync(content);
+        return Optional.ofNullable(images.get(content.contentid()));
     }
 
     public static Identifier getTextureIdentifier(LiteContent content) {
