@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public final class Workspace {
+    private static final int MAX_HISTORY = 50;
+
     public SkinLibraryScreen.SkinType skinType;
 
     public int contentid = -1;
@@ -27,7 +29,11 @@ public final class Workspace {
 
     public final NativeImage currentImage;
     public final NativeImageBackedTexture backendTexture;
-    public boolean dirty;
+
+    public LinkedList<NativeImage> history = new LinkedList<>();
+
+    private boolean dirty;
+    private boolean dirtySinceSnapshot;
 
 
     public Workspace(NativeImage image) {
@@ -78,6 +84,8 @@ public final class Workspace {
     public void fillDelete(int x, int y) {
         if (x < 0 || y < 0 || x >= 64 || y >= 64) return;
 
+        saveSnapshot(true);
+
         Queue<FillTodo> todo = new LinkedList<>();
         todo.add(new FillTodo(x, y, currentImage.getRed(x, y), currentImage.getGreen(x, y), currentImage.getBlue(x, y), currentImage.getOpacity(x, y)));
 
@@ -103,5 +111,38 @@ public final class Workspace {
 
     public boolean validPixel(int x, int y) {
         return x >= 0 && x < 64 && y >= 0 && y < 64;
+    }
+
+    public void saveSnapshot(boolean always) {
+        if (always || dirtySinceSnapshot) {
+            dirtySinceSnapshot = false;
+            while (history.size() > MAX_HISTORY) {
+                history.removeFirst().close();
+            }
+            NativeImage image = new NativeImage(64, 64, false);
+            image.copyFrom(currentImage);
+            history.add(image);
+        }
+    }
+
+    public void undo() {
+        if (history.size() > 0) {
+            NativeImage image = history.removeLast();
+            currentImage.copyFrom(image);
+            image.close();
+            dirty = true;
+            dirtySinceSnapshot = false;
+        }
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+        if (dirty) {
+            dirtySinceSnapshot = true;
+        }
     }
 }

@@ -260,10 +260,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 drawTextBox(matrices, Text.translatable("gui.skin_library.delete_confirm"));
             }
             case EDITOR -> {
-                if (workspace.dirty) {
+                if (workspace.isDirty()) {
                     workspace.backendTexture.upload();
                     MinecraftClient.getInstance().getTextureManager().registerTexture(CANVAS_IDENTIFIER, workspace.backendTexture);
-                    workspace.dirty = false;
+                    workspace.setDirty(false);
                 }
 
                 //painting area
@@ -319,7 +319,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 int cx = width / 2 + 150;
-                int cy = height / 2 + 10;
+                int cy = height / 2 - 10;
 
                 InventoryScreen.drawEntity(cx, cy, 50, -(mouseX - cx) / 2.0f, -(mouseY - cy + 32) / 2.0f, villagerVisualization);
             }
@@ -503,6 +503,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 return true;
             }
 
+            // Unto
+            if (keyCode == GLFW.GLFW_KEY_Z) {
+                workspace.undo();
+                return true;
+            }
+
             // Color pick
             if (keyCode == GLFW.GLFW_KEY_P) {
                 pickColor();
@@ -560,6 +566,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 int x = (int)getPixelX();
                 int y = (int)getPixelY();
+
+                if (workspace.validPixel(x, y)) {
+                    workspace.saveSnapshot(true);
+                }
 
                 if (!isPanning) {
                     paint(x, y);
@@ -620,10 +630,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         if (page == SkinLibraryScreen.Page.EDITOR && workspace.validPixel(x, y)) {
             if (activeMouseButton == 0) {
                 workspace.currentImage.setColor(x, y, color.getColor());
-                workspace.dirty = true;
+                workspace.setDirty(true);
             } else if (activeMouseButton == 1) {
                 workspace.currentImage.setColor(x, y, 0);
-                workspace.dirty = true;
+                workspace.setDirty(true);
             }
         }
     }
@@ -936,7 +946,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     }
                 }
 
-                int y = height / 2 + 20;
+
+                int y = height / 2 - 5;
 
                 if (workspace.skinType == SkinType.CLOTHING) {
                     //hue
@@ -1008,6 +1019,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         v -> Text.translatable("gui.skin_library.fillToolThreshold", +v),
                         () -> Text.translatable("gui.skin_library.fillToolThreshold.tooltip")
                 ));
+
+                //undo
+                addDrawableChild(new ButtonWidget(width / 2 + 100, y + 85, 100, 20,
+                        Text.translatable("gui.skin_library.undo"),
+                        v -> {
+                            workspace.undo();
+                        }));
 
                 // publish
                 addDrawableChild(new ButtonWidget(width / 2 - 50, height / 2 + 80, 100, 20,
@@ -1090,12 +1108,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         // ban
         if (advanced && isModerator()) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 5 * 16, 5 * 16,
+            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 5 * 16, 4 * 16,
                     true,
                     Text.translatable("gui.skin_library.ban"),
                     v -> {
                         ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
-                        setBan(content.userid(), ((ToggleableTooltipButtonWidget)v).toggle);
+                        setBan(content.userid(), true);
                         reloadDatabase();
                     })));
         }
