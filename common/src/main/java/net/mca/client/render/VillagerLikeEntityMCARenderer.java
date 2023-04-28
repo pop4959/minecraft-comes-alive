@@ -2,6 +2,7 @@ package net.mca.client.render;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.mca.Config;
+import net.mca.client.gui.VillagerEditorScreen;
 import net.mca.client.model.VillagerEntityBaseModelMCA;
 import net.mca.client.model.VillagerEntityModelMCA;
 import net.mca.entity.Infectable;
@@ -75,6 +76,7 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
     protected boolean hasLabel(T villager) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         return villager.getCustomName() != null
+                && !(MinecraftClient.getInstance().currentScreen instanceof VillagerEditorScreen)
                 && player != null
                 && Config.getInstance().showNameTags
                 && player.squaredDistanceTo(villager) < Math.pow(Config.getInstance().nameTagDistance, 2.0f)
