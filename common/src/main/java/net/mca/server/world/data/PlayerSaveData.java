@@ -231,7 +231,9 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     public void sendMail(NbtCompound nbt) {
-        inbox.add(nbt);
+        if (Config.getInstance().enableVillagerMailingPlayers) {
+            inbox.add(nbt);
+        }
         markDirty();
     }
 
