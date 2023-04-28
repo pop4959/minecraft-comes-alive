@@ -276,15 +276,15 @@ public class BlueprintScreen extends ExtendedScreen {
                 break;
             case "rules":
                 //taxes
-                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 0.1f : -0.1f), Text.translatable("gui.blueprint.tooltip.taxes"));
+                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.taxes"));
                 toggleButtons(buttonTaxes, false);
 
                 //birth threshold
-                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 0.1f : -0.1f), Text.translatable("gui.blueprint.tooltip.births"));
+                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.births"));
                 toggleButtons(buttonBirths, false);
 
                 //marriage threshold
-                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 0.1f : -0.1f), Text.translatable("gui.blueprint.tooltip.marriage"));
+                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.marriage"));
                 toggleButtons(buttonMarriage, false);
                 break;
             case "rename":
