@@ -25,7 +25,7 @@ public final class Workspace {
     public String profession;
     public Gender gender = Gender.NEUTRAL;
 
-    public int fillToolThreshold = 4;
+    public int fillToolThreshold = 32;
 
     public final NativeImage currentImage;
     public final NativeImageBackedTexture backendTexture;

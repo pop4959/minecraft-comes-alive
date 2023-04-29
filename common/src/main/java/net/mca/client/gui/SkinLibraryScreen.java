@@ -11,10 +11,7 @@ import net.mca.client.gui.immersiveLibrary.responses.*;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
 import net.mca.client.gui.immersiveLibrary.types.User;
 import net.mca.client.gui.widget.*;
-import net.mca.client.resources.ClientUtils;
-import net.mca.client.resources.ProfessionIcons;
-import net.mca.client.resources.SkinLocations;
-import net.mca.client.resources.SkinMeta;
+import net.mca.client.resources.*;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -291,7 +288,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 //draw template
                 RenderSystem.setShaderTexture(0, TEMPLATE_IDENTIFIER);
-                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.5f);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.25f);
                 WidgetUtils.drawTexturedQuad(matrices.peek().getPositionMatrix(), vx0 * 64, vx1 * 64, vy0 * 64, vy1 * 64, 0, uvx0, uvx1, uvy0, uvy1);
 
                 //draw canvas
@@ -510,8 +507,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 return true;
             }
 
-            // Unto
-            if (keyCode == GLFW.GLFW_KEY_Z) {
+            // Undo
+            if (keyCode == GLFW.GLFW_KEY_Y) {
                 workspace.undo();
                 return true;
             }
@@ -1019,11 +1016,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 //fill tool strength
                 addDrawableChild(new IntegerSliderWidget(width / 2 + 100, y + 60, 100, 20,
                         workspace.fillToolThreshold,
-                        0, 32,
+                        0, 128,
                         v -> {
                             workspace.fillToolThreshold = v;
                         },
-                        v -> Text.translatable("gui.skin_library.fillToolThreshold", +v),
+                        v -> Text.translatable("gui.skin_library.fillToolThreshold"),
                         () -> Text.translatable("gui.skin_library.fillToolThreshold.tooltip")
                 ));
 
@@ -1312,12 +1309,18 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 NativeImage image = NativeImage.read(stream);
                 stream.close();
 
-                if (image.getWidth() != 64 || image.getHeight() != 64) {
-                    setError(Text.translatable("gui.skin_library.not_64"));
-                } else {
+                if (image.getWidth() == 64 && image.getHeight() == 64) {
+                    if (SkinPorter.isSlimFormat(image)) {
+                        SkinPorter.convertSlimToDefault(image);
+                    }
                     workspace = new Workspace(image);
-
                     setPage(Page.EDITOR_TYPE);
+                } else if (image.getWidth() == 64 && image.getHeight() == 32) {
+                    // port legacy skins
+                    workspace = new Workspace(SkinPorter.portLegacySkin(image));
+                    setPage(Page.EDITOR_TYPE);
+                } else {
+                    setError(Text.translatable("gui.skin_library.not_64"));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
