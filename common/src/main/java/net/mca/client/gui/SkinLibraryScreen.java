@@ -61,6 +61,7 @@ import java.util.stream.Stream;
 import static net.mca.client.gui.immersiveLibrary.Api.request;
 
 public class SkinLibraryScreen extends Screen implements SkinListUpdateListener {
+    private static final Identifier TEMPLATE_IDENTIFIER = MCA.locate("textures/skin_template.png");
     private static final Identifier EMPTY_IDENTIFIER = MCA.locate("skins/empty.png");
     private static final Identifier CANVAS_IDENTIFIER = MCA.locate("temp");
     private static final float CANVAS_SCALE = 2.35f;
@@ -270,7 +271,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 int tw = 64;
                 int th = 64;
                 RenderSystem.setShader(GameRenderer::getPositionShader);
-                RenderSystem.setShaderTexture(0, CANVAS_IDENTIFIER);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 RenderSystem.enableDepthTest();
@@ -289,7 +289,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 float uvy0 = (vy0 - y0) / (y1 - y0);
                 float uvy1 = (vy1 - y0) / (y1 - y0);
 
+                //draw template
+                RenderSystem.setShaderTexture(0, TEMPLATE_IDENTIFIER);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.5f);
+                WidgetUtils.drawTexturedQuad(matrices.peek().getPositionMatrix(), vx0 * 64, vx1 * 64, vy0 * 64, vy1 * 64, 0, uvx0, uvx1, uvy0, uvy1);
+
                 //draw canvas
+                RenderSystem.setShaderTexture(0, CANVAS_IDENTIFIER);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                 WidgetUtils.drawTexturedQuad(matrices.peek().getPositionMatrix(), vx0 * 64, vx1 * 64, vy0 * 64, vy1 * 64, 0, uvx0, uvx1, uvy0, uvy1);
 
                 //border
