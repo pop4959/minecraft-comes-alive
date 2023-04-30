@@ -321,7 +321,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 int cy = height / 2 - 10;
 
                 villagerVisualization.getGenetics().setGender(workspace.gender.binary());
-                InventoryScreen.drawEntity(cx, cy, 50, -(mouseX - cx) / 2.0f, -(mouseY - cy + 32) / 2.0f, villagerVisualization);
+                WidgetUtils.drawBackgroundEntity(cx, cy, 50, -(mouseX - cx) / 2.0f, -(mouseY - cy + 32) / 2.0f, villagerVisualization);
 
                 if (workspace.skinType == SkinType.HAIR) {
                     drawCenteredText(matrices, textRenderer, Text.translatable("gui.skin_library.hair_color"), width / 2 - 150, height / 2 - 40, 0xAAFFFFFF);
