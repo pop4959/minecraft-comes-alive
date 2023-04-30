@@ -6,6 +6,7 @@
 * Fixed baby growth command
 * Move state and infection status are no longer on the gravestone
 * Fixed hugging being restricted to adults
+* Decreased tombstone text render distance to tackle lag
 
 # 7.4.9
 

@@ -27,8 +27,12 @@ public class TombstoneBlockEntityRenderer implements BlockEntityRenderer<Tombsto
     }
 
     @Override
-    public void render(Data entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
+    public int getRenderDistance() {
+        return 32;
+    }
 
+    @Override
+    public void render(Data entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (!entity.hasEntity()) {
             return;
         }
