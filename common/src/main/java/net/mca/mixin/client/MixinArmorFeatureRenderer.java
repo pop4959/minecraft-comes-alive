@@ -11,6 +11,7 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,7 +35,7 @@ public abstract class MixinArmorFeatureRenderer<T extends LivingEntity, A extend
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/entity/LivingEntity;FFFFFF)V", at = @At("HEAD"))
     public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, T livingEntity, float f, float g, float h, float j, float k, float l, CallbackInfo ci) {
-        mca$injectionActive = MCAClient.useGeneticsRenderer(livingEntity.getUuid());
+        mca$injectionActive = livingEntity instanceof PlayerEntity && MCAClient.useGeneticsRenderer(livingEntity.getUuid());
     }
 
     @Inject(method = "getModel", at = @At("HEAD"), cancellable = true)
