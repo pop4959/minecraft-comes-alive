@@ -21,6 +21,7 @@ import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static net.mca.client.model.CommonVillagerModel.getVillager;
@@ -33,7 +34,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     static {
         // the temp image is used for temporary canvases and definitely exists
-        TEXTURE_EXIST_CACHE.put(MCA.locate("temp.png"), true);
+        TEXTURE_EXIST_CACHE.put(MCA.locate("temp"), true);
     }
 
     public final M model;
@@ -99,7 +100,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         }
 
         Identifier overlay = getOverlay(villager);
-        if (canUse(overlay)) {
+        if (!Objects.equals(skin, overlay) && canUse(overlay)) {
             renderModel(transform, provider, light, model, 1, 1, 1, overlay, tint);
         }
     }

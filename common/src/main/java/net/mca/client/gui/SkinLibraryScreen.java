@@ -60,7 +60,7 @@ import static net.mca.client.gui.immersiveLibrary.Api.request;
 public class SkinLibraryScreen extends Screen implements SkinListUpdateListener {
     private static final Identifier TEMPLATE_IDENTIFIER = MCA.locate("textures/skin_template.png");
     private static final Identifier EMPTY_IDENTIFIER = MCA.locate("skins/empty.png");
-    private static final Identifier CANVAS_IDENTIFIER = MCA.locate("temp.png");
+    private static final Identifier CANVAS_IDENTIFIER = MCA.locate("temp");
     private static final float CANVAS_SCALE = 2.35f;
 
     private String filteredString = "";
@@ -1403,6 +1403,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             getContentById(contentid).ifPresent(content -> {
                                 focusedContent = content;
                                 setPage(Page.DETAIL);
+                                SkinCache.clearRequested();
                             });
                         });
                     } else if (request instanceof ErrorResponse response) {

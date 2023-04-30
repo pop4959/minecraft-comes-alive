@@ -370,7 +370,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void validateClothes() {
         if (!asEntity().world.isClient()) {
-            if (!ClothingList.getInstance().clothing.containsKey(getClothes())) {
+            if (!getClothes().startsWith("immersive_library") && !ClothingList.getInstance().clothing.containsKey(getClothes())) {
                 //try to port from old versions
                 if (getClothes() != null) {
                     Identifier identifier = new Identifier(getClothes());
@@ -387,7 +387,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                 }
             }
 
-            if (!HairList.getInstance().hair.containsKey(getHair())) {
+            if (!getHair().startsWith("immersive_library") && !HairList.getInstance().hair.containsKey(getHair())) {
                 MCA.LOGGER.info(String.format("Villagers hair %s does not exist!", getHair()));
                 randomizeHair();
             }
