@@ -33,7 +33,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     static {
         // the temp image is used for temporary canvases and definitely exists
-        TEXTURE_EXIST_CACHE.put(MCA.locate("temp"), true);
+        TEXTURE_EXIST_CACHE.put(MCA.locate("temp.png"), true);
     }
 
     public final M model;

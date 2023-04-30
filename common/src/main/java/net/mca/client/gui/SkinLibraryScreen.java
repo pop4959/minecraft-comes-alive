@@ -15,6 +15,7 @@ import net.mca.client.resources.*;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
+import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.network.c2s.AddCustomClothingMessage;
 import net.mca.network.c2s.RemoveCustomClothingMessage;
@@ -32,7 +33,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -60,7 +60,7 @@ import static net.mca.client.gui.immersiveLibrary.Api.request;
 public class SkinLibraryScreen extends Screen implements SkinListUpdateListener {
     private static final Identifier TEMPLATE_IDENTIFIER = MCA.locate("textures/skin_template.png");
     private static final Identifier EMPTY_IDENTIFIER = MCA.locate("skins/empty.png");
-    private static final Identifier CANVAS_IDENTIFIER = MCA.locate("temp");
+    private static final Identifier CANVAS_IDENTIFIER = MCA.locate("temp.png");
     private static final float CANVAS_SCALE = 2.35f;
 
     private String filteredString = "";
@@ -209,13 +209,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         hoveredContent = null;
 
+        villagerVisualization.setBreedingAge(0);
+        villagerVisualization.calculateDimensions();
+
         switch (page) {
             case LIBRARY -> {
-                NbtCompound nbt = new NbtCompound();
-                villagerVisualization.readCustomDataFromNbt(nbt);
-                villagerVisualization.setBreedingAge(0);
-                villagerVisualization.calculateDimensions();
-
                 int i = 0;
                 for (int y = 0; y < CLOTHES_V; y++) {
                     for (int x = 0; x < CLOTHES_H + y; x++) {
@@ -233,6 +231,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                 renderTooltip(matrices, getMetaDataText(c), mouseX, mouseY);
                             }
 
+                            villagerVisualization.getGenetics().setGender(SkinCache.getMeta(c).map(SkinMeta::getGender).orElse(Gender.MALE).binary());
                             InventoryScreen.drawEntity(cx, cy, hoveredContent == c ? 30 : 28, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
                             i++;
                         } else {
@@ -325,7 +324,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 int cx = width / 2 + 150;
                 int cy = height / 2 - 10;
 
+                villagerVisualization.getGenetics().setGender(workspace.gender.binary());
                 InventoryScreen.drawEntity(cx, cy, 50, -(mouseX - cx) / 2.0f, -(mouseY - cy + 32) / 2.0f, villagerVisualization);
+
+                if (workspace.skinType == SkinType.HAIR) {
+                    drawCenteredText(matrices, textRenderer, Text.translatable("gui.skin_library.hair_color"), width / 2 - 150, height / 2 - 40, 0xAAFFFFFF);
+                }
             }
             case LOGIN -> {
                 // check user authentication
@@ -377,6 +381,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 int cx = width / 2;
                 int cy = height / 2 + 50;
+
+                villagerVisualization.getGenetics().setGender(SkinCache.getMeta(focusedContent).map(SkinMeta::getGender).orElse(Gender.MALE).binary());
                 InventoryScreen.drawEntity(cx, cy, 60, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
 
                 //metadata
@@ -508,7 +514,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             }
 
             // Undo
-            if (keyCode == GLFW.GLFW_KEY_Y) {
+            if (keyCode == GLFW.GLFW_KEY_Y || keyCode == GLFW.GLFW_KEY_Z) {
                 workspace.undo();
                 return true;
             }
@@ -647,10 +653,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         int y = (int)getPixelY();
         if (workspace.validPixel(x, y)) {
             color.setRGB(
-                    workspace.currentImage.getRed(x, y) / 255.0,
-                    workspace.currentImage.getGreen(x, y) / 255.0,
-                    workspace.currentImage.getBlue(x, y) / 255.0
+                    (workspace.currentImage.getRed(x, y) & 0xFF) / 255.0,
+                    (workspace.currentImage.getGreen(x, y) & 0xFF) / 255.0,
+                    (workspace.currentImage.getBlue(x, y) & 0xFF) / 255.0
             );
+            if (workspace.skinType == SkinType.HAIR) color.setHSV(0, 0, color.brightness);
         }
     }
 
@@ -769,33 +776,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         Text.translatable("gui.skin_library.prepare.hair"),
                         v -> {
                             workspace.skinType = SkinType.HAIR;
+                            color.setHSV(0, 0, 0.5);
                             setPage(Page.EDITOR);
-
-                            // make black and white
-                            if (workspace.skinType == SkinType.HAIR) {
-                                double maxLuminance = 0.0;
-                                for (int x = 0; x < 64; x++) {
-                                    for (int y = 0; y < 64; y++) {
-                                        int r = workspace.currentImage.getRed(x, y);
-                                        int g = workspace.currentImage.getGreen(x, y);
-                                        int b = workspace.currentImage.getBlue(x, y);
-                                        double l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-                                        maxLuminance = Math.max(maxLuminance, l);
-                                    }
-                                }
-                                for (int x = 0; x < 64; x++) {
-                                    for (int y = 0; y < 64; y++) {
-                                        int r = workspace.currentImage.getRed(x, y);
-                                        int g = workspace.currentImage.getGreen(x, y);
-                                        int b = workspace.currentImage.getBlue(x, y);
-                                        int a = workspace.currentImage.getOpacity(x, y);
-                                        int l = (int)((0.2126 * r + 0.7152 * g + 0.0722 * b + (255.0 - maxLuminance)) * 0.5 + 128);
-                                        workspace.currentImage.setColor(x, y, a << 24 | l << 16 | l << 8 | l);
-                                    }
-                                }
-
-                                color.setHSV(0, 0, 0.5);
-                            }
                         }));
 
                 addDrawableChild(new ButtonWidget(width / 2 + 5, height / 2, 95, 20,
@@ -1031,8 +1013,67 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             workspace.undo();
                         }));
 
+                if (workspace.skinType == SkinType.HAIR) {
+                    // make black and white
+                    addDrawableChild(new ButtonWidget(width / 2 + 100, y - 20, 100, 20,
+                            Text.translatable("gui.skin_library.remove_saturation"),
+                            v -> {
+                                workspace.removeSaturation();
+                            }));
+
+                    //less contrast
+                    addDrawableChild(new TooltipButtonWidget(width / 2 + 100, y, 50, 20,
+                            Text.literal("C -"),
+                            Text.translatable("gui.skin_library.less_contrast"),
+                            v -> {
+                                workspace.addContrast(-0.15f);
+                            }));
+
+                    //more contrast
+                    addDrawableChild(new TooltipButtonWidget(width / 2 + 150, y, 50, 20,
+                            Text.literal("C +"),
+                            Text.translatable("gui.skin_library.more_contrast"),
+                            v -> {
+                                workspace.addContrast(0.15f);
+                            }));
+
+                    //less contrast
+                    addDrawableChild(new TooltipButtonWidget(width / 2 + 100, y + 20, 50, 20,
+                            Text.literal("B -"),
+                            Text.translatable("gui.skin_library.less_brightness"),
+                            v -> {
+                                workspace.addBrightness(-8);
+                            }));
+
+                    //more contrast
+                    addDrawableChild(new TooltipButtonWidget(width / 2 + 150, y + 20, 50, 20,
+                            Text.literal("B +"),
+                            Text.translatable("gui.skin_library.more_brightness"),
+                            v -> {
+                                workspace.addBrightness(8);
+                            }));
+
+                    //hair color
+                    Genetics genetics = villagerVisualization.getGenetics();
+                    addDrawableChild(new ColorPickerWidget(width / 2 - 200, height / 2 - 30, 100, 100,
+                            genetics.getGene(Genetics.PHEOMELANIN),
+                            genetics.getGene(Genetics.EUMELANIN),
+                            MCA.locate("textures/colormap/villager_hair.png"),
+                            (vx, vy) -> {
+                                genetics.setGene(Genetics.PHEOMELANIN, vx.floatValue());
+                                genetics.setGene(Genetics.EUMELANIN, vy.floatValue());
+                            }));
+                }
+
+                // cancel
+                addDrawableChild(new ButtonWidget(width / 2 - 80, height / 2 + 80, 75, 20,
+                        Text.translatable("gui.skin_library.cancel"),
+                        v -> {
+                            setPage(Page.LIBRARY);
+                        }));
+
                 // publish
-                addDrawableChild(new ButtonWidget(width / 2 - 50, height / 2 + 80, 100, 20,
+                addDrawableChild(new ButtonWidget(width / 2 + 5, height / 2 + 80, 75, 20,
                         Text.translatable("gui.skin_library.publish"),
                         v -> {
                             publish();
@@ -1083,6 +1124,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             SkinCache.getMeta(content).ifPresent(meta -> {
                                 workspace = new Workspace(image, meta, content);
                                 setPage(Page.EDITOR);
+                                if (workspace.skinType == SkinType.HAIR) color.setHSV(0, 0, 0.5);
                             });
                         });
                     })));
@@ -1530,6 +1572,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             if (hueWidget != null) {
                 hueWidget.setValueX(hue / 360.0);
                 saturationWidget.setValueX(saturation);
+            }
+            if (brightnessWidget != null) {
                 brightnessWidget.setValueX(brightness);
             }
         }
@@ -1550,6 +1594,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             if (hueWidget != null) {
                 hueWidget.setValueX(hue / 360.0);
                 saturationWidget.setValueX(saturation);
+            }
+            if (brightnessWidget != null) {
                 brightnessWidget.setValueX(brightness);
             }
         }

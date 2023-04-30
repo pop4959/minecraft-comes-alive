@@ -9,6 +9,7 @@ import net.mca.resources.data.skin.Hair;
 import net.mca.resources.data.skin.SkinListEntry;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -79,6 +80,70 @@ public final class Workspace {
         if (Math.abs(nextEntry.alpha - entry.alpha) > fillToolThreshold) return;
 
         todo.add(nextEntry);
+    }
+
+    public void removeSaturation() {
+        saveSnapshot(true);
+
+        for (int x = 0; x < 64; x++) {
+            for (int y = 0; y < 64; y++) {
+                int r = currentImage.getRed(x, y) & 0xFF;
+                int g = currentImage.getGreen(x, y) & 0xFF;
+                int b = currentImage.getBlue(x, y) & 0xFF;
+                int a = currentImage.getOpacity(x, y) & 0xFF;
+                int l = MathHelper.clamp((int)(0.2126 * r + 0.7152 * g + 0.0722 * b), 0, 255);
+                currentImage.setColor(x, y, a << 24 | l << 16 | l << 8 | l);
+            }
+        }
+
+        dirty = true;
+    }
+
+    public void addBrightness(int i) {
+        saveSnapshot(true);
+
+        for (int x = 0; x < 64; x++) {
+            for (int y = 0; y < 64; y++) {
+                int r = MathHelper.clamp((currentImage.getRed(x, y) & 0xFF) + i, 0, 255);
+                int g = MathHelper.clamp((currentImage.getGreen(x, y) & 0xFF) + i, 0, 255);
+                int b = MathHelper.clamp((currentImage.getBlue(x, y) & 0xFF) + i, 0, 255);
+                int a = currentImage.getOpacity(x, y) & 0xFF;
+                currentImage.setColor(x, y, a << 24 | r << 16 | g << 8 | b);
+            }
+        }
+
+        dirty = true;
+    }
+
+    public void addContrast(float c) {
+        saveSnapshot(true);
+
+        int average = 0;
+        int samples = 0;
+        for (int x = 0; x < 64; x++) {
+            for (int y = 0; y < 64; y++) {
+                int a = currentImage.getOpacity(x, y) & 0xFF;
+                if (a > 0) {
+                    average += currentImage.getRed(x, y) & 0xFF;
+                    average += currentImage.getBlue(x, y) & 0xFF;
+                    average += currentImage.getGreen(x, y) & 0xFF;
+                    samples += 3;
+                }
+            }
+        }
+        average /= samples;
+
+        for (int x = 0; x < 64; x++) {
+            for (int y = 0; y < 64; y++) {
+                int r = MathHelper.clamp((int)(((currentImage.getRed(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
+                int g = MathHelper.clamp((int)(((currentImage.getGreen(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
+                int b = MathHelper.clamp((int)(((currentImage.getBlue(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
+                int a = currentImage.getOpacity(x, y) & 0xFF;
+                currentImage.setColor(x, y, a << 24 | r << 16 | g << 8 | b);
+            }
+        }
+
+        dirty = true;
     }
 
     public void fillDelete(int x, int y) {

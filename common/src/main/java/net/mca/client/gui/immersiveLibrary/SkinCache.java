@@ -2,6 +2,7 @@ package net.mca.client.gui.immersiveLibrary;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import net.mca.MCA;
 import net.mca.client.gui.immersiveLibrary.responses.ContentResponse;
 import net.mca.client.gui.immersiveLibrary.responses.Response;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
@@ -20,13 +21,13 @@ import java.util.concurrent.CompletableFuture;
 import static net.mca.client.gui.immersiveLibrary.Api.request;
 
 public class SkinCache {
-    private static final Identifier DEFAULT_SKIN = new Identifier("textures/entity/steve.png");
+    private static final Identifier DEFAULT_SKIN = MCA.locate("skins/empty.png");
 
     private static final Gson gson = new Gson();
 
     static final Set<Integer> requested = new HashSet<>();
     static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
-    static final Map<Integer, NativeImage> images = new HashMap<Integer, NativeImage>();
+    static final Map<Integer, NativeImage> images = new HashMap<>();
     static final Map<Integer, SkinMeta> metaCache = new HashMap<>();
 
     private static File getFile(String key) {
