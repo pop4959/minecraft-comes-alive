@@ -3,6 +3,7 @@ package net.mca.client.gui.immersiveLibrary;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.mca.MCA;
+import net.mca.client.gui.immersiveLibrary.responses.ContentListResponse;
 import net.mca.client.gui.immersiveLibrary.responses.ContentResponse;
 import net.mca.client.gui.immersiveLibrary.responses.Response;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
@@ -29,6 +30,9 @@ public class SkinCache {
     static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
     static final Map<Integer, NativeImage> images = new HashMap<>();
     static final Map<Integer, SkinMeta> metaCache = new HashMap<>();
+
+    private static final List<LiteContent> content = new ArrayList<>();
+    private static final Map<Integer, LiteContent> contentLookup = new HashMap<>();
 
     private static File getFile(String key) {
         //noinspection ResultOfMethodCallIgnored
@@ -60,10 +64,6 @@ public class SkinCache {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static void clearRequested() {
-        requested.clear();
     }
 
     public static void enforceSync(int contentid) {
@@ -146,7 +146,33 @@ public class SkinCache {
     }
 
     public static Identifier getTextureIdentifier(int contentid) {
-        sync(contentid, -2);
+        sync(contentid, contentLookup.containsKey(contentid) ? contentLookup.get(contentid).version() : -2);
         return textureIdentifiers.getOrDefault(contentid, DEFAULT_SKIN);
+    }
+
+    public static void setContent(List<LiteContent> content) {
+        requested.clear();
+
+        SkinCache.content.clear();
+        SkinCache.content.addAll(content);
+
+        SkinCache.contentLookup.clear();
+        for (LiteContent liteContent : content) {
+            SkinCache.contentLookup.put(liteContent.contentid(), liteContent);
+        }
+    }
+
+    public static List<LiteContent> getContent() {
+        return content;
+    }
+
+    static {
+        // fetch assets
+        CompletableFuture.runAsync(() -> {
+            Response response = request(Api.HttpMethod.GET, ContentListResponse.class, "content/mca");
+            if (response instanceof ContentListResponse contentListResponse) {
+                SkinCache.setContent(List.of(contentListResponse.contents()));
+            }
+        });
     }
 }

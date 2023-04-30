@@ -70,7 +70,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private LinkedHashMap<String, Long> tags = new LinkedHashMap<>();
     private final Set<String> selectedTags = new HashSet<>();
 
-    private final List<LiteContent> content = new ArrayList<>();
     private final List<LiteContent> serverContent = new ArrayList<>();
     private List<LiteContent> filteredContent = new ArrayList<>();
     private SubscriptionFilter subscriptionFilter = SubscriptionFilter.LIBRARY;
@@ -147,8 +146,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     protected void init() {
         super.init();
 
-        SkinCache.clearRequested();
-
         refreshServerContent();
 
         thread = Thread.currentThread();
@@ -191,8 +188,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             // fetch assets
             Response response = request(Api.HttpMethod.GET, ContentListResponse.class, "content/mca");
             if (response instanceof ContentListResponse contentListResponse) {
-                content.clear();
-                Collections.addAll(content, contentListResponse.contents());
+                SkinCache.setContent(List.of(contentListResponse.contents()));
                 updateSearch();
             } else {
                 setError(Text.translatable("gui.skin_library.list_fetch_failed"));
@@ -1276,7 +1272,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // fetch the list matching the current subscription filter
         List<LiteContent> contents = Collections.emptyList();
         switch (subscriptionFilter) {
-            case LIBRARY -> {contents = content;}
+            case LIBRARY -> {contents = SkinCache.getContent();}
             case GLOBAL -> {contents = serverContent;}
             case LIKED -> {contents = currentUser != null ? currentUser.likes() : Collections.emptyList();}
             case SUBMISSIONS -> {contents = currentUser != null ? currentUser.submissions() : Collections.emptyList();}
@@ -1403,7 +1399,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             getContentById(contentid).ifPresent(content -> {
                                 focusedContent = content;
                                 setPage(Page.DETAIL);
-                                SkinCache.clearRequested();
                             });
                         });
                     } else if (request instanceof ErrorResponse response) {
@@ -1418,7 +1413,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private Optional<LiteContent> getContentById(int contentid) {
-        return Stream.concat(content.stream(), serverContent.stream()).filter(v -> v.contentid() == contentid).findAny();
+        return Stream.concat(SkinCache.getContent().stream(), serverContent.stream()).filter(v -> v.contentid() == contentid).findAny();
     }
 
     private Optional<LiteContent> getServerContentById(int contentid) {
@@ -1445,7 +1440,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             request(Api.HttpMethod.DELETE, SuccessResponse.class, "content/mca/%s".formatted(contentId), Map.of(
                     "token", Auth.getToken()
             ));
-            content.removeIf(v -> v.contentid() == contentId);
+            SkinCache.getContent().removeIf(v -> v.contentid() == contentId);
 
             if (currentUser != null) {
                 currentUser.likes().removeIf(v -> v.contentid() == contentId);
