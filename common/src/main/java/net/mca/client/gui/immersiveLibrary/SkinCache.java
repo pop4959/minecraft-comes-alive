@@ -18,6 +18,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static net.mca.client.gui.immersiveLibrary.Api.request;
 
@@ -26,7 +27,7 @@ public class SkinCache {
 
     private static final Gson gson = new Gson();
 
-    static final Set<Integer> requested = new HashSet<>();
+    static final Map<Integer, Boolean> requested = new ConcurrentHashMap<>();
     static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
     static final Map<Integer, NativeImage> images = new HashMap<>();
     static final Map<Integer, SkinMeta> metaCache = new HashMap<>();
@@ -76,8 +77,8 @@ public class SkinCache {
     }
 
     public static void sync(int contentid, int currentVersion) {
-        if (!requested.contains(contentid)) {
-            requested.add(contentid);
+        if (!requested.containsKey(contentid)) {
+            requested.put(contentid, true);
 
             int version = -1;
             try {
@@ -98,7 +99,7 @@ public class SkinCache {
                         write(contentid + ".png", Base64.getDecoder().decode(contentResponse.content().data()));
                         write(contentid + ".json", contentResponse.content().meta());
                         write(contentid + ".version", Integer.toString(contentResponse.content().version()));
-                        loadResources(contentid);
+                        requested.remove(contentid);
                     }
                 });
             }
