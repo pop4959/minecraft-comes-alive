@@ -350,6 +350,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                 } else {
                                     //token rejected, delete file
                                     Auth.clearToken();
+                                    if (!isBrowserOpen) {
+                                        setPage(Page.LIBRARY);
+                                        setError(Text.translatable("gui.skin_library.is_auth_failed"));
+                                    }
                                 }
                             } else {
                                 setError(Text.translatable("gui.skin_library.is_auth_failed"));

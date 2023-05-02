@@ -6,6 +6,7 @@ import net.minecraft.util.Util;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
@@ -70,8 +71,8 @@ public class Auth {
             // Inject token into request
             String content = RES_PAGE;
             content = content.replace("{URL}", Config.getInstance().immersiveLibraryUrl);
-            content = content.replace("{USERNAME}", URLEncoder.encode(username));
-            content = content.replace("{TOKEN}", URLEncoder.encode(currentToken));
+            content = content.replace("{USERNAME}", URLEncoder.encode(username, StandardCharsets.UTF_8));
+            content = content.replace("{TOKEN}", URLEncoder.encode(currentToken, StandardCharsets.UTF_8));
             write(tmpdir + "/page.html", content);
 
             // Copy CSS
