@@ -9,8 +9,6 @@ app = FastAPI()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-model = "gpt-3.5-turbo"
-
 limiter = Limiter(RequestRate(700, Duration.HOUR))
 limiter_premium = Limiter(RequestRate(7000, Duration.HOUR))
 
@@ -46,6 +44,32 @@ def chat(prompt: str, player: str, villager: str):
             lim.try_acquire(player)
         print(player, lim.get_current_volume(player), player in premium)
 
+        response = openai.Completion.create(
+            model="text-curie-001",
+            prompt=prompt,
+            temperature=0.95,
+            max_tokens=150,
+            frequency_penalty=0.6,
+            presence_penalty=0.6,
+            stop=[f"{player}:", f"{villager}:"],
+        )
+
+        return {"answer": response["choices"][0]["text"]}
+    except BucketFullException:
+        if player in premium:
+            return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
+        else:
+            return {"answer": LIMIT_EXCEEDED, "error": "limit"}
+
+
+@app.get("v2/chat")
+def chat_v2(prompt: str, player: str, villager: str):
+    try:
+        lim = limiter_premium if player in premium else limiter
+        for i in range(len(prompt) // 100 + 1):
+            lim.try_acquire(player)
+        print(player, lim.get_current_volume(player), player in premium)
+
         messages = []
         for line in prompt.split("\n"):
             if line.strip():
@@ -56,14 +80,12 @@ def chat(prompt: str, player: str, villager: str):
                 elif line.startswith(villager + ":"):
                     c = line[len(villager) + 1 :].strip()
                     if c:
-                        messages.append(
-                            {"role": "assistant", "content": c}
-                        )
+                        messages.append({"role": "assistant", "content": c})
                 else:
                     messages.append({"role": "system", "content": line})
 
         response = openai.ChatCompletion.create(
-            model=model,
+            model="gpt-3.5-turbo",
             messages=messages,
             temperature=0.95,
             max_tokens=150,
