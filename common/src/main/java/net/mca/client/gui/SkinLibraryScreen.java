@@ -11,10 +11,12 @@ import net.mca.client.gui.immersiveLibrary.responses.*;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
 import net.mca.client.gui.immersiveLibrary.types.User;
 import net.mca.client.gui.widget.*;
+import net.mca.client.model.CommonVillagerModel;
 import net.mca.client.resources.*;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
+import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.network.c2s.AddCustomClothingMessage;
@@ -33,6 +35,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -119,13 +122,27 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private static HorizontalColorPickerWidget brightnessWidget;
 
     public SkinLibraryScreen() {
-        this(null);
+        this(null, null);
     }
 
-    public SkinLibraryScreen(VillagerEditorScreen screen) {
+    public SkinLibraryScreen(VillagerEditorScreen screen, VillagerEntityMCA villagerVisualization) {
         super(Text.translatable("gui.skin_library.title"));
 
         this.previousScreen = screen;
+
+        if (villagerVisualization != null) {
+            NbtCompound nbt = new NbtCompound();
+            villagerVisualization.writeCustomDataToNbt(nbt);
+            this.villagerVisualization.readCustomDataFromNbt(nbt);
+        } else {
+            assert MinecraftClient.getInstance().player != null;
+            VillagerLike<?> villagerLike = CommonVillagerModel.getVillager(MinecraftClient.getInstance().world, MinecraftClient.getInstance().player.getUuid());
+            if (villagerLike instanceof VillagerEntityMCA villager) {
+                NbtCompound nbt = new NbtCompound();
+                villager.writeCustomDataToNbt(nbt);
+                this.villagerVisualization.readCustomDataFromNbt(nbt);
+            }
+        }
     }
 
     @Override
@@ -219,8 +236,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                             setDummyTexture(c);
 
-                            int cx = width / 2 + (int)((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 55);
-                            int cy = height / 2 + 25 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
+                            int cx = width / 2 + (int) ((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 55);
+                            int cy = height / 2 + 25 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 65);
 
                             if (Math.abs(cx - mouseX) <= 15 && Math.abs(cy - mouseY - 25) <= 24) {
                                 hoveredContent = c;
@@ -297,8 +314,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 matrices.pop();
 
                 //hovered element
-                int x = (int)getPixelX();
-                int y = (int)getPixelY();
+                int x = (int) getPixelX();
+                int y = (int) getPixelY();
                 if (x >= 0 && x < 64 && y >= 0 && y < 64) {
                     SkinLocations.Part part = SkinLocations.LOOKUP[x][y];
                     if (part != null) {
@@ -372,7 +389,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 } else if (error != null) {
                     drawTextBox(matrices, Text.translatable("gui.skin_library.authenticating"));
                 } else {
-                    drawTextBox(matrices, Text.translatable("gui.skin_library.authenticating").append(Text.literal(" " + ".".repeat((int)(System.currentTimeMillis() / 500 % 4)))));
+                    drawTextBox(matrices, Text.translatable("gui.skin_library.authenticating").append(Text.literal(" " + ".".repeat((int) (System.currentTimeMillis() / 500 % 4)))));
                 }
             }
             case DETAIL -> {
@@ -423,7 +440,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     Text.translatable("gui.skin_library.gender", meta.get().getGender() == Gender.MALE ? Text.translatable("gui.villager_editor.masculine") : (meta.get().getGender() == Gender.FEMALE ? Text.translatable("gui.villager_editor.feminine") : Text.translatable("gui.villager_editor.neutral"))),
                     Text.translatable("gui.skin_library.profession", meta.get().getProfession() == null ? Text.translatable("entity.minecraft.villager") : Text.translatable("entity.minecraft.villager." + meta.get().getProfession())),
                     Text.translatable("gui.skin_library.temperature", Text.translatable("gui.skin_library.temperature." + (meta.get().getTemperature() + 2))),
-                    Text.translatable("gui.skin_library.chance_val", (int)(meta.get().getChance() * 100)).formatted(Formatting.GRAY)
+                    Text.translatable("gui.skin_library.chance_val", (int) (meta.get().getChance() * 100)).formatted(Formatting.GRAY)
             ));
             texts.addAll(wrap);
             return texts;
@@ -432,12 +449,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private double getScreenScaleX() {
         assert client != null;
-        return (double)this.client.getWindow().getScaledWidth() / (double)this.client.getWindow().getWidth();
+        return (double) this.client.getWindow().getScaledWidth() / (double) this.client.getWindow().getWidth();
     }
 
     private double getScreenScaleY() {
         assert client != null;
-        return (double)this.client.getWindow().getScaledHeight() / (double)this.client.getWindow().getHeight();
+        return (double) this.client.getWindow().getScaledHeight() / (double) this.client.getWindow().getHeight();
     }
 
     private double getCanvasX() {
@@ -454,12 +471,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private float getPixelX() {
         double cx = getCanvasX();
-        return (int)((cx - x0) / (x1 - x0) * 64);
+        return (int) ((cx - x0) / (x1 - x0) * 64);
     }
 
     private float getPixelY() {
         double cy = getCanvasY();
-        return (int)((cy - y0) / (y1 - y0) * 64.0);
+        return (int) ((cy - y0) / (y1 - y0) * 64.0);
     }
 
     @Override
@@ -475,11 +492,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     @SuppressWarnings("unused")
     protected void mouseMoved(double x, double y, double deltaX, double deltaY) {
         if (isPanning) {
-            float ox = (float)(deltaX / 64 / CANVAS_SCALE);
+            float ox = (float) (deltaX / 64 / CANVAS_SCALE);
             x0 -= ox;
             x1 -= ox;
 
-            float oy = (float)(deltaY / 64 / CANVAS_SCALE);
+            float oy = (float) (deltaY / 64 / CANVAS_SCALE);
             y0 -= oy;
             y1 -= oy;
 
@@ -509,7 +526,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
             // Fill-delete
             if (keyCode == GLFW.GLFW_KEY_F) {
-                workspace.fillDelete((int)getPixelX(), (int)getPixelY());
+                workspace.fillDelete((int) getPixelX(), (int) getPixelY());
                 return true;
             }
 
@@ -541,8 +558,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (!isPanning && activeMouseButton >= 0 && page == Page.EDITOR) {
-            int x = (int)getPixelX();
-            int y = (int)getPixelY();
+            int x = (int) getPixelX();
+            int y = (int) getPixelY();
             ClientUtils.bethlehemLine(lastPixelMouseX, lastPixelMouseY, x, y, this::paint);
             lastPixelMouseX = x;
             lastPixelMouseY = y;
@@ -554,7 +571,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         if (page == Page.EDITOR) {
-            float zoom = (float)(amount * 0.2f) * (x1 - x0);
+            float zoom = (float) (amount * 0.2f) * (x1 - x0);
 
             float ox = getPixelX() / 64.0f;
             x0 = x0 - zoom * ox;
@@ -574,8 +591,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             if (button == 0 || button == 1) {
                 activeMouseButton = button;
 
-                int x = (int)getPixelX();
-                int y = (int)getPixelY();
+                int x = (int) getPixelX();
+                int y = (int) getPixelY();
 
                 if (workspace.validPixel(x, y)) {
                     workspace.saveSnapshot(true);
@@ -649,8 +666,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private void pickColor() {
-        int x = (int)getPixelX();
-        int y = (int)getPixelY();
+        int x = (int) getPixelX();
+        int y = (int) getPixelY();
         if (workspace.validPixel(x, y)) {
             color.setRGB(
                     (workspace.currentImage.getRed(x, y) & 0xFF) / 255.0,
@@ -689,10 +706,16 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             case LIBRARY -> //noinspection CommentedOutCode
             {
                 //page
-                addDrawableChild(new ButtonWidget(width / 2 - 35 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> setSelectionPage(selectionPage - 1)));
+                addDrawableChild(new ButtonWidget(width / 2 - 35 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> {
+                    setSelectionPage(selectionPage - 1);
+                    rebuild();
+                }));
                 pageWidget = addDrawableChild(new ButtonWidget(width / 2 - 35, height / 2 + 80, 70, 20, Text.literal(""), sender -> {
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 35, height / 2 + 80, 30, 20, Text.literal(">>"), sender -> setSelectionPage(selectionPage + 1)));
+                addDrawableChild(new ButtonWidget(width / 2 + 35, height / 2 + 80, 30, 20, Text.literal(">>"), sender -> {
+                    setSelectionPage(selectionPage + 1);
+                    rebuild();
+                }));
                 setSelectionPage(selectionPage);
 
                 //search
@@ -752,8 +775,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         if (filteredContent.size() > index) {
                             LiteContent c = filteredContent.get(index);
 
-                            int cx = width / 2 + (int)((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 55);
-                            int cy = height / 2 + 25 + (int)((y - CLOTHES_V / 2.0 + 0.5) * 65);
+                            int cx = width / 2 + (int) ((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 55);
+                            int cy = height / 2 + 25 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 65);
 
                             drawControls(c, false, cx, cy);
                             i++;
@@ -953,14 +976,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             color.saturation,
                             () -> {
                                 double[] doubles = ClientUtils.HSV2RGB(color.hue, 0.0, 1.0);
-                                return new float[] {
-                                        (float)doubles[0], (float)doubles[1], (float)doubles[2], 1.0f,
+                                return new float[]{
+                                        (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
                                 };
                             },
                             () -> {
                                 double[] doubles = ClientUtils.HSV2RGB(color.hue, 1.0, 1.0);
-                                return new float[] {
-                                        (float)doubles[0], (float)doubles[1], (float)doubles[2], 1.0f,
+                                return new float[]{
+                                        (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
                                 };
                             },
                             (vx, vy) -> {
@@ -977,14 +1000,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         color.brightness,
                         () -> {
                             double[] doubles = ClientUtils.HSV2RGB(color.hue, color.saturation, 0.0);
-                            return new float[] {
-                                    (float)doubles[0], (float)doubles[1], (float)doubles[2], 1.0f,
+                            return new float[]{
+                                    (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
                             };
                         },
                         () -> {
                             double[] doubles = ClientUtils.HSV2RGB(color.hue, color.saturation, 1.0);
-                            return new float[] {
-                                    (float)doubles[0], (float)doubles[1], (float)doubles[2], 1.0f,
+                            return new float[]{
+                                    (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
                             };
                         },
                         (vx, vy) -> {
@@ -1092,14 +1115,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     getServerContentById(content.contentid()).isPresent(),
                     Text.translatable("gui.skin_library.subscribe"),
                     v -> {
-                        if (((ToggleableTooltipButtonWidget)v).toggle) {
+                        if (((ToggleableTooltipButtonWidget) v).toggle) {
                             NetworkHandler.sendToServer(new RemoveCustomClothingMessage(content.hasTag("clothing") ? RemoveCustomClothingMessage.Type.CLOTHING : RemoveCustomClothingMessage.Type.HAIR, new Identifier("immersive_library", String.valueOf(content.contentid()))));
                         } else {
                             toListEntry(content).ifPresent(e -> {
                                 NetworkHandler.sendToServer(new AddCustomClothingMessage(e));
                             });
                         }
-                        ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
+                        ((ToggleableTooltipButtonWidget) v).toggle = !((ToggleableTooltipButtonWidget) v).toggle;
                     })));
         }
 
@@ -1109,8 +1132,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     isLiked(content),
                     Text.translatable("gui.skin_library.like"),
                     v -> {
-                        ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
-                        setLike(content.contentid(), ((ToggleableTooltipButtonWidget)v).toggle);
+                        ((ToggleableTooltipButtonWidget) v).toggle = !((ToggleableTooltipButtonWidget) v).toggle;
+                        setLike(content.contentid(), ((ToggleableTooltipButtonWidget) v).toggle);
                     })));
         }
 
@@ -1158,7 +1181,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     true,
                     Text.translatable("gui.skin_library.ban"),
                     v -> {
-                        ((ToggleableTooltipButtonWidget)v).toggle = !((ToggleableTooltipButtonWidget)v).toggle;
+                        ((ToggleableTooltipButtonWidget) v).toggle = !((ToggleableTooltipButtonWidget) v).toggle;
                         setBan(content.userid(), true);
                         reloadDatabase();
                     })));
@@ -1276,10 +1299,18 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // fetch the list matching the current subscription filter
         List<LiteContent> contents = Collections.emptyList();
         switch (subscriptionFilter) {
-            case LIBRARY -> {contents = SkinCache.getContent();}
-            case GLOBAL -> {contents = serverContent;}
-            case LIKED -> {contents = currentUser != null ? currentUser.likes() : Collections.emptyList();}
-            case SUBMISSIONS -> {contents = currentUser != null ? currentUser.submissions() : Collections.emptyList();}
+            case LIBRARY -> {
+                contents = SkinCache.getContent();
+            }
+            case GLOBAL -> {
+                contents = serverContent;
+            }
+            case LIKED -> {
+                contents = currentUser != null ? currentUser.likes() : Collections.emptyList();
+            }
+            case SUBMISSIONS -> {
+                contents = currentUser != null ? currentUser.submissions() : Collections.emptyList();
+            }
         }
 
         // pre-filter the assets by string search and asset group
@@ -1325,7 +1356,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private int getMaxPages() {
-        return (int)Math.ceil(filteredContent.size() / 24.0);
+        return (int) Math.ceil(filteredContent.size() / 24.0);
     }
 
     @Override
@@ -1601,15 +1632,15 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }
 
         public int getRed() {
-            return (int)(red * 255);
+            return (int) (red * 255);
         }
 
         public int getGreen() {
-            return (int)(green * 255);
+            return (int) (green * 255);
         }
 
         public int getBlue() {
-            return (int)(blue * 255);
+            return (int) (blue * 255);
         }
 
         public int getColor() {

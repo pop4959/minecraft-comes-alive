@@ -418,7 +418,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                     }
                 }));
                 addDrawableChild(new ButtonWidget(width / 2 + 128, y, 64, 20, Text.translatable("gui.button.library"), b -> {
-                    MinecraftClient.getInstance().setScreen(new SkinLibraryScreen(this));
+                    MinecraftClient.getInstance().setScreen(new SkinLibraryScreen(this, villagerVisualization));
                 }));
                 widgetMasculine = addDrawableChild(new ButtonWidget(width / 2 - 32 - 96 - 64, y, 64, 20, Text.translatable("gui.villager_editor.masculine"), b -> {
                     filterGender = Gender.MALE;
