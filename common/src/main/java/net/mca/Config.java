@@ -100,6 +100,7 @@ public final class Config implements Serializable {
     //AI
     public boolean enableVillagerChatAI = false;
     public int villagerChatAIIntelligence = 4;
+    public String villagerChatAIServer = "http://snoweagle.tk/";
 
     //village behavior
     public float guardSpawnFraction = 0.175f;

@@ -9,7 +9,7 @@ app = FastAPI()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-model = "text-curie-001"
+model = "gpt-3.5-turbo"
 
 limiter = Limiter(RequestRate(700, Duration.HOUR))
 limiter_premium = Limiter(RequestRate(7000, Duration.HOUR))
@@ -46,9 +46,25 @@ def chat(prompt: str, player: str, villager: str):
             lim.try_acquire(player)
         print(player, lim.get_current_volume(player), player in premium)
 
-        response = openai.Completion.create(
+        messages = []
+        for line in prompt.split("\n"):
+            if line.strip():
+                if line.startswith(player + ":"):
+                    c = line[len(player) + 1 :].strip()
+                    if c:
+                        messages.append({"role": "user", "content": c})
+                elif line.startswith(villager + ":"):
+                    c = line[len(villager) + 1 :].strip()
+                    if c:
+                        messages.append(
+                            {"role": "assistant", "content": c}
+                        )
+                else:
+                    messages.append({"role": "system", "content": line})
+
+        response = openai.ChatCompletion.create(
             model=model,
-            prompt=prompt,
+            messages=messages,
             temperature=0.95,
             max_tokens=150,
             frequency_penalty=0.6,
@@ -56,7 +72,7 @@ def chat(prompt: str, player: str, villager: str):
             stop=[f"{player}:", f"{villager}:"],
         )
 
-        return {"answer": response["choices"][0]["text"]}
+        return {"answer": response["choices"][0]["message"]["content"]}
     except BucketFullException:
         if player in premium:
             return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
