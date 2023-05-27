@@ -6,6 +6,8 @@ import net.mca.Config;
 import net.mca.MCA;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
+import net.mca.resources.data.skin.Clothing;
+import net.mca.server.world.data.CustomClothingManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
@@ -15,9 +17,9 @@ import net.minecraft.util.profiler.Profiler;
 import net.minecraft.village.VillagerProfession;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class ClothingList extends JsonDataLoader {
     protected static final Identifier ID = MCA.locate("skins/clothing");
@@ -53,12 +55,9 @@ public class ClothingList extends JsonDataLoader {
                 for (int i = 0; i < JsonHelper.getInt(object, "count", 1); i++) {
                     String identifier = String.format(key, i);
 
-                    Clothing c = new Clothing(identifier);
+                    Clothing c = new Clothing(identifier, object);
+
                     c.gender = gender;
-                    c.profession = JsonHelper.getString(object, "profession", null);
-                    c.chance = JsonHelper.getFloat(object, "chance", 1.0f);
-                    c.exclude = JsonHelper.getBoolean(object, "exclude", false);
-                    c.temperature = JsonHelper.getInt(object, "temperature", 0);
 
                     if (!clothing.containsKey(identifier) || !object.has("count")) {
                         clothing.put(identifier, c);
@@ -95,7 +94,7 @@ public class ClothingList extends JsonDataLoader {
     }
 
     public WeightedPool<String> getPool(Gender gender, @Nullable String profession) {
-        return clothing.values().stream()
+        return Stream.concat(clothing.values().stream(), CustomClothingManager.getClothing().getEntries().values().stream())
                 .filter(c -> c.gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.gender == gender)
                 .filter(c -> c.profession == null || profession == null && !c.exclude || c.profession.equals(profession))
                 .collect(() -> new WeightedPool.Mutable<>("mca:missing"),
@@ -105,24 +104,4 @@ public class ClothingList extends JsonDataLoader {
                         });
     }
 
-    public static class Clothing extends ListEntry {
-        @Nullable
-        public String profession;
-        public float temperature;
-        public boolean exclude;
-
-        public Clothing(String identifier) {
-            super(identifier);
-        }
-    }
-
-    public static class ListEntry implements Serializable {
-        final String identifier;
-        public Gender gender;
-        public float chance;
-
-        public ListEntry(String identifier) {
-            this.identifier = identifier;
-        }
-    }
 }

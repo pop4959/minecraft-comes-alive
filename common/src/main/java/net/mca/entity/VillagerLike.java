@@ -14,7 +14,7 @@ import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.VillagerDimensions;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.entity.interaction.EntityCommandHandler;
 import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
@@ -217,6 +217,10 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         return getTrackedValue(HAIR);
     }
 
+    default void setHair(Identifier hair) {
+        setHair(hair.toString());
+    }
+
     default void setHair(String hair) {
         setTrackedValue(HAIR, hair);
     }
@@ -366,7 +370,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void validateClothes() {
         if (!asEntity().world.isClient()) {
-            if (!ClothingList.getInstance().clothing.containsKey(getClothes())) {
+            if (!getClothes().startsWith("immersive_library") && !ClothingList.getInstance().clothing.containsKey(getClothes())) {
                 //try to port from old versions
                 if (getClothes() != null) {
                     Identifier identifier = new Identifier(getClothes());
@@ -383,7 +387,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                 }
             }
 
-            if (!HairList.getInstance().hair.containsKey(getHair())) {
+            if (!getHair().startsWith("immersive_library") && !HairList.getInstance().hair.containsKey(getHair())) {
                 MCA.LOGGER.info(String.format("Villagers hair %s does not exist!", getHair()));
                 randomizeHair();
             }

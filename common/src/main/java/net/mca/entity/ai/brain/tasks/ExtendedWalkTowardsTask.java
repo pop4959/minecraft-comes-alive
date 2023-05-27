@@ -28,7 +28,7 @@ public class ExtendedWalkTowardsTask {
                         return (world, entity, time) -> {
                             GlobalPos globalPos = context.getValue(destinationResult);
                             Optional<Long> optional = context.getOptionalValue(cantReachWalkTargetSince);
-                            if (globalPos.getDimension() == world.getRegistryKey() && (!optional.isPresent() || world.getTime() - optional.get() <= (long)maxRunTime)) {
+                            if (globalPos.getDimension() == world.getRegistryKey() && (optional.isEmpty() || world.getTime() - optional.get() <= (long)maxRunTime)) {
                                 if (globalPos.getPos().getManhattanDistance(entity.getBlockPos()) > maxDistance) {
                                     Vec3d vec3d = null;
                                     int l = 0;

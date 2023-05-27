@@ -17,8 +17,6 @@ import static net.mca.client.model.CommonVillagerModel.getVillager;
 public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> extends VillagerLayer<T, M> {
     public HairLayer(FeatureRendererContext<T, M> renderer, M model) {
         super(renderer, model);
-
-
     }
 
     @Override

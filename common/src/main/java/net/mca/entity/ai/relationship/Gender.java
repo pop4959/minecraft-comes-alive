@@ -5,6 +5,7 @@ import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ZombieVillagerEntityMCA;
 import net.minecraft.entity.EntityType;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 
 import java.util.Locale;
@@ -104,6 +105,10 @@ public enum Gender {
         return this == Gender.FEMALE ? Config.getInstance().femaleVillagerHeightFactor :
                 this == Gender.MALE ? Config.getInstance().maleVillagerHeightFactor :
                         (Config.getInstance().femaleVillagerHeightFactor + Config.getInstance().maleVillagerHeightFactor) * 0.5f;
+    }
+
+    public static Text getText(Gender t) {
+        return Text.translatable("gui.villager_editor." + t.name().toLowerCase(Locale.ROOT));
     }
 }
 

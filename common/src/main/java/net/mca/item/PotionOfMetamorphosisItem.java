@@ -3,8 +3,8 @@ package net.mca.item;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.Gender;
-import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.network.s2c.PlayerDataMessage;
 import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;
@@ -51,7 +51,7 @@ public class PotionOfMetamorphosisItem extends TooltippedItem {
     }
 
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (entity instanceof VillagerLike villager && !entity.world.isClient) {
+        if (entity instanceof VillagerLike<?> villager && !entity.world.isClient) {
             villager.getGenetics().setGender(gender);
 
             common(entity);

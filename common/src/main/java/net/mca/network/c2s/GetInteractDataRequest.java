@@ -7,7 +7,7 @@ import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.relationship.CompassionateEntity;
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.RelationshipState;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.network.s2c.GetInteractDataResponse;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -20,7 +20,7 @@ public class GetInteractDataRequest implements Message {
     @Serial
     private static final long serialVersionUID = -4363277735373237564L;
 
-    UUID uuid;
+    final UUID uuid;
 
     public GetInteractDataRequest(UUID villager) {
         this.uuid = villager;

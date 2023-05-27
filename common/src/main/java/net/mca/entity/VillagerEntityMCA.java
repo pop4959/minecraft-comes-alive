@@ -10,15 +10,16 @@ import net.mca.entity.ai.brain.VillagerBrain;
 import net.mca.entity.ai.brain.VillagerTasksMCA;
 import net.mca.entity.ai.pathfinder.VillagerNavigation;
 import net.mca.entity.ai.relationship.*;
-import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.entity.interaction.VillagerCommandHandler;
 import net.mca.item.ItemsMCA;
 import net.mca.network.c2s.InteractionVillagerMessage;
 import net.mca.resources.Names;
 import net.mca.resources.Rank;
 import net.mca.resources.Tasks;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.server.world.data.Village;
+import net.mca.server.world.data.VillagerTrackerManager;
 import net.mca.util.InventoryUtils;
 import net.mca.util.network.datasync.CDataManager;
 import net.mca.util.network.datasync.CDataParameter;
@@ -77,7 +78,10 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
-import net.minecraft.util.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -102,19 +106,44 @@ import java.util.function.Predicate;
 import static net.mca.client.model.CommonVillagerModel.getVillager;
 
 public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<VillagerEntityMCA>, NamedScreenHandlerFactory, CompassionateEntity<BreedableRelationship>, CrossbowUser {
+    final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
+
     private static final CDataParameter<Float> INFECTION_PROGRESS = CParameter.create("infectionProgress", 0.0f);
-
     private static final CDataParameter<Integer> GROWTH_AMOUNT = CParameter.create("growthAmount", -AgeState.getMaxAge());
-
     private static final CDataManager<VillagerEntityMCA> DATA = createTrackedData(VillagerEntityMCA.class).build();
 
+    public final ConversationManager conversationManager = new ConversationManager(this);
+    private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
+    private final LongTermMemory longTermMemory = new LongTermMemory(this);
+    private final Genetics genetics = new Genetics(this);
+    private final Traits traits = new Traits(this);
+    private final Residency residency = new Residency(this);
+    private final BreedableRelationship relations = new BreedableRelationship(this);
+    private final VillagerCommandHandler interactions = new VillagerCommandHandler(this);
+    private final UpdatableInventory inventory = new UpdatableInventory(27);
+    private final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.UNASSIGNED);
+
+    private GameProfile gameProfile;
     private PlayerModel playerModel;
 
     private int despawnDelay;
     private int burned;
-
-    public final ConversationManager conversationManager = new ConversationManager(this);
     private long lastHit = 0;
+    private int prevGrowthAmount;
+    private boolean recalcDimensionsBlocked;
+    private boolean interactedWith;
+
+    public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
+        return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
+                .add(Residency::createTrackedData)
+                .add(BreedableRelationship::createTrackedData);
+    }
+
+    public VillagerEntityMCA(EntityType<VillagerEntityMCA> type, World w, Gender gender) {
+        super(type, w);
+        inventory.addListener(this::onInvChange);
+        genetics.setGender(gender);
+    }
 
     @Override
     public PlayerModel getPlayerModel() {
@@ -138,46 +167,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
     }
 
-    public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
-        return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
-                .add(Residency::createTrackedData)
-                .add(BreedableRelationship::createTrackedData);
-    }
-
-    private final VillagerBrain<VillagerEntityMCA> mcaBrain = new VillagerBrain<>(this);
-
-    private final LongTermMemory longTermMemory = new LongTermMemory(this);
-
-    final UUID EXTRA_HEALTH_EFFECT_ID = UUID.fromString("87f56a96-686f-4796-b035-22e16ee9e038");
-
-    private final Genetics genetics = new Genetics(this);
-    private final Traits traits = new Traits(this);
-    private final Residency residency = new Residency(this);
-    private final BreedableRelationship relations = new BreedableRelationship(this);
-
-    private final VillagerCommandHandler interactions = new VillagerCommandHandler(this);
-    private final UpdatableInventory inventory = new UpdatableInventory(27);
-
-    private final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.UNASSIGNED);
-
-    private int prevGrowthAmount;
-
-    public VillagerEntityMCA(EntityType<VillagerEntityMCA> type, World w, Gender gender) {
-        super(type, w);
-        inventory.addListener(this::onInvChange);
-        genetics.setGender(gender);
-    }
-
     @Override
     protected void initDataTracker() {
         super.initDataTracker();
 
         getTypeDataManager().register(this);
     }
-
-    private boolean recalcDimensionsBlocked;
-
-    private GameProfile gameProfile;
 
     @Override
     public GameProfile getGameProfile() {
@@ -329,22 +324,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public boolean isBaby() {
-        return super.isBaby();
-    }
-
-    @Override
     public void setCustomName(@Nullable Text name) {
         super.setCustomName(name);
 
         if (name != null) {
             setName(name.getString());
         }
-    }
-
-    @Override
-    public int getBreedingAge() {
-        return super.getBreedingAge();
     }
 
     @Override
@@ -476,6 +461,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                     }
                 } else {
                     playWelcomeSound();
+                    interactedWith = true;
                     return interactions.interactAt(player, pos, hand);
                 }
             }
@@ -742,6 +728,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (age % Config.getInstance().giftDesaturationReset == 0) {
                 getRelationships().getGiftSaturation().pop();
             }
+
+            // track the position from time to time
+            if (interactedWith && age % Config.getInstance().trackVillagerPositionEveryNTicks == 0) {
+                VillagerTrackerManager.update(this);
+            }
         }
     }
 
@@ -916,11 +907,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     @Override
-    public double getMountedHeightOffset() {
-        return super.getMountedHeightOffset();
-    }
-
-    @Override
     public EntityDimensions getDimensions(EntityPose pose) {
 
         Entity vehicle = getVehicle();
@@ -943,6 +929,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // deselect equipment as this messes with MobEntities equipment dropping
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             this.equipStack(slot, ItemStack.EMPTY);
+        }
+
+        //death message
+        if (!world.isClient) {
+            getResidency().getHomeVillage().flatMap(Village::getCivilRegistry).ifPresent(r -> r.addText(getDamageTracker().getDeathMessage()));
         }
 
         super.onDeath(cause);
@@ -991,6 +982,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         //move out
         residency.leaveHome();
+
+        if (interactedWith) {
+            VillagerTrackerManager.update(this);
+        }
     }
 
     @Override
@@ -1373,6 +1368,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             this.despawnDelay = nbt.getInt("DespawnDelay");
         }
 
+        if (nbt.contains("InteractedWith")) {
+            this.interactedWith = nbt.getBoolean("InteractedWith");
+        }
+
         if (nbt.contains("clothes")) {
             validateClothes();
         }
@@ -1385,7 +1384,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         relations.writeToNbt(nbt);
         longTermMemory.writeToNbt(nbt);
         nbt.putInt("DespawnDelay", this.despawnDelay);
+        nbt.putBoolean("InteractedWith", this.interactedWith);
         InventoryUtils.saveToNBT(inventory, nbt);
+
+        if (interactedWith) {
+            VillagerTrackerManager.update(this);
+        }
     }
 
     @Override

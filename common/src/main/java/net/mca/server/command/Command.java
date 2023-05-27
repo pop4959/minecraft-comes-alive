@@ -19,7 +19,6 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -100,7 +99,7 @@ public class Command {
             // encode and create url
             String encodedURL = params.keySet().stream()
                     .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
-                    .collect(Collectors.joining("&", GPT3.URL + "verify?", ""));
+                    .collect(Collectors.joining("&", Config.getInstance().villagerChatAIServer + "verify?", ""));
 
             GPT3.Answer request = GPT3.request(encodedURL);
 

@@ -20,8 +20,8 @@ public class ColorPickerWidget extends ClickableWidget {
 
     private final DualConsumer<Double, Double> consumer;
     private final Identifier texture;
-    private double valueX;
-    private double valueY;
+    double valueX;
+    double valueY;
 
     public ColorPickerWidget(int x, int y, int width, int height, double valueX, double valueY, Identifier texture, DualConsumer<Double, Double> consumer) {
         super(x, y, width, height, Text.literal(""));
@@ -40,10 +40,12 @@ public class ColorPickerWidget extends ClickableWidget {
         RenderSystem.setShaderTexture(0, texture);
         DrawableHelper.drawTexture(matrices, getX(), getY(), 0, 0, width, height, width, height);
 
+        WidgetUtils.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
+
         RenderSystem.setShaderTexture(0, MCA_GUI_ICONS_TEXTURE);
         DrawableHelper.drawTexture(matrices, (int)(getX() + valueX * width) - 8, (int)(getY() + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
 
-        RectangleWidget.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
+        WidgetUtils.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class ColorPickerWidget extends ClickableWidget {
         return mouseX >= getX() && mouseX <= getX() + width && mouseY >= getY() && mouseY <= getY() + height;
     }
 
-    private void update(double mouseX, double mouseY) {
+    void update(double mouseX, double mouseY) {
         valueX = MathHelper.clamp((mouseX - getX()) / width, 0.0, 1.0);
         valueY = MathHelper.clamp((mouseY - getY()) / height, 0.0, 1.0);
         consumer.apply(valueX, valueY);
@@ -73,5 +75,21 @@ public class ColorPickerWidget extends ClickableWidget {
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
         appendDefaultNarrations(builder);
+    }
+
+    public double getValueX() {
+        return valueX;
+    }
+
+    public void setValueX(double valueX) {
+        this.valueX = valueX;
+    }
+
+    public double getValueY() {
+        return valueY;
+    }
+
+    public void setValueY(double valueY) {
+        this.valueY = valueY;
     }
 }

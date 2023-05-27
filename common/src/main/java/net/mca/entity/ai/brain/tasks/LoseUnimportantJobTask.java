@@ -2,7 +2,6 @@ package net.mca.entity.ai.brain.tasks;
 
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.brain.task.LoseJobOnSiteLossTask;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.ai.brain.task.TaskTriggerer;
 import net.minecraft.entity.passive.VillagerEntity;

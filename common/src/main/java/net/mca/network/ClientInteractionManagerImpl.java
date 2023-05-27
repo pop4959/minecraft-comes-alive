@@ -4,6 +4,7 @@ import net.mca.Config;
 import net.mca.MCAClient;
 import net.mca.client.SpeechManager;
 import net.mca.client.book.Book;
+import net.mca.client.book.CivilRegistryBook;
 import net.mca.client.gui.*;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -92,6 +93,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                 break;
             case FAMILY_TREE:
                 client.setScreen(new FamilyTreeSearchScreen());
+                break;
+            case VILLAGER_TRACKER:
+                client.setScreen(new VillagerTrackerSearchScreen());
                 break;
             default:
         }
@@ -212,8 +216,9 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleSkinListResponse(SkinListResponse message) {
         Screen screen = client.currentScreen;
-        if (screen instanceof VillagerEditorScreen gui) {
-            gui.setSkinList(message.getClothing(), message.getHair());
+        VillagerEditorScreen.setSkinList(message.getClothing(), message.getHair());
+        if (screen instanceof SkinListUpdateListener gui) {
+            gui.skinListUpdatedCallback();
         }
     }
 
@@ -234,5 +239,20 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         msg.toString();
         client.getMessageHandler().onGameMessage(msg, false);
         SpeechManager.INSTANCE.onChatMessage(msg, message.getUuid());
+    }
+
+    @Override
+    public void handleCustomSkinsChangedMessage(CustomSkinsChangedMessage message) {
+        VillagerEditorScreen.setSkinListOutdated();
+    }
+
+    @Override
+    public void handleCivilRegistryResponse(CivilRegistryResponse response) {
+        Screen screen = client.currentScreen;
+        if (screen instanceof ExtendedBookScreen extendedBookScreen) {
+            if (extendedBookScreen.getBook() instanceof CivilRegistryBook civilRegistryBook) {
+                civilRegistryBook.receive(response.getIndex(), response.getLines());
+            }
+        }
     }
 }

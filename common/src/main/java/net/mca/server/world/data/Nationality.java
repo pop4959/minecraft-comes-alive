@@ -34,7 +34,7 @@ public class Nationality extends PersistentState {
         return nbt;
     }
 
-    static Random random = Random.create();
+    static final Random random = Random.create();
 
     private static final int[][] neighbours = {
             {0, 0},

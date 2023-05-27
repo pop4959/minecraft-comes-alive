@@ -21,7 +21,6 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +135,7 @@ public class ChoppingTask extends AbstractChoreTask {
         BlockPos.Mutable pos_up = origin.mutableCopy(); // copy as mutable for reduce resources
         for (int y = 0; y < Config.getInstance().maxTreeHeight; y++) {
             BlockState up = world.getBlockState(pos_up.setY(pos_up.getY() + 1)); // use set directly instead of "pos_up.move(Direction.UP)" (set is faster)
-            if (up.isIn(BlockTags.LOGS)) {continue;} else return up.isIn(BlockTags.LEAVES);
+            if (!up.isIn(BlockTags.LOGS)) return up.isIn(BlockTags.LEAVES);
         }
         return false;
     }
@@ -152,10 +151,6 @@ public class ChoppingTask extends AbstractChoreTask {
             villager.getInventory().addStack(new ItemStack(state.getBlock(), 1));
             stack.damage(1, villager, e -> e.sendEquipmentBreakStatus(e.getDominantSlot()));
         }
-    }
-
-    private boolean isValidTree(ServerWorld world, Vec3d pos) {
-        return isValidTree(world, new BlockPos(pos));
     }
 
     private boolean isValidTree(ServerWorld world, BlockPos pos) {

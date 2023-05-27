@@ -16,7 +16,6 @@ public interface Resources {
     String RESOURCE_PREFIX = "assets/mca/";
 
     Gson GSON = new GsonBuilder()
-            //.registerTypeAdapterFactory(RecordTypeAdapterFactory.INSTANCE)
             .registerTypeAdapter(InteractionPredicate.class, InteractionPredicateTypeAdapter.INSTANCE)
             .create();
 

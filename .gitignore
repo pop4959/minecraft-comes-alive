@@ -47,3 +47,4 @@ forge*changelog.txt
 /scripts/TTS/key.json
 /common/src/main/resources/assets/mca_voices/
 /scripts/TTS/temp.pcm
+/immersiveLibraryToken

@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 import static net.minecraft.util.Util.NIL_UUID;
 
 public class GPT3 {
-    public static final String URL = "http://snoweagle.tk/";
-
     private static final int MIN_MEMORY = 100;
     private static final int MAX_MEMORY = 600;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 45;
@@ -47,7 +45,7 @@ public class GPT3 {
     public static Answer request(String encodedURL) {
         try {
             // receive
-            HttpURLConnection con = (HttpURLConnection)(new URL(encodedURL)).openConnection();
+            HttpURLConnection con = (HttpURLConnection) (new URL(encodedURL)).openConnection();
             con.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.toString());
             InputStream response = con.getInputStream();
             String body = IOUtils.toString(response, StandardCharsets.UTF_8);
@@ -127,7 +125,7 @@ public class GPT3 {
             // encode and create url
             String encodedURL = params.keySet().stream()
                     .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
-                    .collect(Collectors.joining("&", URL + "chat?", ""));
+                    .collect(Collectors.joining("&", Config.getInstance().villagerChatAIServer + "chat?", ""));
 
             // encode and create url
             Answer message = request(encodedURL);

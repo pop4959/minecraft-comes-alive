@@ -1,6 +1,7 @@
 package net.mca.quilt;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.mca.MCA;
 import net.mca.ParticleTypesMCA;
 import net.mca.SoundsMCA;
 import net.mca.TradeOffersMCA;
@@ -66,6 +67,8 @@ public final class MCAQuilt implements ModInitializer {
             AdminCommand.register(dispatcher);
             Command.register(dispatcher);
         });
+
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(MCA::setServer);
     }
 }
 

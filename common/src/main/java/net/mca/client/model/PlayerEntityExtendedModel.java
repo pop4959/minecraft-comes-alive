@@ -17,7 +17,7 @@ public class PlayerEntityExtendedModel<T extends LivingEntity> extends PlayerEnt
     public final ModelPart breasts;
     public final ModelPart breastsWear;
 
-    VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
+    final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
     float breastSize;
 
     public PlayerEntityExtendedModel(ModelPart root) {
