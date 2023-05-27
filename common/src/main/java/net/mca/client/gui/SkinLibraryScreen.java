@@ -1403,6 +1403,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private void publish() {
+        if (workspace.title.equals("Unnamed Asset")) {
+            setError(Text.translatable("gui.skin_library.choose_name"));
+            return;
+        }
+
         if (!uploading) {
             uploading = true;
             CompletableFuture.runAsync(() -> {
