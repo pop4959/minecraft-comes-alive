@@ -727,14 +727,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 setSelectionPage(selectionPage);
 
                 //sorting icons
-                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 150, height / 2 + 82, 6 * 16, 3 * 16,
+                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 130, height / 2 + 82, 6 * 16, 3 * 16,
                         sortingMode == SortingMode.LIKES,
                         Text.translatable("gui.skin_library.sort_likes"),
                         v -> {
                             sortingMode = SortingMode.LIKES;
                             updateSearch();
                         }));
-                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 150 + 22, height / 2 + 82, 7 * 16, 3 * 16,
+                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 130 + 22, height / 2 + 82, 7 * 16, 3 * 16,
                         sortingMode == SortingMode.NEWEST,
                         Text.translatable("gui.skin_library.sort_newest"),
                         v -> {
