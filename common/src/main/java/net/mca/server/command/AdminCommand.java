@@ -6,13 +6,12 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.mca.Config;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.RelationshipState;
-import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.item.BabyItem;
 import net.mca.server.SpawnQueue;
 import net.mca.server.world.data.Building;
@@ -160,13 +159,15 @@ public class AdminCommand {
         return 0;
     }
 
-    private static int setBuildingType(CommandContext<ServerCommandSource> ctx, String type) throws CommandSyntaxException {
-        PlayerEntity e = ctx.getSource().getPlayer();
+    private static int setBuildingType(CommandContext<ServerCommandSource> ctx, String type) {
+        PlayerEntity player = ctx.getSource().getPlayer();
+        if (player == null) return 0;
+
         VillageManager villages = VillageManager.get(ctx.getSource().getWorld());
-        Optional<Village> village = villages.findNearestVillage(e);
+        Optional<Village> village = villages.findNearestVillage(player);
 
         Optional<Building> building = village.flatMap(v -> v.getBuildings().values().stream().filter((b) ->
-                b.containsPos(e.getBlockPos())).findAny());
+                b.containsPos(player.getBlockPos())).findAny());
         if (building.isPresent()) {
             if (building.get().getType().equals(type)) {
                 building.get().setTypeForced(false);
@@ -181,11 +182,11 @@ public class AdminCommand {
         return 0;
     }
 
-    private static int forceBuildingType(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int forceBuildingType(CommandContext<ServerCommandSource> ctx) {
         return setBuildingType(ctx, StringArgumentType.getString(ctx, "type"));
     }
 
-    private static int clearForcedBuildingType(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int clearForcedBuildingType(CommandContext<ServerCommandSource> ctx) {
         return setBuildingType(ctx, null);
     }
 
@@ -211,30 +212,34 @@ public class AdminCommand {
         return 0;
     }
 
-    private static int resetPlayerData(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int resetPlayerData(CommandContext<ServerCommandSource> ctx) {
         ServerPlayerEntity player = ctx.getSource().getPlayer();
+        if (player == null) return 0;
         PlayerSaveData playerData = PlayerSaveData.get(player);
         playerData.reset();
         success("Player data reset.", ctx);
         return 0;
     }
 
-    private static int resetMarriage(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int resetMarriage(CommandContext<ServerCommandSource> ctx) {
         ServerPlayerEntity player = ctx.getSource().getPlayer();
+        if (player == null) return 0;
         PlayerSaveData playerData = PlayerSaveData.get(player);
         playerData.endRelationShip(RelationshipState.SINGLE);
         success("Marriage reset.", ctx);
         return 0;
     }
 
-    private static int decrementHearts(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int decrementHearts(CommandContext<ServerCommandSource> ctx) {
         PlayerEntity player = ctx.getSource().getPlayer();
+        if (player == null) return 0;
         getLoadedVillagers(ctx).forEach(v -> v.getVillagerBrain().getMemoriesForPlayer(player).modHearts(-10));
         return 0;
     }
 
-    private static int incrementHearts(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int incrementHearts(CommandContext<ServerCommandSource> ctx) {
         PlayerEntity player = ctx.getSource().getPlayer();
+        if (player == null) return 0;
         getLoadedVillagers(ctx).forEach(v -> v.getVillagerBrain().getMemoriesForPlayer(player).modHearts(10));
         return 0;
     }
@@ -244,22 +249,30 @@ public class AdminCommand {
         return 0;
     }
 
-    private static int forceBabyGrowth(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int forceBabyGrowth(CommandContext<ServerCommandSource> ctx) {
         PlayerEntity player = ctx.getSource().getPlayer();
-        ItemStack heldStack = player.getMainHandStack();
+        ItemStack heldStack;
+        if (player != null) {
+            heldStack = player.getMainHandStack();
 
         if (heldStack.getItem() instanceof BabyItem) {
-            heldStack.getOrCreateNbt().putInt("age", Config.getInstance().babyItemGrowUpTime);
+            NbtCompound nbt = BabyItem.getBabyNbt(heldStack);
+            nbt.putInt("age", Config.getInstance().babyItemGrowUpTime);
             success("Baby is old enough to place now.", ctx);
         } else {
             fail("Hold a baby first.", ctx);
         }
+        }
         return 0;
     }
 
-    private static int forceFullHearts(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int forceFullHearts(CommandContext<ServerCommandSource> ctx) {
         PlayerEntity player = ctx.getSource().getPlayer();
-        getLoadedVillagers(ctx).forEach(v -> v.getVillagerBrain().getMemoriesForPlayer(player).setHearts(1000));
+        if (player != null) {
+        getLoadedVillagers(ctx).forEach(v -> {
+                v.getVillagerBrain().getMemoriesForPlayer(player).setHearts(1000);
+        });
+        }
         return 0;
     }
 

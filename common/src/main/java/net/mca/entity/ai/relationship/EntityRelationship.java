@@ -1,8 +1,8 @@
 package net.mca.entity.ai.relationship;
 
 import net.mca.advancement.criterion.CriterionMCA;
-import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;

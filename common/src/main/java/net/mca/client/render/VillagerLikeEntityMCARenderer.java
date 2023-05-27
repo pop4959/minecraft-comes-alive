@@ -2,6 +2,7 @@ package net.mca.client.render;
 
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import net.mca.Config;
+import net.mca.client.gui.VillagerEditorScreen;
 import net.mca.client.model.VillagerEntityBaseModelMCA;
 import net.mca.client.model.VillagerEntityModelMCA;
 import net.mca.entity.Infectable;
@@ -33,8 +34,8 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
     private VillagerEntityBaseModelMCA<T> createArmorModel(float modelSize) {
         return new VillagerEntityBaseModelMCA<>(
                 TexturedModelData.of(
-                        VillagerEntityBaseModelMCA.getModelData(new Dilation(modelSize)), 64, 32)
-                .createModel()
+                                VillagerEntityBaseModelMCA.getModelData(new Dilation(modelSize)), 64, 32)
+                        .createModel()
         );
     }
 
@@ -55,11 +56,11 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
             //custom skin
             MinecraftClient minecraftClient = MinecraftClient.getInstance();
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = minecraftClient.getSkinProvider().getTextures(entity.getGameProfile());
-            return map.containsKey(MinecraftProfileTexture.Type.SKIN) ? 
+            return map.containsKey(MinecraftProfileTexture.Type.SKIN) ?
                     RenderLayer.getEntityTranslucent(
                             minecraftClient.getSkinProvider().loadSkin(
                                     map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN
-                            )) : 
+                            )) :
                     RenderLayer.getEntityCutoutNoCull(
                             DefaultSkinHelper.getTexture(
                                     Uuids.getUuidFromProfile(entity.getGameProfile())
@@ -75,7 +76,9 @@ public class VillagerLikeEntityMCARenderer<T extends MobEntity & VillagerLike<T>
     @Override
     protected boolean hasLabel(T villager) {
         PlayerEntity player = MinecraftClient.getInstance().player;
-        return player != null
+        return villager.getCustomName() != null
+                && !(MinecraftClient.getInstance().currentScreen instanceof VillagerEditorScreen)
+                && player != null
                 && Config.getInstance().showNameTags
                 && player.squaredDistanceTo(villager) < Math.pow(Config.getInstance().nameTagDistance, 2.0f)
                 && !villager.isInvisibleTo(player);

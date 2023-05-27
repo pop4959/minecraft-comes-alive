@@ -47,7 +47,7 @@ public class Names extends JsonDataLoader {
         Arrays.stream(NAMES_MAP.keySet().toArray()).sorted().forEach(n -> REGION_NAMES.add((String)n));
     }
 
-    static Random random = Random.create();
+    static final Random random = Random.create();
 
     public static String getCitizenNation(Entity entity) {
         if (Config.getInstance().useModernUSANamesOnly) {

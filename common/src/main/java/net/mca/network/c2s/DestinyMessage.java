@@ -4,7 +4,8 @@ import net.mca.Config;
 import net.mca.MCA;
 import net.mca.cobalt.network.Message;
 import net.mca.util.WorldUtils;
-import net.mca.util.compat.FuzzyPositionsCompat;
+import net.mca.util.compat.ExtendedFuzzyPositions;
+import net.minecraft.entity.ai.FuzzyPositions;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -48,8 +49,8 @@ public class DestinyMessage implements Message {
                 WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 128).ifPresent(pos -> {
                     player.getWorld().getWorldChunk(pos);
                     pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
-                    pos = FuzzyPositionsCompat.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
-                    pos = FuzzyPositionsCompat.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
+                    pos = FuzzyPositions.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
+                    pos = ExtendedFuzzyPositions.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
 
                     ChunkPos chunkPos = new ChunkPos(pos);
                     player.getWorld().getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, player.getId());

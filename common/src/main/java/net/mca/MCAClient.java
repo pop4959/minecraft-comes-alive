@@ -1,10 +1,10 @@
 package net.mca;
 
+import net.mca.client.gui.SkinLibraryScreen;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.VillagerLike;
 import net.mca.network.c2s.ConfigRequest;
-import net.mca.network.c2s.DamageItemMessage;
 import net.mca.network.c2s.PlayerDataRequest;
 import net.minecraft.client.MinecraftClient;
 
@@ -12,8 +12,8 @@ import java.util.*;
 
 public class MCAClient {
     public static VillagerEntityMCA fallbackVillager;
-    public static Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
-    public static Set<UUID> playerDataRequests = new HashSet<>();
+    public static final Map<UUID, VillagerLike<?>> playerData = new HashMap<>();
+    public static final Set<UUID> playerDataRequests = new HashSet<>();
 
     private static final DestinyManager destinyManager = new DestinyManager();
 
@@ -48,11 +48,11 @@ public class MCAClient {
                         .noneMatch(entry -> MCA.doesModExist(entry.getKey()));
     }
 
-    public static boolean renderArms(UUID uuid) {
-        return renderArms(uuid, "arms");
-    }
-
     public static void tickClient(MinecraftClient client) {
         destinyManager.tick(client);
+
+        if (KeyBindings.SKIN_LIBRARY.wasPressed()) {
+            MinecraftClient.getInstance().setScreen(new SkinLibraryScreen());
+        }
     }
 }

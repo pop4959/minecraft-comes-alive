@@ -5,7 +5,6 @@ import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Chore;
 import net.minecraft.entity.ai.brain.*;
 import net.minecraft.entity.ai.brain.task.MultiTickTask;
-import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
 public class InteractTask extends MultiTickTask<VillagerEntityMCA> {

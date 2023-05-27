@@ -2,8 +2,8 @@ package net.mca.network.c2s;
 
 import net.mca.cobalt.network.Message;
 import net.mca.cobalt.network.NetworkHandler;
-import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.network.s2c.GetVillagerResponse;
 import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.entity.Entity;

@@ -2,7 +2,6 @@ package net.mca.entity.ai;
 
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
 
 import java.util.LinkedList;

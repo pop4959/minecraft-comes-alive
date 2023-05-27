@@ -5,7 +5,7 @@ import net.mca.MCA;
 import net.mca.client.resources.Icon;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.relationship.RelationshipState;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.network.c2s.GetFamilyTreeRequest;
 import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.MinecraftClient;

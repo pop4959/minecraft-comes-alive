@@ -48,6 +48,7 @@ public final class Config implements Serializable {
     public boolean villagerRestockNotification = true;
     public boolean showNotificationsAsChat = false;
     public int heartsToBeConsideredAsFriend = 40;
+    public boolean enableVillagerMailingPlayers = true;
 
     public float zombieBiteInfectionChance = 0.05f;
     public float infectionChanceDecreasePerLevel = 0.25f;
@@ -92,9 +93,14 @@ public final class Config implements Serializable {
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
 
+    //tracker
+    public boolean trackVillagerPosition = true;
+    public int trackVillagerPositionEveryNTicks = 200;
+
     //AI
     public boolean enableVillagerChatAI = false;
     public int villagerChatAIIntelligence = 4;
+    public String villagerChatAIServer = "http://snoweagle.tk/";
 
     //village behavior
     public float guardSpawnFraction = 0.175f;
@@ -121,6 +127,10 @@ public final class Config implements Serializable {
             "minecraft:bucket"
     );
     public boolean enableAutoScanByDefault = false;
+
+    //skin library
+    public String immersiveLibraryUrl = "https://vps-zap359452-1.zap-srv.com:8000";
+    public boolean allowEveryoneToAddContentGlobally = false;
 
     //gifts
     public int giftDesaturationQueueLength = 16;

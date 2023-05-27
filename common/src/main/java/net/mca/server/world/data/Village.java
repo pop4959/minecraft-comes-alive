@@ -16,7 +16,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import net.minecraft.world.poi.PointOfInterestTypes;
@@ -481,5 +480,9 @@ public class Village implements Iterable<Building> {
 
     public VillageGuardsManager getVillageGuardsManager() {
         return villageGuardsManager;
+    }
+
+    public Optional<CivilRegistryManager> getCivilRegistry() {
+        return world != null ? Optional.of(CivilRegistryManager.get(world, this)) : Optional.empty();
     }
 }

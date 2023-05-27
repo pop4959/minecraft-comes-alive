@@ -21,8 +21,9 @@ import net.mca.network.c2s.GetVillagerRequest;
 import net.mca.network.c2s.SkinListRequest;
 import net.mca.network.c2s.VillagerEditorSyncRequest;
 import net.mca.network.c2s.VillagerNameRequest;
-import net.mca.resources.ClothingList;
-import net.mca.resources.HairList;
+import net.mca.resources.data.skin.Clothing;
+import net.mca.resources.data.skin.Hair;
+import net.mca.resources.data.skin.SkinListEntry;
 import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -41,7 +42,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class VillagerEditorScreen extends Screen {
+public class VillagerEditorScreen extends Screen implements SkinListUpdateListener {
     final UUID villagerUUID;
     final UUID playerUUID;
     final boolean allowPlayerModel;
@@ -62,15 +63,16 @@ public class VillagerEditorScreen extends Screen {
 
     private List<String> filteredClothing = new LinkedList<>();
     private List<String> filteredHair = new LinkedList<>();
-    private static HashMap<String, ClothingList.Clothing> clothing = new HashMap<>();
-    private static HashMap<String, HairList.Hair> hair = new HashMap<>();
+    private static boolean isSkinListOutdated = true;
+    private static HashMap<String, Clothing> clothing = new HashMap<>();
+    private static HashMap<String, Hair> hair = new HashMap<>();
     private Gender filterGender = Gender.NEUTRAL;
     private String searchString = "";
     private int hoveredClothingId;
 
-    int CLOTHES_H = 8;
-    int CLOTHES_V = 2;
-    int CLOTHES_PER_PAGE = CLOTHES_H * CLOTHES_V + 1;
+    final int CLOTHES_H = 8;
+    final int CLOTHES_V = 2;
+    final int CLOTHES_PER_PAGE = CLOTHES_H * CLOTHES_V + 1;
 
     ButtonWidget widgetMasculine;
     ButtonWidget widgetFeminine;
@@ -86,10 +88,6 @@ public class VillagerEditorScreen extends Screen {
         this.playerUUID = playerUUID;
         this.allowPlayerModel = allowPlayerModel;
         this.allowVillagerModel = allowVillagerModel;
-
-        if (clothing.isEmpty()) {
-            NetworkHandler.sendToServer(new SkinListRequest());
-        }
 
         requestVillagerData();
         setPage(Objects.requireNonNullElse(page, "loading"));
@@ -221,7 +219,7 @@ public class VillagerEditorScreen extends Screen {
             }
             case "body" -> {
                 //genes
-                if(!Config.getServerConfig().allowPlayerSizeAdjustment && villagerUUID.equals(playerUUID)){
+                if (!Config.getServerConfig().allowPlayerSizeAdjustment && villagerUUID.equals(playerUUID)) {
                     y = doubleGeneSliders(y, Genetics.BREAST, Genetics.SKIN);
                     genetics.setGene(Genetics.SIZE, 0.80f);
                     genetics.setGene(Genetics.WIDTH, 0.80f);
@@ -412,12 +410,15 @@ public class VillagerEditorScreen extends Screen {
                     clothingPage = Math.max(0, Math.min(clothingPageCount - 1, clothingPage + 1));
                     updateClothingPageWidget();
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 32 + 32, y, 128, 20, Text.translatable("gui.button.done"), b -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 32 + 32, y, 64, 20, Text.translatable("gui.button.done"), b -> {
                     if (page.equals("clothing")) {
                         setPage("body");
                     } else {
                         setPage("head");
                     }
+                }));
+                addDrawableChild(new ButtonWidget(width / 2 + 128, y, 64, 20, Text.translatable("gui.button.library"), b -> {
+                    MinecraftClient.getInstance().setScreen(new SkinLibraryScreen(this, villagerVisualization));
                 }));
                 widgetMasculine = addDrawableChild(new ButtonWidget(width / 2 - 32 - 96 - 64, y, 64, 20, Text.translatable("gui.villager_editor.masculine"), b -> {
                     filterGender = Gender.MALE;
@@ -455,17 +456,17 @@ public class VillagerEditorScreen extends Screen {
 
     private void filter() {
         if (Objects.equals(page, "clothing")) {
-            filteredClothing = filter(clothing);
+            filteredClothing = filter(getClothing());
         } else {
-            filteredHair = filter(hair);
+            filteredHair = filter(getHair());
         }
     }
 
-    private <T extends ClothingList.ListEntry> List<String> filter(HashMap<String, T> map) {
+    private <T extends SkinListEntry> List<String> filter(HashMap<String, T> map) {
         List<String> filtered = map.entrySet().stream()
                 .filter(v -> filterGender == v.getValue().gender || v.getValue().gender == Gender.NEUTRAL)
                 .filter(v -> {
-                    if (v.getValue() instanceof ClothingList.Clothing c) {
+                    if (v.getValue() instanceof Clothing c) {
                         return !c.exclude;
                     } else {
                         return true;
@@ -767,6 +768,10 @@ public class VillagerEditorScreen extends Screen {
             villager.readCustomDataFromNbt(villagerData);
             villagerBreedingAge = villagerData.getInt("Age");
             villager.setBreedingAge(villagerBreedingAge);
+            if (client != null && client.player != null) {
+                villager.setPos(client.player.getX(), client.player.getY(), client.player.getZ());
+                villagerVisualization.setPos(client.player.getX(), client.player.getY(), client.player.getZ());
+            }
             villager.calculateDimensions();
         }
         if (page.equals("loading")) {
@@ -780,16 +785,45 @@ public class VillagerEditorScreen extends Screen {
         NetworkHandler.sendToServer(new GetVillagerRequest(villagerUUID));
     }
 
-    void syncVillagerData() {
+    public void syncVillagerData() {
         NbtCompound nbt = villagerData;
         ((MobEntity)villager).writeCustomDataToNbt(nbt);
         nbt.putInt("Age", villagerBreedingAge);
         NetworkHandler.sendToServer(new VillagerEditorSyncRequest("sync", villagerUUID, nbt));
     }
 
-    public void setSkinList(HashMap<String, ClothingList.Clothing> clothing, HashMap<String, HairList.Hair> hair) {
+    public static void setSkinList(HashMap<String, Clothing> clothing, HashMap<String, Hair> hair) {
         VillagerEditorScreen.clothing = clothing;
         VillagerEditorScreen.hair = hair;
+    }
+
+    @Override
+    public void skinListUpdatedCallback() {
         filter();
+    }
+
+    public static void sync() {
+        if (isSkinListOutdated) {
+            NetworkHandler.sendToServer(new SkinListRequest());
+            isSkinListOutdated = false;
+        }
+    }
+
+    public static HashMap<String, Clothing> getClothing() {
+        sync();
+        return clothing;
+    }
+
+    public static HashMap<String, Hair> getHair() {
+        sync();
+        return hair;
+    }
+
+    public static void setSkinListOutdated() {
+        isSkinListOutdated = true;
+    }
+
+    public VillagerEntityMCA getVillager() {
+        return villager;
     }
 }

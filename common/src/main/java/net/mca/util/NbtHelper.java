@@ -1,10 +1,14 @@
 package net.mca.util;
 
 import com.mojang.datafixers.util.Pair;
+import net.mca.MCA;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.math.GlobalPos;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,7 +56,7 @@ public interface NbtHelper {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)
-        );
+                );
     }
 
     static <V> NbtList fromList(Iterable<V> list, Function<V, NbtElement> valueMapper) {
@@ -66,5 +70,14 @@ public interface NbtHelper {
     static <K, V> NbtCompound fromMap(NbtCompound output, Map<K, V> map, Function<K, String> keyMapper, Function<V, NbtElement> valueMapper) {
         map.forEach((key, value) -> output.put(keyMapper.apply(key), valueMapper.apply(value)));
         return output;
+    }
+
+    static NbtElement encodeGlobalPosition(GlobalPos v) {
+        return GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, v).resultOrPartial(MCA.LOGGER::error).orElseThrow();
+    }
+
+    @Nullable
+    static GlobalPos decodeGlobalPos(NbtElement element) {
+        return GlobalPos.CODEC.parse(NbtOps.INSTANCE, element).resultOrPartial(MCA.LOGGER::error).orElse(null);
     }
 }

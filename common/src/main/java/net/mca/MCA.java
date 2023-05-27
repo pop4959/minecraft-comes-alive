@@ -2,6 +2,7 @@ package net.mca;
 
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +19,8 @@ public final class MCA {
     private static final Map<String, Boolean> modCacheMap = new HashMap<>();
 
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private static MinecraftServer server;
 
     public static Identifier locate(String id) {
         return new Identifier(MOD_ID, id);
@@ -63,5 +66,13 @@ public final class MCA {
             modCacheMap.put(modId, modData.isPresent());
         }
         return modCacheMap.get(modId);
+    }
+
+    public static void setServer(MinecraftServer server) {
+        MCA.server = server;
+    }
+
+    public static Optional<MinecraftServer> getServer() {
+        return Optional.ofNullable(server);
     }
 }

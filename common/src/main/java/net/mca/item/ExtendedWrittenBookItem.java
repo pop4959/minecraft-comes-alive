@@ -23,10 +23,6 @@ import java.util.List;
 public class ExtendedWrittenBookItem extends WrittenBookItem {
     private final Book book;
 
-    public ExtendedWrittenBookItem(Settings settings) {
-        this(settings, new Book("unknown"));
-    }
-
     public ExtendedWrittenBookItem(Settings settings, Book book) {
         super(settings);
         this.book = book;
@@ -58,7 +54,7 @@ public class ExtendedWrittenBookItem extends WrittenBookItem {
     public Book getBook(ItemStack item) {
         NbtCompound tag = item.getNbt();
         if (tag != null && tag.contains("pages")) {
-            //seems like a vanilla book, let's make a copy of the book and add
+            //seems like a vanilla book, let's make a copy of the book
             Book book = this.book.copy();
 
             //add our text pages

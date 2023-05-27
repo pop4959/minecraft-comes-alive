@@ -14,7 +14,7 @@ import static net.mca.client.model.VillagerEntityBaseModelMCA.BREASTS;
 public class PlayerArmorExtendedModel<T extends LivingEntity> extends BipedEntityModel<T> implements CommonVillagerModel<T> {
     public final ModelPart breasts;
 
-    VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
+    final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
     float breastSize;
 
     public PlayerArmorExtendedModel(ModelPart root) {

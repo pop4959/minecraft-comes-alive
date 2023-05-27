@@ -21,11 +21,6 @@ public class NeedleScreen extends VillagerEditorScreen {
     }
 
     @Override
-    public void close() {
-        super.close();
-    }
-
-    @Override
     protected void eventCallback(String event) {
         if (event.equals("clothing")) {
             NetworkHandler.sendToServer(new DamageItemMessage(MCA.locate("needle_and_thread")));

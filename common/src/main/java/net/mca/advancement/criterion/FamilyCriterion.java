@@ -2,8 +2,8 @@ package net.mca.advancement.criterion;
 
 import com.google.gson.JsonObject;
 import net.mca.MCA;
-import net.mca.entity.ai.relationship.family.FamilyTree;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;

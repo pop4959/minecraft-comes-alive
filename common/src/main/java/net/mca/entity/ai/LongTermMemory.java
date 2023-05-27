@@ -13,7 +13,7 @@ import java.util.Map;
  * While not powerful in terms of features it allows adding more intelligence to villager interactions
  */
 public class LongTermMemory {
-    HashMap<String, Long> memories = new HashMap<>();
+    final HashMap<String, Long> memories = new HashMap<>();
 
     private final VillagerEntityMCA entity;
 

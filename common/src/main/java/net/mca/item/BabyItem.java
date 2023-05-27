@@ -10,7 +10,7 @@ import net.mca.entity.VillagerLike;
 import net.mca.entity.ai.Memories;
 import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.Gender;
-import net.mca.entity.ai.relationship.family.FamilyTree;
+import net.mca.server.world.data.FamilyTree;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.util.WorldUtils;
 import net.minecraft.client.item.TooltipContext;

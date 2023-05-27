@@ -1,6 +1,5 @@
 package net.mca.client.gui.widget;
 
-import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
 

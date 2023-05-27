@@ -7,11 +7,11 @@ import net.mca.MCA;
 import net.mca.TagsMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.book.Book;
+import net.mca.client.book.CivilRegistryBook;
 import net.mca.client.book.pages.CenteredTextPage;
 import net.mca.client.book.pages.DynamicListPage;
 import net.mca.client.book.pages.ScribbleTextPage;
 import net.mca.client.book.pages.TitlePage;
-import net.mca.crafting.recipe.RecipesMCA;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.Supporters;
@@ -19,8 +19,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.text.Text;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
@@ -153,6 +153,11 @@ public interface ItemsMCA {
     RegistrySupplier<Item> LETTER = register("letter", () -> new ExtendedWrittenBookItem(baseProps().maxCount(1), new Book("letter", null)
             .setBackground(MCA.locate("textures/gui/books/paper.png"))));
 
+    RegistrySupplier<Item> CIVIL_REGISTRY = register("civil_registry", () -> new CivilRegistry(baseProps().maxCount(1), new CivilRegistryBook("civil_registry", null)
+            .setBackground(MCA.locate("textures/gui/books/supporters.png"))));
+
+    RegistrySupplier<Item> VILLAGER_TRACKER = register("villager_tracker", () -> new VillagerTrackerItem(baseProps().maxCount(1)));
+
     RegistrySupplier<Item> GOLD_DUST = register("gold_dust", () -> new Item(baseProps()));
     RegistrySupplier<Item> ROSE_GOLD_DUST = register("rose_gold_dust", () -> new Item(baseProps()));
     RegistrySupplier<Item> ROSE_GOLD_INGOT = register("rose_gold_ingot", () -> new Item(baseProps()));
@@ -182,7 +187,6 @@ public interface ItemsMCA {
     static void bootstrap() {
         ITEMS.register();
         TagsMCA.Blocks.bootstrap();
-        RecipesMCA.bootstrap();
     }
 
     static RegistrySupplier<Item> register(String name, Supplier<Item> item) {

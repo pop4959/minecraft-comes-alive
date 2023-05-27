@@ -16,7 +16,7 @@ public class VillagerEntityBaseModelMCA<T extends LivingEntity & VillagerLike<T>
 
     public final ModelPart breasts;
 
-    VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
+    final VillagerDimensions.Mutable dimensions = new VillagerDimensions.Mutable(AgeState.ADULT);
     float breastSize;
 
     public VillagerEntityBaseModelMCA(ModelPart root) {

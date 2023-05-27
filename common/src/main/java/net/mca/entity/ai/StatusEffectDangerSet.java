@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class StatusEffectDangerSet {
-    public static Set<StatusEffect> isDanger = new HashSet<>();
+    public static final Set<StatusEffect> isDanger = new HashSet<>();
     static {
         isDanger.add(StatusEffects.SLOWNESS);
         isDanger.add(StatusEffects.MINING_FATIGUE);

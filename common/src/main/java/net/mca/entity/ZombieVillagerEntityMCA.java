@@ -120,11 +120,6 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     }
 
     @Override
-    public double getMountedHeightOffset() {
-        return super.getMountedHeightOffset();
-    }
-
-    @Override
     public EntityDimensions getDimensions(EntityPose pose) {
 
         if (pose == EntityPose.SLEEPING) {

@@ -70,6 +70,10 @@ public class Book {
         return pages.size();
     }
 
+    public boolean showPageCount() {
+        return getPageCount() > 1;
+    }
+
     public String getBookName() {
         return bookName;
     }

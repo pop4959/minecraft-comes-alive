@@ -1,6 +1,7 @@
 package net.mca.client.render.layer;
 
 import com.google.common.collect.Maps;
+import net.mca.MCA;
 import net.mca.MCAClient;
 import net.mca.client.model.PlayerEntityExtendedModel;
 import net.mca.client.model.VillagerEntityModelMCA;
@@ -20,6 +21,7 @@ import net.minecraft.util.InvalidIdentifierException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static net.mca.client.model.CommonVillagerModel.getVillager;
@@ -29,6 +31,11 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     private static final Map<String, Identifier> TEXTURE_CACHE = Maps.newHashMap();
     private static final Map<Identifier, Boolean> TEXTURE_EXIST_CACHE = Maps.newHashMap();
+
+    static {
+        // the temp image is used for temporary canvases and definitely exists
+        TEXTURE_EXIST_CACHE.put(MCA.locate("temp"), true);
+    }
 
     public final M model;
 
@@ -93,7 +100,7 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
         }
 
         Identifier overlay = getOverlay(villager);
-        if (canUse(overlay)) {
+        if (!Objects.equals(skin, overlay) && canUse(overlay)) {
             renderModel(transform, provider, light, model, 1, 1, 1, overlay, tint);
         }
     }
@@ -105,6 +112,9 @@ public abstract class VillagerLayer<T extends LivingEntity, M extends BipedEntit
 
     public final boolean canUse(Identifier texture) {
         return TEXTURE_EXIST_CACHE.computeIfAbsent(texture, s -> {
+            if (texture != null && texture.getNamespace().equals("immersive_library")) {
+                return true;
+            }
             return texture != null && MinecraftClient.getInstance().getResourceManager().getResource(texture).isPresent();
         });
     }

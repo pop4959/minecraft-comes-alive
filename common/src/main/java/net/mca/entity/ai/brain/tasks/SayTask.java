@@ -3,7 +3,6 @@ package net.mca.entity.ai.brain.tasks;
 import com.google.common.collect.ImmutableMap;
 import net.mca.entity.VillagerEntityMCA;
 import net.minecraft.entity.ai.brain.task.MultiTickTask;
-import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.function.Predicate;

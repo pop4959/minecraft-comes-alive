@@ -9,7 +9,6 @@ import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.RelationshipState;
 import net.mca.entity.ai.relationship.RelationshipType;
-import net.mca.entity.ai.relationship.family.FamilyTreeNode;
 import net.mca.item.ItemsMCA;
 import net.mca.network.s2c.ShowToastRequest;
 import net.mca.resources.API;
@@ -232,7 +231,9 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     }
 
     public void sendMail(NbtCompound nbt) {
-        inbox.add(nbt);
+        if (Config.getInstance().enableVillagerMailingPlayers) {
+            inbox.add(nbt);
+        }
         markDirty();
     }
 
@@ -249,14 +250,6 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
         } else {
             return null;
         }
-    }
-
-    // todo: Implement for 7.4.0
-    public void sendEngagementLetter(String name) {
-        sendLetter(List.of(
-                String.format("{ \"translate\": \"mca.letter.engagement\", \"with\": [\"%s\", \"%s\"] }",
-                        getFamilyEntry().getName(), name)
-        ));
     }
 
     public void sendLetterOfCondolence(String name, String village) {

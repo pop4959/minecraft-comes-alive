@@ -6,14 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-public class DynamicListPage extends ListPage {
+public class DynamicListPage extends CenteredListPage {
     private final Function<Page, List<Text>> generator;
-
-    public DynamicListPage(Text title, Function<Page, List<Text>> generator) {
-        super(title, new LinkedList<>());
-
-        this.generator = generator;
-    }
 
     public DynamicListPage(String title, Function<Page, List<Text>> generator) {
         super(title, new LinkedList<>());

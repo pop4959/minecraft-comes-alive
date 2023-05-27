@@ -1,3 +1,17 @@
+# 7.5.0
+
+* Added experimental Skin library, editor and uploader
+* Added civil registry, a log writing down all events in a village
+* Added the villager tracker, a compass being able to track the last known position of villagers
+* Fixed baby growth command
+* Move state and infection status are no longer on the gravestone
+* Fixed hugging being restricted to adults
+* Decreased tombstone text render distance to tackle lag
+
+# 7.4.9
+
+* Added compat with Chunks fade in
+
 # 7.4.8
 
 * Fixed a crash

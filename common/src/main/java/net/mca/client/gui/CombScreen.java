@@ -21,11 +21,6 @@ public class CombScreen extends VillagerEditorScreen {
     }
 
     @Override
-    public void close() {
-        super.close();
-    }
-
-    @Override
     protected void eventCallback(String event) {
         if (event.equals("hair")) {
             NetworkHandler.sendToServer(new DamageItemMessage(MCA.locate("comb")));
