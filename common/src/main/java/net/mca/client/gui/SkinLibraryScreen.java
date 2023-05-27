@@ -1309,7 +1309,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         // filter the assets by string search and asset group
         filteredContent = contents.stream()
-                .filter(v -> (filteredString.isEmpty() || v.title().contains(filteredString)) || v.tags().stream().anyMatch(t -> t.contains(filteredString)))
+                .filter(v -> (filteredString.isEmpty() || v.title().contains(filteredString) || v.username().contains(filteredString)) || v.tags().stream().anyMatch(t -> t.contains(filteredString)))
                 .toList();
 
         rebuild();
