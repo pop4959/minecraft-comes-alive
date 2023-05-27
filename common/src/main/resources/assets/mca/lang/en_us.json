@@ -355,6 +355,8 @@
   "gui.skin_library.locked": "To publish skins, please log in first.",
   "gui.skin_library.like_locked": "Please log in to see liked or submitted content.",
   "gui.skin_library.already_uploading": "Already uploading, be patient.",
+  "gui.skin_library.upload_duplicate": "That content already exists.",
+  "gui.skin_library.upload_failed": "Upload failed. Woops.",
   "gui.skin_library.subscribe": "Use server wide!",
   "gui.skin_library.like": "Like",
   "gui.skin_library.edit": "Edit",

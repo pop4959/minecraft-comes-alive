@@ -1439,7 +1439,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             });
                         });
                     } else if (request instanceof ErrorResponse response) {
-                        setError(Text.of(response.message()));
+                        if (response.code() == 428) {
+                            setError(Text.translatable("gui.skin_library.upload_duplicate"));
+                        } else {
+                            setError(Text.translatable("gui.skin_library.upload_failed"));
+                        }
                         uploading = false;
                     }
                 }
