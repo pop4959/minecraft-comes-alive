@@ -55,7 +55,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.mca.client.gui.immersiveLibrary.Api.request;
@@ -67,11 +66,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private static final float CANVAS_SCALE = 2.35f;
 
     private String filteredString = "";
-
-    // todo tag filters are currently disabled
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private LinkedHashMap<String, Long> tags = new LinkedHashMap<>();
-    private final Set<String> selectedTags = new HashSet<>();
 
     private final List<LiteContent> serverContent = new ArrayList<>();
     private List<LiteContent> filteredContent = new ArrayList<>();
@@ -215,7 +209,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void clearSearch() {
         filteredString = "";
-        selectedTags.clear();
     }
 
     @Override
@@ -1314,23 +1307,9 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             }
         }
 
-        // pre-filter the assets by string search and asset group
-        List<LiteContent> untaggedFilteredContent = contents.stream()
+        // filter the assets by string search and asset group
+        filteredContent = contents.stream()
                 .filter(v -> (filteredString.isEmpty() || v.title().contains(filteredString)) || v.tags().stream().anyMatch(t -> t.contains(filteredString)))
-                .toList();
-
-        // extract all tags, count them and sort them
-        tags = untaggedFilteredContent.stream()
-                .flatMap(v -> v.tags().stream())
-                .collect(Collectors.groupingBy(tag -> tag, Collectors.counting()))
-                .entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (a, b) -> a, LinkedHashMap::new));
-
-        // now filter by selected tags
-        filteredContent = untaggedFilteredContent.stream()
-                .filter(v -> selectedTags.size() == 0 || v.hasTag(selectedTags))
                 .toList();
 
         rebuild();
