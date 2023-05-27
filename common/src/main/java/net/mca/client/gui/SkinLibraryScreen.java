@@ -66,6 +66,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private static final float CANVAS_SCALE = 2.35f;
 
     private String filteredString = "";
+    private SortingMode sortingMode = SortingMode.LIKES;
 
     private final List<LiteContent> serverContent = new ArrayList<>();
     private List<LiteContent> filteredContent = new ArrayList<>();
@@ -94,6 +95,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private boolean hasPanned;
     private double lastMouseX;
     private double lastMouseY;
+
+    private int timeSinceLastRebuild;
 
     private Text error;
 
@@ -579,7 +582,18 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     @Override
+    public void tick() {
+        super.tick();
+
+        timeSinceLastRebuild++;
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (timeSinceLastRebuild < 2) {
+            return false;
+        }
+
         if (page == Page.EDITOR) {
             if (button == 0 || button == 1) {
                 activeMouseButton = button;
@@ -674,6 +688,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private void rebuild() {
         clearChildren();
 
+        timeSinceLastRebuild = 0;
+
         // filters
         if (page == Page.LIBRARY || page == Page.EDITOR_LOCKED || page == Page.EDITOR_PREPARE || page == Page.EDITOR_TYPE) {
             List<Page> b = new LinkedList<>();
@@ -710,6 +726,22 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     rebuild();
                 }));
                 setSelectionPage(selectionPage);
+
+                //sorting icons
+                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 150, height / 2 + 82, 6 * 16, 3 * 16,
+                        sortingMode == SortingMode.LIKES,
+                        Text.translatable("gui.skin_library.sort_likes"),
+                        v -> {
+                            sortingMode = SortingMode.LIKES;
+                            updateSearch();
+                        }));
+                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 150 + 22, height / 2 + 82, 7 * 16, 3 * 16,
+                        sortingMode == SortingMode.NEWEST,
+                        Text.translatable("gui.skin_library.sort_newest"),
+                        v -> {
+                            sortingMode = SortingMode.NEWEST;
+                            updateSearch();
+                        }));
 
                 //search
                 TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200 + 65, height / 2 - 110 + 2, 110, 16,
@@ -1174,7 +1206,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     true,
                     Text.translatable("gui.skin_library.ban"),
                     v -> {
-                        ((ToggleableTooltipButtonWidget) v).toggle = !((ToggleableTooltipButtonWidget) v).toggle;
                         setBan(content.userid(), true);
                         reloadDatabase();
                     })));
@@ -1310,6 +1341,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // filter the assets by string search and asset group
         filteredContent = contents.stream()
                 .filter(v -> (filteredString.isEmpty() || v.title().contains(filteredString) || v.username().contains(filteredString)) || v.tags().stream().anyMatch(t -> t.contains(filteredString)))
+                .sorted((a, b) -> sortingMode == SortingMode.LIKES ? b.likes() - a.likes() : b.contentid() - a.contentid())
                 .toList();
 
         rebuild();
@@ -1564,6 +1596,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     public enum SkinType {
         CLOTHING,
         HAIR
+    }
+
+    public enum SortingMode {
+        LIKES,
+        NEWEST
     }
 
     public enum SubscriptionFilter {
