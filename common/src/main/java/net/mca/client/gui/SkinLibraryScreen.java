@@ -1270,6 +1270,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             x1 = 1.0f;
             y0 = 0.0f;
             y1 = 1.0f;
+            uploading = false;
         }
 
         if (page == Page.LIBRARY) {
@@ -1434,13 +1435,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             getContentById(contentid).ifPresent(content -> {
                                 focusedContent = content;
                                 setPage(Page.DETAIL);
+                                uploading = false;
                             });
                         });
                     } else if (request instanceof ErrorResponse response) {
                         setError(Text.of(response.message()));
+                        uploading = false;
                     }
                 }
-                uploading = false;
             });
         } else {
             setError(Text.translatable("gui.skin_library.already_uploading"));
