@@ -1457,12 +1457,23 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         return serverContent.stream().filter(v -> v.contentid() == contentid).findAny();
     }
 
+    private Optional<LiteContent> getSubscribedContentById(int contentid) {
+        return currentUser == null ? Optional.empty() : currentUser.submissions().stream().filter(v -> v.contentid() == contentid).findAny();
+    }
+
     private void setTag(int contentid, String tag, boolean add) {
         if (Auth.getToken() != null) {
             request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "tag/mca/%s/%s".formatted(contentid, tag), Map.of(
                     "token", Auth.getToken()
             ));
             getContentById(contentid).ifPresent(c -> {
+                if (add) {
+                    c.tags().add(tag);
+                } else {
+                    c.tags().remove(tag);
+                }
+            });
+            getSubscribedContentById(contentid).ifPresent(c -> {
                 if (add) {
                     c.tags().add(tag);
                 } else {
