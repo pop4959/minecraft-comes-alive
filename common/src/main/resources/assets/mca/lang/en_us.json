@@ -389,7 +389,7 @@
   "gui.skin_library.meta.by": "By %s",
   "gui.skin_library.meta.likes": "%s Likes",
 
-  "gui.skin_library.prepare": "What asset type do you want to create?",
+  "gui.skin_library.prepare": "What asset type do you want to create?\nClick on '?' BEFORE uploading skins!",
   "gui.skin_library.prepare.hair": "Create hairstyle",
   "gui.skin_library.prepare.clothing": "Create Clothing",
 
@@ -397,6 +397,7 @@
   "gui.skin_library.fillToolThreshold.tooltip": "Pressing F fill delete similar, adjacent pixels up to the given threshold.",
 
   "gui.skin_library.tool_help": "Controls:\nLeft mouse to paint\nRight mouse to delete\nMiddle mouse to pick color\nHold space or mouse 3 to pan\nMousewheel to zoom\nF to clear similar pixels\nClick to open help",
+  "gui.skin_library.help": "Click to open help. MCA Skins need a bit of preprocessing in order to look good.",
 
   "gui.skin_library.temperature.0": "Cold",
   "gui.skin_library.temperature.1": "Chilly",

@@ -712,8 +712,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }
 
         switch (page) {
-            case LIBRARY -> //noinspection CommentedOutCode
-            {
+            case LIBRARY -> {
                 //page
                 addDrawableChild(new ButtonWidget(width / 2 - 35 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> {
                     setSelectionPage(selectionPage - 1);
@@ -767,31 +766,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             updateSearch();
                         }));
 
-                //tags
-                /*
-                int tx = width / 2 - 200;
-                for (Map.Entry<String, Long> tag : tags.entrySet()) {
-                    String str = "%d x %s".formatted(tag.getValue(), tag.getKey());
-                    int w = textRenderer.getWidth(str) + 8;
-                    addDrawableChild(new ToggleableButtonWidget(tx, height / 2 - 110 + 22, w, 20,
-                            selectedTags.contains(tag.getKey()),
-                            Text.literal(str),
-                            v -> {
-                                if (selectedTags.contains(tag.getKey())) {
-                                    selectedTags.remove(tag.getKey());
-                                } else {
-                                    selectedTags.add(tag.getKey());
-                                }
-                                ((ToggleableButtonWidget)v).toggle = !((ToggleableButtonWidget)v).toggle;
-                                updateSearch();
-                            }));
-                    tx += w;
-                    if (tx > width / 2 + 200) {
-                        break;
-                    }
-                }
-                */
-
                 //controls
                 int i = 0;
                 for (int y = 0; y < CLOTHES_V; y++) {
@@ -833,6 +807,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         v -> {
                             workspace.skinType = SkinType.CLOTHING;
                             setPage(Page.EDITOR);
+                        }));
+
+                // help
+                addDrawableChild(new TooltipButtonWidget(width / 2 - 10, height / 2 + 30, 20, 20,
+                        Text.literal("?"),
+                        Text.translatable("gui.skin_library.help"),
+                        v -> {
+                            openHelp();
                         }));
             }
             case LOGIN -> {
