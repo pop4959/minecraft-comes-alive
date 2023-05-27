@@ -237,7 +237,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             setDummyTexture(c);
 
                             int cx = width / 2 + (int) ((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 55);
-                            int cy = height / 2 + 25 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 65);
+                            int cy = height / 2 + 15 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 80);
 
                             if (Math.abs(cx - mouseX) <= 15 && Math.abs(cy - mouseY - 25) <= 24) {
                                 hoveredContent = c;
@@ -776,7 +776,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             LiteContent c = filteredContent.get(index);
 
                             int cx = width / 2 + (int) ((x - CLOTHES_H / 2.0 + 0.5 - 0.5 * (y % 2)) * 55);
-                            int cy = height / 2 + 25 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 65);
+                            int cy = height / 2 + 15 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 80);
 
                             drawControls(c, false, cx, cy);
                             i++;
@@ -1332,9 +1332,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         filteredContent = untaggedFilteredContent.stream()
                 .filter(v -> selectedTags.size() == 0 || v.hasTag(selectedTags))
                 .toList();
-
-        // load meta in the background
-        filteredContent.forEach(SkinCache::getMeta);
 
         rebuild();
 
