@@ -1118,7 +1118,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         // subscribe
         if (isOp() || Config.getServerConfig().allowEveryoneToAddContentGlobally) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(0, 0, 0, 3 * 16,
+            widgets.add(new ToggleableTooltipIconButtonWidget(0, 0, 0, 3 * 16,
                     getServerContentById(content.contentid()).isPresent(),
                     Text.translatable("gui.skin_library.subscribe"),
                     v -> {
@@ -1130,23 +1130,23 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             });
                         }
                         ((ToggleableTooltipButtonWidget) v).toggle = !((ToggleableTooltipButtonWidget) v).toggle;
-                    })));
+                    }));
         }
 
         // like
         if (authenticated) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(0, 0, 16, 3 * 16,
+            widgets.add(new ToggleableTooltipIconButtonWidget(0, 0, 16, 3 * 16,
                     isLiked(content),
                     Text.translatable("gui.skin_library.like"),
                     v -> {
                         ((ToggleableTooltipButtonWidget) v).toggle = !((ToggleableTooltipButtonWidget) v).toggle;
                         setLike(content.contentid(), ((ToggleableTooltipButtonWidget) v).toggle);
-                    })));
+                    }));
         }
 
         // edit
         if (advanced && canModifyContent(content)) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(0, 0, 2 * 16, 3 * 16,
+            widgets.add(new ToggleableTooltipIconButtonWidget(0, 0, 2 * 16, 3 * 16,
                     isLiked(content),
                     Text.translatable("gui.skin_library.edit"),
                     v -> {
@@ -1157,40 +1157,40 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                                 if (workspace.skinType == SkinType.HAIR) color.setHSV(0, 0, 0.5);
                             });
                         });
-                    })));
+                    }));
         }
 
         // delete
         if (advanced && canModifyContent(content)) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 3 * 16, 3 * 16,
+            widgets.add(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 3 * 16, 3 * 16,
                     true,
                     Text.translatable("gui.skin_library.delete"),
                     v -> {
                         deleteConfirmationContent = content;
                         setPage(Page.DELETE);
-                    })));
+                    }));
         }
 
         // advanced
         if (!advanced) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 4 * 16, 4 * 16,
+            widgets.add(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 4 * 16, 4 * 16,
                     true,
                     Text.translatable("gui.skin_library.edit"),
                     v -> {
                         focusedContent = content;
                         setPage(Page.DETAIL);
-                    })));
+                    }));
         }
 
         // ban
         if (advanced && isModerator()) {
-            widgets.add(addDrawableChild(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 5 * 16, 4 * 16,
+            widgets.add(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 5 * 16, 4 * 16,
                     true,
                     Text.translatable("gui.skin_library.ban"),
                     v -> {
                         setBan(content.userid(), true);
                         reloadDatabase();
-                    })));
+                    }));
         }
 
         // add the widgets
