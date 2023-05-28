@@ -2,6 +2,7 @@
 
 * Fixed a critical performance issue when childrens are stuck in a wall
 * Disabled smarter door AI (which can open gates) by default due to reports of villagers not closing the door
+* Added a few config flags for customizing the destiny screen
 
 # 7.5.0
 
