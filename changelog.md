@@ -1,6 +1,7 @@
 # 7.5.1
 
 * Fixed a critical performance issue when childrens are stuck in a wall
+* Disabled smarter door AI (which can open gates) by default due to reports of villagers not closing the door
 
 # 7.5.0
 

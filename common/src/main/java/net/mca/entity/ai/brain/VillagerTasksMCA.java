@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
+import net.mca.Config;
 import net.mca.ProfessionsMCA;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.EquipmentSet;
@@ -195,18 +196,18 @@ public class VillagerTasksMCA {
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getImportantCorePackage(float speedModifier) {
         return ImmutableList.of(
                 Pair.of(0, new StayAboveWaterTask(0.8F)),
-                Pair.of(0, new SmarterOpenDoorsTask()),
+                Config.getServerConfig().useSmarterDoorAI ? Pair.of(0, new SmarterOpenDoorsTask()) : Pair.of(0, new OpenDoorsTask()),
                 Pair.of(0, new LookAroundTask(45, 90)),
                 Pair.of(0, new WakeUpTask()),
                 Pair.of(0, new DeliverMessageTask()),
                 Pair.of(1, new WanderOrTeleportToTargetTask()),
                 Pair.of(3, new InteractTask(speedModifier)),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte) 14), (villager) -> {
                     // update villagers home/bed position
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
                     // verify that this bed is not blocked
-                    VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+                    VillageManager manager = VillageManager.get((ServerWorld) entity.world);
                     if (entity.requiresHome()) {
                         return manager.findNearestVillage(entity).filter(v -> !v.isPositionValidBed(pos)).isEmpty();
                     } else {
@@ -223,21 +224,21 @@ public class VillagerTasksMCA {
                 Pair.of(0, new HideWhenBellRingsTask()),
                 Pair.of(0, new StartRaidTask()),
                 Pair.of(5, new WalkToNearestVisibleWantedItemTask<>(speedModifier, false, 4)),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), MemoryModuleType.HOME, false, Optional.of((byte) 14), (villager) -> {
                     // update villagers home/bed position
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
                     // verify that this bed is not blocked
-                    VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+                    VillageManager manager = VillageManager.get((ServerWorld) entity.world);
                     return manager.findNearestVillage(entity).filter(v -> {
                         return v.getBuildingAt(pos).filter(b -> b.getBuildingType().noBeds()).isPresent();
                     }).isEmpty();
                 })),
-                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte)14), (villager) -> {
+                Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte) 14), (villager) -> {
                     //report a town bell, the only building always added
                     villager.getBrain().getOptionalMemory(MemoryModuleType.MEETING_POINT).ifPresent(p -> {
                         if (villager.world.getRegistryKey() == p.getDimension()) {
-                            VillageManager manager = VillageManager.get((ServerWorld)villager.world);
+                            VillageManager manager = VillageManager.get((ServerWorld) villager.world);
                             if (!manager.cache.contains(p.getPos())) {
                                 manager.cache.add(p.getPos());
                                 manager.processBuilding(p.getPos());
@@ -351,7 +352,7 @@ public class VillagerTasksMCA {
     }
 
     private static Activity getActivity(VillagerEntityMCA villager) {
-        return villager.getBrain().getSchedule().getActivityForTime((int)(villager.world.getTimeOfDay() % 24000L));
+        return villager.getBrain().getSchedule().getActivityForTime((int) (villager.world.getTimeOfDay() % 24000L));
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getGrievingPackage() {

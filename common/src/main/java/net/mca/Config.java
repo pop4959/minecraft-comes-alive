@@ -92,6 +92,7 @@ public final class Config implements Serializable {
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
+    public boolean useSmarterDoorAI = false;
 
     //tracker
     public boolean trackVillagerPosition = true;
