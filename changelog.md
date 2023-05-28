@@ -1,3 +1,9 @@
+# 7.5.1
+
+* Fixed a critical performance issue when childrens are stuck in a wall
+* Disabled smarter door AI (which can open gates) by default due to reports of villagers not closing the door
+* Added a few config flags for customizing the destiny screen
+
 # 7.5.0
 
 * Added experimental Skin library, editor and uploader
@@ -155,17 +161,21 @@
 * Added tooltip to editor to avoid confusion when choosing vanilla model
 * Fixed players also having randomly colored hair
 * Several Changes to the Naming systems in MCA
-    * Player Naming has been fixed and works properly, much like how /nickname systems work (If you have an existing custom name, MCA will use that instead)
-    * It is no longer possible to have a whitespace/empty name, and multiple safeguards have been placed to prevent exploits.
+    * Player Naming has been fixed and works properly, much like how /nickname systems work (If you have an existing
+      custom name, MCA will use that instead)
+    * It is no longer possible to have a whitespace/empty name, and multiple safeguards have been placed to prevent
+      exploits.
     * The `Nameless Traveler` code has been removed in favor of the above fix.
 * Added a Homosexuality Trait as a possible chance to spawn with
     * This trait cannot be inherited from past/to future generations
-    * Having this trait will enforce gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
+    * Having this trait will enforce gender restrictions in Relationship Items and Villagers entering relations with
+      those of the same gender
     * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
     * In the event of this trait being applied alongside the bisexual trait, the homosexual trait will take priority.
 * Added `professionConversionsMap` as a config value, made for mod compatibility
     * Designed to be able to use clothing from another profession, if your mod does not supply any to us
-    * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by default.
+    * Example: You can make a Butcher wear Armorer's clothing, or villagers wear a certain professions clothing by
+      default.
     * Only Adult clothing is used in this, baby and child clothing remains unchanged.
 * Added `playerRendererBlacklist` to disable certain render elements of the player model if certain mods are present
     * Supported Values: `arms`, `left_arm`, `right_arm`, `all`, `block_player`, `block_villager`
@@ -179,7 +189,8 @@
 * The `canBeAttractedTo` checks for a Player/Villager relationship now properly respect traits
     * IE the same logic that is used for villagers now also applies to players
 * Added `shaderLocationsMap` to allow specifying custom shaders dependent on traits
-    * If the camera entity has the specified trait, it'll apply the shader, and remove it when the current camera entity does not.
+    * If the camera entity has the specified trait, it'll apply the shader, and remove it when the current camera entity
+      does not.
     * Requires `enablePlayerShaders` to be true to utilize this feature
 * Added functionality for `Lactose Intolerance`
     * Applies a Poison effect after usage, similar to if a spider eye were consumed
@@ -214,8 +225,10 @@
 # 7.3.17
 
 * Fixed an issue with the Bone Meal Check in `HarvestingTask` not taking into account modded items
-* Fixed an issue relating to a mismatched slot checked when a villager is left-handed and `HarvestingTask#bonemealCrop` was ran
-* Rewritten `HarvestingTask#plantSeed` to allow modded plants to be properly planted, if specified in the `villager_plantable` tag and a valid `BlockItem`
+* Fixed an issue relating to a mismatched slot checked when a villager is left-handed and `HarvestingTask#bonemealCrop`
+  was ran
+* Rewritten `HarvestingTask#plantSeed` to allow modded plants to be properly planted, if specified in
+  the `villager_plantable` tag and a valid `BlockItem`
     * This also fixes pumpkin and melon seeds not properly planting, despite being in the tag
 * Added a `minBuildingSize` as a counterpart to the previously implemented `maxBuildingSize` config option
     * I'm not sure why someone wanted this, but...ok.
@@ -270,20 +283,26 @@
 * Sneaking + Interacting with a villager with the editor item will now open their inventory!
 * Added Left-Handed Trait as a possible chance to spawn with
     * This trait can be inherited from past/to future generations
-    * Having this trait will change their dominant hand in most tasks to be their left hand (Known to the player as the off-hand slot)
-    * Some examples of this include Work Tasks, EquipmentSet's, and Melee Attacks (For Equipment, if a preset already uses both hands, it'll remain unchanged.)
-    * Given Minecraft was never intended to support this type of gameplay, further tuning may be required in a future update.
+    * Having this trait will change their dominant hand in most tasks to be their left hand (Known to the player as the
+      off-hand slot)
+    * Some examples of this include Work Tasks, EquipmentSet's, and Melee Attacks (For Equipment, if a preset already
+      uses both hands, it'll remain unchanged.)
+    * Given Minecraft was never intended to support this type of gameplay, further tuning may be required in a future
+      update.
 
 # 7.3.11/7.3.12
 
 * Misc. Patches for 1.18.2 and 1.19 Dependencies (1.18.2 officially identifies as LTS now!)
 * Added `innArrivalNotification` config setting, for notifying players in the village that a new traveller has arrived!
-* Added a Night Owl schedule, in which Cultist's and Outlaws have a chance to use, based on the `nightOwlChance` config setting (Default: 50% Chance)
+* Added a Night Owl schedule, in which Cultist's and Outlaws have a chance to use, based on the `nightOwlChance` config
+  setting (Default: 50% Chance)
     * Enable `allowAnyNightOwl` to be able to apply this same chance to other professions
-    * Guard's will also now use `nightOwlChance` instead of using a random boolean to determine their schedule (Meaning if you want more guards at night, increase `nightOwlChance`)
+    * Guard's will also now use `nightOwlChance` instead of using a random boolean to determine their schedule (Meaning
+      if you want more guards at night, increase `nightOwlChance`)
 * Added a Bisexuality Trait as a possible chance to spawn with
     * This trait cannot be inherited from past/to future generations
-    * Having this trait will bypass gender restrictions in Relationship Items and Villagers entering relations with those of the same gender
+    * Having this trait will bypass gender restrictions in Relationship Items and Villagers entering relations with
+      those of the same gender
     * Due to this trait being available, some relationship items being gifted may result in `incompatible` responses.
 
 # 7.3.10
@@ -511,7 +530,8 @@
 * Fixed letter author and creative mode usage
 * Strengthened Grim Reaper
 * Added mod support for atmospheric, autumity, berry good, buzzier bees, environmental, neopolitan, and upgrade aquatic
-* Villager now recognize and estimate the value of every (modded) armor, tool, sword, bow and food as a gift (accuracy not guaranteed)
+* Villager now recognize and estimate the value of every (modded) armor, tool, sword, bow and food as a gift (accuracy
+  not guaranteed)
 
 # 7.0.7
 

@@ -49,6 +49,8 @@ public final class Config implements Serializable {
     public boolean showNotificationsAsChat = false;
     public int heartsToBeConsideredAsFriend = 40;
     public boolean enableVillagerMailingPlayers = true;
+    public boolean allowBodyCustomizationInDestiny = true;
+    public boolean allowTraitCustomizationInDestiny = true;
 
     public float zombieBiteInfectionChance = 0.05f;
     public float infectionChanceDecreasePerLevel = 0.25f;
@@ -92,6 +94,7 @@ public final class Config implements Serializable {
     public int burnedClothingTickLength = 3600;
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
+    public boolean useSmarterDoorAI = false;
 
     //tracker
     public boolean trackVillagerPosition = true;
