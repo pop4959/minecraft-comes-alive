@@ -119,7 +119,7 @@ public class SmarterOpenDoorsTask extends MultiTickTask<LivingEntity> {
                 // Not far enough away
                 if (lastNode != null && lastNode.getBlockPos().equals(blockPos) || currentNode != null && currentNode.getBlockPos().equals(blockPos)) continue;
 
-                // Our of range
+                // Out of range
                 if (SmarterOpenDoorsTask.cannotReachDoor(world, entity, globalPos)) {
                     iterator.remove();
                     continue;

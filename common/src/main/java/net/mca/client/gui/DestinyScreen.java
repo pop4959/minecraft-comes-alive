@@ -47,19 +47,28 @@ public class DestinyScreen extends VillagerEditorScreen {
 
     @Override
     protected String[] getPages() {
-        return new String[] {"general", "body", "head", "traits"};
+        LinkedList<String> pages = new LinkedList<>();
+        pages.add("general");
+        if (Config.getInstance().allowBodyCustomizationInDestiny) {
+            pages.add("body");
+            pages.add("head");
+        }
+        if (Config.getInstance().allowTraitCustomizationInDestiny) {
+            pages.add("traits");
+        }
+        return pages.toArray(new String[]{});
     }
 
     @Override
     public void renderBackground(MatrixStack matrices) {
         assert MinecraftClient.getInstance().world != null;
-        renderBackgroundTexture((int)MinecraftClient.getInstance().world.getTime());
+        renderBackgroundTexture((int) MinecraftClient.getInstance().world.getTime());
     }
 
     private void drawScaledText(MatrixStack transform, Text text, int x, int y, float scale) {
         transform.push();
         transform.scale(scale, scale, scale);
-        drawCenteredText(transform, textRenderer, text, (int)(x / scale), (int)(y / scale), 0xffffffff);
+        drawCenteredText(transform, textRenderer, text, (int) (x / scale), (int) (y / scale), 0xffffffff);
         transform.pop();
     }
 
@@ -79,10 +88,11 @@ public class DestinyScreen extends VillagerEditorScreen {
                 DrawableHelper.drawTexture(transform, width * 2 - 512, -40, 0, 0, 1024, 512, 1024, 512);
                 transform.pop();
             }
-            case "destiny" -> drawScaledText(transform, Text.translatable("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
+            case "destiny" ->
+                    drawScaledText(transform, Text.translatable("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
             case "story" -> {
                 List<Text> text = FlowingText.wrap(story.getFirst(), 256);
-                int y = (int)(height / 2 - 20 - 7.5f * text.size());
+                int y = (int) (height / 2 - 20 - 7.5f * text.size());
                 for (Text t : text) {
                     drawScaledText(transform, t, width / 2, y, 1.25f);
                     y += 15;
@@ -126,17 +136,23 @@ public class DestinyScreen extends VillagerEditorScreen {
                 drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
 
                 acceptWidget = addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, Text.translatable("gui.button.accept"), sender -> {
-                    setPage("body");
+                    if (Config.getInstance().allowBodyCustomizationInDestiny) {
+                        setPage("body");
+                    } else if (Config.getInstance().allowTraitCustomizationInDestiny) {
+                        setPage("traits");
+                    } else {
+                        setPage("destiny");
+                    }
                 }));
             }
             case "destiny" -> {
                 int x = 0;
                 int y = 0;
                 for (String location : Config.getServerConfig().destinySpawnLocations) {
-                    int rows = (int)Math.ceil(Config.getServerConfig().destinySpawnLocations.size() / 3.0f);
+                    int rows = (int) Math.ceil(Config.getServerConfig().destinySpawnLocations.size() / 3.0f);
                     float offsetX = (y + 1) == rows ? (2 - (Config.getServerConfig().destinySpawnLocations.size() - 1) % 3) / 2.0f : 0;
                     float offsetY = Math.max(0, 3 - rows) / 2.0f;
-                    addDrawableChild(new ButtonWidget((int)(width / 2 - 96 * 1.5f + (x + offsetX) * 96), (int)(height / 2 + (y + offsetY) * 20 - 16), 96, 20, Text.translatable("gui.destiny." + new Identifier(location).getPath()), sender -> {
+                    addDrawableChild(new ButtonWidget((int) (width / 2 - 96 * 1.5f + (x + offsetX) * 96), (int) (height / 2 + (y + offsetY) * 20 - 16), 96, 20, Text.translatable("gui.destiny." + new Identifier(location).getPath()), sender -> {
                         selectStory(location);
                     }));
                     x++;
@@ -146,20 +162,21 @@ public class DestinyScreen extends VillagerEditorScreen {
                     }
                 }
             }
-            case "story" -> addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, Text.translatable("gui.destiny.next"), sender -> {
-                //we teleport early here to avoid initial flickering
-                if (!teleported) {
-                    NetworkHandler.sendToServer(new DestinyMessage(location));
-                    MCAClient.getDestinyManager().allowClosing();
-                    teleported = true;
-                }
-                if (story.size() > 1) {
-                    story.remove(0);
-                } else {
-                    NetworkHandler.sendToServer(new DestinyMessage(true));
-                    super.close();
-                }
-            }));
+            case "story" ->
+                    addDrawableChild(new ButtonWidget(width / 2 - 48, height / 2 + 32, 96, 20, Text.translatable("gui.destiny.next"), sender -> {
+                        //we teleport early here to avoid initial flickering
+                        if (!teleported) {
+                            NetworkHandler.sendToServer(new DestinyMessage(location));
+                            MCAClient.getDestinyManager().allowClosing();
+                            teleported = true;
+                        }
+                        if (story.size() > 1) {
+                            story.remove(0);
+                        } else {
+                            NetworkHandler.sendToServer(new DestinyMessage(true));
+                            super.close();
+                        }
+                    }));
             default -> super.setPage(page);
         }
     }

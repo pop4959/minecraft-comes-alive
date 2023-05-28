@@ -130,8 +130,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     private int burned;
     private long lastHit = 0;
     private int prevGrowthAmount;
-    private boolean recalcDimensionsBlocked;
     private boolean interactedWith;
+
+    private static final int recalculateDimensionsEveryNTicks = 100;
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(Class<E> type) {
         return VillagerLike.createTrackedData(type).addAll(INFECTION_PROGRESS, GROWTH_AMOUNT)
@@ -757,7 +758,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         // update visual age
         int age = getTrackedValue(GROWTH_AMOUNT);
-        if (age != prevGrowthAmount || recalcDimensionsBlocked) {
+        if (age / recalculateDimensionsEveryNTicks != prevGrowthAmount / recalculateDimensionsEveryNTicks) {
             prevGrowthAmount = age;
             calculateDimensions();
         }
@@ -824,8 +825,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         AgeState current = getAgeState();
         AgeState next = current.getNext();
 
-        VillagerDimensions.Mutable old = new VillagerDimensions.Mutable(dimensions);
-
         // either interpolate or set if final age is reached
         if (next != current) {
             dimensions.interpolate(current, next, AgeState.getDelta(getTrackedValue(GROWTH_AMOUNT)));
@@ -839,15 +838,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         boolean oldOnGround = this.onGround;
         super.calculateDimensions();
         this.onGround = oldOnGround;
-
-        // prevents from growing into the wall
-        if (!this.firstUpdate && !world.isSpaceEmpty(this)) {
-            dimensions.set(old);
-            super.calculateDimensions();
-            recalcDimensionsBlocked = true;
-        } else {
-            recalcDimensionsBlocked = false;
-        }
     }
 
     @Override
