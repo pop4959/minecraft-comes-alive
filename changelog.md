@@ -1,3 +1,7 @@
+# 7.5.2
+
+* Removed gold dust
+
 # 7.5.1
 
 * Fixed a critical performance issue when childrens are stuck in a wall
