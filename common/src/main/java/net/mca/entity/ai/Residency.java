@@ -64,7 +64,7 @@ public class Residency {
                         // Set
                         GlobalPos globalPos = GlobalPos.create(player.getWorld().getRegistryKey(), blockPos);
                         entity.getBrain().remember(MemoryModuleType.JOB_SITE, globalPos);
-                        player.getWorld().sendEntityStatus(entity, (byte)14);
+                        player.getWorld().sendEntityStatus(entity, (byte) 14);
                         MinecraftServer minecraftServer = player.getWorld().getServer();
                         Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension())).flatMap((world) -> {
                             return world.getPointOfInterestStorage().getType(globalPos.getPos());
@@ -73,7 +73,12 @@ public class Residency {
                                 return profession.heldWorkstation().test(registryEntry);
                             }).findFirst();
                         }).ifPresent((profession) -> {
-                            entity.setVillagerData(entity.getVillagerData().withProfession(profession));
+                            int level = entity.getVillagerData().getLevel();
+                            entity.setVillagerData(entity.getVillagerData().withProfession(profession).withLevel(1));
+                            entity.setOffers(null);
+                            for (int l = 1; l < level; l++) {
+                                entity.customLevelUp();
+                            }
                             entity.reinitializeBrain(player.getWorld());
                         });
 
@@ -87,7 +92,7 @@ public class Residency {
     }
 
     public Optional<Village> getHomeVillage() {
-        VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+        VillageManager manager = VillageManager.get((ServerWorld) entity.world);
         return manager.getOrEmpty(entity.getTrackedValue(VILLAGE));
     }
 
@@ -96,7 +101,7 @@ public class Residency {
      */
     public void seekHome() {
         if (entity.requiresHome()) {
-            VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+            VillageManager manager = VillageManager.get((ServerWorld) entity.world);
             manager.findNearestVillage(entity).ifPresent(v -> {
                 leaveHome();
                 v.updateResident(entity);
@@ -156,10 +161,10 @@ public class Residency {
 
     //report potential buildings within this villagers reach
     private void reportBuildings() {
-        VillageManager manager = VillageManager.get((ServerWorld)entity.world);
+        VillageManager manager = VillageManager.get((ServerWorld) entity.world);
 
         //fetch all near POIs
-        Stream<BlockPos> stream = ((ServerWorld)entity.world).getPointOfInterestStorage().getPositions(
+        Stream<BlockPos> stream = ((ServerWorld) entity.world).getPointOfInterestStorage().getPositions(
                 (type) -> true,
                 (p) -> !manager.cache.contains(p),
                 entity.getBlockPos(),
@@ -170,7 +175,7 @@ public class Residency {
         stream.forEach(manager::reportBuilding);
 
         // also add tombstones
-        GraveyardManager.get((ServerWorld)entity.world).reportToVillageManager(entity);
+        GraveyardManager.get((ServerWorld) entity.world).reportToVillageManager(entity);
     }
 
     public void setHome(ServerPlayerEntity player) {
@@ -180,7 +185,7 @@ public class Residency {
         }
 
         // also trigger a building refresh, because why not
-        VillageManager manager = VillageManager.get((ServerWorld)player.world);
+        VillageManager manager = VillageManager.get((ServerWorld) player.world);
         manager.processBuilding(player.getBlockPos(), true, false);
 
         seekHome();

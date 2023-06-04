@@ -4,6 +4,7 @@
 * Added compression to skin library networking
 * Skin Editor will now reject most invalid skins
     * Existing invalid skins are marked
+* Changing workspace will rebuild trades
 
 # 7.5.1
 

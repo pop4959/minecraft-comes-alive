@@ -211,10 +211,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }).thenRunAsync(callback);
     }
 
-    private void clearSearch() {
-        filteredString = "";
-    }
-
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         hoveredContent = null;
@@ -510,13 +506,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (page == Page.EDITOR && (textFieldWidget == null || !textFieldWidget.isFocused())) {
-            // Pan
-            if (keyCode == GLFW.GLFW_KEY_SPACE) {
-                isPanning = true;
-                return true;
-            }
+        // Pan
+        if (keyCode == GLFW.GLFW_KEY_SPACE && (textFieldWidget == null || !textFieldWidget.isFocused())) {
+            isPanning = true;
+            return true;
+        }
 
+        if (page == Page.EDITOR && (textFieldWidget == null || !textFieldWidget.isFocused())) {
             // Reset viewport
             if (keyCode == GLFW.GLFW_KEY_R) {
                 x0 = 0.0f;
@@ -1162,9 +1158,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // edit
         if (advanced && canModifyContent(content)) {
             widgets.add(new ToggleableTooltipIconButtonWidget(0, 0, 2 * 16, 3 * 16,
-                    isLiked(content),
+                    false,
                     Text.translatable("gui.skin_library.edit"),
                     v -> {
+
                         SkinCache.getImage(content).ifPresent(image -> {
                             SkinCache.getMeta(content).ifPresent(meta -> {
                                 workspace = new Workspace(image, meta, content);
@@ -1192,8 +1189,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     true,
                     Text.translatable("gui.skin_library.edit"),
                     v -> {
-                        focusedContent = content;
-                        setPage(Page.DETAIL);
+                        if (isPanning && isModerator()) {
+                            //admin tool
+                            removeContent(content.contentid());
+                            rebuild();
+                        } else {
+                            focusedContent = content;
+                            setPage(Page.DETAIL);
+                        }
                     }));
         }
 
@@ -1278,10 +1281,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             Auth.clearToken();
             refreshPage();
             return;
-        }
-
-        if (page != this.page) {
-            clearSearch();
         }
 
         this.page = page;
