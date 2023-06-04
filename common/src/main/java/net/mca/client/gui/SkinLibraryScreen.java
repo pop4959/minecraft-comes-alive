@@ -1192,7 +1192,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         if (isPanning && isModerator()) {
                             //admin tool
                             removeContent(content.contentid());
-                            rebuild();
                         } else {
                             focusedContent = content;
                             setPage(Page.DETAIL);
