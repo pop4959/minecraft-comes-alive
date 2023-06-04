@@ -7,7 +7,7 @@ public record Content(int contentid, int userid, String username, int likes, Set
     public String toString() {
         return "Content{" +
                 "contentid=" + contentid +
-                "userid=" + userid +
+                ", userid=" + userid +
                 ", username='" + username + '\'' +
                 ", likes=" + likes +
                 ", tags=" + tags +

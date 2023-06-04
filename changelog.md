@@ -1,6 +1,7 @@
 # 7.5.2
 
 * Removed gold dust
+* Added compression to skin library networking
 
 # 7.5.1
 

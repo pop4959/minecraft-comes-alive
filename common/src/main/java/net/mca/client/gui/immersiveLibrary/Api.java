@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 public class Api {
     private static final Gson gson = new GsonBuilder()
@@ -43,13 +44,14 @@ public class Api {
                         .collect(Collectors.joining("&", fullUrl + "?", ""));
             }
 
-            HttpURLConnection con = (HttpURLConnection)(new URL(fullUrl)).openConnection();
+            HttpURLConnection con = (HttpURLConnection) (new URL(fullUrl)).openConnection();
 
             // Set request method
             con.setRequestMethod(httpMethod.name());
 
             // Set request headers
             con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("Accept-Encoding", "gzip");
             con.setRequestProperty("Accept", "application/json");
 
             // Set request body
@@ -69,7 +71,13 @@ public class Api {
             }
 
             // Parse answer
-            String response = IOUtils.toString(con.getInputStream(), StandardCharsets.UTF_8);
+            String response;
+            if ("gzip".equals(con.getContentEncoding())) {
+                response = IOUtils.toString(new GZIPInputStream(con.getInputStream()), StandardCharsets.UTF_8);
+            } else {
+                response = IOUtils.toString(con.getInputStream(), StandardCharsets.UTF_8);
+            }
+
             return gson.fromJson(response, expectedAnswer);
         } catch (IOException e) {
             return new ErrorResponse(-1, e.toString());
