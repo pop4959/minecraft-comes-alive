@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Optional;
 
 public class SmarterOpenDoorsTask extends MultiTickTask<LivingEntity> {
     private static final int RUN_TIME = 20;
@@ -43,8 +44,10 @@ public class SmarterOpenDoorsTask extends MultiTickTask<LivingEntity> {
 
     @Override
     protected boolean shouldRun(ServerWorld world, LivingEntity entity) {
-        //noinspection OptionalGetWithoutIsPresent
-        Path path = entity.getBrain().getOptionalMemory(MemoryModuleType.PATH).get();
+        Optional<Path> optionalMemory = entity.getBrain().getOptionalMemory(MemoryModuleType.PATH);
+        if (optionalMemory.isEmpty()) return false;
+
+        Path path = optionalMemory.get();
 
         //Luke100000: I removed the path.isStart() check as this caused villagers to slam their face onto the door, not being able to open it anymore.
         if (path.isFinished()) {

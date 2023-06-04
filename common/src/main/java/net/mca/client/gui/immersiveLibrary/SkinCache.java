@@ -7,6 +7,7 @@ import net.mca.client.gui.immersiveLibrary.responses.ContentListResponse;
 import net.mca.client.gui.immersiveLibrary.responses.ContentResponse;
 import net.mca.client.gui.immersiveLibrary.responses.Response;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
+import net.mca.client.resources.SkinLocations;
 import net.mca.client.resources.SkinMeta;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
@@ -28,6 +29,7 @@ public class SkinCache {
     private static final Gson gson = new Gson();
 
     static final Map<Integer, Boolean> requested = new ConcurrentHashMap<>();
+    static final Map<Integer, Boolean> probablyValid = new HashMap<>();
     static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
     static final Map<Integer, NativeImage> images = new HashMap<>();
     static final Map<Integer, SkinMeta> metaCache = new HashMap<>();
@@ -106,6 +108,22 @@ public class SkinCache {
         }
     }
 
+    // Sanity check of skins by checking if at least one skin pixel is transparent, thus not being a valid vanilla skin, thus requiring at least minimal effort to convert to a valid skin
+    public static boolean verify(NativeImage image) {
+        int errors = 0;
+        for (int x = 0; x < 64; x++) {
+            for (int y = 0; y < 64; y++) {
+                if (SkinLocations.SKIN_LOOKUP[x][y] && image.getOpacity(x, y) == 0) {
+                    errors++;
+                    if (errors > 6) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private static void loadResources(int contentid) {
         // Load meta
         try {
@@ -122,6 +140,7 @@ public class SkinCache {
             // Load new
             NativeImage image = NativeImage.read(stream);
             Identifier identifier = new Identifier("immersive_library", String.valueOf(contentid));
+            probablyValid.put(contentid, verify(image));
             MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, new NativeImageBackedTexture(image));
             textureIdentifiers.put(contentid, identifier);
             images.put(contentid, image);
@@ -149,6 +168,10 @@ public class SkinCache {
     public static Identifier getTextureIdentifier(int contentid) {
         sync(contentid, contentLookup.containsKey(contentid) ? contentLookup.get(contentid).version() : -2);
         return textureIdentifiers.getOrDefault(contentid, DEFAULT_SKIN);
+    }
+
+    public static boolean isValid(int contentid) {
+        return probablyValid.getOrDefault(contentid, true);
     }
 
     public static void setContent(List<LiteContent> content) {

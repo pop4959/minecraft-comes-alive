@@ -2,7 +2,9 @@ package net.mca.client.resources;
 
 import net.minecraft.text.Text;
 
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 public class SkinLocations {
     public enum Part {
@@ -13,7 +15,18 @@ public class SkinLocations {
         }
     }
 
+    public static Set<Part> SKIN_PARTS = new HashSet<>();
+    static {
+        SKIN_PARTS.add(Part.HEAD);
+        SKIN_PARTS.add(Part.RIGHT_LEG);
+        SKIN_PARTS.add(Part.BODY);
+        SKIN_PARTS.add(Part.RIGHT_ARM);
+        SKIN_PARTS.add(Part.LEFT_LEG);
+        SKIN_PARTS.add(Part.LEFT_ARM);
+    }
+
     public static final Part[][] LOOKUP = new Part[64][64];
+    public static final boolean[][] SKIN_LOOKUP = new boolean[64][64];
 
     static {
         add(Part.HEAD, 8, 0, 16, 8);
@@ -95,6 +108,10 @@ public class SkinLocations {
         for (int x = x0; x < x1; x++) {
             for (int y = y0; y < y1; y++) {
                 LOOKUP[x][y] = part;
+
+                if (SKIN_PARTS.contains(part)) {
+                    SKIN_LOOKUP[x][y] = true;
+                }
             }
         }
     }

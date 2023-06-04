@@ -1499,4 +1499,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         inventory.addStack(new ItemStack(Items.FISHING_ROD));
         inventory.addStack(new ItemStack(Items.BREAD, 16));
     }
+
+    public void customLevelUp() {
+        this.setVillagerData(this.getVillagerData().withLevel(this.getVillagerData().getLevel() + 1));
+        this.fillRecipes();
+    }
 }
