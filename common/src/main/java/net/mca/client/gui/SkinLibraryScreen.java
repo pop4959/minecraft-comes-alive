@@ -117,6 +117,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private static HorizontalColorPickerWidget hueWidget;
     private static HorizontalColorPickerWidget saturationWidget;
     private static HorizontalColorPickerWidget brightnessWidget;
+    private TextFieldWidget textFieldWidget;
 
     public SkinLibraryScreen() {
         this(null, null);
@@ -208,10 +209,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 setError(Text.translatable("gui.skin_library.list_fetch_failed"));
             }
         }).thenRunAsync(callback);
-    }
-
-    private void clearSearch() {
-        filteredString = "";
     }
 
     @Override
@@ -439,6 +436,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     Text.translatable("gui.skin_library.chance_val", (int) (meta.get().getChance() * 100)).formatted(Formatting.GRAY)
             ));
             texts.addAll(wrap);
+
+            if (!SkinCache.isValid(content.contentid())) {
+                texts.add(Text.translatable("gui.skin_library.probably_not_valids").formatted(Formatting.BOLD).formatted(Formatting.RED));
+            }
+
             return texts;
         }
     }
@@ -504,13 +506,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (page == Page.EDITOR) {
-            // Pan
-            if (keyCode == GLFW.GLFW_KEY_SPACE) {
-                isPanning = true;
-                return true;
-            }
+        // Pan
+        if (keyCode == GLFW.GLFW_KEY_SPACE && (textFieldWidget == null || !textFieldWidget.isFocused())) {
+            isPanning = true;
+            return true;
+        }
 
+        if (page == Page.EDITOR && (textFieldWidget == null || !textFieldWidget.isFocused())) {
             // Reset viewport
             if (keyCode == GLFW.GLFW_KEY_R) {
                 x0 = 0.0f;
@@ -778,6 +780,15 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             int cy = height / 2 + 15 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 80);
 
                             drawControls(c, false, cx, cy);
+
+                            //sorting icons
+                            if (!SkinCache.isValid(c.contentid())) {
+                                addDrawableChild(new ToggleableTooltipIconButtonWidget(cx + 12, cy - 16, 9 * 16, 3 * 16,
+                                        true,
+                                        Text.translatable("gui.skin_library.probably_not_valids"),
+                                        v -> {
+                                        }));
+                            }
                             i++;
                         } else {
                             break;
@@ -894,7 +905,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             }
             case EDITOR -> {
                 // name
-                TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 60, height / 2 - 105, 120, 20,
+                textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 60, height / 2 - 105, 120, 20,
                         Text.translatable("gui.skin_library.name")));
                 textFieldWidget.setMaxLength(1024);
                 textFieldWidget.setText(workspace.title);
@@ -1147,9 +1158,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // edit
         if (advanced && canModifyContent(content)) {
             widgets.add(new ToggleableTooltipIconButtonWidget(0, 0, 2 * 16, 3 * 16,
-                    isLiked(content),
+                    false,
                     Text.translatable("gui.skin_library.edit"),
                     v -> {
+
                         SkinCache.getImage(content).ifPresent(image -> {
                             SkinCache.getMeta(content).ifPresent(meta -> {
                                 workspace = new Workspace(image, meta, content);
@@ -1177,8 +1189,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     true,
                     Text.translatable("gui.skin_library.edit"),
                     v -> {
-                        focusedContent = content;
-                        setPage(Page.DETAIL);
+                        if (isPanning && isModerator()) {
+                            //admin tool
+                            removeContent(content.contentid());
+                        } else {
+                            focusedContent = content;
+                            setPage(Page.DETAIL);
+                        }
                     }));
         }
 
@@ -1263,10 +1280,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             Auth.clearToken();
             refreshPage();
             return;
-        }
-
-        if (page != this.page) {
-            clearSearch();
         }
 
         this.page = page;
@@ -1395,6 +1408,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private void publish() {
         if (workspace.title.equals("Unnamed Asset")) {
             setError(Text.translatable("gui.skin_library.choose_name"));
+            return;
+        }
+
+        if (!SkinCache.verify(workspace.currentImage)) {
+            setError(Text.translatable("gui.skin_library.read_the_help"));
             return;
         }
 
