@@ -2,6 +2,8 @@
 
 * Removed gold dust
 * Added compression to skin library networking
+* Skin Editor will now reject most invalid skins
+    * Existing invalid skins are marked
 
 # 7.5.1
 
