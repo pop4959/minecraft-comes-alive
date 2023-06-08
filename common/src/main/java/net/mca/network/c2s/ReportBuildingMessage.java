@@ -29,7 +29,7 @@ public class ReportBuildingMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        VillageManager villages = VillageManager.get(player.getWorld());
+        VillageManager villages = VillageManager.get(player.getServerWorld());
         switch (action) {
             case ADD, ADD_ROOM -> {
                 Building.validationResult result = villages.processBuilding(player.getBlockPos(), true, action == Action.ADD_ROOM);

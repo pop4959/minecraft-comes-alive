@@ -28,7 +28,7 @@ public class GetInteractDataRequest implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity entity = player.getWorld().getEntity(uuid);
+        Entity entity = player.getServerWorld().getEntity(uuid);
 
         if (entity instanceof VillagerLike<?> villager) {
             //get constraints

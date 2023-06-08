@@ -8,7 +8,7 @@ import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate.Extended;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -21,7 +21,7 @@ public class HeartsCriterion extends AbstractCriterion<HeartsCriterion.Condition
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
+    public Conditions conditionsFromJson(JsonObject json, LootContextPredicate player, AdvancementEntityPredicateDeserializer deserializer) {
         NumberRange.IntRange hearts = NumberRange.IntRange.fromJson(json.get("hearts"));
         NumberRange.IntRange increase = NumberRange.IntRange.fromJson(json.get("increase"));
         String source = json.has("source") ? json.get("source").getAsString() : "";
@@ -37,7 +37,7 @@ public class HeartsCriterion extends AbstractCriterion<HeartsCriterion.Condition
         private final NumberRange.IntRange increase;
         private final String source;
 
-        public Conditions(Extended player, NumberRange.IntRange hearts, NumberRange.IntRange increase, String source) {
+        public Conditions(LootContextPredicate player, NumberRange.IntRange hearts, NumberRange.IntRange increase, String source) {
             super(HeartsCriterion.ID, player);
             this.hearts = hearts;
             this.increase = increase;

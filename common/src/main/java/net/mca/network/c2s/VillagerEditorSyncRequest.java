@@ -85,7 +85,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity entity = player.getWorld().getEntity(uuid);
+        Entity entity = player.getServerWorld().getEntity(uuid);
         switch (command) {
             case "hair":
                 setHair(player, entity);
@@ -118,7 +118,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
             syncFamilyTree(player, entity, villagerData);
 
             //also update players
-            serverPlayer.getWorld().getPlayers().forEach(p -> NetworkHandler.sendToPlayer(new PlayerDataMessage(player.getUuid(), villagerData), p));
+            serverPlayer.getServerWorld().getPlayers().forEach(p -> NetworkHandler.sendToPlayer(new PlayerDataMessage(player.getUuid(), villagerData), p));
         } else if (entity instanceof VillagerLike) {
             ((LivingEntity)entity).readCustomDataFromNbt(villagerData);
             entity.calculateDimensions();
@@ -167,7 +167,7 @@ public class VillagerEditorSyncRequest extends NbtDataMessage implements Message
     }
 
     private void syncFamilyTree(ServerPlayerEntity player, Entity entity, NbtCompound villagerData) {
-        FamilyTree tree = FamilyTree.get((ServerWorld)entity.world);
+        FamilyTree tree = FamilyTree.get((ServerWorld)entity.getWorld());
         FamilyTreeNode entry = tree.getOrCreate(entity);
         entry.setGender(getGender(getData()));
         entry.setName(getData().getString("villagerName"));

@@ -16,7 +16,7 @@ public class VillagerEditorItem extends TooltippedItem {
     }
 
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (entity instanceof VillagerLike<?> villager && !entity.world.isClient && player instanceof ServerPlayerEntity serverPlayer) {
+        if (entity instanceof VillagerLike<?> villager && !entity.getWorld().isClient && player instanceof ServerPlayerEntity serverPlayer) {
             if (player.isSneaking()) {
                 villager.getInteractions().handle(serverPlayer, "inventory");
             } else {

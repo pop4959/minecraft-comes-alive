@@ -7,7 +7,7 @@ import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate.Extended;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -20,7 +20,7 @@ public class BabyCriterion extends AbstractCriterion<BabyCriterion.Conditions> {
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
+    public Conditions conditionsFromJson(JsonObject json, LootContextPredicate player, AdvancementEntityPredicateDeserializer deserializer) {
         NumberRange.IntRange c = NumberRange.IntRange.fromJson(json.get("count"));
         return new Conditions(player, c);
     }
@@ -32,7 +32,7 @@ public class BabyCriterion extends AbstractCriterion<BabyCriterion.Conditions> {
     public static class Conditions extends AbstractCriterionConditions {
         private final NumberRange.IntRange count;
 
-        public Conditions(Extended player, NumberRange.IntRange count) {
+        public Conditions(LootContextPredicate player, NumberRange.IntRange count) {
             super(BabyCriterion.ID, player);
             this.count = count;
         }

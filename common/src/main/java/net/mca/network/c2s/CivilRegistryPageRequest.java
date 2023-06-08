@@ -29,7 +29,7 @@ public class CivilRegistryPageRequest implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.world)).flatMap(Village::getCivilRegistry).ifPresentOrElse(c -> {
+        PlayerSaveData.get(player).getLastSeenVillage(VillageManager.get((ServerWorld)player.getWorld())).flatMap(Village::getCivilRegistry).ifPresentOrElse(c -> {
             List<Text> page = c.getPage(from, to);
             NetworkHandler.sendToPlayer(new CivilRegistryResponse(index, page), player);
         }, () -> {

@@ -9,6 +9,7 @@ import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -21,7 +22,7 @@ public class VillagerFateCriterion extends AbstractCriterion<VillagerFateCriteri
     }
 
     @Override
-    public VillagerFateCriterion.Conditions conditionsFromJson(JsonObject json, EntityPredicate.Extended player, AdvancementEntityPredicateDeserializer deserializer) {
+    public VillagerFateCriterion.Conditions conditionsFromJson(JsonObject json, LootContextPredicate player, AdvancementEntityPredicateDeserializer deserializer) {
         Rank userRelation = Rank.fromName(json.get("user_relation").getAsString());
         Identifier cause = Identifier.tryParse(json.get("cause").getAsString());
         return new Conditions(player, cause, userRelation);
@@ -35,7 +36,7 @@ public class VillagerFateCriterion extends AbstractCriterion<VillagerFateCriteri
         private final Rank userRelation;
         private final Identifier cause;
 
-        public Conditions(EntityPredicate.Extended player, Identifier cause, Rank userRelation) {
+        public Conditions(LootContextPredicate player, Identifier cause, Rank userRelation) {
             super(VillagerFateCriterion.ID, player);
             this.userRelation = userRelation;
             this.cause = cause;

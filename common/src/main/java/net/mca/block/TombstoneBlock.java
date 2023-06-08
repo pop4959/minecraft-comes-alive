@@ -24,6 +24,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -117,10 +118,11 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
         return true;
     }
 
-    @Override
-    public boolean canMobSpawnInside() {
-        return true;
-    }
+    // TODO: Verify (1.20)
+//    @Override
+//    public boolean canMobSpawnInside() {
+//        return true;
+//    }
 
     @Override
     @Deprecated
@@ -275,7 +277,7 @@ public class TombstoneBlock extends BlockWithEntity implements Waterloggable {
 
     @Deprecated
     @Override
-    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+    public List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
         List<ItemStack> stacks = super.getDroppedStacks(state, builder);
 
         Optional<Data> data = Data.of(builder.get(LootContextParameters.BLOCK_ENTITY)).filter(Data::hasEntity);

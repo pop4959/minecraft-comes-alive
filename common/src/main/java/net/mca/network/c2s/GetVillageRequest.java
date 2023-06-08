@@ -22,7 +22,7 @@ public class GetVillageRequest implements Message {
     public void receive(ServerPlayerEntity player) {
         Optional<Village> village = Village.findNearest(player);
         if (village.isPresent()) {
-            GraveyardManager.get(player.getWorld()).reportToVillageManager(player);
+            GraveyardManager.get(player.getServerWorld()).reportToVillageManager(player);
             village.get().updateMaxPopulation();
             int reputation = village.get().getReputation(player);
             boolean isVillage = village.get().isVillage();

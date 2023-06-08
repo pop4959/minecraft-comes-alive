@@ -1,6 +1,7 @@
 package net.mca.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -17,10 +18,7 @@ public class ExtendedPageTurnWidget extends PageTurnWidget {
     }
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShaderTexture(0, texture);
-
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         int i = 0;
         int j = 192;
         if (isHovered()) {
@@ -31,6 +29,6 @@ public class ExtendedPageTurnWidget extends PageTurnWidget {
             j += 13;
         }
 
-        drawTexture(matrices, getX(), getY(), i, j, 23, 13);
+        context.drawTexture(texture, getX(), getY(), i, j, 23, 13);
     }
 }

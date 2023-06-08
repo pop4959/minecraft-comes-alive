@@ -11,7 +11,7 @@ public class UpdatableInventory extends SimpleInventory {
     public void update(Entity entity) {
         for (int slot = 0; slot < size(); slot++) {
             if (!getStack(slot).isEmpty()) {
-                getStack(slot).inventoryTick(entity.world, entity, slot, false);
+                getStack(slot).inventoryTick(entity.getWorld(), entity, slot, false);
             }
         }
     }

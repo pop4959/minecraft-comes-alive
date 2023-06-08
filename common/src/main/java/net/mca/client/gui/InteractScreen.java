@@ -14,6 +14,7 @@ import net.mca.network.c2s.*;
 import net.mca.resources.data.analysis.Analysis;
 import net.mca.resources.data.dialogue.Question;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.MutableText;
@@ -85,11 +86,11 @@ public class InteractScreen extends AbstractDynamicScreen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
-        super.render(matrices, mouseX, mouseY, tickDelta);
+    public void render(DrawContext context, int mouseX, int mouseY, float tickDelta) {
+        super.render(context, mouseX, mouseY, tickDelta);
 
-        drawIcons(matrices);
-        drawTextPopups(matrices);
+        drawIcons(context);
+        drawTextPopups(context);
     }
 
     @Override
@@ -137,61 +138,60 @@ public class InteractScreen extends AbstractDynamicScreen {
         return false;
     }
 
-    private void drawIcons(MatrixStack transform) {
+    private void drawIcons(DrawContext context) {
+        final MatrixStack matrices = context.getMatrices();
         Memories memory = villager.getVillagerBrain().getMemoriesForPlayer(player);
 
-        transform.push();
-        transform.scale(iconScale, iconScale, iconScale);
-
-        RenderSystem.setShaderTexture(0, ICON_TEXTURES);
+        matrices.push();
+        matrices.scale(iconScale, iconScale, iconScale);
 
         if (marriageState != null) {
-            drawIcon(transform, marriageState.getIcon());
+            drawIcon(context, ICON_TEXTURES, marriageState.getIcon());
         }
 
-        drawIcon(transform, memory.getHearts() < 0 ? "blackHeart" : memory.getHearts() >= 100 ? "goldHeart" : "redHeart");
+        drawIcon(context, ICON_TEXTURES, memory.getHearts() < 0 ? "blackHeart" : memory.getHearts() >= 100 ? "goldHeart" : "redHeart");
         // drawIcon(transform, "neutralEmerald");
-        drawIcon(transform, "genes");
+        drawIcon(context, ICON_TEXTURES, "genes");
 
         if (canDrawParentsIcon()) {
-            drawIcon(transform, "parents");
+            drawIcon(context, ICON_TEXTURES, "parents");
         }
         if (canDrawGiftIcon()) {
-            drawIcon(transform, "gift");
+            drawIcon(context, ICON_TEXTURES, "gift");
         }
 
         if (analysis != null) {
-            drawIcon(transform, "analysis");
+            drawIcon(context, ICON_TEXTURES, "analysis");
         }
 
-        transform.pop();
+        matrices.pop();
     }
 
-    private void drawTextPopups(MatrixStack transform) {
+    private void drawTextPopups(DrawContext context) {
         //name or state tip (gifting, ...)
         int h = 17;
         if (inGiftMode) {
-            renderTooltip(transform, Text.translatable("gui.interact.label.giveGift"), 10, 28);
+            context.drawTooltip(textRenderer, Text.translatable("gui.interact.label.giveGift"), 10, 28);
         } else {
-            renderTooltip(transform, villager.asEntity().getName(), 10, 28);
+            context.drawTooltip(textRenderer, villager.asEntity().getName(), 10, 28);
         }
 
         //age or profession
-        renderTooltip(transform, villager.asEntity().isBaby() ? villager.getAgeState().getName() : villager.getProfessionText(), 10, 30 + h);
+        context.drawTooltip(textRenderer, villager.asEntity().isBaby() ? villager.getAgeState().getName() : villager.getProfessionText(), 10, 30 + h);
 
         VillagerBrain<?> brain = villager.getVillagerBrain();
 
         //mood
-        renderTooltip(transform,
+        context.drawTooltip(textRenderer,
                 Text.translatable("gui.interact.label.mood", brain.getMood().getText())
                         .formatted(brain.getMood().getColor()), 10, 30 + h * 2);
 
         //personality
         if (hoveringOverText(10, 30 + h * 3, 128)) {
-            renderTooltip(transform, brain.getPersonality().getDescription(), 10, 30 + h * 3);
+            context.drawTooltip(textRenderer, brain.getPersonality().getDescription(), 10, 30 + h * 3);
         } else {
             //White as we don't know if a personality is negative
-            renderTooltip(transform, Text.translatable("gui.interact.label.personality", brain.getPersonality().getName()).formatted(Formatting.WHITE), 10, 30 + h * 3);
+            context.drawTooltip(textRenderer, Text.translatable("gui.interact.label.personality", brain.getPersonality().getName()).formatted(Formatting.WHITE), 10, 30 + h * 3);
         }
 
         //traits
@@ -201,7 +201,7 @@ public class InteractScreen extends AbstractDynamicScreen {
                 //details
                 List<Text> traitText = traits.stream().map(Traits.Trait::getDescription).collect(Collectors.toList());
                 traitText.add(0, Text.translatable("traits.title"));
-                renderTooltip(transform, traitText, 10, 30 + h * 4);
+                context.drawTooltip(textRenderer, traitText, 10, 30 + h * 4);
             } else {
                 //list
                 MutableText traitText = Text.translatable("traits.title");
@@ -211,25 +211,25 @@ public class InteractScreen extends AbstractDynamicScreen {
                     }
                     traitText.append(t);
                 });
-                renderTooltip(transform, traitText, 10, 30 + h * 4);
+                context.drawTooltip(textRenderer, traitText, 10, 30 + h * 4);
             }
         }
 
         //hearts
         if (hoveringOverIcon("redHeart")) {
             int hearts = brain.getMemoriesForPlayer(player).getHearts();
-            drawHoveringIconText(transform, Text.literal(hearts + " hearts"), "redHeart");
+            drawHoveringIconText(context, Text.literal(hearts + " hearts"), "redHeart");
         }
 
         //marriage status
         if (marriageState != null && hoveringOverIcon("married") && villager instanceof CompassionateEntity<?>) {
             String ms = marriageState.base().getIcon().toLowerCase(Locale.ENGLISH);
-            drawHoveringIconText(transform, Text.translatable("gui.interact.label." + ms, spouse), "married");
+            drawHoveringIconText(context, Text.translatable("gui.interact.label." + ms, spouse), "married");
         }
 
         //parents
         if (canDrawParentsIcon() && hoveringOverIcon("parents")) {
-            drawHoveringIconText(transform, Text.translatable("gui.interact.label.parents",
+            drawHoveringIconText(context, Text.translatable("gui.interact.label.parents",
                     father == null ? Text.translatable("gui.interact.label.parentUnknown") : father,
                     mother == null ? Text.translatable("gui.interact.label.parentUnknown") : mother
             ), "parents");
@@ -237,7 +237,7 @@ public class InteractScreen extends AbstractDynamicScreen {
 
         //gift
         if (canDrawGiftIcon() && hoveringOverIcon("gift")) {
-            drawHoveringIconText(transform, Text.translatable("gui.interact.label.gift"), "gift");
+            drawHoveringIconText(context, Text.translatable("gui.interact.label.gift"), "gift");
         }
 
         //genes
@@ -251,7 +251,7 @@ public class InteractScreen extends AbstractDynamicScreen {
                 lines.add(Text.translatable("gene.tooltip", Text.translatable(key), value));
             }
 
-            drawHoveringIconText(transform, lines, "genes");
+            drawHoveringIconText(context, lines, "genes");
         }
 
         //analysis
@@ -270,31 +270,31 @@ public class InteractScreen extends AbstractDynamicScreen {
             String chance = analysis.getTotalAsString();
             lines.add(Text.translatable("analysis.total").append(": " + chance));
 
-            drawHoveringIconText(transform, lines, "analysis");
+            drawHoveringIconText(context, lines, "analysis");
         }
 
         //dialogue
         if (dialogQuestionText != null) {
             //background
-            fill(transform, width / 2 - 85, height / 2 - 50 - 10 * dialogQuestionText.size(), width / 2 + 85,
+            context.fill(width / 2 - 85, height / 2 - 50 - 10 * dialogQuestionText.size(), width / 2 + 85,
                     height / 2 - 30 + 10 * dialogAnswers.size(), 0x77000000);
 
             //question
             int i = -dialogQuestionText.size();
             for (OrderedText t : dialogQuestionText) {
                 i++;
-                textRenderer.drawWithShadow(transform, t, width / 2.0f - textRenderer.getWidth(t) / 2.0f, (float)height / 2 - 50 + i * 10, 0xFFFFFFFF);
+                context.drawTextWithShadow(textRenderer, t, width / 2 - textRenderer.getWidth(t) / 2, height / 2 - 50 + i * 10, 0xFFFFFFFF);
             }
             dialogAnswerHover = null;
 
             //separator
-            drawHorizontalLine(transform, width / 2 - 75, width / 2 + 75, height / 2 - 40, 0xAAFFFFFF);
+            context.drawHorizontalLine(width / 2 - 75, width / 2 + 75, height / 2 - 40, 0xAAFFFFFF);
 
             //answers
             int y = height / 2 - 35;
             for (String a : dialogAnswers) {
                 boolean hover = hoveringOver(width / 2 - 100, y - 3, 200, 10);
-                drawCenteredTextWithShadow(transform, textRenderer, Text.translatable(Question.getTranslationKey(dialogQuestionId, a)), width / 2, y, hover ? 0xFFD7D784 : 0xAAFFFFFF);
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable(Question.getTranslationKey(dialogQuestionId, a)), width / 2, y, hover ? 0xFFD7D784 : 0xAAFFFFFF);
                 if (hover) {
                     dialogAnswerHover = a;
                 }

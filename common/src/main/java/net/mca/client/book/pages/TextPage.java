@@ -1,6 +1,7 @@
 package net.mca.client.book.pages;
 
 import net.mca.client.gui.ExtendedBookScreen;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.*;
 
@@ -40,7 +41,7 @@ public class TextPage extends Page {
         return cachedPage;
     }
 
-    public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(ExtendedBookScreen screen, DrawContext context, int mouseX, int mouseY, float delta) {
         //prepare page
         if (content != null) {
             // text
@@ -48,8 +49,8 @@ public class TextPage extends Page {
             int i = (screen.width - 192) / 2;
             for (int m = 0; m < l; ++m) {
                 OrderedText orderedText = getCachedPage(screen).get(m);
-                float x = i + 36;
-                screen.getTextRenderer().draw(matrices, orderedText, x, (32.0f + m * 9.0f), 0);
+                int x = i + 36;
+                context.drawTextWithShadow(screen.getTextRenderer(), orderedText, x, (32 + m * 9), 0);
             }
         }
     }

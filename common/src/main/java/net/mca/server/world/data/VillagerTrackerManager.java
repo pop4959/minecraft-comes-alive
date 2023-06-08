@@ -42,13 +42,13 @@ public class VillagerTrackerManager extends PersistentState {
     }
 
     public static void update(Entity entity) {
-        if (Config.getInstance().trackVillagerPosition && entity.world instanceof ServerWorld serverWorld) {
+        if (Config.getInstance().trackVillagerPosition && entity.getWorld() instanceof ServerWorld serverWorld) {
             get(serverWorld).set(entity);
         }
     }
 
     public void set(Entity entity) {
-        entries.put(entity.getUuid(), GlobalPos.create(entity.world.getRegistryKey(), entity.getBlockPos()));
+        entries.put(entity.getUuid(), GlobalPos.create(entity.getWorld().getRegistryKey(), entity.getBlockPos()));
     }
 
     public GlobalPos get(UUID id) {

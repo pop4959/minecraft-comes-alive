@@ -14,6 +14,7 @@ import net.minecraft.item.BoneMealItem;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -127,25 +128,25 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private boolean isValidFarmland(BlockPos pos) {
-        BlockState state = villager.world.getBlockState(pos);
+        BlockState state = villager.getWorld().getBlockState(pos);
         return state.getBlock() instanceof FarmlandBlock
-                && state.canPlaceAt(villager.world, pos)
-                && villager.world.getBlockState(pos.up()).isAir();
+                && state.canPlaceAt(villager.getWorld(), pos)
+                && villager.getWorld().getBlockState(pos.up()).isAir();
     }
 
     private boolean isValidMature(BlockPos pos) {
-        BlockState state = villager.world.getBlockState(pos);
+        BlockState state = villager.getWorld().getBlockState(pos);
         return (state.getBlock() instanceof CropBlock crop && crop.isMature(state))
                 || state.getBlock() instanceof GourdBlock;
     }
 
     private boolean isValidImmature(BlockPos pos) {
-        BlockState state = villager.world.getBlockState(pos);
+        BlockState state = villager.getWorld().getBlockState(pos);
         return (state.getBlock() instanceof CropBlock crop && !crop.isMature(state));
     }
 
     private void searchCrop(int rangeX, int rangeY) {
-        List<BlockPos> nearbyCrops = TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.world,
+        List<BlockPos> nearbyCrops = TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.getWorld(),
                 blockState -> blockState.getBlock() instanceof CropBlock || blockState.getBlock() instanceof GourdBlock, rangeX, rangeY);
 
         harvestable.addAll(nearbyCrops.stream().filter(this::isValidMature).toList());
@@ -162,7 +163,7 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private void searchUnusedFarmLand(int rangeX, int rangeY) {
-        plantable.addAll(TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.world,
+        plantable.addAll(TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.getWorld(),
                         blockState -> blockState.isOf(Blocks.FARMLAND), rangeX, rangeY)
                 .stream()
                 .filter(this::isValidFarmland)
@@ -261,15 +262,14 @@ public class HarvestingTask extends AbstractChoreTask {
 
     private void harvestCrops(ServerWorld world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        LootContext.Builder lootContext$builder = new LootContext.Builder(world)
-                .parameter(LootContextParameters.ORIGIN, villager.getPos())
-                .parameter(LootContextParameters.TOOL, ItemStack.EMPTY)
-                .parameter(LootContextParameters.THIS_ENTITY, villager)
-                .parameter(LootContextParameters.BLOCK_STATE, state)
-                .random(villager.getRandom())
+        LootContextParameterSet.Builder lootContext$builder = new LootContextParameterSet.Builder(world)
+                .add(LootContextParameters.ORIGIN, villager.getPos())
+                .add(LootContextParameters.TOOL, ItemStack.EMPTY)
+                .add(LootContextParameters.THIS_ENTITY, villager)
+                .add(LootContextParameters.BLOCK_STATE, state)
                 .luck(0);
 
-        List<ItemStack> drops = world.getServer().getLootManager().getTable(state.getBlock().getLootTableId()).generateLoot(lootContext$builder.build(LootContextTypes.BLOCK));
+        List<ItemStack> drops = world.getServer().getLootManager().getLootTable(state.getBlock().getLootTableId()).generateLoot(lootContext$builder.build(LootContextTypes.BLOCK));
         for (ItemStack stack : drops) {
             villager.getInventory().addStack(stack);
         }

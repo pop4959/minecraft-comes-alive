@@ -20,8 +20,8 @@ abstract class MixinPlayerEntity extends LivingEntity {
 
     @Inject(method = "onDeath(Lnet/minecraft/entity/damage/DamageSource;)V", at = @At("HEAD"))
     private void onOnDeath(DamageSource cause, CallbackInfo info) {
-        if (!world.isClient) {
-            VillageManager.get((ServerWorld)world).getBabies().push((PlayerEntity)(Object)this);
+        if (!getWorld().isClient) {
+            VillageManager.get((ServerWorld)getWorld()).getBabies().push((PlayerEntity)(Object)this);
         }
     }
 

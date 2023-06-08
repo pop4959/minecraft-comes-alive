@@ -52,7 +52,7 @@ public final class MCAFabric implements ModInitializer {
 
         ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
             if (!alive) {
-                VillageManager.get(old.getWorld()).getBabies().pop(neu);
+                VillageManager.get(old.getServerWorld()).getBabies().pop(neu);
             }
         });
 

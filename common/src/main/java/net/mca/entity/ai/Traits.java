@@ -75,7 +75,7 @@ public class Traits {
 
     public Traits(VillagerLike<?> entity) {
         this.entity = entity;
-        random = Random.create(entity.asEntity().world.random.nextLong());
+        random = Random.create(entity.asEntity().getWorld().random.nextLong());
     }
 
     public Set<Trait> getTraits() {

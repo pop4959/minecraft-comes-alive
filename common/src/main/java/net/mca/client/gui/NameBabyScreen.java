@@ -5,6 +5,7 @@ import net.mca.item.BabyItem;
 import net.mca.network.c2s.BabyNameRequest;
 import net.mca.network.c2s.BabyNamingVillagerMessage;
 import net.mca.util.compat.ButtonWidget;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -54,16 +55,16 @@ public class NameBabyScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack transform, int w, int h, float scale) {
-        renderBackground(transform);
+    public void render(DrawContext context, int w, int h, float scale) {
+        renderBackground(context);
 
         setFocused(babyNameTextField);
 
-        drawCenteredTextWithShadow(transform, this.textRenderer, this.title, this.width / 2, 70, 16777215);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 70, 16777215);
 
-        babyNameTextField.render(transform, width / 2 - 100, height / 2 - 20, scale);
+        babyNameTextField.render(context, width / 2 - 100, height / 2 - 20, scale);
 
-        super.render(transform, w, h, scale);
+        super.render(context, w, h, scale);
     }
 
     public void setBabyName(String name) {

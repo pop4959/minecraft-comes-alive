@@ -14,6 +14,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.server.world.ServerWorld;
@@ -56,8 +57,8 @@ public class FishingTask extends AbstractChoreTask {
             }
         }
 
-        LootTable loottable = world.getServer().getLootManager().getTable(LootTables.FISHING_GAMEPLAY);
-        LootContext.Builder lootcontext$builder = (new LootContext.Builder(world)).parameter(LootContextParameters.ORIGIN, villager.getPos()).parameter(LootContextParameters.TOOL, new ItemStack(Items.FISHING_ROD)).parameter(LootContextParameters.THIS_ENTITY, villager).random(this.villager.getRandom()).luck(0F);
+        LootTable loottable = world.getServer().getLootManager().getLootTable(LootTables.FISHING_GAMEPLAY);
+        LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder(world)).add(LootContextParameters.ORIGIN, villager.getPos()).add(LootContextParameters.TOOL, new ItemStack(Items.FISHING_ROD)).add(LootContextParameters.THIS_ENTITY, villager).luck(0F);
         this.list = loottable.generateLoot(lootcontext$builder.build(LootContextTypes.FISHING));
     }
 
@@ -74,9 +75,9 @@ public class FishingTask extends AbstractChoreTask {
         }
 
         if (targetWater == null) {
-            List<BlockPos> nearbyStaticLiquid = TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.world, blockState -> blockState.isOf(Blocks.WATER), 12, 3);
+            List<BlockPos> nearbyStaticLiquid = TaskUtils.getNearbyBlocks(villager.getBlockPos(), villager.getWorld(), blockState -> blockState.isOf(Blocks.WATER), 12, 3);
             targetWater = nearbyStaticLiquid.stream()
-                    .filter((p) -> villager.world.getBlockState(p).getBlock() == Blocks.WATER)
+                    .filter((p) -> villager.getWorld().getBlockState(p).getBlock() == Blocks.WATER)
                     .min(Comparator.comparingDouble(d -> villager.squaredDistanceTo(d.getX(), d.getY(), d.getZ()))).orElse(null);
 
             if (targetWater == null) {
@@ -93,8 +94,8 @@ public class FishingTask extends AbstractChoreTask {
 
             ticks++;
 
-            if (ticks >= villager.world.random.nextInt(200) + 200) {
-                if (villager.world.random.nextFloat() >= 0.35F) {
+            if (ticks >= villager.getWorld().random.nextInt(200) + 200) {
+                if (villager.getWorld().random.nextFloat() >= 0.35F) {
                     ItemStack stack = list.get(villager.getRandom().nextInt(list.size())).copy();
 
                     villager.swingHand(villager.getDominantHand());

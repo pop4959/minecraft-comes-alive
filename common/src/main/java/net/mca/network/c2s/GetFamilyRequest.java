@@ -29,7 +29,7 @@ public class GetFamilyRequest implements Message {
                         playerData.getFamilyEntry().getAllRelatives(4),
                         playerData.getPartnerUUID().stream()
                 ).distinct()
-                .map(player.getWorld()::getEntity)
+                .map(player.getServerWorld()::getEntity)
                 .filter(e -> e instanceof VillagerLike<?>)
                 .limit(100)
                 .forEach(e -> {

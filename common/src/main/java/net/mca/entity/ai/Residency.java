@@ -48,7 +48,7 @@ public class Residency {
     }
 
     public void setWorkplace(ServerPlayerEntity player) {
-        PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
+        PointOfInterestStorage pointOfInterestStorage = ((ServerWorld) player.getWorld()).getPointOfInterestStorage();
         pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.acquirableWorkstation(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
                     pointOfInterestStorage.getType(blockPos).ifPresent((pointOfInterestType) -> {
                         pointOfInterestStorage.getPosition(VillagerProfession.NONE.acquirableWorkstation(), (registryEntry, blockPos2) -> {
@@ -79,7 +79,7 @@ public class Residency {
                             for (int l = 1; l < level; l++) {
                                 entity.customLevelUp();
                             }
-                            entity.reinitializeBrain(player.getWorld());
+                            entity.reinitializeBrain((ServerWorld) player.getWorld());
                         });
 
                         // Success
@@ -92,7 +92,7 @@ public class Residency {
     }
 
     public Optional<Village> getHomeVillage() {
-        VillageManager manager = VillageManager.get((ServerWorld) entity.world);
+        VillageManager manager = VillageManager.get((ServerWorld) entity.getWorld());
         return manager.getOrEmpty(entity.getTrackedValue(VILLAGE));
     }
 
@@ -101,7 +101,7 @@ public class Residency {
      */
     public void seekHome() {
         if (entity.requiresHome()) {
-            VillageManager manager = VillageManager.get((ServerWorld) entity.world);
+            VillageManager manager = VillageManager.get((ServerWorld) entity.getWorld());
             manager.findNearestVillage(entity).ifPresent(v -> {
                 leaveHome();
                 v.updateResident(entity);
@@ -142,7 +142,7 @@ public class Residency {
                 }
 
                 //fetch hearts
-                entity.world.getPlayers().forEach(player -> {
+                entity.getWorld().getPlayers().forEach(player -> {
                     int rep = village.popHearts(player);
                     if (rep != 0) {
                         entity.getVillagerBrain().getMemoriesForPlayer(player).modHearts(rep);
@@ -150,7 +150,7 @@ public class Residency {
                 });
 
                 //update the reputation
-                entity.world.getPlayers().forEach(player -> {
+                entity.getWorld().getPlayers().forEach(player -> {
                     //currently, only hearts are considered, maybe additional factors can affect that too
                     int hearts = entity.getVillagerBrain().getMemoriesForPlayer(player).getHearts();
                     village.setReputation(player, entity, hearts);
@@ -161,10 +161,10 @@ public class Residency {
 
     //report potential buildings within this villagers reach
     private void reportBuildings() {
-        VillageManager manager = VillageManager.get((ServerWorld) entity.world);
+        VillageManager manager = VillageManager.get((ServerWorld) entity.getWorld());
 
         //fetch all near POIs
-        Stream<BlockPos> stream = ((ServerWorld) entity.world).getPointOfInterestStorage().getPositions(
+        Stream<BlockPos> stream = ((ServerWorld) entity.getWorld()).getPointOfInterestStorage().getPositions(
                 (type) -> true,
                 (p) -> !manager.cache.contains(p),
                 entity.getBlockPos(),
@@ -175,7 +175,7 @@ public class Residency {
         stream.forEach(manager::reportBuilding);
 
         // also add tombstones
-        GraveyardManager.get((ServerWorld) entity.world).reportToVillageManager(entity);
+        GraveyardManager.get((ServerWorld) entity.getWorld()).reportToVillageManager(entity);
     }
 
     public void setHome(ServerPlayerEntity player) {
@@ -185,13 +185,13 @@ public class Residency {
         }
 
         // also trigger a building refresh, because why not
-        VillageManager manager = VillageManager.get((ServerWorld) player.world);
+        VillageManager manager = VillageManager.get((ServerWorld) player.getWorld());
         manager.processBuilding(player.getBlockPos(), true, false);
 
         seekHome();
 
         //check if a bed can be found
-        PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
+        PointOfInterestStorage pointOfInterestStorage = ((ServerWorld) player.getWorld()).getPointOfInterestStorage();
         Optional<BlockPos> position = pointOfInterestStorage.getPositions(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), (p) -> true, player.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
         if (position.isPresent()) {
             entity.sendChatMessage(player, "interaction.sethome.success");
@@ -204,7 +204,7 @@ public class Residency {
 
             // Remember the new one
             pointOfInterestStorage.getPosition(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), (p, q) -> true, position.get(), 1);
-            entity.getBrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.world.getRegistryKey(), position.get()));
+            entity.getBrain().remember(MemoryModuleType.HOME, GlobalPos.create(entity.getWorld().getRegistryKey(), position.get()));
             entity.getBrain().remember(MemoryModuleTypeMCA.FORCED_HOME.get(), true);
 
             seekHome();
@@ -226,7 +226,7 @@ public class Residency {
     public void goHome(PlayerEntity player) {
         entity.getVillagerBrain().setMoveState(MoveState.MOVE, player);
         entity.getInteractions().stopInteracting();
-        getHome().filter(p -> p.getDimension() == entity.world.getRegistryKey()).ifPresentOrElse(home -> {
+        getHome().filter(p -> p.getDimension() == entity.getWorld().getRegistryKey()).ifPresentOrElse(home -> {
             entity.moveTowards(home.getPos());
             entity.sendChatMessage(player, "interaction.gohome.success");
         }, () -> entity.sendChatMessage(player, "interaction.gohome.fail.nohome"));

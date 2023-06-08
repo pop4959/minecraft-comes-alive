@@ -68,7 +68,7 @@ public class GPT3 {
             String villagerName = villager.getName().getString();
 
             // forgot about last conversation if it's too long ago
-            long time = villager.world.getTime();
+            long time = villager.getWorld().getTime();
             if (time > lastInteractions.getOrDefault(villager.getUuid(), 0L) + MAX_MEMORY_TIME) {
                 memory.remove(villager.getUuid());
             }
@@ -156,7 +156,7 @@ public class GPT3 {
 
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
         return villager.distanceTo(player) < CONVERSATION_DISTANCE
-                && villager.world.getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME
+                && villager.getWorld().getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME
                 && lastInteraction.getOrDefault(player.getUuid(), NIL_UUID).equals(villager.getUuid());
     }
 }

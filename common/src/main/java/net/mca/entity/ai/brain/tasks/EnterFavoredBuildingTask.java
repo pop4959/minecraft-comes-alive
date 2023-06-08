@@ -35,7 +35,7 @@ public class EnterFavoredBuildingTask extends EnterBuildingTask {
                     villager.getVillagerBrain().modifyMoodValue(1);
                 }
             } else {
-                return getRandomPositionIn(b.get(), villager.world);
+                return getRandomPositionIn(b.get(), villager.getWorld());
             }
         }
         return Optional.empty();

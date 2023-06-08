@@ -26,7 +26,7 @@ public class GrimReaperTargetGoal extends Goal {
             this.nextScanTick--;
         } else {
             this.nextScanTick = 20;
-            List<PlayerEntity> list = mob.world.getPlayers(this.attackTargeting, mob, mob.getBoundingBox().expand(48.0D, 64.0D, 48.0D));
+            List<PlayerEntity> list = mob.getWorld().getPlayers(this.attackTargeting, mob, mob.getBoundingBox().expand(48.0D, 64.0D, 48.0D));
             if (!list.isEmpty()) {
                 list.sort(Comparator.comparing(Entity::getY).reversed());
 

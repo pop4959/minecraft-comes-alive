@@ -27,6 +27,7 @@ import net.mca.resources.data.skin.SkinListEntry;
 import net.mca.util.compat.ButtonWidget;
 import net.mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -212,7 +213,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        final MatrixStack matrices = context.getMatrices();
         hoveredContent = null;
 
         villagerVisualization.setBreedingAge(0);
@@ -234,11 +236,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                             if (Math.abs(cx - mouseX) <= 15 && Math.abs(cy - mouseY - 25) <= 24) {
                                 hoveredContent = c;
-                                renderTooltip(matrices, getMetaDataText(c), mouseX, mouseY);
+                                context.drawTooltip(textRenderer, getMetaDataText(c), mouseX, mouseY);
                             }
 
                             villagerVisualization.getGenetics().setGender(SkinCache.getMeta(c).map(SkinMeta::getGender).orElse(Gender.MALE).binary());
-                            InventoryScreen.drawEntity(matrices, cx, cy, hoveredContent == c ? 30 : 28, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
+                            InventoryScreen.drawEntity(context, cx, cy, hoveredContent == c ? 30 : 28, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
                             i++;
                         } else {
                             break;
@@ -247,20 +249,20 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 if (!authenticated && (subscriptionFilter == SubscriptionFilter.LIKED || subscriptionFilter == SubscriptionFilter.SUBMISSIONS)) {
-                    drawTextBox(matrices, Text.translatable("gui.skin_library.like_locked"));
+                    drawTextBox(context, Text.translatable("gui.skin_library.like_locked"));
                 }
             }
             case EDITOR_LOCKED -> {
-                drawTextBox(matrices, Text.translatable("gui.skin_library.locked"));
+                drawTextBox(context, Text.translatable("gui.skin_library.locked"));
             }
             case EDITOR_PREPARE -> {
-                drawTextBox(matrices, Text.translatable("gui.skin_library.drop"));
+                drawTextBox(context, Text.translatable("gui.skin_library.drop"));
             }
             case EDITOR_TYPE -> {
-                drawTextBox(matrices, Text.translatable("gui.skin_library.prepare"));
+                drawTextBox(context, Text.translatable("gui.skin_library.prepare"));
             }
             case DELETE -> {
-                drawTextBox(matrices, Text.translatable("gui.skin_library.delete_confirm"));
+                drawTextBox(context, Text.translatable("gui.skin_library.delete_confirm"));
             }
             case EDITOR -> {
                 if (workspace.isDirty()) {
@@ -302,7 +304,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 WidgetUtils.drawTexturedQuad(matrices.peek().getPositionMatrix(), vx0 * 64, vx1 * 64, vy0 * 64, vy1 * 64, 0, uvx0, uvx1, uvy0, uvy1);
 
                 //border
-                WidgetUtils.drawRectangle(matrices, -1, -1, tw + 1, th + 1, 0xaaffffff);
+                WidgetUtils.drawRectangle(context, -1, -1, tw + 1, th + 1, 0xaaffffff);
 
                 matrices.pop();
 
@@ -314,7 +316,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     if (part != null) {
                         Text text = part.getTranslation();
                         int textWidth = textRenderer.getWidth(text);
-                        renderTooltip(matrices, text, width / 2 - textWidth / 2 - 12, height / 2 - 68);
+                        context.drawTooltip(textRenderer, text, width / 2 - textWidth / 2 - 12, height / 2 - 68);
                     }
                 }
 
@@ -334,7 +336,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 WidgetUtils.drawBackgroundEntity(cx, cy, 50, -(mouseX - cx) / 2.0f, -(mouseY - cy + 32) / 2.0f, villagerVisualization);
 
                 if (workspace.skinType == SkinType.HAIR) {
-                    drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("gui.skin_library.hair_color"), width / 2 - 150, height / 2 - 40, 0xAAFFFFFF);
+                    context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.skin_library.hair_color"), width / 2 - 150, height / 2 - 40, 0xAAFFFFFF);
                 }
             }
             case LOGIN -> {
@@ -378,11 +380,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 // auth hint
                 if (isBrowserOpen) {
-                    drawTextBox(matrices, Text.translatable("gui.skin_library.authenticating_browser"));
+                    drawTextBox(context, Text.translatable("gui.skin_library.authenticating_browser"));
                 } else if (error != null) {
-                    drawTextBox(matrices, Text.translatable("gui.skin_library.authenticating"));
+                    drawTextBox(context, Text.translatable("gui.skin_library.authenticating"));
                 } else {
-                    drawTextBox(matrices, Text.translatable("gui.skin_library.authenticating").append(Text.literal(" " + ".".repeat((int) (System.currentTimeMillis() / 500 % 4)))));
+                    drawTextBox(context, Text.translatable("gui.skin_library.authenticating").append(Text.literal(" " + ".".repeat((int) (System.currentTimeMillis() / 500 % 4)))));
                 }
             }
             case DETAIL -> {
@@ -393,21 +395,21 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 int cy = height / 2 + 50;
 
                 villagerVisualization.getGenetics().setGender(SkinCache.getMeta(focusedContent).map(SkinMeta::getGender).orElse(Gender.MALE).binary());
-                InventoryScreen.drawEntity(matrices, cx, cy, 60, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
+                InventoryScreen.drawEntity(context, cx, cy, 60, -(mouseX - cx) / 2.0f, -(mouseY - cy) / 2.0f, villagerVisualization);
 
                 //metadata
-                renderTooltip(matrices, getMetaDataText(focusedContent), width / 2 + 200, height / 2 - 50);
+                context.drawTooltip(textRenderer, getMetaDataText(focusedContent), width / 2 + 200, height / 2 - 50);
             }
             case LOADING -> {
-                drawTextWithShadow(matrices, textRenderer, Text.translatable("gui.loading"), width / 2, height / 2, 0xFFFFFFFF);
+                context.drawTextWithShadow(textRenderer, Text.translatable("gui.loading"), width / 2, height / 2, 0xFFFFFFFF);
             }
         }
 
         if (error != null) {
-            drawCenteredTextWithShadow(matrices, textRenderer, error, width / 2, height / 2, 0xFFFF0000);
+            context.drawCenteredTextWithShadow(textRenderer, error, width / 2, height / 2, 0xFFFF0000);
         }
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     private void setDummyTexture(LiteContent content) {
@@ -652,12 +654,12 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    private void drawTextBox(MatrixStack matrices, Text text) {
+    private void drawTextBox(DrawContext context, Text text) {
         List<Text> wrap = FlowingText.wrap(text, 220);
         int y = height / 2 - 20 - wrap.size() * 12;
-        fill(matrices, width / 2 - 115, y - 5, width / 2 + 115, y + 12 * wrap.size(), 0x50000000);
+        context.fill(width / 2 - 115, y - 5, width / 2 + 115, y + 12 * wrap.size(), 0x50000000);
         for (Text t : wrap) {
-            drawCenteredTextWithShadow(matrices, textRenderer, t, width / 2, y, 0xFFFFFFFF);
+            context.drawCenteredTextWithShadow(textRenderer, t, width / 2, y, 0xFFFFFFFF);
             y += 12;
         }
     }

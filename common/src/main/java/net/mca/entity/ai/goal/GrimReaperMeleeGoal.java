@@ -71,7 +71,7 @@ public class GrimReaperMeleeGoal extends Goal {
 
                 reaper.requestTeleport(player.getX() - (dX * 2), player.getY() + 2, reaper.getZ() - (dZ * 2));
 
-                if (!reaper.world.isClient && reaper.getRandom().nextFloat() >= 0.20F) {
+                if (!reaper.getWorld().isClient && reaper.getRandom().nextFloat() >= 0.20F) {
                     int currentItem = player.getInventory().selectedSlot;
                     int randomItem = reaper.getRandom().nextInt(9);
                     ItemStack currentItemStack = player.getInventory().getStack(currentItem);
@@ -133,7 +133,7 @@ public class GrimReaperMeleeGoal extends Goal {
                 reaper.swingHand(Hand.MAIN_HAND);
                 attackDuration = 0;
 
-                entityToAttack.damage(reaper.world.getDamageSources().mobAttack(reaper), (float)reaper.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
+                entityToAttack.damage(reaper.getWorld().getDamageSources().mobAttack(reaper), (float)reaper.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE));
 
                 //apply wither effect
                 entityToAttack.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 200));

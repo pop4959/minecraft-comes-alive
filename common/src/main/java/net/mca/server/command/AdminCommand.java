@@ -315,7 +315,7 @@ public class AdminCommand {
     }
 
     private static void success(String message, CommandContext<ServerCommandSource> ctx, Object... events) {
-        ctx.getSource().sendFeedback(message(message, GREEN, events), true);
+        ctx.getSource().sendFeedback(() -> message(message, GREEN, events), true);
     }
 
     private static void fail(String message, CommandContext<ServerCommandSource> ctx, Object... events) {

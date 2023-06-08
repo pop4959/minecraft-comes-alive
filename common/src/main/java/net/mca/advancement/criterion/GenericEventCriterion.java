@@ -7,7 +7,7 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate.Extended;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -20,7 +20,7 @@ public class GenericEventCriterion extends AbstractCriterion<GenericEventCriteri
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
+    public Conditions conditionsFromJson(JsonObject json, LootContextPredicate player, AdvancementEntityPredicateDeserializer deserializer) {
         String event = json.has("event") ? json.get("event").getAsString() : "";
         return new Conditions(player, event);
     }
@@ -32,7 +32,7 @@ public class GenericEventCriterion extends AbstractCriterion<GenericEventCriteri
     public static class Conditions extends AbstractCriterionConditions {
         private final String event;
 
-        public Conditions(Extended player, String event) {
+        public Conditions(LootContextPredicate player, String event) {
             super(GenericEventCriterion.ID, player);
             this.event = event;
         }

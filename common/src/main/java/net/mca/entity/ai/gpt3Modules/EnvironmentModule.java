@@ -10,13 +10,13 @@ public class EnvironmentModule {
 
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
         if (Config.getInstance().villagerChatAIIntelligence >= 3) {
-            if (player.world.isRaining()) {
+            if (player.getWorld().isRaining()) {
                 input.add("It is raining. ");
             }
-            if (player.world.isThundering()) {
+            if (player.getWorld().isThundering()) {
                 input.add("It is thundering. ");
             }
-            if (player.world.isNight()) {
+            if (player.getWorld().isNight()) {
                 input.add("It is night. ");
             }
         }

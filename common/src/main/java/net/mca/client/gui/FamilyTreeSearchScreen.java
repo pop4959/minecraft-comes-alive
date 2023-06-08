@@ -4,6 +4,7 @@ import net.mca.MCA;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.c2s.FamilyTreeUUIDLookup;
 import net.mca.util.compat.ButtonWidget;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -63,23 +64,23 @@ public class FamilyTreeSearchScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         assert client != null;
         this.mouseX = (int)(client.mouse.getX() * width / client.getWindow().getFramebufferWidth());
         this.mouseY = (int)(client.mouse.getY() * height / client.getWindow().getFramebufferHeight());
 
-        fill(matrices, width / 2 - DATA_WIDTH / 2 - 10, height / 2 - 110, width / 2 + DATA_WIDTH / 2 + 10, height / 2 + 110, 0x66000000);
+        context.fill(width / 2 - DATA_WIDTH / 2 - 10, height / 2 - 110, width / 2 + DATA_WIDTH / 2 + 10, height / 2 + 110, 0x66000000);
 
-        renderBackground(matrices);
+        renderBackground(context);
 
-        renderVillagers(matrices);
+        renderVillagers(context);
 
-        drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("gui.title.family_tree"), width / 2, height / 2 - 100, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.title.family_tree"), width / 2, height / 2 - 100, 16777215);
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
-    private void renderVillagers(MatrixStack transform) {
+    private void renderVillagers(DrawContext context) {
         int maxPages = (int)Math.ceil(list.size() / 9.0);
         buttonPage.setMessage(Text.literal((pageNumber + 1) + "/" + maxPages));
 
@@ -102,7 +103,7 @@ public class FamilyTreeSearchScreen extends Screen {
                     text = Text.translatable("gui.family_tree.child_of_2", entry.father, entry.mother);
                 }
 
-                drawCenteredTextWithShadow(transform, textRenderer, text, width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
+                context.drawCenteredTextWithShadow(textRenderer, text, width / 2, y, hover ? 0xFFD7D784 : 0xFFFFFFFF);
                 if (hover) {
                     selectedVillager = entry.uuid;
                 }

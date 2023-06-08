@@ -63,22 +63,22 @@ public class GrimReaperRestGoal extends Goal {
 
         reaper.setVelocity(Vec3d.ZERO);
 
-        if (!reaper.world.isClient && healingTime % (10 + healingCount * 5) == 0) {
+        if (!reaper.getWorld().isClient && healingTime % (10 + healingCount * 5) == 0) {
             reaper.setHealth(reaper.getHealth() + 1);
         }
 
-        if (!reaper.world.isClient && healingTime % 50 == 0) {
+        if (!reaper.getWorld().isClient && healingTime % 50 == 0) {
             // Let's have a light show.
             int dX = reaper.getRandom().nextInt(16) - 8;
             int dZ = reaper.getRandom().nextInt(16) - 8;
-            int y = TaskUtils.getSpawnSafeTopLevel(reaper.world, (int)reaper.getX() + dX, 256, (int)reaper.getZ() + dZ);
+            int y = TaskUtils.getSpawnSafeTopLevel(reaper.getWorld(), (int)reaper.getX() + dX, 256, (int)reaper.getZ() + dZ);
 
-            EntityType.LIGHTNING_BOLT.spawn((ServerWorld)reaper.world, BlockPos.ofFloored(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED);
+            EntityType.LIGHTNING_BOLT.spawn((ServerWorld)reaper.getWorld(), BlockPos.ofFloored(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED);
 
-            if (!reaper.world.isClient && healingTime % 100 == 0) {
+            if (!reaper.getWorld().isClient && healingTime % 100 == 0) {
                 // Also spawn a random enemy
                 EntityType<?> m = reaper.getRandom().nextFloat() < 0.5f ? EntityType.ZOMBIE : EntityType.SKELETON;
-                Entity e = m.spawn((ServerWorld)reaper.world, BlockPos.ofFloored(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED);
+                Entity e = m.spawn((ServerWorld)reaper.getWorld(), BlockPos.ofFloored(reaper.getX() + dX, y, reaper.getZ() + dZ), SpawnReason.TRIGGERED);
 
                 // Equip them
                 if (e != null) {

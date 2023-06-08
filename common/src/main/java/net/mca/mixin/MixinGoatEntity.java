@@ -28,15 +28,15 @@ public abstract class MixinGoatEntity extends AnimalEntity {
 
     @Inject(method = "getMilkingSound()Lnet/minecraft/sound/SoundEvent;", at = @At("HEAD"))
     protected void getMilkingSound(CallbackInfoReturnable<SoundEvent> cir) {
-        if (!this.world.isClient && this.world.isRaining()) {
-            long time = this.world.getTimeOfDay() % 24000;
+        if (!this.getWorld().isClient && this.getWorld().isRaining()) {
+            long time = this.getWorld().getTimeOfDay() % 24000;
             BlockPos pos = getBlockPos();
-            if (time > 16000 && time < 20000 && this.world.getBiome(pos).value().isCold(pos) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, world, pos, EntityType.WITHER_SKELETON)) {
-                WitherSkeletonEntity ancientCultist = EntityType.WITHER_SKELETON.create(world);
+            if (time > 16000 && time < 20000 && this.getWorld().getBiome(pos).value().isCold(pos) && SpawnHelper.canSpawn(SpawnRestriction.Location.ON_GROUND, getWorld(), pos, EntityType.WITHER_SKELETON)) {
+                WitherSkeletonEntity ancientCultist = EntityType.WITHER_SKELETON.create(getWorld());
                 if (ancientCultist != null) {
                     //place the ancient boi
                     ancientCultist.setPosition(pos.getX(), pos.getY(), pos.getZ());
-                    WorldUtils.spawnEntity(world, ancientCultist, SpawnReason.EVENT);
+                    WorldUtils.spawnEntity(getWorld(), ancientCultist, SpawnReason.EVENT);
 
                     //drip
                     ancientCultist.equipStack(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
@@ -50,7 +50,7 @@ public abstract class MixinGoatEntity extends AnimalEntity {
                     ancientCultist.setCustomName(Text.translatable("entity.mca.ancient_cultist"));
 
                     //advancement
-                    ((ServerWorld)this.world).getPlayers().stream().filter(p -> p.distanceTo(this) < 30).forEach(p -> {
+                    ((ServerWorld)this.getWorld()).getPlayers().stream().filter(p -> p.distanceTo(this) < 30).forEach(p -> {
                         CriterionMCA.GENERIC_EVENT_CRITERION.trigger(p, "ancient_cultists");
                     });
 
@@ -58,12 +58,12 @@ public abstract class MixinGoatEntity extends AnimalEntity {
                     kill();
 
                     //extra spiciness
-                    world.setLightningTicksLeft(10);
-                    LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(world);
+                    getWorld().setLightningTicksLeft(10);
+                    LightningEntity bolt = EntityType.LIGHTNING_BOLT.create(getWorld());
                     if (bolt != null) {
                         bolt.setCosmetic(true);
                         bolt.updatePosition(pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F);
-                        world.spawnEntity(bolt);
+                        getWorld().spawnEntity(bolt);
                     }
                 }
             }

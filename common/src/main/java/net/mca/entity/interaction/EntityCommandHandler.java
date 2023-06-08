@@ -29,7 +29,7 @@ public abstract class EntityCommandHandler<T extends Entity & VillagerLike<?>> {
     }
 
     public void stopInteracting() {
-        if (!entity.world.isClient) {
+        if (!entity.getWorld().isClient) {
             if (interactingPlayer instanceof ServerPlayerEntity serverPlayer) {
                 serverPlayer.closeHandledScreen();
             }

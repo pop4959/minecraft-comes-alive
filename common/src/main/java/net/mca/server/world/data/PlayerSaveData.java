@@ -52,7 +52,7 @@ public class PlayerSaveData extends PersistentState implements EntityRelationshi
     private final List<NbtCompound> inbox = new LinkedList<>();
 
     public static PlayerSaveData get(ServerPlayerEntity player) {
-        return get(player.getWorld(), player.getUuid());
+        return get((ServerWorld) player.getWorld(), player.getUuid());
     }
 
     public static PlayerSaveData get(ServerWorld world, UUID uuid) {

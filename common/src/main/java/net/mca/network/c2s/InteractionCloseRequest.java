@@ -20,7 +20,7 @@ public class InteractionCloseRequest implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity v = player.getWorld().getEntity(villagerUUID);
+        Entity v = player.getServerWorld().getEntity(villagerUUID);
         if (v instanceof VillagerEntityMCA villager) {
             villager.getInteractions().stopInteracting();
         }

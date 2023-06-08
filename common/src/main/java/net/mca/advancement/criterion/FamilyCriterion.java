@@ -9,7 +9,7 @@ import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.NumberRange;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate.Extended;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -22,7 +22,7 @@ public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Condition
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
+    public Conditions conditionsFromJson(JsonObject json, LootContextPredicate player, AdvancementEntityPredicateDeserializer deserializer) {
         // quite limited, but I do not assume any more use cases
         NumberRange.IntRange c = NumberRange.IntRange.fromJson(json.get("children"));
         NumberRange.IntRange gc = NumberRange.IntRange.fromJson(json.get("grandchildren"));
@@ -30,7 +30,7 @@ public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Condition
     }
 
     public void trigger(ServerPlayerEntity player) {
-        FamilyTreeNode familyTree = FamilyTree.get(player.getWorld()).getOrCreate(player);
+        FamilyTreeNode familyTree = FamilyTree.get(player.getServerWorld()).getOrCreate(player);
         long c = familyTree.getRelatives(0, 1).count();
         long gc = familyTree.getRelatives(0, 2).count() - c;
 
@@ -41,7 +41,7 @@ public class FamilyCriterion extends AbstractCriterion<FamilyCriterion.Condition
         private final NumberRange.IntRange children;
         private final NumberRange.IntRange grandchildren;
 
-        public Conditions(Extended player, NumberRange.IntRange children, NumberRange.IntRange grandchildren) {
+        public Conditions(LootContextPredicate player, NumberRange.IntRange children, NumberRange.IntRange grandchildren) {
             super(FamilyCriterion.ID, player);
             this.children = children;
             this.grandchildren = grandchildren;

@@ -39,9 +39,9 @@ public class SpawnQueue {
         // lazy spawning of our villagers as they can't be spawned while loading
         VillagerEntity ve = villagerSpawnQueue.poll();
         if (ve != null) {
-            if (WorldUtils.isChunkLoaded(ve.world, ve.getBlockPos())) {
+            if (WorldUtils.isChunkLoaded(ve.getWorld(), ve.getBlockPos())) {
                 ve.discard();
-                VillagerEntityMCA villager = VillagerFactory.newVillager(ve.world)
+                VillagerEntityMCA villager = VillagerFactory.newVillager(ve.getWorld())
                         .withName(ve.hasCustomName() ? ve.getName().getString() : null)
                         .withGender(Gender.getRandom())
                         .withAge(ve.getBreedingAge())
@@ -58,9 +58,9 @@ public class SpawnQueue {
 
         ZombieVillagerEntity zve = zombieVillagerSpawnQueue.poll();
         if (zve != null) {
-            if (WorldUtils.isChunkLoaded(zve.world, zve.getBlockPos())) {
+            if (WorldUtils.isChunkLoaded(zve.getWorld(), zve.getBlockPos())) {
                 zve.discard();
-                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(zve.world)
+                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(zve.getWorld())
                         .withName(zve.hasCustomName() ? zve.getName().getString() : null)
                         .withGender(Gender.getRandom())
                         .withPosition(zve)
@@ -76,13 +76,13 @@ public class SpawnQueue {
 
         ZombieEntity ze = zombieSpawnList.poll();
         if (ze != null) {
-            if (WorldUtils.isChunkLoaded(ze.world, ze.getBlockPos())) {
+            if (WorldUtils.isChunkLoaded(ze.getWorld(), ze.getBlockPos())) {
                 ze.discard();
-                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(ze.world)
+                ZombieVillagerEntityMCA villager = ZombieVillagerFactory.newVillager(ze.getWorld())
                         .withName(ze.hasCustomName() ? ze.getName().getString() : null)
                         .withGender(Gender.getRandom())
                         .withPosition(ze)
-                        .withType(VillagerType.forBiome(ze.world.getBiome(ze.getBlockPos())))
+                        .withType(VillagerType.forBiome(ze.getWorld().getBiome(ze.getBlockPos())))
                         .withProfession(Registries.VILLAGER_PROFESSION.getRandom(ze.getRandom()).map(RegistryEntry::value).orElse(VillagerProfession.NONE))
                         .spawn(SpawnReason.NATURAL);
 

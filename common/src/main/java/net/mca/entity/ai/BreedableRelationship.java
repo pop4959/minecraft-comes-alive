@@ -69,7 +69,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         if (procreateTick > 0) {
             procreateTick--;
             entity.getNavigation().stop();
-            entity.world.sendEntityStatus(entity, Status.VILLAGER_HEARTS);
+            entity.getWorld().sendEntityStatus(entity, Status.VILLAGER_HEARTS);
         } else {
             getFamilyTree().getOrCreate(entity);
             getPartner().ifPresent(spouse -> {
@@ -174,7 +174,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
             //take the gift
             getGiftSaturation().add(stack);
-            entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_POS_INTERACTION);
+            entity.getWorld().sendEntityStatus(entity, Status.MCA_VILLAGER_POS_INTERACTION);
             entity.getInventory().addStack(stack.split(1));
         }
 
@@ -185,7 +185,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
     }
 
     private void rejectGift(PlayerEntity player, String dialogue) {
-        entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_NEG_INTERACTION);
+        entity.getWorld().sendEntityStatus(entity, Status.MCA_VILLAGER_NEG_INTERACTION);
         entity.sendChatMessage(player, dialogue);
     }
 
@@ -201,7 +201,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
         if (item == Items.CAKE && !entity.isBaby()) {
             if (pregnancy.tryStartGestation()) {
-                player.world.sendEntityStatus(entity, Status.VILLAGER_HEARTS);
+                player.getWorld().sendEntityStatus(entity, Status.VILLAGER_HEARTS);
                 stack.decrement(1);
                 entity.sendChatMessage(player, "gift.cake.success");
             } else {
@@ -213,7 +213,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
         if (item == Items.GOLDEN_APPLE && entity.isInfected()) {
             entity.setInfected(false);
-            entity.eatFood(entity.world, stack);
+            entity.eatFood(entity.getWorld(), stack);
             stack.decrement(1);
             return true;
         }

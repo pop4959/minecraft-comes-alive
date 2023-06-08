@@ -3,6 +3,7 @@ package net.mca.client.gui.widget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -28,17 +29,15 @@ public abstract class ExtendedSliderWidget<T> extends SliderWidget {
     abstract T getValue();
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         int i = (this.isHovered() ? 2 : 1) * 20;
-        drawTexture(matrices, this.getX() + (int) (getOpticalValue() * (double) (this.width - 8)), this.getY(), 0, 46 + i, 4, 20);
-        drawTexture(matrices, this.getX() + (int) (getOpticalValue() * (double) (this.width - 8)) + 4, this.getY(), 196, 46 + i, 4, 20);
+        context.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) (getOpticalValue() * (double) (this.width - 8)), this.getY(), 0, 46 + i, 4, 20);
+        context.drawTexture(WIDGETS_TEXTURE, this.getX() + (int) (getOpticalValue() * (double) (this.width - 8)) + 4, this.getY(), 196, 46 + i, 4, 20);
 
-        super.renderButton(matrices, mouseX, mouseY, delta);
+        super.renderButton(context, mouseX, mouseY, delta);
 
         if (this.isHovered()) {
-            this.renderTooltip(matrices, mouseX, mouseY);
+            this.renderTooltip(context, mouseX, mouseY);
         }
     }
 
@@ -51,8 +50,8 @@ public abstract class ExtendedSliderWidget<T> extends SliderWidget {
         }
     }
 
-    public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
-        assert MinecraftClient.getInstance().currentScreen != null;
-        MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, FlowingText.wrap(tooltipSupplier.get(), 160), mouseX, mouseY);
+    public void renderTooltip(DrawContext context, int mouseX, int mouseY) {
+        assert MinecraftClient.getInstance() != null;
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, FlowingText.wrap(tooltipSupplier.get(), 160), mouseX, mouseY);
     }
 }

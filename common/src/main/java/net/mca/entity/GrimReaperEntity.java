@@ -103,7 +103,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
 
     @Override
     public void checkDespawn() {
-        if (world.getDifficulty() == Difficulty.PEACEFUL && isDisallowedInPeaceful()) {
+        if (getWorld().getDifficulty() == Difficulty.PEACEFUL && isDisallowedInPeaceful()) {
             discard();
         }
     }
@@ -171,7 +171,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         Entity attacker = source.getSource();
 
         // Ignore damage when blocking, and teleport behind the attacker when attacked
-        if (!world.isClient && this.getAttackState() == ReaperAttackState.BLOCK && attacker != null) {
+        if (!getWorld().isClient && this.getAttackState() == ReaperAttackState.BLOCK && attacker != null) {
 
             double deltaX = this.getX() - attacker.getX();
             double deltaZ = this.getZ() - attacker.getZ();
@@ -182,7 +182,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         }
 
         // Randomly portal behind the player who just attacked.
-        if (!world.isClient && random.nextFloat() >= 0.30F && attacker != null) {
+        if (!getWorld().isClient && random.nextFloat() >= 0.30F && attacker != null) {
             double deltaX = this.getX() - attacker.getX();
             double deltaZ = this.getZ() - attacker.getZ();
 
@@ -246,7 +246,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         }
 
         // look at the player. Always.
-        PlayerEntity player = world.getClosestPlayer(this, 10.D);
+        PlayerEntity player = getWorld().getClosestPlayer(this, 10.D);
         if (player != null) {
             getLookControl().lookAt(player.getX(), player.getEyeY(), player.getZ());
         }
@@ -265,7 +265,7 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
 
     @Override
     public void requestTeleport(double x, double y, double z) {
-        if (world instanceof ServerWorld) {
+        if (getWorld() instanceof ServerWorld) {
             playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1, 1);
             super.requestTeleport(x, y, z);
             playSound(SoundEvents.ENTITY_ENDERMAN_TELEPORT, 1, 1);

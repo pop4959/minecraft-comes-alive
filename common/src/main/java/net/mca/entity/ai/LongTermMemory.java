@@ -43,7 +43,7 @@ public class LongTermMemory {
     }
 
     public void remember(String id, long time) {
-        long currentTime = entity.world.getTime();
+        long currentTime = entity.getWorld().getTime();
         if (memories.containsKey(id)) {
             currentTime = Math.max(currentTime, memories.get(id));
         }
@@ -52,10 +52,10 @@ public class LongTermMemory {
 
     public long getMemory(String id) {
         if (memories.containsKey(id)) {
-            if (entity.world.getTime() > memories.get(id)) {
+            if (entity.getWorld().getTime() > memories.get(id)) {
                 memories.remove(id);
             } else {
-                return memories.get(id) - entity.world.getTime();
+                return memories.get(id) - entity.getWorld().getTime();
             }
         }
         return 0;

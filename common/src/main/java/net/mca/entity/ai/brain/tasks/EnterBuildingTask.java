@@ -65,7 +65,7 @@ public class EnterBuildingTask extends MultiTickTask<VillagerEntityMCA> {
     protected Optional<BlockPos> getNextPosition(VillagerEntityMCA villager) {
         Optional<Building> b = getNearestBuilding(villager);
         if (b.isPresent() && !b.get().containsPos(villager.getBlockPos())) {
-            return getRandomPositionIn(b.get(), villager.world);
+            return getRandomPositionIn(b.get(), villager.getWorld());
         }
         return Optional.empty();
     }

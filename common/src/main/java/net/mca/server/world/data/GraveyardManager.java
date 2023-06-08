@@ -154,8 +154,8 @@ public class GraveyardManager extends PersistentState {
     }
 
     public void reportToVillageManager(Entity entity) {
-        VillageManager manager = VillageManager.get((ServerWorld)entity.world);
-        GraveyardManager.get((ServerWorld)entity.world)
+        VillageManager manager = VillageManager.get((ServerWorld)entity.getWorld());
+        GraveyardManager.get((ServerWorld)entity.getWorld())
                 .findAll(entity.getBoundingBox().expand(24D), true, true)
                 .stream()
                 .filter(p -> !manager.cache.contains(p))

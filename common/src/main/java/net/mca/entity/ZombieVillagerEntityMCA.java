@@ -179,7 +179,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
 
     @Override
     protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {
-        child.initialize((ServerWorldAccess) world, world.getLocalDifficulty(child.getBlockPos()), SpawnReason.SPAWN_EGG, null, null);
+        child.initialize((ServerWorldAccess) getWorld(), getWorld().getLocalDifficulty(child.getBlockPos()), SpawnReason.SPAWN_EGG, null, null);
     }
 
     @Override
@@ -219,7 +219,7 @@ public class ZombieVillagerEntityMCA extends ZombieVillagerEntity implements Vil
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
 
-        if (world.isClient) {
+        if (getWorld().isClient) {
             return;
         }
 

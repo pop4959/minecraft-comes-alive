@@ -77,7 +77,7 @@ public final class MCAForgeClient {
 
     @SubscribeEvent
     public static void onParticleFactoryRegistration(RegisterParticleProvidersEvent event) {
-        event.register(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
-        event.register(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);
+        event.registerSpriteSet(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
+        event.registerSpriteSet(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);
     }
 }

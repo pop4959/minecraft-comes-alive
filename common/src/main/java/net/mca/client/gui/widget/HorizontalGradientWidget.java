@@ -1,7 +1,7 @@
 package net.mca.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import org.joml.Matrix4f;
@@ -20,7 +20,7 @@ public class HorizontalGradientWidget extends HorizontalColorPickerWidget {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -32,6 +32,7 @@ public class HorizontalGradientWidget extends HorizontalColorPickerWidget {
         float[] endColor = endColorSupplier.get();
 
         float z = 0.0f;
+        final MatrixStack matrices = context.getMatrices();
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         builder.vertex(matrix, (float)getX() + width, (float)getY(), z).color(endColor[0], endColor[1], endColor[2], endColor[3]).next();
         builder.vertex(matrix, (float)getX(), (float)getY(), z).color(startColor[0], startColor[1], startColor[2], startColor[3]).next();
@@ -42,9 +43,8 @@ public class HorizontalGradientWidget extends HorizontalColorPickerWidget {
 
         RenderSystem.disableBlend();
 
-        WidgetUtils.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
+        WidgetUtils.drawRectangle(context, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
 
-        RenderSystem.setShaderTexture(0, MCA_GUI_ICONS_TEXTURE);
-        DrawableHelper.drawTexture(matrices, (int)(getX() + valueX * width) - 8, (int)(getY() + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
+        context.drawTexture(MCA_GUI_ICONS_TEXTURE, (int)(getX() + valueX * width) - 8, (int)(getY() + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
     }
 }

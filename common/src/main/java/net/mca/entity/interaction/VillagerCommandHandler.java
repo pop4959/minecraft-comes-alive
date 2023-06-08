@@ -86,7 +86,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                 if (entity.hasVehicle()) {
                     entity.stopRiding();
                 } else {
-                    entity.world.getOtherEntities(player, player.getBoundingBox()
+                    entity.getWorld().getOtherEntities(player, player.getBoundingBox()
                                     .expand(10), e -> e instanceof Saddleable && ((Saddleable)e).isSaddled())
                             .stream()
                             .filter(horse -> !horse.hasPassengers())
@@ -126,9 +126,9 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "adopt" -> {
                 entity.sendChatMessage(player, "interaction.adopt.success");
-                FamilyTreeNode parentNode = FamilyTree.get(player.getWorld()).getOrCreate(player);
+                FamilyTreeNode parentNode = FamilyTree.get((ServerWorld) player.getWorld()).getOrCreate(player);
                 entity.getRelationships().getFamilyEntry().assignParent(parentNode);
-                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get(player.getWorld()).getOrEmpty(parentNode.partner());
+                Optional<FamilyTreeNode> parentSpouse = FamilyTree.get((ServerWorld) player.getWorld()).getOrEmpty(parentNode.partner());
                 parentSpouse.ifPresent(p -> entity.getRelationships().getFamilyEntry().assignParent(p));
             }
             case "procreate" -> {
@@ -222,7 +222,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             }
             case "apologize" -> {
                 Vec3d pos = entity.getPos();
-                entity.world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
+                entity.getWorld().getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
                     if (entity.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
                         v.pardonPlayers(99);
                     }
@@ -236,7 +236,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     }
 
                     //slightly randomly the search center
-                    ServerWorld world = (ServerWorld)entity.world;
+                    ServerWorld world = (ServerWorld)entity.getWorld();
                     String finalArg = arg;
                     MCA.executorService.execute(() -> {
                         Identifier identifier = new Identifier(finalArg);
@@ -253,7 +253,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     entity.sendChatMessage(player, "dialogue.location.forgot");
                 }
             }
-            case "slap" -> player.damage(player.world.getDamageSources().cramming(), 1.0f);
+            case "slap" -> player.damage(player.getWorld().getDamageSources().cramming(), 1.0f);
         }
 
         return super.handle(player, command);

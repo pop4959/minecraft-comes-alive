@@ -94,7 +94,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
     }
 
     public Optional<PlayerEntity> getJobAssigner() {
-        return entity.getTrackedValue(CHORE_ASSIGNING_PLAYER).map(id -> entity.world.getPlayerByUuid(id));
+        return entity.getTrackedValue(CHORE_ASSIGNING_PLAYER).map(id -> entity.getWorld().getPlayerByUuid(id));
     }
 
     /**
@@ -123,7 +123,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
 
     public void randomize() {
         entity.setTrackedValue(PERSONALITY, Personality.getRandom());
-        entity.setTrackedValue(MOOD, entity.world.random.nextInt(MoodGroup.maxLevel - MoodGroup.normalMinLevel + 1) + MoodGroup.normalMinLevel);
+        entity.setTrackedValue(MOOD, entity.getWorld().random.nextInt(MoodGroup.maxLevel - MoodGroup.normalMinLevel + 1) + MoodGroup.normalMinLevel);
     }
 
     public void setPersonality(Personality p) {
@@ -153,7 +153,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
         NbtCompound compoundTag = nbt.getCompound(player.getUuid().toString());
         Memories returnMemories = Memories.fromCNBT(entity, compoundTag);
         if (returnMemories == null) {
-            returnMemories = new Memories(this, player.world.getTimeOfDay(), player.getUuid());
+            returnMemories = new Memories(this, player.getWorld().getTimeOfDay(), player.getUuid());
             nbt.put(player.getUuid().toString(), returnMemories.toCNBT());
             entity.setTrackedValue(MEMORIES, nbt);
         }
@@ -222,15 +222,15 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
     }
 
     public void justGrieved() {
-        entity.getBrain().remember(LAST_GRIEVE.get(), entity.world.getTime());
+        entity.getBrain().remember(LAST_GRIEVE.get(), entity.getWorld().getTime());
     }
 
     public boolean shouldGrieve() {
         Optional<Long> memory = entity.getBrain().getOptionalMemory(LAST_GRIEVE.get());
         if (memory.isPresent()) {
-            return entity.world.getTime() - memory.get() > GRIEVE_COOLDOWN;
+            return entity.getWorld().getTime() - memory.get() > GRIEVE_COOLDOWN;
         } else {
-            entity.getBrain().remember(LAST_GRIEVE.get(), entity.world.getTime() - random.nextLong(GRIEVE_COOLDOWN));
+            entity.getBrain().remember(LAST_GRIEVE.get(), entity.getWorld().getTime() - random.nextLong(GRIEVE_COOLDOWN));
             return false;
         }
     }
@@ -259,9 +259,9 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
 
         //spawn particles
         if (hearts > 0) {
-            entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_POS_INTERACTION);
+            entity.getWorld().sendEntityStatus(entity, Status.MCA_VILLAGER_POS_INTERACTION);
         } else {
-            entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_NEG_INTERACTION);
+            entity.getWorld().sendEntityStatus(entity, Status.MCA_VILLAGER_NEG_INTERACTION);
 
             //sensitive people doubles the loss
             if (entity.getVillagerBrain().getPersonality() == Personality.SENSITIVE) {

@@ -7,6 +7,7 @@ import net.mca.network.c2s.CallToPlayerMessage;
 import net.mca.network.c2s.GetFamilyRequest;
 import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -88,32 +89,32 @@ public class WhistleScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack transform, int sizeX, int sizeY, float offset) {
-        renderBackground(transform);
+    public void render(DrawContext context, int sizeX, int sizeY, float offset) {
+        renderBackground(context);
 
-        drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.whistle.title"), width / 2, height / 2 - 100, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.whistle.title"), width / 2, height / 2 - 100, 0xffffff);
 
         if (loadingAnimationTicks != -1) {
             String loadingMsg = new String(new char[(loadingAnimationTicks / 5) % 4]).replace("\0", ".");
-            drawTextWithShadow(transform, textRenderer, Text.translatable("gui.loading").append(Text.literal(loadingMsg)), width / 2 - 20, height / 2 - 10, 0xffffff);
+            context.drawTextWithShadow(textRenderer, Text.translatable("gui.loading").append(Text.literal(loadingMsg)), width / 2 - 20, height / 2 - 10, 0xffffff);
         } else {
             if (keys.size() == 0) {
-                drawCenteredTextWithShadow(transform, textRenderer, Text.translatable("gui.whistle.noFamily"), width / 2, height / 2 + 50, 0xffffff);
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.whistle.noFamily"), width / 2, height / 2 + 50, 0xffffff);
             } else {
-                drawCenteredTextWithShadow(transform, textRenderer, (selectedIndex + 1) + " / " + keys.size(), width / 2, height / 2 + 50, 0xffffff);
+                context.drawCenteredTextWithShadow(textRenderer, (selectedIndex + 1) + " / " + keys.size(), width / 2, height / 2 + 50, 0xffffff);
             }
         }
 
-        drawDummy(transform);
+        drawDummy(context);
 
-        super.render(transform, sizeX, sizeY, offset);
+        super.render(context, sizeX, sizeY, offset);
     }
 
-    private void drawDummy(MatrixStack transform) {
+    private void drawDummy(DrawContext context) {
         final int posX = width / 2;
         int posY = height / 2 + 45;
         if (dummy != null) {
-            InventoryScreen.drawEntity(transform, posX, posY, 60, 0, 0, dummy);
+            InventoryScreen.drawEntity(context, posX, posY, 60, 0, 0, dummy);
         }
     }
 

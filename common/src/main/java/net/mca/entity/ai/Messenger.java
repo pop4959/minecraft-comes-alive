@@ -47,7 +47,7 @@ public interface Messenger extends EntityWrapper {
         String genderString = "";
 
         String targetName;
-        if (target.world instanceof ServerWorld world) {
+        if (target.getWorld() instanceof ServerWorld world) {
             //todo won't work on a few client side use cases
             targetName = FamilyTree.get(world)
                     .getOrEmpty(target.getUuid())
@@ -80,14 +80,14 @@ public interface Messenger extends EntityWrapper {
     }
 
     default void sendChatToAllAround(MutableText phrase) {
-        for (PlayerEntity player : asEntity().world.getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
+        for (PlayerEntity player : asEntity().getWorld().getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
             float dist = player.distanceTo(asEntity());
             sendChatMessage(phrase.formatted(dist < 10 ? Formatting.WHITE : Formatting.GRAY), player);
         }
     }
 
     default void sendChatToAllAround(String phrase, Object... params) {
-        for (PlayerEntity player : asEntity().world.getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
+        for (PlayerEntity player : asEntity().getWorld().getPlayers(CAN_RECEIVE, asEntity(), asEntity().getBoundingBox().expand(20))) {
             float dist = player.distanceTo(asEntity());
             sendChatMessage(getTranslatable(player, phrase, params).formatted(dist < 10 ? Formatting.WHITE : Formatting.GRAY), player);
         }
@@ -132,7 +132,7 @@ public interface Messenger extends EntityWrapper {
         if (!(this instanceof Entity)) {
             return; // Can't tell all
         }
-        sendEventMessage(((Entity)this).world, message);
+        sendEventMessage(((Entity)this).getWorld(), message);
     }
 
     static void sendEventMessage(World world, Text message) {

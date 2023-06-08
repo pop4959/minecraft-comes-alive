@@ -69,7 +69,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
     @Override
     public ServerWorld getWorld() {
-        return (ServerWorld)entity.world;
+        return (ServerWorld)entity.getWorld();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
         if (beRemembered || beLoved || !entity.isHostile()) {
             getFamilyEntry().setDeceased(true);
 
-            ServerWorld world = (ServerWorld)entity.world;
+            ServerWorld world = (ServerWorld)entity.getWorld();
 
             // look for a gravestone
             Optional<BlockPos> nearest = GraveyardManager.get(world).findNearest(entity.getBlockPos(), GraveyardManager.TombstoneState.EMPTY, 10);
@@ -127,8 +127,8 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
 
             // fill it and yeet the villager into depression
             nearest.ifPresentOrElse(pos -> {
-                if (entity.world.getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
-                    BlockEntity be = entity.world.getBlockEntity(pos);
+                if (entity.getWorld().getBlockState(pos).isIn(TagsMCA.Blocks.TOMBSTONES)) {
+                    BlockEntity be = entity.getWorld().getBlockEntity(pos);
                     if (be instanceof TombstoneBlock.Data) {
                         onTragedy(cause, pos);
                         ((TombstoneBlock.Data)be).setEntity(entity);
@@ -155,7 +155,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
         // The death of a villager negatively modifies the mood of nearby strangers
         if (!entity.isHostile()) {
             WorldUtils
-                    .getCloseEntities(entity.world, entity, 32, VillagerEntityMCA.class)
+                    .getCloseEntities(entity.getWorld(), entity, 32, VillagerEntityMCA.class)
                     .forEach(villager -> villager.getRelationships().onTragedy(cause, burialSite, RelationshipType.STRANGER, entity));
         }
 
@@ -166,7 +166,7 @@ public class Relationship<T extends MobEntity & VillagerLike<T>> implements Enti
     public void onTragedy(DamageSource cause, @Nullable BlockPos burialSite, RelationshipType type, Entity with) {
         if (!cause.isOf(DamageTypes.OUT_OF_WORLD)) {
             int moodAffect = 5 * type.getProximityAmplifier();
-            entity.world.sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
+            entity.getWorld().sendEntityStatus(entity, Status.MCA_VILLAGER_TRAGEDY);
             entity.getVillagerBrain().modifyMoodValue(-moodAffect);
 
             // seen murder

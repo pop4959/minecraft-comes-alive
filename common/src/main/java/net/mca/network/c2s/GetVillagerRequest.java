@@ -30,7 +30,7 @@ public class GetVillagerRequest implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity e = player.getWorld().getEntity(uuid);
+        Entity e = player.getServerWorld().getEntity(uuid);
         NbtCompound villagerData = getVillagerData(e);
         if (villagerData != null) {
             NetworkHandler.sendToPlayer(new GetVillagerResponse(villagerData), player);
@@ -59,7 +59,7 @@ public class GetVillagerRequest implements Message {
             return null;
         }
 
-        FamilyTree tree = FamilyTree.get((ServerWorld)e.world);
+        FamilyTree tree = FamilyTree.get((ServerWorld)e.getWorld());
         FamilyTreeNode entry = tree.getOrCreate(e);
 
         storeNode(data, tree.getOrEmpty(entry.partner()), "spouse");

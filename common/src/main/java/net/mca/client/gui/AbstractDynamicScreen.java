@@ -2,11 +2,13 @@ package net.mca.client.gui;
 
 import net.mca.entity.interaction.Constraint;
 import net.mca.client.resources.Icon;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.*;
 
@@ -39,8 +41,8 @@ public abstract class AbstractDynamicScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
     }
@@ -95,19 +97,19 @@ public abstract class AbstractDynamicScreen extends Screen {
         });
     }
 
-    protected void drawIcon(MatrixStack transform, String key) {
+    protected void drawIcon(DrawContext context, Identifier texture, String key) {
         Icon icon = MCAScreens.getInstance().getIcon(key);
-        this.drawTexture(transform, (int)(icon.x() / iconScale), (int)(icon.y() / iconScale), icon.u(), icon.v(), 16, 16);
+        context.drawTexture(texture, (int)(icon.x() / iconScale), (int)(icon.y() / iconScale), icon.u(), icon.v(), 16, 16);
     }
 
-    protected void drawHoveringIconText(MatrixStack transform, Text text, String key) {
+    protected void drawHoveringIconText(DrawContext context, Text text, String key) {
         Icon icon = MCAScreens.getInstance().getIcon(key);
-        renderTooltip(transform, text, icon.x() + 16, icon.y() + 20);
+        context.drawTooltip(textRenderer, text, icon.x() + 16, icon.y() + 20);
     }
 
-    protected void drawHoveringIconText(MatrixStack transform, List<Text> text, String key) {
+    protected void drawHoveringIconText(DrawContext context, List<Text> text, String key) {
         Icon icon = MCAScreens.getInstance().getIcon(key);
-        renderTooltip(transform, text, icon.x() + 16, icon.y() + 20);
+        context.drawTooltip(textRenderer, text, icon.x() + 16, icon.y() + 20);
     }
 
     //checks if the mouse hovers over a specified button

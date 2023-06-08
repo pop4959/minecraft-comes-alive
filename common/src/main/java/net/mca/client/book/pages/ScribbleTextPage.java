@@ -2,7 +2,7 @@ package net.mca.client.book.pages;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.client.gui.ExtendedBookScreen;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
@@ -19,14 +19,13 @@ public class ScribbleTextPage extends TextPage {
         this.scribble = scribble;
     }
 
-    public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(ExtendedBookScreen screen, DrawContext context, int mouseX, int mouseY, float delta) {
         // scribble
         int i = (screen.width - 192) / 2;
         RenderSystem.enableBlend();
-        RenderSystem.setShaderTexture(0, scribble);
-        DrawableHelper.drawTexture(matrices, i + 28, 32, 0, 0, 128, 128, 128, 128);
+        context.drawTexture(scribble, i + 28, 32, 0, 0, 128, 128, 128, 128);
         RenderSystem.disableBlend();
 
-        super.render(screen, matrices, mouseX, mouseY, delta);
+        super.render(screen, context, mouseX, mouseY, delta);
     }
 }

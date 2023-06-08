@@ -6,6 +6,7 @@ import net.mca.client.book.pages.Page;
 import net.mca.client.gui.widget.ExtendedPageTurnWidget;
 import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.util.NarratorManager;
@@ -110,28 +111,26 @@ public class ExtendedBookScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
 
         // background
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.setShaderTexture(0, book.getBackground());
         int i = (width - 192) / 2;
-        drawTexture(matrices, i, 2, 0, 0, 192, 192);
+        context.drawTexture(book.getBackground(), i, 2, 0, 0, 192, 192);
 
         // page number
         if (book.showPageCount()) {
             Text pageIndexText = Text.translatable("book.pageIndicator", this.pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
             int k = textRenderer.getWidth(pageIndexText);
-            textRenderer.draw(matrices, pageIndexText, i - k + 192 - 44, 18.0f, 0);
+            context.drawTextWithShadow(textRenderer, pageIndexText, i - k + 192 - 44, 18, 0);
         }
 
         Page page = book.getPage(pageIndex);
         if (page != null) {
-            page.render(this, matrices, mouseX, mouseY, delta);
+            page.render(this, context, mouseX, mouseY, delta);
         }
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

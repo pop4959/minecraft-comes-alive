@@ -9,7 +9,7 @@ import net.mca.network.c2s.DestinyMessage;
 import net.mca.util.compat.ButtonWidget;
 import net.mca.util.localization.FlowingText;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -60,41 +60,43 @@ public class DestinyScreen extends VillagerEditorScreen {
     }
 
     @Override
-    public void renderBackground(MatrixStack matrices) {
+    public void renderBackground(DrawContext context) {
         assert MinecraftClient.getInstance().world != null;
-        renderBackgroundTexture(matrices);
+        renderBackgroundTexture(context);
     }
 
-    private void drawScaledText(MatrixStack transform, Text text, int x, int y, float scale) {
-        transform.push();
-        transform.scale(scale, scale, scale);
-        drawCenteredTextWithShadow(transform, textRenderer, text, (int) (x / scale), (int) (y / scale), 0xffffffff);
-        transform.pop();
+    private void drawScaledText(DrawContext context, Text text, int x, int y, float scale) {
+        final MatrixStack matrices = context.getMatrices();
+        matrices.push();
+        matrices.scale(scale, scale, scale);
+        context.drawCenteredTextWithShadow(textRenderer, text, (int) (x / scale), (int) (y / scale), 0xffffffff);
+        matrices.pop();
     }
 
     @Override
-    public void render(MatrixStack transform, int mouseX, int mouseY, float delta) {
-        super.render(transform, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+
+        final MatrixStack matrices = context.getMatrices();
 
         switch (page) {
             case "general" -> {
-                drawScaledText(transform, Text.translatable("gui.destiny.whoareyou"), width / 2, height / 2 - 24, 1.5f);
-                transform.push();
-                transform.scale(0.25f, 0.25f, 0.25f);
+                drawScaledText(context, Text.translatable("gui.destiny.whoareyou"), width / 2, height / 2 - 24, 1.5f);
+                matrices.push();
+                matrices.scale(0.25f, 0.25f, 0.25f);
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 RenderSystem.setShaderColor(1, 1, 1, 1);
-                RenderSystem.setShaderTexture(0, LOGO_TEXTURE);
-                DrawableHelper.drawTexture(transform, width * 2 - 512, -40, 0, 0, 1024, 512, 1024, 512);
-                transform.pop();
+                context.drawTexture(LOGO_TEXTURE, width * 2 - 512, -40, 0, 0, 1024, 512, 1024, 512);
+                matrices.pop();
             }
             case "destiny" ->
-                    drawScaledText(transform, Text.translatable("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
+                    drawScaledText(context, Text.translatable("gui.destiny.journey"), width / 2, height / 2 - 48, 1.5f);
             case "story" -> {
                 List<Text> text = FlowingText.wrap(story.getFirst(), 256);
                 int y = (int) (height / 2 - 20 - 7.5f * text.size());
                 for (Text t : text) {
-                    drawScaledText(transform, t, width / 2, y, 1.25f);
+                    drawScaledText(context, t, width / 2, y, 1.25f);
                     y += 15;
                 }
             }

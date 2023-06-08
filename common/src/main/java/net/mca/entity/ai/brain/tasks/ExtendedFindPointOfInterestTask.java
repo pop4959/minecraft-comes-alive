@@ -73,7 +73,7 @@ public class ExtendedFindPointOfInterestTask extends MultiTickTask<VillagerEntit
             return false;
         }
         if (this.positionExpireTimeLimit == 0L) {
-            this.positionExpireTimeLimit = pathAwareEntity.world.getTime() + (long)serverWorld.random.nextInt(POSITION_EXPIRE_INTERVAL);
+            this.positionExpireTimeLimit = pathAwareEntity.getWorld().getTime() + (long)serverWorld.random.nextInt(POSITION_EXPIRE_INTERVAL);
             return false;
         }
         return serverWorld.getTime() >= this.positionExpireTimeLimit;
@@ -117,7 +117,7 @@ public class ExtendedFindPointOfInterestTask extends MultiTickTask<VillagerEntit
             });
         } else {
             for (Pair<RegistryEntry<PointOfInterestType>, BlockPos> blockPos2 : set) {
-                this.foundPositionsToExpiry.computeIfAbsent(blockPos2.getSecond().asLong(), m -> new RetryMarker(villager.world.random, l));
+                this.foundPositionsToExpiry.computeIfAbsent(blockPos2.getSecond().asLong(), m -> new RetryMarker(villager.getWorld().random, l));
             }
         }
     }

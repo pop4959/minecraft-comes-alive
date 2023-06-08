@@ -161,10 +161,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     public void restock() {
         super.restock();
 
-        if (!world.isClient) {
+        if (!getWorld().isClient) {
             Optional<Village> village = residency.getHomeVillage();
             if (village.isPresent() && Config.getInstance().villagerRestockNotification) {
-                village.get().broadCastMessage((ServerWorld)world, "events.restock", getName().getString());
+                village.get().broadCastMessage((ServerWorld)getWorld(), "events.restock", getName().getString());
             }
         }
     }
@@ -287,7 +287,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     public final void setProfession(VillagerProfession profession) {
         setVillagerData(getVillagerData().withProfession(profession));
-        reinitializeBrain((ServerWorld)world);
+        reinitializeBrain((ServerWorld)getWorld());
     }
 
     @Override
@@ -312,7 +312,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void setVillagerData(VillagerData data) {
-        boolean hasChanged = !world.isClient && getProfession() != data.getProfession() && data.getProfession() != ProfessionsMCA.OUTLAW.get();
+        boolean hasChanged = !getWorld().isClient && getProfession() != data.getProfession() && data.getProfession() != ProfessionsMCA.OUTLAW.get();
         super.setVillagerData(data);
         if (hasChanged) {
             randomizeClothes();
@@ -384,7 +384,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             target.setOnFireFor(i * 4);
         }
 
-        boolean damageDealt = target.damage(world.getDamageSources().mobAttack(this), damage);
+        boolean damageDealt = target.damage(getWorld().getDamageSources().mobAttack(this), damage);
 
         //knockback and post damage stuff
         if (damageDealt) {
@@ -481,18 +481,18 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 } else {
                     boolean hasOffers = !getOffers().isEmpty();
                     if (hand == Hand.MAIN_HAND) {
-                        if (!hasOffers && !world.isClient) {
+                        if (!hasOffers && !getWorld().isClient) {
                             sayNo();
                         }
 
                         player.incrementStat(Stats.TALKED_TO_VILLAGER);
                     }
 
-                    if (hasOffers && !world.isClient) {
+                    if (hasOffers && !getWorld().isClient) {
                         beginTradeWith(player);
                     }
                 }
-                return ActionResult.success(world.isClient);
+                return ActionResult.success(getWorld().isClient);
             }
         }
         return ActionResult.PASS;
@@ -500,7 +500,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private void sayNo() {
         this.setHeadRollingTimeLeft(40);
-        if (!this.world.isClient()) {
+        if (!this.getWorld().isClient()) {
             this.playSound(this.getNoSound(), this.getSoundVolume(), this.getSoundPitch());
         }
     }
@@ -548,7 +548,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         double d = random.nextDouble();
 
         if (d < 0.5D) {
-            return VillagerType.forBiome(world.getBiome(getBlockPos()));
+            return VillagerType.forBiome(getWorld().getBiome(getBlockPos()));
         }
 
         if (d < 0.75D) {
@@ -576,11 +576,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         damageAmount *= mcaBrain.getPersonality().getWeaknessModifier();
 
-        if (!world.isClient) {
+        if (!getWorld().isClient) {
             //scream and loose hearts
             if (source.getAttacker() instanceof PlayerEntity player) {
-                if (world.getTime() - lastHit > 40) {
-                    lastHit = world.getTime();
+                if (getWorld().getTime() - lastHit > 40) {
+                    lastHit = getWorld().getTime();
                     if (!isGuard() || getSmallBounty() == 0) {
                         if (getHealth() < getMaxHealth() / 2) {
                             sendChatMessage(player, "villager.badly_hurt");
@@ -619,7 +619,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             getBrain().remember(MemoryModuleTypeMCA.SMALL_BOUNTY.get(), getSmallBounty() + 1);
 
             Vec3d pos = getPos();
-            world.getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
+            getWorld().getNonSpectatingEntities(VillagerEntityMCA.class, new Box(pos, pos).expand(32)).forEach(v -> {
                 if (this.squaredDistanceTo(v) <= (v.getTarget() == null ? 1024 : 64)) {
                     if (attacker instanceof PlayerEntity player) {
                         int bounty = v.getSmallBounty();
@@ -694,13 +694,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             spawnBurntParticles();
         }
 
-        if (!world.isClient) {
+        if (!getWorld().isClient) {
             if (age % 200 == 0 && getHealth() < getMaxHealth()) {
                 // if the villager has food they should try to eat.
                 ItemStack food = getMainHandStack();
 
                 if (food.isFood()) {
-                    eatFood(world, food);
+                    eatFood(getWorld(), food);
                 } else {
                     //noinspection ConstantConditions
                     if (!findAndEquipToMain(i -> i.isFood()
@@ -765,7 +765,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             calculateDimensions();
         }
 
-        if (world.isClient) {
+        if (getWorld().isClient) {
             // procreate anim
             if (relations.isProcreating()) {
                 headYaw += 50;
@@ -774,7 +774,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             // mood particles
             Mood mood = mcaBrain.getMood();
             if (mood.getParticle() != null && this.age % mood.getParticleInterval() == 0) {
-                if (world.random.nextBoolean()) {
+                if (getWorld().random.nextBoolean()) {
                     produceParticles(mood.getParticle());
                 }
             }
@@ -782,7 +782,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             // infection
             float infection = getInfectionProgress();
             if (infection > 0 && this.age % 20 == 0) {
-                if (infection > FEVER_THRESHOLD && world.random.nextInt(25) == 0) {
+                if (infection > FEVER_THRESHOLD && getWorld().random.nextInt(25) == 0) {
                     sendChatToAllAround("villager.sickness");
                 }
 
@@ -837,9 +837,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // todo calculateDimensions call move, move sets some flags, but since it's a "fake" move no collision happen
         // without collision the pathfinder skips the frame, causing children to not move
         // there are more flags affected, none of them seem to affect the game tho
-        boolean oldOnGround = this.onGround;
+        boolean oldOnGround = this.isOnGround();
         super.calculateDimensions();
-        this.onGround = oldOnGround;
+        this.setOnGround(oldOnGround);
     }
 
     @Override
@@ -924,13 +924,13 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
 
         //death message
-        if (!world.isClient) {
+        if (!getWorld().isClient) {
             getResidency().getHomeVillage().flatMap(Village::getCivilRegistry).ifPresent(r -> r.addText(getDamageTracker().getDeathMessage()));
         }
 
         super.onDeath(cause);
 
-        if (world.isClient) {
+        if (getWorld().isClient) {
             return;
         }
 
@@ -955,7 +955,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         //this prevents rapid drops in village reputation as well as bounty hunters to know what you did
         Optional<Village> village = residency.getHomeVillage();
         if (village.isPresent()) {
-            ServerWorld servRef = (ServerWorld)world;
+            ServerWorld servRef = (ServerWorld)getWorld();
             Map<UUID, Memories> memories = mcaBrain.getMemories();
 
             //iterate through all players for fate system
@@ -1214,7 +1214,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public boolean setAgeState(AgeState state) {
         if (VillagerLike.super.setAgeState(state)) {
-            if (!world.isClient) {
+            if (!getWorld().isClient) {
                 // trigger grow up advancements
                 relations.getParents()
                         .filter(e -> e instanceof ServerPlayerEntity)
@@ -1231,7 +1231,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                             );
                 }
 
-                reinitializeBrain((ServerWorld)world);
+                reinitializeBrain((ServerWorld)getWorld());
 
                 // set age specific clothes
                 randomizeClothes();
@@ -1289,8 +1289,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     @Override
     public void handleStatus(byte id) {
         switch (id) {
-            case Status.MCA_VILLAGER_NEG_INTERACTION -> world.addImportantParticle(ParticleTypesMCA.NEG_INTERACTION.get(), true, getX(), getEyeY() + 0.5, getZ(), 0, 0, 0);
-            case Status.MCA_VILLAGER_POS_INTERACTION -> world.addImportantParticle(ParticleTypesMCA.POS_INTERACTION.get(), true, getX(), getEyeY() + 0.5, getZ(), 0, 0, 0);
+            case Status.MCA_VILLAGER_NEG_INTERACTION -> getWorld().addImportantParticle(ParticleTypesMCA.NEG_INTERACTION.get(), true, getX(), getEyeY() + 0.5, getZ(), 0, 0, 0);
+            case Status.MCA_VILLAGER_POS_INTERACTION -> getWorld().addImportantParticle(ParticleTypesMCA.POS_INTERACTION.get(), true, getX(), getEyeY() + 0.5, getZ(), 0, 0, 0);
             case Status.MCA_VILLAGER_TRAGEDY -> this.produceParticles(ParticleTypes.DAMAGE_INDICATOR);
             default -> super.handleStatus(id);
         }
@@ -1324,7 +1324,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
 
         if (mob instanceof ZombieVillagerEntity zombie) {
-            zombie.initialize((ServerWorld)world, world.getLocalDifficulty(zombie.getBlockPos()), SpawnReason.CONVERSION, new ZombieEntity.ZombieData(false, true), null);
+            zombie.initialize((ServerWorld)getWorld(), getWorld().getLocalDifficulty(zombie.getBlockPos()), SpawnReason.CONVERSION, new ZombieEntity.ZombieData(false, true), null);
             zombie.setVillagerData(getVillagerData());
             zombie.setGossipData(getGossip().serialize(NbtOps.INSTANCE));
             zombie.setOfferData(getOffers().toNbt());
@@ -1332,7 +1332,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             zombie.setUuid(getUuid());
             zombie.setPersistent();
 
-            world.syncWorldEvent(null, 1026, this.getBlockPos(), 0);
+            getWorld().syncWorldEvent(null, 1026, this.getBlockPos(), 0);
         }
 
         if (mob instanceof ZombieVillagerEntityMCA zombie) {
@@ -1405,7 +1405,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         ItemStack lv2 = arg.getStackInHand(lv);
 
         if (arg.isHolding(Items.CROSSBOW)) {
-            CrossbowItem.shootAll(arg.world, arg, lv, lv2, f, 4);
+            CrossbowItem.shootAll(arg.getWorld(), arg, lv, lv2, f, 4);
         }
 
         this.postShoot();
@@ -1447,7 +1447,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             double vel = Math.sqrt(x * x + z * z);
             persistentProjectileEntity.setVelocity(x, y + vel * 0.20000000298023224D, z, 1.6F, 3);
             this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-            this.world.spawnEntity(persistentProjectileEntity);
+            this.getWorld().spawnEntity(persistentProjectileEntity);
         }
     }
 

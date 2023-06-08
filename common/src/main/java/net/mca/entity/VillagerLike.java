@@ -112,7 +112,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     default void setName(String name) {
         setTrackedValue(VILLAGER_NAME, name);
-        if (!asEntity().world.isClient) {
+        if (!asEntity().getWorld().isClient) {
             EntityRelationship.of(asEntity()).ifPresent(relationship -> relationship.getFamilyEntry().setName(name));
         }
     }
@@ -312,12 +312,12 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     @Override
     default DialogueType getDialogueType(PlayerEntity receiver) {
-        if (!receiver.world.isClient) {
+        if (!receiver.getWorld().isClient) {
             // age specific
             DialogueType type = DialogueType.fromAge(getAgeState());
 
             // relationship specific
-            if (!receiver.world.isClient) {
+            if (!receiver.getWorld().isClient) {
                 Optional<EntityRelationship> r = EntityRelationship.of(asEntity());
                 if (r.isPresent()) {
                     FamilyTreeNode relationship = r.get().getFamilyEntry();
@@ -369,7 +369,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default void validateClothes() {
-        if (!asEntity().world.isClient()) {
+        if (!asEntity().getWorld().isClient()) {
             if (!getClothes().startsWith("immersive_library") && !ClothingList.getInstance().clothing.containsKey(getClothes())) {
                 //try to port from old versions
                 if (getClothes() != null) {
@@ -444,7 +444,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
             double d = random.nextGaussian() * 0.02;
             double e = random.nextGaussian() * 0.02;
             double f = random.nextGaussian() * 0.02;
-            asEntity().world.addParticle(ParticleTypes.SMOKE, asEntity().getParticleX(1.0), asEntity().getRandomBodyY() + 1.0, asEntity().getParticleZ(1.0), d, e, f);
+            asEntity().getWorld().addParticle(ParticleTypes.SMOKE, asEntity().getParticleX(1.0), asEntity().getRandomBodyY() + 1.0, asEntity().getParticleZ(1.0), d, e, f);
         }
     }
 

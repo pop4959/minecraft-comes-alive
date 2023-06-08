@@ -22,7 +22,7 @@ public class InteractionVillagerMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity v = player.getWorld().getEntity(villagerUUID);
+        Entity v = player.getServerWorld().getEntity(villagerUUID);
         if (v instanceof VillagerLike<?> villager) {
             if (villager.getInteractions().handle(player, command)) {
                 villager.getInteractions().stopInteracting();

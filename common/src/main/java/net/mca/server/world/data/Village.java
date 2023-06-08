@@ -115,7 +115,7 @@ public class Village implements Iterable<Building> {
     }
 
     public static Optional<Village> findNearest(Entity entity) {
-        return VillageManager.get((ServerWorld)entity.world).findNearestVillage(entity);
+        return VillageManager.get((ServerWorld)entity.getWorld()).findNearestVillage(entity);
     }
 
     public boolean isWithinBorder(Entity entity) {

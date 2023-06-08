@@ -55,7 +55,7 @@ public final class MCAQuilt implements ModInitializer {
         // TODO: Replace with QSL equivalent, once they get around to doing that
         ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
             if (!alive) {
-                VillageManager.get(old.getWorld()).getBabies().pop(neu);
+                VillageManager.get(old.getServerWorld()).getBabies().pop(neu);
             }
         });
 

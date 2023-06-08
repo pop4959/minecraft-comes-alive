@@ -2,6 +2,7 @@ package net.mca.client.book.pages;
 
 import net.mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 
@@ -15,7 +16,7 @@ public class CenteredTextPage extends TextPage {
     }
 
     @Override
-    public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(ExtendedBookScreen screen, DrawContext context, int mouseX, int mouseY, float delta) {
         //prepare page
         if (content != null) {
             TextRenderer textRenderer = screen.getTextRenderer();
@@ -25,8 +26,8 @@ public class CenteredTextPage extends TextPage {
             int i = (screen.width - 192) / 2;
             for (int m = 0; m < l; ++m) {
                 OrderedText orderedText = getCachedPage(screen).get(m);
-                float x = i + 36;
-                textRenderer.draw(matrices, orderedText, x + 114 / 2.0f - textRenderer.getWidth(orderedText) / 2.0f, (32.0f + (m + 7 - (int)(l / 2.0f)) * 9.0f), 0);
+                int x = i + 36;
+                context.drawTextWithShadow(textRenderer, orderedText, x + 114 / 2 - textRenderer.getWidth(orderedText) / 2, (32 + (m + 7 - (l / 2)) * 9), 0);
             }
         }
     }

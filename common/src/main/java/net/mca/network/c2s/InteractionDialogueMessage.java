@@ -25,7 +25,7 @@ public class InteractionDialogueMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity v = player.getWorld().getEntity(villagerUUID);
+        Entity v = player.getServerWorld().getEntity(villagerUUID);
         if (v instanceof VillagerEntityMCA villager) {
             Dialogues.getInstance().selectAnswer(villager, player, question, answer);
         }

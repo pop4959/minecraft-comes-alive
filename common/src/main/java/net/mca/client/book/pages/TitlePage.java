@@ -2,6 +2,7 @@ package net.mca.client.book.pages;
 
 import net.mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
@@ -35,24 +36,24 @@ public class TitlePage extends Page {
         this.subtitle = subtitle;
     }
 
-    private static void drawCenteredText(MatrixStack matrices, TextRenderer textRenderer, Text text, int centerX, int y, int color) {
+    private static void drawCenteredText(DrawContext context, TextRenderer textRenderer, Text text, int centerX, int y, int color) {
         OrderedText orderedText = text.asOrderedText();
-        drawCenteredText(matrices, textRenderer, orderedText, centerX, y, color);
+        drawCenteredText(context, textRenderer, orderedText, centerX, y, color);
     }
 
-    private static void drawCenteredText(MatrixStack matrices, TextRenderer textRenderer, OrderedText text, int centerX, int y, int color) {
-        textRenderer.draw(matrices, text, (float)(centerX - textRenderer.getWidth(text) / 2), (float)y, color);
+    private static void drawCenteredText(DrawContext context, TextRenderer textRenderer, OrderedText text, int centerX, int y, int color) {
+        context.drawTextWithShadow(textRenderer, text, (centerX - textRenderer.getWidth(text) / 2), y, color);
     }
 
     @Override
-    public void render(ExtendedBookScreen screen, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(ExtendedBookScreen screen, DrawContext context, int mouseX, int mouseY, float delta) {
         List<OrderedText> texts = screen.getTextRenderer().wrapLines(title, 114);
         int y = 80 - 5 * texts.size();
         for (OrderedText t : texts) {
-            drawCenteredText(matrices, screen.getTextRenderer(), t, screen.width / 2 - 2, y, 0xFFFFFF);
+            drawCenteredText(context, screen.getTextRenderer(), t, screen.width / 2 - 2, y, 0xFFFFFF);
             y += 10;
         }
         y = 82 + 5 * texts.size();
-        drawCenteredText(matrices, screen.getTextRenderer(), subtitle, screen.width / 2 - 2, y, 0xFFFFFF);
+        drawCenteredText(context, screen.getTextRenderer(), subtitle, screen.width / 2 - 2, y, 0xFFFFFF);
     }
 }

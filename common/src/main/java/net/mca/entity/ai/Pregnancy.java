@@ -78,7 +78,7 @@ public class Pregnancy {
             VillagerEntityMCA child = createChild(getGender(), father);
 
             child.setPosition(mother.getX(), mother.getY(), mother.getZ());
-            WorldUtils.spawnEntity(mother.world, child, SpawnReason.BREEDING);
+            WorldUtils.spawnEntity(mother.getWorld(), child, SpawnReason.BREEDING);
         });
     }
 
@@ -95,13 +95,13 @@ public class Pregnancy {
             }
 
             setPregnant(true);
-            mother.setTrackedValue(IS_BABY_MALE, mother.world.random.nextBoolean());
+            mother.setTrackedValue(IS_BABY_MALE, mother.getWorld().random.nextBoolean());
             return true;
         }).orElse(false);
     }
 
     public VillagerEntityMCA createChild(Gender gender, VillagerEntityMCA partner) {
-        VillagerEntityMCA child = Objects.requireNonNull(gender.getVillagerType().create(mother.world));
+        VillagerEntityMCA child = Objects.requireNonNull(gender.getVillagerType().create(mother.getWorld()));
 
         child.getGenetics().combine(partner.getGenetics(), mother.getGenetics());
         child.getTraits().inherit(partner.getTraits());

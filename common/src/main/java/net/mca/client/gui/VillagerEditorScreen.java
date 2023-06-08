@@ -26,6 +26,7 @@ import net.mca.resources.data.skin.Hair;
 import net.mca.resources.data.skin.SkinListEntry;
 import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -674,10 +675,10 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
 
-        fill(matrices, 0, 20, width, height - 20, 0x66000000);
+        context.fill(0, 20, width, height - 20, 0x66000000);
 
         if (villager == null) {
             return;
@@ -690,17 +691,18 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
             int y = height / 2 + 70;
             if (villagerUUID.equals(playerUUID) && shouldUsePlayerModel()) {
                 assert MinecraftClient.getInstance().player != null;
-                InventoryScreen.drawEntity(matrices, x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
+                InventoryScreen.drawEntity(context, x, y, 60, x - mouseX, y - 50 - mouseY, MinecraftClient.getInstance().player);
             } else {
-                InventoryScreen.drawEntity(matrices, x, y, 60, x - mouseX, y - 50 - mouseY, villager);
+                InventoryScreen.drawEntity(context, x, y, 60, x - mouseX, y - 50 - mouseY, villager);
             }
 
             // hint for confused people
             if (shouldPrintPlayerHint() && villagerUUID.equals(playerUUID) && villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VILLAGER.ordinal()) {
+                final MatrixStack matrices = context.getMatrices();
                 matrices.push();
                 matrices.translate(x, y - 145, 0);
                 matrices.scale(0.5f, 0.5f, 0.5f);
-                drawCenteredTextWithShadow(matrices, textRenderer, Text.translatable("gui.villager_editor.model_hint"), 0, 0, 0xAAFFFFFF);
+                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.villager_editor.model_hint"), 0, 0, 0xAAFFFFFF);
                 matrices.pop();
             }
         }
@@ -731,7 +733,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                             hoveredClothingId = index;
                         }
 
-                        InventoryScreen.drawEntity(matrices, cx, cy, (hoveredClothingId == index) ? 35 : 30,
+                        InventoryScreen.drawEntity(context, cx, cy, (hoveredClothingId == index) ? 35 : 30,
                                 -(mouseX - cx) / 2.0f, -(mouseY - cy - 64) / 2.0f, villagerVisualization);
                         i++;
                     } else {
@@ -741,7 +743,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
             }
         }
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class FamilyTreeUUIDLookup implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        FamilyTree tree = FamilyTree.get(player.getWorld());
+        FamilyTree tree = FamilyTree.get(player.getServerWorld());
         List<FamilyTreeSearchScreen.Entry> list = tree.getAllWithName(search)
                 .map(entry -> new FamilyTreeSearchScreen.Entry(
                         entry.id(),

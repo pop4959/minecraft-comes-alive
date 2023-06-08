@@ -29,7 +29,7 @@ public class NeedleAndThreadItem extends TooltippedItem {
     }
 
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-        if (entity instanceof VillagerLike && !entity.world.isClient && player instanceof ServerPlayerEntity) {
+        if (entity instanceof VillagerLike && !entity.getWorld().isClient && player instanceof ServerPlayerEntity) {
             NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.NEEDLE_AND_THREAD, entity), (ServerPlayerEntity)player);
             return ActionResult.SUCCESS;
         } else {

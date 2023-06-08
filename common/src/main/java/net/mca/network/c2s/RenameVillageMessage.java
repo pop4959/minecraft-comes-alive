@@ -20,6 +20,6 @@ public class RenameVillageMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        VillageManager.get(player.getWorld()).getOrEmpty(id).ifPresent(v -> v.setName(name));
+        VillageManager.get(player.getServerWorld()).getOrEmpty(id).ifPresent(v -> v.setName(name));
     }
 }

@@ -61,7 +61,7 @@ public class BabyItem extends Item {
         VillagerLike<?> fatherVillager = VillagerLike.toVillager(father);
 
         // Create dummy child to generate genes and traits
-        VillagerEntityMCA child = VillagerFactory.newVillager(mother.world)
+        VillagerEntityMCA child = VillagerFactory.newVillager(mother.getWorld())
                 .withPosition(mother.getPos())
                 .withGender(gender)
                 .withAge(-AgeState.getMaxAge())
@@ -84,7 +84,7 @@ public class BabyItem extends Item {
         nbt.put("child", compound);
 
         // Make sure family tree entries exist
-        FamilyTree tree = FamilyTree.get((ServerWorld)mother.world);
+        FamilyTree tree = FamilyTree.get((ServerWorld)mother.getWorld());
         tree.getOrCreate(mother);
         tree.getOrCreate(father);
 

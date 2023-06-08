@@ -36,7 +36,7 @@ public class MixinServerPlayNetworkHandler {
         if (Config.getInstance().enableVillagerChatAI) {
             String msg = StringUtils.normalizeSpace(message.chatMessage());
             if (!msg.startsWith("/")) {
-                List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.world, player, 32, VillagerEntityMCA.class);
+                List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.getWorld(), player, 32, VillagerEntityMCA.class);
 
                 // talk to specific villager
                 String search = normalize(msg);

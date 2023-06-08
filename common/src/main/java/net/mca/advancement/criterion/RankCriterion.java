@@ -8,7 +8,7 @@ import net.minecraft.advancement.criterion.AbstractCriterion;
 import net.minecraft.advancement.criterion.AbstractCriterionConditions;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
 import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
-import net.minecraft.predicate.entity.EntityPredicate.Extended;
+import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -21,7 +21,7 @@ public class RankCriterion extends AbstractCriterion<RankCriterion.Conditions> {
     }
 
     @Override
-    public Conditions conditionsFromJson(JsonObject json, Extended player, AdvancementEntityPredicateDeserializer deserializer) {
+    public Conditions conditionsFromJson(JsonObject json, LootContextPredicate player, AdvancementEntityPredicateDeserializer deserializer) {
         Rank rank = Rank.fromName(json.get("rank").getAsString());
         return new Conditions(player, rank);
     }
@@ -33,7 +33,7 @@ public class RankCriterion extends AbstractCriterion<RankCriterion.Conditions> {
     public static class Conditions extends AbstractCriterionConditions {
         private final Rank rank;
 
-        public Conditions(Extended player, Rank rank) {
+        public Conditions(LootContextPredicate player, Rank rank) {
             super(RankCriterion.ID, player);
             this.rank = rank;
         }

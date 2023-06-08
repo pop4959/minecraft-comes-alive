@@ -20,7 +20,7 @@ public class CallToPlayerMessage implements Message {
 
     @Override
     public void receive(ServerPlayerEntity player) {
-        Entity e = player.getWorld().getEntity(uuid);
+        Entity e = player.getServerWorld().getEntity(uuid);
         if (e instanceof VillagerEntityMCA v) {
             if (v.isSleeping()) {
                 v.wakeUp();

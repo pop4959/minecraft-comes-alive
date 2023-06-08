@@ -2,7 +2,7 @@ package net.mca.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.MCA;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -32,20 +32,18 @@ public class ColorPickerWidget extends ClickableWidget {
     }
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         RenderSystem.setShaderColor(1, 1, 1, alpha);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        RenderSystem.setShaderTexture(0, texture);
-        DrawableHelper.drawTexture(matrices, getX(), getY(), 0, 0, width, height, width, height);
+        context.drawTexture(texture, getX(), getY(), 0, 0, width, height, width, height);
 
-        WidgetUtils.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
+        WidgetUtils.drawRectangle(context, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
 
-        RenderSystem.setShaderTexture(0, MCA_GUI_ICONS_TEXTURE);
-        DrawableHelper.drawTexture(matrices, (int)(getX() + valueX * width) - 8, (int)(getY() + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
+        context.drawTexture(MCA_GUI_ICONS_TEXTURE, (int)(getX() + valueX * width) - 8, (int)(getY() + valueY * height) - 8, 240, 0, 16, 16, 256, 256);
 
-        WidgetUtils.drawRectangle(matrices, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
+        WidgetUtils.drawRectangle(context, getX(), getY(), getX() + width, getY() + height, 0xaaffffff);
     }
 
     @Override

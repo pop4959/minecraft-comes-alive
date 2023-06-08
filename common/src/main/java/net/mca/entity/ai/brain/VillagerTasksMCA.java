@@ -172,7 +172,7 @@ public class VillagerTasksMCA {
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
         brain.setDefaultActivity(Activity.IDLE);
         brain.doExclusively(Activity.IDLE);
-        brain.refreshActivities(villager.world.getTimeOfDay(), villager.world.getTime());
+        brain.refreshActivities(villager.getWorld().getTimeOfDay(), villager.getWorld().getTime());
 
         return brain;
     }
@@ -205,7 +205,7 @@ public class VillagerTasksMCA {
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
                     // verify that this bed is not blocked
-                    VillageManager manager = VillageManager.get((ServerWorld) entity.world);
+                    VillageManager manager = VillageManager.get((ServerWorld) entity.getWorld());
                     if (entity.requiresHome()) {
                         return manager.findNearestVillage(entity).filter(v -> !v.isPositionValidBed(pos)).isEmpty();
                     } else {
@@ -227,7 +227,7 @@ public class VillagerTasksMCA {
                     villager.getResidency().seekHome();
                 }, (entity, pos) -> {
                     // verify that this bed is not blocked
-                    VillageManager manager = VillageManager.get((ServerWorld) entity.world);
+                    VillageManager manager = VillageManager.get((ServerWorld) entity.getWorld());
                     return manager.findNearestVillage(entity).filter(v -> {
                         return v.getBuildingAt(pos).filter(b -> b.getBuildingType().noBeds()).isPresent();
                     }).isEmpty();
@@ -235,8 +235,8 @@ public class VillagerTasksMCA {
                 Pair.of(10, new ExtendedFindPointOfInterestTask(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.MEETING), MemoryModuleType.MEETING_POINT, true, Optional.of((byte) 14), (villager) -> {
                     //report a town bell, the only building always added
                     villager.getBrain().getOptionalMemory(MemoryModuleType.MEETING_POINT).ifPresent(p -> {
-                        if (villager.world.getRegistryKey() == p.getDimension()) {
-                            VillageManager manager = VillageManager.get((ServerWorld) villager.world);
+                        if (villager.getWorld().getRegistryKey() == p.getDimension()) {
+                            VillageManager manager = VillageManager.get((ServerWorld) villager.getWorld());
                             if (!manager.cache.contains(p.getPos())) {
                                 manager.cache.add(p.getPos());
                                 manager.processBuilding(p.getPos());
@@ -352,7 +352,7 @@ public class VillagerTasksMCA {
     }
 
     private static Activity getActivity(VillagerEntityMCA villager) {
-        return villager.getBrain().getSchedule().getActivityForTime((int) (villager.world.getTimeOfDay() % 24000L));
+        return villager.getBrain().getSchedule().getActivityForTime((int) (villager.getWorld().getTimeOfDay() % 24000L));
     }
 
     public static ImmutableList<Pair<Integer, ? extends Task<? super VillagerEntityMCA>>> getGrievingPackage() {

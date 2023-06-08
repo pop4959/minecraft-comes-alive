@@ -10,6 +10,7 @@ import net.mca.network.c2s.GetFamilyTreeRequest;
 import net.mca.util.compat.ButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -20,6 +21,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -111,10 +113,10 @@ public class FamilyTreeScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
 
-        fill(matrices, 0, 30, width, height - 30, 0x66000000);
+        context.fill(0, 30, width, height - 30, 0x66000000);
 
         focused = null;
 
@@ -130,12 +132,13 @@ public class FamilyTreeScreen extends Screen {
         GL11.glScissor(x, windowHeight - h - y, w, h);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
+        final MatrixStack matrices = context.getMatrices();
         matrices.push();
 
         int xx = (int)(scrollX + width / 2);
         int yy = (int)(scrollY + height / 2);
         matrices.translate(xx, yy, 0);
-        tree.render(matrices, mouseX - xx, mouseY - yy);
+        tree.render(context, mouseX - xx, mouseY - yy);
         matrices.pop();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -144,9 +147,9 @@ public class FamilyTreeScreen extends Screen {
 
         Text label = selected == null ? title : Text.literal(selected.getName()).append("'s ").append(title);
 
-        drawCenteredTextWithShadow(matrices, textRenderer, label, width / 2, 10, 16777215);
+        context.drawCenteredTextWithShadow(textRenderer, label, width / 2, 10, 16777215);
 
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     private void rebuildTree() {
@@ -252,7 +255,8 @@ public class FamilyTreeScreen extends Screen {
             }
         }
 
-        public void render(MatrixStack matrices, int mouseX, int mouseY) {
+        public void render(DrawContext context, int mouseX, int mouseY) {
+            final MatrixStack matrices = context.getMatrices();
             Bounds bounds = getBounds();
 
             boolean isFocused = id != null && bounds.contains(mouseX, mouseY);
@@ -269,11 +273,11 @@ public class FamilyTreeScreen extends Screen {
                 int x = childrenStartX + HORIZONTAL_SPACING / 2;
                 int y = VERTICAL_SPACING;
 
-                drawHook(matrices, x, y);
+                drawHook(context, x, y);
 
                 matrices.push();
                 matrices.translate(x, y, 0);
-                node.render(matrices, mouseX - x, mouseY - y);
+                node.render(context, mouseX - x, mouseY - y);
                 matrices.pop();
 
                 childrenStartX += (node.getWidth() + HORIZONTAL_SPACING) / 2;
@@ -285,15 +289,15 @@ public class FamilyTreeScreen extends Screen {
             int fillColor = isFocused ? 0xF0100040 : 0xF0100010;
             int borderColor = isFocused ? 0xFF28007F : 1347420415;
 
-            fill(matrices, bounds.left, bounds.top + 1, bounds.left + 1, bounds.bottom - 1, fillColor);
-            fill(matrices, bounds.right - 1, bounds.top + 1, bounds.right, bounds.bottom - 1, fillColor);
-            fill(matrices, bounds.left + 1, bounds.top, bounds.right - 1, bounds.bottom, fillColor);
+            context.fill(bounds.left, bounds.top + 1, bounds.left + 1, bounds.bottom - 1, fillColor);
+            context.fill(bounds.right - 1, bounds.top + 1, bounds.right, bounds.bottom - 1, fillColor);
+            context.fill(bounds.left + 1, bounds.top, bounds.right - 1, bounds.bottom, fillColor);
 
-            fill(matrices, bounds.left + 1, bounds.top + 1, bounds.left + 2, bounds.bottom - 1, borderColor);
-            fill(matrices, bounds.right - 2, bounds.top + 1, bounds.right - 1, bounds.bottom - 1, borderColor);
+            context.fill(bounds.left + 1, bounds.top + 1, bounds.left + 2, bounds.bottom - 1, borderColor);
+            context.fill(bounds.right - 2, bounds.top + 1, bounds.right - 1, bounds.bottom - 1, borderColor);
 
-            fill(matrices, bounds.left + 2, bounds.top + 1, bounds.right - 2, bounds.top + 2, borderColor);
-            fill(matrices, bounds.left + 2, bounds.bottom - 2, bounds.right - 2, bounds.bottom - 1, borderColor);
+            context.fill(bounds.left + 2, bounds.top + 1, bounds.right - 2, bounds.top + 2, borderColor);
+            context.fill(bounds.left + 2, bounds.bottom - 2, bounds.right - 2, bounds.bottom - 1, borderColor);
 
             VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
 
@@ -324,16 +328,14 @@ public class FamilyTreeScreen extends Screen {
             immediate.draw();
             matrices.pop();
 
-            RenderSystem.setShaderTexture(0, InteractScreen.ICON_TEXTURES);
-
             if (deceased) {
                 Icon icon = MCAScreens.getInstance().getIcon("deceased");
-                drawTexture(matrices, bounds.left + 6, bounds.top + 6, 0, icon.u(), icon.v(), 16, 16, 256, 256);
+                context.drawTexture(InteractScreen.ICON_TEXTURES, bounds.left + 6, bounds.top + 6, 0, icon.u(), icon.v(), 16, 16, 256, 256);
 
                 if (isFocused && mouseX <= bounds.left + 20) {
                     matrices.push();
                     matrices.translate(0, 0, 20);
-                    renderTooltip(matrices, Text.translatable("gui.family_tree.label.deceased"), mouseX, mouseY);
+                    context.drawTooltip(textRenderer, Text.translatable("gui.family_tree.label.deceased"), mouseX, mouseY);
                     matrices.pop();
                 }
             }
@@ -342,7 +344,7 @@ public class FamilyTreeScreen extends Screen {
                 int x = bounds.left - SPOUSE_HORIZONTAL_SPACING;
                 int y = bounds.top + bounds.bottom / 2;
 
-                drawHorizontalLine(matrices, x, bounds.left - 1, y, 0xffffffff);
+                context.drawHorizontalLine(x, bounds.left - 1, y, 0xffffffff);
 
                 if (relationship == RelationshipState.MARRIED_TO_PLAYER ||
                         relationship == RelationshipState.MARRIED_TO_VILLAGER ||
@@ -350,7 +352,7 @@ public class FamilyTreeScreen extends Screen {
                         relationship == RelationshipState.PROMISED ||
                         relationship == RelationshipState.WIDOW) {
                     Icon icon = MCAScreens.getInstance().getIcon(relationship.getIcon());
-                    drawTexture(matrices, bounds.left - SPOUSE_HORIZONTAL_SPACING / 2 - 8, y - 8, 0, icon.u(), icon.v(), 16, 16, 256, 256);
+                    context.drawTexture(InteractScreen.ICON_TEXTURES, bounds.left - SPOUSE_HORIZONTAL_SPACING / 2 - 8, y - 8, 0, icon.u(), icon.v(), 16, 16, 256, 256);
                 }
 
                 y -= spouse.label.size() * textRenderer.fontHeight / 2;
@@ -359,17 +361,17 @@ public class FamilyTreeScreen extends Screen {
                 matrices.push();
                 matrices.translate(x, y, 0);
 
-                spouse.render(matrices, mouseX - x, mouseY - y);
+                spouse.render(context, mouseX - x, mouseY - y);
                 matrices.pop();
             }
         }
 
-        private void drawHook(MatrixStack matrices, int endX, int endY) {
+        private void drawHook(DrawContext context, int endX, int endY) {
             int midY = endY / 2;
 
-            drawVerticalLine(matrices, 0, 0, midY, 0xffffffff);
-            drawHorizontalLine(matrices, 0, endX, midY, 0xffffffff);
-            drawVerticalLine(matrices, endX, midY, endY, 0xffffffff);
+            context.drawVerticalLine(0, 0, midY, 0xffffffff);
+            context.drawHorizontalLine(0, endX, midY, 0xffffffff);
+            context.drawVerticalLine(endX, midY, endY, 0xffffffff);
         }
 
         public int getWidth() {

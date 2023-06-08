@@ -30,7 +30,7 @@ public class MatchmakersRingItem extends Item implements SpecialCaseGift {
         }
 
         // look for partner
-        Optional<VillagerEntityMCA> target = WorldUtils.getCloseEntities(villager.world, villager, 5.0).stream()
+        Optional<VillagerEntityMCA> target = WorldUtils.getCloseEntities(villager.getWorld(), villager, 5.0).stream()
                 .filter(v -> v != villager && v instanceof VillagerEntityMCA)
                 .map(VillagerEntityMCA.class::cast)
                 .filter(v -> !v.isBaby() && !v.getRelationships().isMarried())
@@ -50,7 +50,7 @@ public class MatchmakersRingItem extends Item implements SpecialCaseGift {
         spouse.getRelationships().marry(villager);
 
         // show a reaction
-        player.world.sendEntityStatus(villager, Status.VILLAGER_HEARTS);
+        player.getWorld().sendEntityStatus(villager, Status.VILLAGER_HEARTS);
 
         // remove the rings for survival mode (only one because the other one is gifted)
         if (!player.isCreative()) {

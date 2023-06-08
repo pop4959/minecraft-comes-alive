@@ -57,7 +57,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             i = MathHelper.floor(this.entity.getY() + 0.5);
         } else {
             BlockPos blockPos = this.entity.getBlockPos();
-            while ((this.cachedWorld.getBlockState(blockPos).isAir() || this.cachedWorld.getBlockState(blockPos).canPathfindThrough(this.cachedWorld, blockPos, NavigationType.LAND)) && blockPos.getY() > this.entity.world.getBottomY()) {
+            while ((this.cachedWorld.getBlockState(blockPos).isAir() || this.cachedWorld.getBlockState(blockPos).canPathfindThrough(this.cachedWorld, blockPos, NavigationType.LAND)) && blockPos.getY() > this.entity.getWorld().getBottomY()) {
                 blockPos = blockPos.down();
             }
             i = blockPos.up().getY();
@@ -248,7 +248,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             if (this.getNodeType(this.entity, x, y - 1, z) != ExtendedPathNodeType.WATER) {
                 return pathNode;
             }
-            while (y > this.entity.world.getBottomY()) {
+            while (y > this.entity.getWorld().getBottomY()) {
                 if ((pathNodeType = this.getNodeType(this.entity, x, --y, z)) == ExtendedPathNodeType.WATER) {
                     pathNode = this.getNode(x, y, z);
                     pathNode.type = pathNodeType.toVanilla();
@@ -263,7 +263,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             int i = 0;
             int j = y;
             while (pathNodeType == ExtendedPathNodeType.OPEN) {
-                if (--y < this.entity.world.getBottomY()) {
+                if (--y < this.entity.getWorld().getBottomY()) {
                     PathNode pathNode2 = this.getNode(x, j, z);
                     pathNode2.type = ExtendedPathNodeType.BLOCKED.toVanilla();
                     pathNode2.penalty = -1.0f;
@@ -483,7 +483,6 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
     protected static ExtendedPathNodeType getCommonNodeType(BlockView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos);
         Block block = blockState.getBlock();
-        Material material = blockState.getMaterial();
 
         // Here starts mca custom types
         if (block instanceof DirtPathBlock) {
@@ -519,14 +518,12 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         if (VillagerLandPathNodeMaker.inflictsFireDamage(blockState)) {
             return ExtendedPathNodeType.DAMAGE_FIRE;
         }
-        if (DoorBlock.isWoodenDoor(blockState) && !blockState.get(DoorBlock.OPEN)) {
-            return ExtendedPathNodeType.DOOR_WOOD_CLOSED;
-        }
-        if (block instanceof DoorBlock && material == Material.METAL && !blockState.get(DoorBlock.OPEN)) {
-            return ExtendedPathNodeType.DOOR_IRON_CLOSED;
-        }
-        if (block instanceof DoorBlock && blockState.get(DoorBlock.OPEN)) {
-            return ExtendedPathNodeType.DOOR_OPEN;
+        if (block instanceof DoorBlock doorBlock) {
+            if (blockState.get(DoorBlock.OPEN)) {
+                return ExtendedPathNodeType.DOOR_OPEN;
+            } else {
+                return doorBlock.getBlockSetType().canOpenByHand() ? ExtendedPathNodeType.DOOR_WOOD_CLOSED : ExtendedPathNodeType.DOOR_IRON_CLOSED;
+            }
         }
         if (block instanceof AbstractRailBlock) {
             return ExtendedPathNodeType.RAIL;

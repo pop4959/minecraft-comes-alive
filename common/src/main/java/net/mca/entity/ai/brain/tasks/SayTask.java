@@ -26,11 +26,11 @@ public class SayTask extends MultiTickTask<VillagerEntityMCA> {
     }
 
     protected boolean shouldRun(ServerWorld world, VillagerEntityMCA entity) {
-        return entity.world.getTime() - lastShout > interval && condition.test(entity);
+        return entity.getWorld().getTime() - lastShout > interval && condition.test(entity);
     }
 
     protected void run(ServerWorld world, VillagerEntityMCA entity, long time) {
         entity.sendChatToAllAround(phrase);
-        lastShout = entity.world.getTime();
+        lastShout = entity.getWorld().getTime();
     }
 }

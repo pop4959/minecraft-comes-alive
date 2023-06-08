@@ -58,13 +58,13 @@ public class ScytheItem extends SwordItem {
 
         boolean active = stack.getOrCreateNbt().getBoolean("active");
 
-        Random r = entity.world.random;
+        Random r = entity.getWorld().random;
 
         if (active != selected) {
             stack.getOrCreateNbt().putBoolean("active", selected);
 
             float baseVolume = selected ? 0.75F : 0.25F;
-            entity.world.playSound(null, entity.getBlockPos(), SoundsMCA.REAPER_SCYTHE_OUT.get(), entity.getSoundCategory(),
+            entity.getWorld().playSound(null, entity.getBlockPos(), SoundsMCA.REAPER_SCYTHE_OUT.get(), entity.getSoundCategory(),
                     baseVolume + r.nextFloat() / 2F,
                     0.65F + r.nextFloat() / 10F
             );
@@ -72,7 +72,7 @@ public class ScytheItem extends SwordItem {
 
         if (selected) {
             if (living.handSwingTicks == -1) {
-                entity.world.playSound(null, entity.getBlockPos(), SoundsMCA.REAPER_SCYTHE_SWING.get(), entity.getSoundCategory(), 0.25F, 1);
+                entity.getWorld().playSound(null, entity.getBlockPos(), SoundsMCA.REAPER_SCYTHE_SWING.get(), entity.getSoundCategory(), 0.25F, 1);
             }
         }
     }
@@ -105,7 +105,7 @@ public class ScytheItem extends SwordItem {
 
     @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (target.world.random.nextInt(50) > 40) {
+        if (target.getWorld().random.nextInt(50) > 40) {
             target.addStatusEffect(new StatusEffectInstance(StatusEffects.WITHER, 1000, 1));
         }
 
@@ -120,8 +120,8 @@ public class ScytheItem extends SwordItem {
             }
         }
 
-        Random r = attacker.world.random;
-        attacker.world.playSound(null, attacker.getBlockPos(), sound, attacker.getSoundCategory(),
+        Random r = attacker.getWorld().random;
+        attacker.getWorld().playSound(null, attacker.getBlockPos(), sound, attacker.getSoundCategory(),
                 0.75F + r.nextFloat() / 2F,
                 0.75F + r.nextFloat() / 2F
         );

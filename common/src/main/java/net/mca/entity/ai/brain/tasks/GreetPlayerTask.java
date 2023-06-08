@@ -34,7 +34,7 @@ public class GreetPlayerTask extends MultiTickTask<VillagerEntityMCA> {
         cooldown = MAX_COOLDOWN;
         getPlayer(villager).ifPresent(player -> {
             Memories memories = villager.getVillagerBrain().getMemoriesForPlayer(player);
-            int day = (int)(villager.world.getTimeOfDay() / 24000L);
+            int day = (int)(villager.getWorld().getTimeOfDay() / 24000L);
             memories.setLastSeen(day);
 
             String phrase = memories.getHearts() < 0 ? "welcomeFoe" : "welcome";
@@ -44,7 +44,7 @@ public class GreetPlayerTask extends MultiTickTask<VillagerEntityMCA> {
     }
 
     private static Optional<? extends PlayerEntity> getPlayer(VillagerEntityMCA villager) {
-        return ((ServerWorld)villager.world).getPlayers().stream()
+        return ((ServerWorld)villager.getWorld()).getPlayers().stream()
                 .filter(p -> isWithinSeeRange(villager, p))
                 .filter(p -> shouldGreet(villager, p))
                 .findFirst();
@@ -56,7 +56,7 @@ public class GreetPlayerTask extends MultiTickTask<VillagerEntityMCA> {
         if (id.isPresent() && village.isPresent() && id.get() == village.get().getId()) {
             Memories memories = villager.getVillagerBrain().getMemoriesForPlayer(player);
 
-            int day = (int)(villager.world.getTimeOfDay() / 24000L);
+            int day = (int)(villager.getWorld().getTimeOfDay() / 24000L);
 
             // first check relationships, only family, friends and foes will greet you
             if (Relationship.IS_MARRIED.test(villager, player)
