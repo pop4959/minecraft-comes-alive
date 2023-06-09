@@ -1,6 +1,7 @@
 package net.mca.item;
 
 import dev.architectury.core.item.ArchitecturySpawnEggItem;
+import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.mca.MCA;
@@ -29,6 +30,12 @@ import java.util.stream.Collectors;
 
 public interface ItemsMCA {
     DeferredRegister<Item> ITEMS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.ITEM);
+    DeferredRegister<ItemGroup> ITEM_GROUPS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.ITEM_GROUP);
+
+    RegistrySupplier<ItemGroup> MCA_GROUP = registerTab("mca_tab", () -> CreativeTabRegistry.create(
+            Text.translatable("itemGroup.mca.mca_tab"),
+            () -> ItemsMCA.ENGAGEMENT_RING.get().getDefaultStack()
+    ));
 
     RegistrySupplier<Item> MALE_VILLAGER_SPAWN_EGG = register("male_villager_spawn_egg", () -> new ArchitecturySpawnEggItem(EntitiesMCA.MALE_VILLAGER, 0x5e9aff, 0x3366bc, baseProps()));
     RegistrySupplier<Item> FEMALE_VILLAGER_SPAWN_EGG = register("female_villager_spawn_egg", () -> new ArchitecturySpawnEggItem(EntitiesMCA.FEMALE_VILLAGER, 0xe85ca1, 0xe3368c, baseProps()));
@@ -184,6 +191,7 @@ public interface ItemsMCA {
     RegistrySupplier<Item> SCYTHE = register("scythe", () -> new ScytheItem(baseProps()));
 
     static void bootstrap() {
+        ITEM_GROUPS.register();
         ITEMS.register();
         TagsMCA.Blocks.bootstrap();
     }
@@ -192,8 +200,12 @@ public interface ItemsMCA {
         return ITEMS.register(new Identifier(MCA.MOD_ID, name), item);
     }
 
+    static RegistrySupplier<ItemGroup> registerTab(String name, Supplier<ItemGroup> group) {
+        return ITEM_GROUPS.register(new Identifier(MCA.MOD_ID, name), group);
+    }
+
     static Item.Settings baseProps() {
-        return new Item.Settings().arch$tab(ItemGroupMCA.MCA_GROUP);
+        return new Item.Settings().arch$tab(MCA_GROUP);
     }
 
     static Item.Settings unstackableProps() {
