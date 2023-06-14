@@ -146,7 +146,8 @@ public class Pregnancy {
 
         long seed = random.nextLong();
         for (int i = 0; i < count; i++) {
-            ItemStack stack = BabyItem.createItem(mother, spouse, seed);
+            boolean flip = mother.getGenetics().getGender() == Gender.MALE;
+            ItemStack stack = BabyItem.createItem(flip ? spouse : mother, flip ? mother : spouse, seed);
             if (!(spouse instanceof PlayerEntity player && player.giveItemStack(stack))) {
                 mother.getInventory().addStack(stack);
             }
