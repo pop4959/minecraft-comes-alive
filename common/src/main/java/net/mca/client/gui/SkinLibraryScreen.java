@@ -889,7 +889,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 //tags
                 int ty = height / 2 - 70;
                 for (String tag : focusedContent.tags()) {
-                    if (!tag.equals("clothing") && !tag.equals("hair") && !tag.equals("invalid")) {
+                    if (!tag.equals("clothing") && !tag.equals("hair")) {
                         int w = textRenderer.getWidth(tag) + 10;
                         if (canModifyFocusedContent()) {
                             addDrawableChild(new ButtonWidget(width / 2 - 200, ty, 20, 20,
