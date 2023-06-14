@@ -3,7 +3,6 @@ package net.mca.client.book.pages;
 import net.mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 
 public class CenteredTextPage extends TextPage {
@@ -27,7 +26,7 @@ public class CenteredTextPage extends TextPage {
             for (int m = 0; m < l; ++m) {
                 OrderedText orderedText = getCachedPage(screen).get(m);
                 int x = i + 36;
-                context.drawTextWithShadow(textRenderer, orderedText, x + 114 / 2 - textRenderer.getWidth(orderedText) / 2, (32 + (m + 7 - (l / 2)) * 9), 0);
+                context.drawText(textRenderer, orderedText, x + 114 / 2 - textRenderer.getWidth(orderedText) / 2, (32 + (m + 7 - (l / 2)) * 9), 0, screen.getBook().hasTextShadow());
             }
         }
     }

@@ -37,9 +37,9 @@ public class ColorPalette {
         int color = data.colors[y * data.height + x];
 
         float[] result = new float[] {
-                ColorHelper.Abgr.getRed(color) / 255F,
+                ColorHelper.Abgr.getBlue(color) / 255F,
                 ColorHelper.Abgr.getGreen(color) / 255F,
-                ColorHelper.Abgr.getBlue(color) / 255F
+                ColorHelper.Abgr.getRed(color) / 255F
         };
 
         if (greenShift > 0) {

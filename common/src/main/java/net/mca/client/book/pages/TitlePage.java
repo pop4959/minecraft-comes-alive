@@ -3,7 +3,6 @@ package net.mca.client.book.pages;
 import net.mca.client.gui.ExtendedBookScreen;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -36,13 +35,13 @@ public class TitlePage extends Page {
         this.subtitle = subtitle;
     }
 
-    private static void drawCenteredText(DrawContext context, TextRenderer textRenderer, Text text, int centerX, int y, int color) {
+    private static void drawCenteredText(ExtendedBookScreen screen, DrawContext context, TextRenderer textRenderer, Text text, int centerX, int y, int color) {
         OrderedText orderedText = text.asOrderedText();
-        drawCenteredText(context, textRenderer, orderedText, centerX, y, color);
+        drawCenteredText(screen, context, textRenderer, orderedText, centerX, y, color);
     }
 
-    private static void drawCenteredText(DrawContext context, TextRenderer textRenderer, OrderedText text, int centerX, int y, int color) {
-        context.drawTextWithShadow(textRenderer, text, (centerX - textRenderer.getWidth(text) / 2), y, color);
+    private static void drawCenteredText(ExtendedBookScreen screen, DrawContext context, TextRenderer textRenderer, OrderedText text, int centerX, int y, int color) {
+        context.drawText(textRenderer, text, (centerX - textRenderer.getWidth(text) / 2), y, color, screen.getBook().hasTextShadow());
     }
 
     @Override
@@ -50,10 +49,10 @@ public class TitlePage extends Page {
         List<OrderedText> texts = screen.getTextRenderer().wrapLines(title, 114);
         int y = 80 - 5 * texts.size();
         for (OrderedText t : texts) {
-            drawCenteredText(context, screen.getTextRenderer(), t, screen.width / 2 - 2, y, 0xFFFFFF);
+            drawCenteredText(screen, context, screen.getTextRenderer(), t, screen.width / 2 - 2, y, 0xFFFFFF);
             y += 10;
         }
         y = 82 + 5 * texts.size();
-        drawCenteredText(context, screen.getTextRenderer(), subtitle, screen.width / 2 - 2, y, 0xFFFFFF);
+        drawCenteredText(screen, context, screen.getTextRenderer(), subtitle, screen.width / 2 - 2, y, 0xFFFFFF);
     }
 }

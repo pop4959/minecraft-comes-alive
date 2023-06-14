@@ -18,6 +18,7 @@ public class Book {
     private Identifier background = new Identifier("textures/gui/book.png");
     private Formatting textFormatting = Formatting.BLACK;
     private boolean pageTurnSound = true;
+    private boolean textShadow;
 
     public Book(String bookName) {
         this(bookName, Text.translatable(String.format("mca.books.%s.author", bookName)).formatted(Formatting.GRAY));
@@ -35,6 +36,11 @@ public class Book {
 
     public Book setTextFormatting(Formatting textFormatting) {
         this.textFormatting = textFormatting;
+        return this;
+    }
+
+    public Book setTextShadow(boolean textShadow) {
+        this.textShadow = textShadow;
         return this;
     }
 
@@ -93,6 +99,10 @@ public class Book {
 
     public Formatting getTextFormatting() {
         return textFormatting;
+    }
+
+    public boolean hasTextShadow() {
+        return textShadow;
     }
 
     public boolean hasPageTurnSound() {

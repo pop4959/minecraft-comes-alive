@@ -1,6 +1,5 @@
 package net.mca.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.client.book.Book;
 import net.mca.client.book.pages.Page;
 import net.mca.client.gui.widget.ExtendedPageTurnWidget;
@@ -10,7 +9,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.PageTurnWidget;
 import net.minecraft.client.util.NarratorManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
@@ -122,7 +120,7 @@ public class ExtendedBookScreen extends Screen {
         if (book.showPageCount()) {
             Text pageIndexText = Text.translatable("book.pageIndicator", this.pageIndex + 1, Math.max(book.getPageCount(), 1)).formatted(book.getTextFormatting());
             int k = textRenderer.getWidth(pageIndexText);
-            context.drawTextWithShadow(textRenderer, pageIndexText, i - k + 192 - 44, 18, 0);
+            context.drawText(textRenderer, pageIndexText, i - k + 192 - 44, 18, 0, getBook().hasTextShadow());
         }
 
         Page page = book.getPage(pageIndex);

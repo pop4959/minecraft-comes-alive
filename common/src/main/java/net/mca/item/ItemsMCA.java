@@ -73,6 +73,7 @@ public interface ItemsMCA {
     RegistrySupplier<Item> BOOK_DEATH = register("book_death", () -> new ExtendedWrittenBookItem(baseProps(), new Book("death")
             .setBackground(MCA.locate("textures/gui/books/death.png"))
             .setTextFormatting(Formatting.WHITE)
+            .setTextShadow(true)
             .addPage(new TitlePage("death", Formatting.GRAY))
             .addSimplePages(3, 0)
             .addPage(new ScribbleTextPage(MCA.locate("textures/gui/scribbles/test.png"), "death", 3))
@@ -102,6 +103,7 @@ public interface ItemsMCA {
     RegistrySupplier<Item> BOOK_BLUEPRINT = register("book_blueprint", () -> new ExtendedWrittenBookItem(baseProps(), new Book("blueprint")
             .setBackground(MCA.locate("textures/gui/books/blueprint.png"))
             .setTextFormatting(Formatting.WHITE)
+            .setTextShadow(true)
             .addPage(new TitlePage("blueprint", Formatting.WHITE))
             .addSimplePages(6)));
 

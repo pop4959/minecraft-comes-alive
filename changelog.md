@@ -1,5 +1,6 @@
 # 7.5.3
 
+* Ported to 1.20
 * Invalid skins are now hidden by default in the Skin Library
 * Added even more sanity checks when uploading stuff
 * Fixed father/mother at baby item not always being correct
