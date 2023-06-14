@@ -1,3 +1,9 @@
+# 7.5.3
+
+* Invalid skins are now hidden by default in the Skin Library
+* Added even more sanity checks when uploading stuff
+* Fixed father/mother at baby item not always being correct
+
 # 7.5.2
 
 * Removed gold dust
