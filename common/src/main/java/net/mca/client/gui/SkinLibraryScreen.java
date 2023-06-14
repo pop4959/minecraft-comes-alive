@@ -3,10 +3,7 @@ package net.mca.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.Config;
 import net.mca.MCA;
-import net.mca.client.gui.immersiveLibrary.Api;
-import net.mca.client.gui.immersiveLibrary.Auth;
-import net.mca.client.gui.immersiveLibrary.SkinCache;
-import net.mca.client.gui.immersiveLibrary.Workspace;
+import net.mca.client.gui.immersiveLibrary.*;
 import net.mca.client.gui.immersiveLibrary.responses.*;
 import net.mca.client.gui.immersiveLibrary.types.LiteContent;
 import net.mca.client.gui.immersiveLibrary.types.User;
@@ -68,6 +65,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private String filteredString = "";
     private SortingMode sortingMode = SortingMode.LIKES;
+    private boolean filterInvalidSkins = true;
 
     private final List<LiteContent> serverContent = new ArrayList<>();
     private List<LiteContent> filteredContent = new ArrayList<>();
@@ -119,6 +117,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private static HorizontalColorPickerWidget saturationWidget;
     private static HorizontalColorPickerWidget brightnessWidget;
     private TextFieldWidget textFieldWidget;
+    private boolean skipHairWarning;
 
     public SkinLibraryScreen() {
         this(null, null);
@@ -202,7 +201,15 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             }
         }).thenRunAsync(() -> {
             // fetch assets
-            Response response = request(Api.HttpMethod.GET, ContentListResponse.class, "content/mca");
+            Response response;
+            if (filterInvalidSkins) {
+                response = request(Api.HttpMethod.GET, ContentListResponse.class, "content/mca", Map.of(
+                        "tag_filter", "invalid",
+                        "invert_filter", "true"
+                ));
+            } else {
+                response = request(Api.HttpMethod.GET, ContentListResponse.class, "content/mca");
+            }
             if (response instanceof ContentListResponse contentListResponse) {
                 SkinCache.setContent(List.of(contentListResponse.contents()));
                 updateSearch();
@@ -439,7 +446,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             ));
             texts.addAll(wrap);
 
-            if (!SkinCache.isValid(content.contentid())) {
+            if (content.tags().contains("invalid")) {
                 texts.add(Text.translatable("gui.skin_library.probably_not_valids").formatted(Formatting.BOLD).formatted(Formatting.RED));
             }
 
@@ -746,6 +753,17 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             updateSearch();
                         }));
 
+
+                //filter
+                addDrawableChild(new ToggleableTooltipIconButtonWidget(width / 2 + 130 + 22 * 2, height / 2 + 82, 9 * 16, 3 * 16,
+                        filterInvalidSkins,
+                        Text.translatable("gui.skin_library.filter_invalid"),
+                        v -> {
+                            filterInvalidSkins = !filterInvalidSkins;
+                            reloadDatabase();
+                        }));
+
+
                 //search
                 TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200 + 65, height / 2 - 110 + 2, 110, 16,
                         Text.translatable("gui.skin_library.search")));
@@ -784,7 +802,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             drawControls(c, false, cx, cy);
 
                             //sorting icons
-                            if (!SkinCache.isValid(c.contentid())) {
+                            if (c.tags().contains("invalid")) {
                                 addDrawableChild(new ToggleableTooltipIconButtonWidget(cx + 12, cy - 16, 9 * 16, 3 * 16,
                                         true,
                                         Text.translatable("gui.skin_library.probably_not_valids"),
@@ -873,8 +891,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 //tags
                 int ty = height / 2 - 70;
                 for (String tag : focusedContent.tags()) {
-                    // todo blacklisted tags could be a bit more smooth, maybe include professions
-                    if (!tag.equals("clothing") && !tag.equals("hair")) {
+                    if (!tag.equals("clothing") && !tag.equals("hair") && !tag.equals("invalid")) {
                         int w = textRenderer.getWidth(tag) + 10;
                         if (canModifyFocusedContent()) {
                             addDrawableChild(new ButtonWidget(width / 2 - 200, ty, 20, 20,
@@ -1362,7 +1379,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     private int getMaxPages() {
-        return (int) Math.ceil(filteredContent.size() / 24.0);
+        return (int) Math.ceil(filteredContent.size() / ((double) CLOTHES_PER_PAGE));
     }
 
     @Override
@@ -1413,10 +1430,17 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             return;
         }
 
-        if (!SkinCache.verify(workspace.currentImage)) {
+        if (!Utils.verify(workspace.currentImage)) {
             setError(Text.translatable("gui.skin_library.read_the_help"));
             return;
         }
+
+        if (workspace.skinType == SkinType.HAIR && !Utils.verifyHair(workspace.currentImage) && !skipHairWarning) {
+            setError(Text.translatable("gui.skin_library.read_the_help_hair"));
+            skipHairWarning = true;
+            return;
+        }
+        skipHairWarning = false;
 
         if (!uploading) {
             uploading = true;
@@ -1447,7 +1471,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             }
 
                             // open detail page
-                            getContentById(contentid).ifPresent(content -> {
+                            getSubmittedContent(contentid).ifPresent(content -> {
                                 focusedContent = content;
                                 setPage(Page.DETAIL);
                                 uploading = false;
@@ -1476,7 +1500,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         return serverContent.stream().filter(v -> v.contentid() == contentid).findAny();
     }
 
-    private Optional<LiteContent> getSubscribedContentById(int contentid) {
+    private Optional<LiteContent> getSubmittedContent(int contentid) {
         return currentUser == null ? Optional.empty() : currentUser.submissions().stream().filter(v -> v.contentid() == contentid).findAny();
     }
 
@@ -1492,7 +1516,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     c.tags().remove(tag);
                 }
             });
-            getSubscribedContentById(contentid).ifPresent(c -> {
+            getSubmittedContent(contentid).ifPresent(c -> {
                 if (add) {
                     c.tags().add(tag);
                 } else {
