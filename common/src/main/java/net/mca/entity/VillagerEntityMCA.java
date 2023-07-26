@@ -550,6 +550,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public final boolean damage(DamageSource source, float damageAmount) {
+        // no baby squishes
+        if (getVehicle() instanceof PlayerEntity) {
+            return super.damage(source, 0.0f);
+        }
+
         // you can't hit babies!
         if (!Config.getInstance().canHurtBabies && !source.isUnblockable() && getAgeState() == AgeState.BABY) {
             if (source.getAttacker() instanceof PlayerEntity) {
