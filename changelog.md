@@ -2,6 +2,7 @@
 
 * Removed size requirements of blueprint buildings
 * Restored C2ME compatibility
+* Fixed drunk behavior at fence gates when smart fence AI is disabled (which it is by default)
 
 # 7.5.3
 
