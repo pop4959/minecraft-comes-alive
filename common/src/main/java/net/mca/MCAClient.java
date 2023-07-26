@@ -28,7 +28,7 @@ public class MCAClient {
 
     public static boolean useGeneticsRenderer(UUID uuid) {
         if (MCA.isPlayerRendererAllowed()) {
-            if (!MCAClient.playerDataRequests.contains(uuid)) {
+            if (!MCAClient.playerDataRequests.contains(uuid) && MinecraftClient.getInstance().getNetworkHandler() != null) {
                 MCAClient.playerDataRequests.add(uuid);
                 NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
             }

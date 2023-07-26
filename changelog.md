@@ -1,3 +1,7 @@
+# 7.5.4
+
+* Removed size requirements of blueprint buildings
+
 # 7.5.3
 
 * Ported to 1.20

@@ -2,8 +2,8 @@ package net.mca.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.MCA;
-import net.mca.client.gui.widget.WidgetUtils;
 import net.mca.client.gui.widget.TooltipButtonWidget;
+import net.mca.client.gui.widget.WidgetUtils;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.network.c2s.GetVillageRequest;
 import net.mca.network.c2s.RenameVillageMessage;
@@ -35,9 +35,9 @@ import java.util.function.Consumer;
 
 public class BlueprintScreen extends ExtendedScreen {
     //gui element Y positions
-    private final int positionTaxes = -60;
-    private final int positionBirth = -10;
-    private final int positionMarriage = 40;
+    private static final int POSITION_TAXES = -60;
+    private static final int POSITION_BIRTH = -10;
+    private static final int POSITION_MARRIAGE = 40;
     private Village village;
     private int reputation;
     private boolean isVillage;
@@ -88,13 +88,13 @@ public class BlueprintScreen extends ExtendedScreen {
         ButtonWidget[] buttons = new ButtonWidget[3];
 
         buttons[1] = addDrawableChild(new ButtonWidget(x - w / 2, y, w / 4, h,
-                Text.literal("<<"), (b) -> onPress.accept(false)));
+                Text.literal("<<"), b -> onPress.accept(false)));
 
         buttons[2] = addDrawableChild(new ButtonWidget(x + w / 4, y, w / 4, h,
-                Text.literal(">>"), (b) -> onPress.accept(true)));
+                Text.literal(">>"), b -> onPress.accept(true)));
 
         buttons[0] = addDrawableChild(new ButtonWidget(x - w / 4, y, w / 2, h,
-                Text.literal(""), (b) -> {
+                Text.literal(""), b -> {
         },
                 tooltip
         ));
@@ -129,21 +129,19 @@ public class BlueprintScreen extends ExtendedScreen {
         clearChildren();
 
         // back button
-        addDrawableChild(new ButtonWidget(5, 5, 20, 20, Text.translatable("gui.button.backarrow"), (b) -> setPage("close")));
+        addDrawableChild(new ButtonWidget(5, 5, 20, 20, Text.translatable("gui.button.backarrow"), b -> setPage("close")));
 
         //page selection
         int bx = width / 2 - 180;
         int by = height / 2 - 56;
-        if (!page.equals("rename")) {
-            if (!page.equals("empty") && !page.equals("waiting")) {
-                for (String p : new String[] {"map", "rank", "catalog", "villagers", "rules", "refresh"}) {
-                    ButtonWidget widget = new ButtonWidget(bx, by, 80, 20, Text.translatable("gui.blueprint." + p), (b) -> setPage(p));
-                    addDrawableChild(widget);
-                    if (page.equals(p)) {
-                        widget.active = false;
-                    }
-                    by += 22;
+        if (!page.equals("rename") && (!page.equals("empty") && !page.equals("waiting"))) {
+            for (String p : new String[]{"map", "rank", "catalog", "villagers", "rules", "refresh"}) {
+                ButtonWidget widget = new ButtonWidget(bx, by, 80, 20, Text.translatable("gui.blueprint." + p), b -> setPage(p));
+                addDrawableChild(widget);
+                if (page.equals(p)) {
+                    widget.active = false;
                 }
+                by += 22;
             }
         }
 
@@ -152,12 +150,12 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 - 48;
                 by = height / 2;
-                addDrawableChild(new TooltipButtonWidget(bx - 50, by + 5, 96, 20, "gui.blueprint.addRoom", (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx - 50, by + 5, 96, 20, "gui.blueprint.addRoom", b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     close();
                 }));
-                addDrawableChild(new TooltipButtonWidget(bx + 50, by + 5, 96, 20, "gui.blueprint.addBuilding", (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx + 50, by + 5, 96, 20, "gui.blueprint.addBuilding", b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     close();
@@ -181,7 +179,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 } else {
                     text.formatted(Formatting.GRAY).formatted(Formatting.STRIKETHROUGH);
                 }
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, Text.translatable("gui.blueprint.autoScan.tooltip"), (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, text, Text.translatable("gui.blueprint.autoScan.tooltip"), b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.AUTO_SCAN));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                     village.toggleAutoScan();
@@ -190,14 +188,14 @@ public class BlueprintScreen extends ExtendedScreen {
                 by += 22;
 
                 //restrict access
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.restrictAccess", (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.restrictAccess", b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.FORCE_TYPE, "blocked"));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
                 //add whole building
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addBuilding", (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addBuilding", b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
@@ -205,7 +203,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
                 //rename village
                 if (isVillage) {
-                    addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.renameVillage"), (b) -> {
+                    addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.renameVillage"), b -> {
                         setPage("rename");
                     }));
                 }
@@ -213,14 +211,14 @@ public class BlueprintScreen extends ExtendedScreen {
                 //add building
                 bx = width / 2 + 180 - 64 - 16;
                 by = height / 2 - 56 + 22 * 3;
-                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addRoom", (b) -> {
+                addDrawableChild(new TooltipButtonWidget(bx, by, 96, 20, "gui.blueprint.addRoom", b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.ADD_ROOM));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
                 by += 22;
 
                 //remove building
-                addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.removeBuilding"), (b) -> {
+                addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.removeBuilding"), b -> {
                     NetworkHandler.sendToServer(new ReportBuildingMessage(ReportBuildingMessage.Action.REMOVE));
                     NetworkHandler.sendToServer(new GetVillageRequest());
                 }));
@@ -228,7 +226,7 @@ public class BlueprintScreen extends ExtendedScreen {
 
                 //advanced
                 if (!page.equals("advanced")) {
-                    addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.advanced"), (b) -> {
+                    addDrawableChild(new ButtonWidget(bx, by, 96, 20, Text.translatable("gui.blueprint.advanced"), b -> {
                         setPage("advanced");
                     }));
                 }
@@ -242,7 +240,7 @@ public class BlueprintScreen extends ExtendedScreen {
                 int col = 0;
                 int size = 21;
                 int x = width / 2 - 4 * size - 8;
-                int y = (int)(height / 2 - 2.0 * size);
+                int y = (int) (height / 2 - 2.0 * size);
                 catalogButtons.clear();
                 for (BuildingType bt : BuildingTypes.getInstance()) {
                     if (bt.visible()) {
@@ -263,30 +261,30 @@ public class BlueprintScreen extends ExtendedScreen {
                 }
                 break;
             case "villagers":
-                addDrawableChild(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 54, 20, 20, Text.literal("<"), (b) -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 24 - 20, height / 2 + 54, 20, 20, Text.literal("<"), b -> {
                     if (pageNumber > 0) {
                         pageNumber--;
                     }
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 24, height / 2 + 54, 20, 20, Text.literal(">"), (b) -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 24, height / 2 + 54, 20, 20, Text.literal(">"), b -> {
                     if (pageNumber < Math.ceil(village.getPopulation() / 9.0) - 1) {
                         pageNumber++;
                     }
                 }));
-                buttonPage = addDrawableChild(new ButtonWidget(width / 2 - 24, height / 2 + 54, 48, 20, Text.literal("0/0)"), (b) -> {
+                buttonPage = addDrawableChild(new ButtonWidget(width / 2 - 24, height / 2 + 54, 48, 20, Text.literal("0/0)"), b -> {
                 }));
                 break;
             case "rules":
                 //taxes
-                buttonTaxes = createValueChanger(width / 2, height / 2 + positionTaxes + 10, 80, 20, (b) -> changeTaxes(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.taxes"));
+                buttonTaxes = createValueChanger(width / 2, height / 2 + POSITION_TAXES + 10, 80, 20, b -> changeTaxes(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.taxes"));
                 toggleButtons(buttonTaxes, false);
 
                 //birth threshold
-                buttonBirths = createValueChanger(width / 2, height / 2 + positionBirth + 10, 80, 20, (b) -> changePopulationThreshold(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.births"));
+                buttonBirths = createValueChanger(width / 2, height / 2 + POSITION_BIRTH + 10, 80, 20, b -> changePopulationThreshold(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.births"));
                 toggleButtons(buttonBirths, false);
 
                 //marriage threshold
-                buttonMarriage = createValueChanger(width / 2, height / 2 + positionMarriage + 10, 80, 20, (b) -> changeMarriageThreshold(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.marriage"));
+                buttonMarriage = createValueChanger(width / 2, height / 2 + POSITION_MARRIAGE + 10, 80, 20, b -> changeMarriageThreshold(b ? 0.125f : -0.125f), Text.translatable("gui.blueprint.tooltip.marriage"));
                 toggleButtons(buttonMarriage, false);
                 break;
             case "rename":
@@ -294,10 +292,10 @@ public class BlueprintScreen extends ExtendedScreen {
                 field.setMaxLength(32);
                 field.setText(village.getName());
 
-                addDrawableChild(new ButtonWidget(width / 2 - 66, height / 2 + 8, 64, 20, Text.translatable("gui.blueprint.cancel"), (b) -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 66, height / 2 + 8, 64, 20, Text.translatable("gui.blueprint.cancel"), b -> {
                     setPage("map");
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 2, height / 2 + 8, 64, 20, Text.translatable("gui.blueprint.rename"), (b) -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 2, height / 2 + 8, 64, 20, Text.translatable("gui.blueprint.rename"), b -> {
                     NetworkHandler.sendToServer(new RenameVillageMessage(village.getId(), field.getText()));
                     village.setName(field.getText());
                     setPage("map");
@@ -320,35 +318,31 @@ public class BlueprintScreen extends ExtendedScreen {
         renderBackground(context);
 
         assert client != null;
-        this.mouseX = (int)(client.mouse.getX() * width / client.getWindow().getFramebufferWidth());
-        this.mouseY = (int)(client.mouse.getY() * height / client.getWindow().getFramebufferHeight());
+        this.mouseX = (int) (client.mouse.getX() * width / client.getWindow().getFramebufferWidth());
+        this.mouseY = (int) (client.mouse.getY() * height / client.getWindow().getFramebufferHeight());
 
         switch (page) {
-            case "waiting":
-                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.waiting"), width / 2, height / 2, 0xffaaaaaa);
-                break;
-            case "empty":
-                context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2 - 20, 0xffaaaaaa);
-                break;
-            case "map":
+            case "waiting" ->
+                    context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.waiting"), width / 2, height / 2, 0xffaaaaaa);
+                case "empty" ->
+                    context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2 - 20, 0xffaaaaaa);
+
+            case "map" -> {
                 renderStats(context);
-            case "advanced":
+                renderName(transform);
+                renderMap(transform);
+            }
+            case "advanced" -> {
                 renderName(context);
                 renderMap(context);
-                break;
-            case "rank":
+            }
+            case "rank" -> {
                 renderTasks(context);
                 renderStats(context);
-                break;
-            case "catalog":
-                renderCatalog(context);
-                break;
-            case "villagers":
-                renderVillagers(context);
-                break;
-            case "rules":
-                renderRules(context);
-                break;
+            }
+            case "catalog" -> renderCatalog(context);
+            case "villagers" -> renderVillagers(context);
+            case "rules" -> renderRules(context);
         }
 
         super.render(context, sizeX, sizeY, offset);
@@ -395,9 +389,9 @@ public class BlueprintScreen extends ExtendedScreen {
         matrices.push();
 
         //center and scale the map
-        float sc = Math.min((float)mapSize / (village.getBox().getMaxBlockCount() + 3) * 2, 2.0f);
-        int mouseLocalX = (int)((mouseX - width / 2.0) / sc + village.getCenter().getX());
-        int mouseLocalY = (int)((mouseY - y) / sc + village.getCenter().getZ());
+        float sc = Math.min((float) mapSize / (village.getBox().getMaxBlockCount() + 3) * 2, 2.0f);
+        int mouseLocalX = (int) ((mouseX - width / 2.0) / sc + village.getCenter().getX());
+        int mouseLocalY = (int) ((mouseY - y) / sc + village.getCenter().getZ());
         matrices.translate(width / 2.0, y, 0);
         matrices.scale(sc, sc, 0.0f);
         matrices.translate(-village.getCenter().getX(), -village.getCenter().getZ(), 0);
@@ -406,7 +400,7 @@ public class BlueprintScreen extends ExtendedScreen {
         assert client != null;
         ClientPlayerEntity player = client.player;
         if (player != null) {
-            WidgetUtils.drawRectangle(context, (int)player.getX() - 1, (int)player.getZ() - 1, (int)player.getX() + 1, (int)player.getZ() + 1, 0xffff00ff);
+            WidgetUtils.drawRectangle(context, (int) player.getX() - 1, (int) player.getZ() - 1, (int) player.getX() + 1, (int) player.getZ() + 1, 0xffff00ff);
         }
 
         //buildings
@@ -476,11 +470,6 @@ public class BlueprintScreen extends ExtendedScreen {
         BuildingType bt = BuildingTypes.getInstance().getBuildingType(hoverBuilding.getType());
         lines.add(Text.translatable("buildingType." + bt.name()));
 
-        //size
-        if (!bt.grouped()) {
-            lines.add(Text.translatable("gui.blueprint.size", String.valueOf(hoverBuilding.getSize())));
-        }
-
         //residents
         for (String name : village.getResidents(hoverBuilding.getId())) {
             lines.add(Text.literal(name));
@@ -528,21 +517,19 @@ public class BlueprintScreen extends ExtendedScreen {
         if (selectedBuilding != null) {
             //name
             context.drawTextWithShadow(textRenderer, Text.translatable("buildingType." + selectedBuilding.name()), x, y, selectedBuilding.getColor());
+            y += 12;
 
             //description
             List<Text> wrap = FlowingText.wrap(Text.translatable("buildingType." + selectedBuilding.name() + ".description").formatted(Formatting.GRAY).formatted(Formatting.ITALIC), 150);
             for (Text t : wrap) {
-                context.drawTextWithShadow(textRenderer, t, x, y + 12, 0xffffffff);
+                context.drawTextWithShadow(textRenderer, t, x, y, 0xffffffff);
                 y += 10;
             }
-
-            //size
-            Text size = selectedBuilding.size() == 0 ? Text.translatable("gui.blueprint.anySize") : Text.translatable("gui.blueprint.size", String.valueOf(selectedBuilding.size()));
-            context.drawTextWithShadow(textRenderer, size, x, y + 20, 0xffdddddd);
+            y += 24;
 
             //required blocks
             for (Map.Entry<Identifier, Integer> b : selectedBuilding.getGroups().entrySet()) {
-                context.drawTextWithShadow(textRenderer, Text.literal(b.getValue() + " x ").append(getBlockName(b.getKey())), x, y + 32, 0xffffffff);
+                context.drawTextWithShadow(textRenderer, Text.literal(b.getValue() + " x ").append(getBlockName(b.getKey())), x, y, 0xffffffff);
                 y += 10;
             }
         } else {
@@ -556,7 +543,7 @@ public class BlueprintScreen extends ExtendedScreen {
     }
 
     private void renderVillagers(DrawContext context) {
-        int maxPages = (int)Math.ceil(village.getPopulation() / 9.0);
+        int maxPages = (int) Math.ceil(village.getPopulation() / 9.0);
         buttonPage.setMessage(Text.literal((pageNumber + 1) + "/" + maxPages));
 
         List<Map.Entry<UUID, String>> villager = village.getResidentNames().entrySet().stream()
@@ -579,32 +566,32 @@ public class BlueprintScreen extends ExtendedScreen {
     }
 
     private void renderRules(DrawContext context) {
-        buttonTaxes[0].setMessage(Text.literal((int)(village.getTaxes() * 100) + "%"));
-        buttonMarriage[0].setMessage(Text.literal((int)(village.getMarriageThreshold() * 100) + "%"));
-        buttonBirths[0].setMessage(Text.literal((int)(village.getPopulationThreshold() * 100) + "%"));
+        buttonTaxes[0].setMessage(Text.literal((int) (village.getTaxes() * 100) + "%"));
+        buttonMarriage[0].setMessage(Text.literal((int) (village.getMarriageThreshold() * 100) + "%"));
+        buttonBirths[0].setMessage(Text.literal((int) (village.getPopulationThreshold() * 100) + "%"));
 
         //taxes
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.taxes"), width / 2, height / 2 + positionTaxes, 0xffffffff);
+        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.taxes"), width / 2, height / 2 + POSITION_TAXES, 0xffffffff);
         if (!rank.isAtLeast(Rank.MERCHANT)) {
-            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionTaxes + 15, 0xffffffff);
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + POSITION_TAXES + 15, 0xffffffff);
             toggleButtons(buttonTaxes, false);
         } else {
             toggleButtons(buttonTaxes, true);
         }
 
         //births
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.birth"), width / 2, height / 2 + positionBirth, 0xffffffff);
+        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.birth"), width / 2, height / 2 + POSITION_BIRTH, 0xffffffff);
         if (!rank.isAtLeast(Rank.NOBLE)) {
-            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionBirth + 15, 0xffffffff);
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + POSITION_BIRTH + 15, 0xffffffff);
             toggleButtons(buttonBirths, false);
         } else {
             toggleButtons(buttonBirths, true);
         }
 
         //marriages
-        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.marriage"), width / 2, height / 2 + positionMarriage, 0xffffffff);
+        context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.marriage"), width / 2, height / 2 + POSITION_MARRIAGE, 0xffffffff);
         if (!rank.isAtLeast(Rank.MAYOR)) {
-            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + positionMarriage + 15, 0xffffffff);
+            context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.rankTooLow"), width / 2, height / 2 + POSITION_MARRIAGE + 15, 0xffffffff);
             toggleButtons(buttonMarriage, false);
         } else {
             toggleButtons(buttonMarriage, true);
