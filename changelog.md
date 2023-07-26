@@ -5,6 +5,7 @@
 * Fixed drunk behavior at fence gates when smart fence AI is disabled (which it is by default)
 * Fixed marriage slider not being saved
 * Fixed fallback translations on 1.20+
+* Added morph to the list of don't-render-custom-arms-when-installed list
 
 # 7.5.3
 

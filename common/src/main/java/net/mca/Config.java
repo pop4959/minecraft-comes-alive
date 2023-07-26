@@ -252,6 +252,7 @@ public final class Config implements Serializable {
     );
 
     public Map<String, String> playerRendererBlacklist = Map.of(
+            "morph", "arms",
             "firstpersonmod", "arms",
             "firstperson", "arms",
             "epicfight", "all"
