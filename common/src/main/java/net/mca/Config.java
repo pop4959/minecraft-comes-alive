@@ -132,7 +132,7 @@ public final class Config implements Serializable {
     public boolean enableAutoScanByDefault = false;
 
     //skin library
-    public String immersiveLibraryUrl = "https://mca.conczin.net/";
+    public String immersiveLibraryUrl = "https://mca.conczin.net";
     public boolean allowEveryoneToAddContentGlobally = false;
 
     //gifts
