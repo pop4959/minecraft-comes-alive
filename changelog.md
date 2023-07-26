@@ -1,6 +1,7 @@
 # 7.5.4
 
 * Removed size requirements of blueprint buildings
+* Restored C2ME compatibility
 
 # 7.5.3
 

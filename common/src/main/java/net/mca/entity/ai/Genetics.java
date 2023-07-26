@@ -38,7 +38,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
         return builder.addAll(GENDER);
     }
 
-    private Random random;
+    private Random random = Random.create();
 
     private final Map<GeneType, Gene> genes = new HashMap<>();
 
@@ -46,7 +46,6 @@ public class Genetics implements Iterable<Genetics.Gene> {
 
     public Genetics(VillagerLike<?> entity) {
         this.entity = entity;
-        random = Random.create(entity.asEntity().world.random.nextLong());
     }
 
     public float getVerticalScaleFactor() {
@@ -203,7 +202,7 @@ public class Genetics implements Iterable<Genetics.Gene> {
 
         @Override
         public boolean equals(Object o) {
-            return o instanceof GeneType && ((GeneType)o).key().equals(key());
+            return o instanceof GeneType geneType && geneType.key().equals(key());
         }
     }
 }
