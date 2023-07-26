@@ -918,15 +918,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             return;
         }
 
-        //convert
-        if ((cause.getAttacker() instanceof ZombieEntity || cause.getAttacker() instanceof ZombieVillagerEntity) && getInfectionProgress() >= BABBLING_THRESHOLD) {
-            RemovalReason reason = getRemovalReason();
-            unsetRemoved();
-            convertTo(EntityType.ZOMBIE_VILLAGER, false);
-            setRemoved(reason);
-            return;
-        }
-
         //drop stuff
         InventoryUtils.dropAllItems(this, inventory);
 
