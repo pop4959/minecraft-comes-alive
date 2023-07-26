@@ -4,6 +4,7 @@
 * Restored C2ME compatibility
 * Fixed drunk behavior at fence gates when smart fence AI is disabled (which it is by default)
 * Fixed marriage slider not being saved
+* Fixed fallback translations on 1.20+
 
 # 7.5.3
 
