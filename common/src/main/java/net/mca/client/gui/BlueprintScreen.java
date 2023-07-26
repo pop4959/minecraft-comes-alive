@@ -1,6 +1,5 @@
 package net.mca.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.MCA;
 import net.mca.client.gui.widget.TooltipButtonWidget;
 import net.mca.client.gui.widget.WidgetUtils;
@@ -329,8 +328,8 @@ public class BlueprintScreen extends ExtendedScreen {
 
             case "map" -> {
                 renderStats(context);
-                renderName(transform);
-                renderMap(transform);
+                renderName(context);
+                renderMap(context);
             }
             case "advanced" -> {
                 renderName(context);
