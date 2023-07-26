@@ -1,3 +1,7 @@
+# 7.5.4
+
+* Removed size requirements of blueprint buildings
+
 # 7.5.3
 
 * Invalid skins are now hidden by default in the Skin Library

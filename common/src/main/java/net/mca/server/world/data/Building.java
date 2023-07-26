@@ -368,7 +368,7 @@ public class Building implements Serializable {
         boolean assignedType = false;
 
         for (BuildingType bt : BuildingTypes.getInstance()) {
-            if ((bt.priority() > bestPriority) && size >= bt.size()) {
+            if (bt.priority() > bestPriority) {
                 //get an overview of the satisfied blocks
                 Map<Identifier, List<BlockPos>> available = bt.getGroups(blocks);
                 boolean valid = bt.getGroups().entrySet().stream().noneMatch(e -> !available.containsKey(e.getKey()) || available.get(e.getKey()).size() < e.getValue());
@@ -408,9 +408,7 @@ public class Building implements Serializable {
 
     public void addBlock(Block block, BlockPos p) {
         Identifier key = Registry.BLOCK.getId(block);
-        if (!blocks.containsKey(key)) {
-            blocks.put(key, new ArrayList<>());
-        }
+        blocks.computeIfAbsent(key, k -> new ArrayList<>());
         blocks.get(key).add(p);
     }
 
@@ -448,12 +446,6 @@ public class Building implements Serializable {
 
     public boolean isIdentical(Building b) {
         return pos0X == b.pos0X && pos1X == b.pos1X && pos0Y == b.pos0Y && pos1Y == b.pos1Y && pos0Z == b.pos0Z && pos1Z == b.pos1Z;
-    }
-
-    @Deprecated
-    public List<BlockPos> getBlocksOfGroup(Identifier i) {
-        Map<Identifier, List<BlockPos>> groups = BuildingTypes.getInstance().getBuildingType("?").getGroups(blocks);
-        return groups.getOrDefault(i, new ArrayList<>());
     }
 
     public int getSize() {
