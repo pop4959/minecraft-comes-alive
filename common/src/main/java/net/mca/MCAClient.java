@@ -26,15 +26,21 @@ public class MCAClient {
         NetworkHandler.sendToServer(new ConfigRequest());
     }
 
-    public static boolean useGeneticsRenderer(UUID uuid) {
+    public static Optional<VillagerLike<?>> getPlayerData(UUID uuid) {
         if (MCA.isPlayerRendererAllowed()) {
             if (!MCAClient.playerDataRequests.contains(uuid) && MinecraftClient.getInstance().getNetworkHandler() != null) {
                 MCAClient.playerDataRequests.add(uuid);
                 NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
             }
-            return MCAClient.playerData.containsKey(uuid) && MCAClient.playerData.get(uuid).getPlayerModel() != VillagerLike.PlayerModel.VANILLA;
+            if (MCAClient.playerData.containsKey(uuid)) {
+                return Optional.of(MCAClient.playerData.get(uuid));
+            }
         }
-        return false;
+        return Optional.empty();
+    }
+
+    public static boolean useGeneticsRenderer(UUID uuid) {
+        return getPlayerData(uuid).filter(f -> f.getPlayerModel() != VillagerLike.PlayerModel.VANILLA).isPresent();
     }
 
     public static boolean useVillagerRenderer(UUID uuid) {
