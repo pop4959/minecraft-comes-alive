@@ -448,6 +448,7 @@
   "gui.destiny.village_snowy": "Snowy Village",
   "gui.destiny.village_plains": "Plains Village",
   "gui.destiny.village_savanna": "Savanna Village",
+  "gui.destiny.ancient_city": "Ancient City",
 
   "destiny.story.reason/1": "One day, you had enough and decided on a journey to explore the world.",
   "destiny.story.travelling/1": "You conquered snowy mountains and muggy swamps, Avoiding Husks in the endless deserts.",
@@ -459,6 +460,7 @@
   "destiny.story.village_snowy/1": "You fight your way through a heavy snowstorm when you see dim lights up ahead. It is a village, maybe they have an inn to warm up?",
   "destiny.story.village_plains/1": "In the middle of a plains biome, a few villagers built themselves a settlement. The climate is moderate, the people friendly, perhaps they have place for another settler?",
   "destiny.story.village_savanna/1": "Finally you find a village between dry trees and grass. Let's see if they are friendly!",
+  "destiny.story.ancient_city/1": "But an unfortunate misstep sends you tumbling into a deep, dark cave. When you regain consciousness, you find yourself surrounded by the ancient ruins of a city forgotten by the world for eons.",
 
   "gui.blueprint.taxes": "Taxes",
   "gui.blueprint.birth": "Birth limit",

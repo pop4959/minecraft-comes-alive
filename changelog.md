@@ -9,6 +9,7 @@
 * You can no longer squish babies on the ceiling
 * Archers can now equip crossbows
 * The camera height is now correct
+* Added the ancient city as a rumor and starting location
 
 # 7.5.3
 

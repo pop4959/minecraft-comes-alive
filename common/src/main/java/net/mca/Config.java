@@ -227,7 +227,8 @@ public final class Config implements Serializable {
             "minecraft:swamp_hut",
             "minecraft:mineshaft",
             "minecraft:jungle_pyramid",
-            "minecraft:pillager_outpost"
+            "minecraft:pillager_outpost",
+            "minecraft:ancient_city"
     );
 
     public List<String> destinySpawnLocations = List.of(
@@ -237,7 +238,8 @@ public final class Config implements Serializable {
             "minecraft:village_taiga",
             "minecraft:village_snowy",
             "minecraft:village_plains",
-            "minecraft:village_savanna"
+            "minecraft:village_savanna",
+            "minecraft:ancient_city"
     );
 
     public Map<String, String> destinyLocationsToTranslationMap = Map.of(
