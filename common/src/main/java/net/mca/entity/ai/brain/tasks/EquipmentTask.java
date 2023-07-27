@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.function.Function;
@@ -57,6 +58,11 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
         villager.equipStack(villager.getDominantSlot(), stack);
     }
 
+    private void equipBestRanged(VillagerEntityMCA villager, Item fallback) {
+        ItemStack stack = InventoryUtils.getBestRanged(villager.getInventory()).orElse(fallback == null ? ItemStack.EMPTY : new ItemStack(fallback));
+        villager.equipStack(villager.getDominantSlot(), stack);
+    }
+
     @Override
     protected void run(ServerWorld world, VillagerEntityMCA villager, long time) {
         super.run(world, villager, time);
@@ -74,7 +80,11 @@ public class EquipmentTask extends Task<VillagerEntityMCA> {
 
         //weapon
         if (wear) {
-            equipBestWeapon(villager, set.getMainHand());
+            if (set.getMainHand() instanceof RangedWeaponItem) {
+                equipBestRanged(villager, set.getMainHand());
+            } else {
+                equipBestWeapon(villager, set.getMainHand());
+            }
             villager.equipStack(villager.getOpposingSlot(), new ItemStack(set.getGetOffHand()));
         } else {
             villager.setStackInHand(villager.getDominantHand(), ItemStack.EMPTY);

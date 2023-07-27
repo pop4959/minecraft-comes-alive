@@ -7,6 +7,7 @@
 * Fixed fallback translations on 1.20+
 * Added morph to the list of don't-render-custom-arms-when-installed list
 * You can no longer squish babies on the ceiling
+* Archers can now equip crossbows
 
 # 7.5.3
 
