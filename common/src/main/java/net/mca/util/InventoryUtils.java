@@ -4,10 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import org.jetbrains.annotations.Nullable;
@@ -83,6 +80,12 @@ public interface InventoryUtils {
         return stream(inv)
                 .filter(s -> s.getItem() instanceof SwordItem)
                 .max(Comparator.comparingDouble(s -> ((SwordItem)s.getItem()).getAttackDamage()));
+    }
+
+    static Optional<ItemStack> getBestRanged(Inventory inv) {
+        return stream(inv)
+                .filter(s -> s.getItem() instanceof RangedWeaponItem)
+                .max(Comparator.comparingDouble(s -> s.getItem().getMaxDamage()));
     }
 
     static void dropAllItems(Entity entity, Inventory inv) {

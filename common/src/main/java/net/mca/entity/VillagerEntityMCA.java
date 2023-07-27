@@ -551,6 +551,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public final boolean damage(DamageSource source, float damageAmount) {
+        // no baby squishes
+        if (getVehicle() instanceof PlayerEntity) {
+            return super.damage(source, 0.0f);
+        }
+
         // you can't hit babies!
         // TODO: Verify the `isUnblockable` replacement for 1.19.4, ensure same behavior
         if (!Config.getInstance().canHurtBabies && !source.isIn(DamageTypeTags.BYPASSES_SHIELD) && getAgeState() == AgeState.BABY) {
@@ -917,15 +922,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         super.onDeath(cause);
 
         if (getWorld().isClient) {
-            return;
-        }
-
-        //convert
-        if ((cause.getAttacker() instanceof ZombieEntity || cause.getAttacker() instanceof ZombieVillagerEntity) && getInfectionProgress() >= BABBLING_THRESHOLD) {
-            RemovalReason reason = getRemovalReason();
-            unsetRemoved();
-            convertTo(EntityType.ZOMBIE_VILLAGER, false);
-            setRemoved(reason);
             return;
         }
 

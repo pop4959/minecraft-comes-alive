@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
+import net.mca.Config;
 import net.minecraft.block.*;
 import net.minecraft.entity.ai.pathing.*;
 import net.minecraft.entity.mob.MobEntity;
@@ -158,15 +159,15 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         if (zNode.type == ExtendedPathNodeType.WALKABLE_DOOR.toVanilla() || xDiagNode.type == ExtendedPathNodeType.WALKABLE_DOOR.toVanilla() || zDiagNode.type == ExtendedPathNodeType.WALKABLE_DOOR.toVanilla()) {
             return false;
         }
-        boolean bl = xDiagNode.type == ExtendedPathNodeType.FENCE.toVanilla() && zNode.type == ExtendedPathNodeType.FENCE.toVanilla() && (double)this.entity.getWidth() < 0.5;
+        boolean bl = xDiagNode.type == ExtendedPathNodeType.FENCE.toVanilla() && zNode.type == ExtendedPathNodeType.FENCE.toVanilla() && (double) this.entity.getWidth() < 0.5;
         return zDiagNode.penalty >= 0.0f && (xDiagNode.y < xNode.y || xDiagNode.penalty >= 0.0f || bl) && (zNode.y < xNode.y || zNode.penalty >= 0.0f || bl);
     }
 
     private boolean isBlocked(PathNode node) {
-        Vec3d vec3d = new Vec3d((double)node.x - this.entity.getX(), (double)node.y - this.entity.getY(), (double)node.z - this.entity.getZ());
+        Vec3d vec3d = new Vec3d((double) node.x - this.entity.getX(), (double) node.y - this.entity.getY(), (double) node.z - this.entity.getZ());
         Box box = this.entity.getBoundingBox();
         int i = MathHelper.ceil(vec3d.length() / box.getAverageSideLength());
-        vec3d = vec3d.multiply(1.0f / (float)i);
+        vec3d = vec3d.multiply(1.0f / (float) i);
         for (int j = 1; j <= i; ++j) {
             if (!this.checkBoxCollision(box = box.offset(vec3d))) continue;
             return false;
@@ -181,7 +182,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
     public static double getFeetY(BlockView world, BlockPos pos) {
         BlockPos blockPos = pos.down();
         VoxelShape voxelShape = world.getBlockState(blockPos).getCollisionShape(world, blockPos);
-        return (double)blockPos.getY() + (voxelShape.isEmpty() ? 0.0 : voxelShape.getMax(Direction.Axis.Y));
+        return (double) blockPos.getY() + (voxelShape.isEmpty() ? 0.0 : voxelShape.getMax(Direction.Axis.Y));
     }
 
     float getPenalty(ExtendedPathNodeType pathNodeType) {
@@ -205,7 +206,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
 
         ExtendedPathNodeType pathNodeType = this.getNodeType(this.entity, x, y, z);
         float penalty = getPenalty(pathNodeType);
-        double e = (double)this.entity.getWidth() / 2.0;
+        double e = (double) this.entity.getWidth() / 2.0;
 
         PathNode pathNode = null;
         if (penalty >= 0.0f) {
@@ -233,11 +234,11 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
             if (pathNode != null &&
                     (pathNode.type == ExtendedPathNodeType.OPEN.toVanilla() || pathNode.type == ExtendedPathNodeType.WALKABLE.toVanilla()) &&
                     this.entity.getWidth() < 1.0f &&
-                    this.checkBoxCollision(new Box((g = (double)(x - direction.getOffsetX()) + 0.5) - e,
-                            VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(g, y + 1, h = (double)(z - direction.getOffsetZ()) + 0.5)) + 0.001,
+                    this.checkBoxCollision(new Box((g = (double) (x - direction.getOffsetX()) + 0.5) - e,
+                            VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(g, y + 1, h = (double) (z - direction.getOffsetZ()) + 0.5)) + 0.001,
                             h - e,
                             g + e,
-                            (double)this.entity.getHeight() + VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(pathNode.x, pathNode.y, (double)pathNode.z)) - 0.002,
+                            (double) this.entity.getHeight() + VillagerLandPathNodeMaker.getFeetY(this.cachedWorld, mutable.set(pathNode.x, pathNode.y, (double) pathNode.z)) - 0.002,
                             h + e)
                     )) {
                 pathNode = null;
@@ -531,7 +532,7 @@ public class VillagerLandPathNodeMaker extends PathNodeMaker {
         if (block instanceof LeavesBlock) {
             return ExtendedPathNodeType.LEAVES;
         }
-        if (blockState.isIn(BlockTags.FENCES) || blockState.isIn(BlockTags.WALLS) || block instanceof FenceGateBlock && !blockState.get(FenceGateBlock.OPEN)) {
+        if (blockState.isIn(BlockTags.FENCES) || blockState.isIn(BlockTags.WALLS) || (Config.getServerConfig().useSmarterDoorAI && block instanceof FenceGateBlock && !blockState.get(FenceGateBlock.OPEN))) {
             return ExtendedPathNodeType.FENCE;
         }
         if (!blockState.canPathfindThrough(world, pos, NavigationType.LAND)) {

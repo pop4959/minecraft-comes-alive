@@ -103,9 +103,9 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     protected final VillagerEntityMCA villagerVisualization = Objects.requireNonNull(EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world));
 
-    final int CLOTHES_H = 7;
-    final int CLOTHES_V = 2;
-    final int CLOTHES_PER_PAGE = CLOTHES_H * CLOTHES_V + 1;
+    static final int CLOTHES_H = 7;
+    static final int CLOTHES_V = 2;
+    static final int CLOTHES_PER_PAGE = CLOTHES_H * CLOTHES_V + 1;
 
     private boolean authenticated = false;
     private boolean awaitingAuthentication = false;
@@ -140,6 +140,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 villager.writeCustomDataToNbt(nbt);
                 this.villagerVisualization.readCustomDataFromNbt(nbt);
             }
+        }
+    }
+
+    @Override
+    public void renderBackground(MatrixStack matrices) {
+        if (previousScreen instanceof DestinyScreen) {
+            assert MinecraftClient.getInstance().world != null;
+            renderBackgroundTexture((int) MinecraftClient.getInstance().world.getTime());
         }
     }
 
@@ -222,6 +230,9 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         final MatrixStack matrices = context.getMatrices();
+
+        renderBackground(matrices);
+
         hoveredContent = null;
 
         villagerVisualization.setBreedingAge(0);
@@ -633,18 +644,25 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 } else {
                     if (hoveredContent.hasTag("clothing")) {
                         previousScreen.getVillager().setClothes("immersive_library:" + hoveredContent.contentid());
-                        previousScreen.syncVillagerData();
-                        previousScreen.close();
+                        returnToPreviousScreen();
                     } else if (hoveredContent.hasTag("hair")) {
                         previousScreen.getVillager().setHair("immersive_library:" + hoveredContent.contentid());
-                        previousScreen.syncVillagerData();
-                        previousScreen.close();
+                        returnToPreviousScreen();
                     }
                 }
             }
         }
 
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void returnToPreviousScreen() {
+        previousScreen.syncVillagerData();
+        if (previousScreen instanceof DestinyScreen) {
+            close();
+        } else {
+            previousScreen.close();
+        }
     }
 
     @Override

@@ -21,9 +21,9 @@ public enum EquipmentSet {
     ELITE(Items.NETHERITE_SWORD, Items.NETHERITE_SWORD, Items.DIAMOND_HELMET, Items.NETHERITE_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.NETHERITE_BOOTS),
     ROYAL(Items.TRIDENT, Items.DIAMOND_AXE, Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS);
 
-    EquipmentSet(Item main_hand, Item off_hand, Item head, Item chest, Item legs, Item feet) {
-        this.mainHand = main_hand;
-        this.getOffHand = off_hand;
+    EquipmentSet(Item mainHand, Item offHand, Item head, Item chest, Item legs, Item feet) {
+        this.mainHand = mainHand;
+        this.getOffHand = offHand;
         this.head = head;
         this.chest = chest;
         this.legs = legs;

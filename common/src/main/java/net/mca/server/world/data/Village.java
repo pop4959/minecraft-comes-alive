@@ -90,7 +90,7 @@ public class Village implements Iterable<Building> {
             populationThreshold = v.getFloat("populationThresholdFloat");
         }
         if (v.contains("marriageThresholdFloat")) {
-            marriageThreshold = v.getInt("marriageThresholdFloat");
+            marriageThreshold = v.getFloat("marriageThresholdFloat");
         }
         this.world = world;
 
