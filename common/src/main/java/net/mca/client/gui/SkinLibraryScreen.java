@@ -144,10 +144,10 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     }
 
     @Override
-    public void renderBackground(MatrixStack matrices) {
+    public void renderBackground(DrawContext context) {
         if (previousScreen instanceof DestinyScreen) {
             assert MinecraftClient.getInstance().world != null;
-            renderBackgroundTexture((int) MinecraftClient.getInstance().world.getTime());
+            renderBackgroundTexture(context);
         }
     }
 
@@ -231,7 +231,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         final MatrixStack matrices = context.getMatrices();
 
-        renderBackground(matrices);
+        renderBackground(context);
 
         hoveredContent = null;
 
