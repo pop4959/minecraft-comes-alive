@@ -136,6 +136,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         this.previousScreen = screen;
 
+        if (this.previousScreen instanceof NeedleScreen) {
+            filterHair = true;
+        }
+        if (this.previousScreen instanceof CombScreen) {
+            filterClothing = true;
+        }
+
         if (villagerVisualization != null) {
             NbtCompound nbt = new NbtCompound();
             villagerVisualization.writeCustomDataToNbt(nbt);
@@ -826,13 +833,15 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             }));
 
                     //moderator search
-                    addDrawableChild(new ToggleableTooltipIconButtonWidget(iconX + 22 * 5, height / 2 + 82, 11 * 16, 3 * 16,
-                            moderatorMode,
-                            Text.translatable("gui.skin_library.filter_moderator"),
-                            v -> {
-                                moderatorMode = !moderatorMode;
-                                loadPage(true);
-                            }));
+                    if (isModerator()) {
+                        addDrawableChild(new ToggleableTooltipIconButtonWidget(iconX + 22 * 5, height / 2 + 82, 11 * 16, 3 * 16,
+                                moderatorMode,
+                                Text.translatable("gui.skin_library.filter_moderator"),
+                                v -> {
+                                    moderatorMode = !moderatorMode;
+                                    loadPage(true);
+                                }));
+                    }
                 }
 
                 //search
@@ -1689,6 +1698,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
             if (reason.equals("DEFAULT")) {
                 removeContentLocally(contentId);
             }
+
+            setError(Text.translatable("gui.skin_library.reported"));
         }
     }
 

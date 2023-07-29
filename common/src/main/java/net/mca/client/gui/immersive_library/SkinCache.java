@@ -61,13 +61,8 @@ public class SkinCache {
         }
     }
 
-    private static String read(String file) {
-        try {
-            return FileUtils.readFileToString(getFile(file), Charset.defaultCharset());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static String read(String file) throws IOException {
+        return FileUtils.readFileToString(getFile(file), Charset.defaultCharset());
     }
 
     /**
@@ -114,7 +109,7 @@ public class SkinCache {
             }
         } else {
             // Outdated, but we have a cached version, lets use that while we wait for the result
-            if (version > 0 && !textureIdentifiers.containsKey(contentid)) {
+            if (version >= 0 && !textureIdentifiers.containsKey(contentid)) {
                 loadResources(contentid);
             }
 
@@ -122,7 +117,7 @@ public class SkinCache {
             if (!requested.containsKey(contentid) && (currentVersion > version || !textureIdentifiers.containsKey(contentid))) {
                 requested.put(contentid, true);
                 CompletableFuture.runAsync(() -> {
-                    MCA.LOGGER.info("Requested asset " + contentid + " with version " + version + " and current version " + currentVersion);
+                    logger("Requested asset " + contentid + " with version " + version + " and current version " + currentVersion);
                     Response response = request(Api.HttpMethod.GET, ContentResponse.class, "content/mca/%s".formatted(contentid));
                     if (response instanceof ContentResponse contentResponse) {
                         int newVersion = contentResponse.content().version();
@@ -132,7 +127,7 @@ public class SkinCache {
                         cachedVersions.put(contentid, newVersion);
                         requested.remove(contentid);
                         textureIdentifiers.remove(contentid);
-                        MCA.LOGGER.warn("Received " + contentid);
+                        logger("Received " + contentid);
                     }
                 });
             }
@@ -144,14 +139,14 @@ public class SkinCache {
      *                  Loads the resources from the disk and creates the texture identifier
      */
     private static void loadResources(int contentid) {
-        MCA.LOGGER.info("Loaded asset " + contentid);
+        logger("Loaded asset " + contentid);
 
         // Load meta
         try {
             String json = read(contentid + ".json");
             SkinMeta meta = gson.fromJson(json, SkinMeta.class);
             metas.put(contentid, meta);
-        } catch (JsonSyntaxException e) {
+        } catch (JsonSyntaxException | IOException e) {
             e.printStackTrace();
             enforceSync(contentid);
             return;
@@ -171,6 +166,13 @@ public class SkinCache {
         } catch (IOException e) {
             e.printStackTrace();
             enforceSync(contentid);
+        }
+    }
+
+    private static void logger(String s) {
+        //noinspection ConstantConditions
+        if (true) {
+            MCA.LOGGER.info(s);
         }
     }
 
@@ -195,7 +197,7 @@ public class SkinCache {
      * Unlike the other getters this function will sync at least once no matter the local state of the cache, as it lacks the current version
      */
     public static Identifier getTextureIdentifier(int contentid) {
-        sync(contentid, -1);
+        sync(contentid, -2);
         return textureIdentifiers.getOrDefault(contentid, DEFAULT_SKIN);
     }
 }

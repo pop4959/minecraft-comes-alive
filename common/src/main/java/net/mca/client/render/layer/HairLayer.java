@@ -1,5 +1,6 @@
 package net.mca.client.render.layer;
 
+import net.mca.client.gui.immersive_library.SkinCache;
 import net.mca.client.resources.ColorPalette;
 import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.Traits;
@@ -30,7 +31,11 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
 
     @Override
     public Identifier getSkin(T villager) {
-        return cached(getVillager(villager).getHair(), Identifier::new);
+        String identifier = getVillager(villager).getHair();
+        if (identifier.startsWith("immersive_library:")) {
+            return SkinCache.getTextureIdentifier(Integer.parseInt(identifier.substring(18)));
+        }
+        return cached(identifier, Identifier::new);
     }
 
     @Override
