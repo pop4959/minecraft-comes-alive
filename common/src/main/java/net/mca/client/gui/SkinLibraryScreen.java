@@ -789,14 +789,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                         Text.translatable("gui.skin_library.sort_likes"),
                         v -> {
                             sortingMode = SortingMode.LIKES;
-                            refreshContentList();
+                            loadPage(true);
                         }));
                 addDrawableChild(new ToggleableTooltipIconButtonWidget(iconX + 22, height / 2 + 82, 7 * 16, 3 * 16,
                         sortingMode == SortingMode.NEWEST,
                         Text.translatable("gui.skin_library.sort_newest"),
                         v -> {
                             sortingMode = SortingMode.NEWEST;
-                            refreshContentList();
+                            loadPage(true);
                         }));
 
                 if (subscriptionFilter == SubscriptionFilter.LIBRARY) {
@@ -950,7 +950,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 //controls
-                drawControls(focusedContent, true, width / 2 + 150, height / 2 + 60);
+                drawControls(focusedContent, true, width / 2 + 130, height / 2 + 60);
 
                 //close
                 addDrawableChild(new ButtonWidget(width / 2 - 40, height / 2 + 60, 80, 20,
@@ -1604,11 +1604,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             }
 
                             // open detail page
-                            getSubmittedContent(contentid).ifPresent(content -> {
+                            getSubmittedContent(contentid).or(() -> getContentById(contentid)).ifPresent(content -> {
                                 focusedContent = content;
                                 setPage(Page.DETAIL);
                                 uploading = false;
                             });
+
+                            //also refresh our cache
+                            SkinCache.enforceSync(contentid);
                         });
                     } else if (request instanceof ErrorResponse response) {
                         if (response.code() == 428) {
@@ -1776,7 +1779,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     public enum SortingMode {
         LIKES("likes"),
-        NEWEST("oid"),
+        NEWEST("date"),
         REPORTS("reports");
 
         public final String order;

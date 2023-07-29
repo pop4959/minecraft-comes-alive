@@ -31,7 +31,7 @@ public class SkinCache {
     private static final Gson gson = new Gson();
 
     static final Map<Integer, Boolean> requested = new ConcurrentHashMap<>();
-    static final Map<Integer, Boolean> upToDate = new ConcurrentHashMap<>();
+    static final Map<Integer, Integer> cachedVersions = new ConcurrentHashMap<>();
 
     static final Map<Integer, Identifier> textureIdentifiers = new HashMap<>();
     static final Map<Integer, NativeImage> images = new HashMap<>();
@@ -71,12 +71,12 @@ public class SkinCache {
 
     /**
      * @param contentid The content id
-     * Enforces re downloading the assets, mostly when local files appear to be corrupted
+     *                  Enforces re downloading the assets, mostly when local files appear to be corrupted
      */
     public static void enforceSync(int contentid) {
-        upToDate.remove(contentid);
         try {
             Files.delete(getFile(contentid + ".version").toPath());
+            cachedVersions.remove(contentid);
         } catch (IOException e) {
             MCA.LOGGER.warn(e);
         }
@@ -92,40 +92,47 @@ public class SkinCache {
      *                       Downloads the assets if they are not up to date
      */
     public static void sync(int contentid, int currentVersion) {
-        if (!requested.containsKey(contentid)) {
-            requested.put(contentid, true);
-
-            // Load the current version
-            int version = -1;
+        // Fetch the version identifier which we have on disk, or -1
+        int version = cachedVersions.computeIfAbsent(contentid, id -> {
             File file = getFile(contentid + ".version");
             if (file.exists()) {
                 try {
                     String s = FileUtils.readFileToString(file, Charset.defaultCharset());
-                    version = Integer.parseInt(s);
+                    return Integer.parseInt(s);
                 } catch (Exception e) {
                     MCA.LOGGER.warn(e);
                 }
             }
+            return -1;
+        });
+
+        boolean loaded = textureIdentifiers.containsKey(contentid);
+
+        if (currentVersion == version) {
+            // Up to date! Only load a resource if it's not loaded yet
+            if (!loaded) {
+                loadResources(contentid);
+            }
+        } else {
+            // Outdated, but we have a cached version, lets use that while we wait for the result
+            if (version > 0 && !loaded) {
+                loadResources(contentid);
+            }
 
             // Download assets when versions mismatch
-            if (currentVersion == version) {
-                upToDate.put(contentid, true);
-                loadResources(contentid);
-            } else if (currentVersion >= 0 || !upToDate.containsKey(contentid)) {
-                try {
-                    Files.delete(getFile(contentid + ".version").toPath());
-                } catch (IOException e) {
-                    MCA.LOGGER.warn(e);
-                }
-
+            if (!requested.containsKey(contentid) && (currentVersion > version || !loaded)) {
+                requested.put(contentid, true);
                 CompletableFuture.runAsync(() -> {
+                    MCA.LOGGER.info("Requested asset " + contentid);
                     Response response = request(Api.HttpMethod.GET, ContentResponse.class, "content/mca/%s".formatted(contentid));
                     if (response instanceof ContentResponse contentResponse) {
+                        int newVersion = contentResponse.content().version();
                         write(contentid + ".png", Base64.getDecoder().decode(contentResponse.content().data()));
                         write(contentid + ".json", contentResponse.content().meta());
-                        write(contentid + ".version", Integer.toString(contentResponse.content().version()));
-                        upToDate.put(contentid, true);
+                        write(contentid + ".version", Integer.toString(newVersion));
+                        cachedVersions.put(contentid, newVersion);
                         requested.remove(contentid);
+                        loadResources(contentid);
                     }
                 });
             }
@@ -137,6 +144,8 @@ public class SkinCache {
      *                  Loads the resources from the disk and creates the texture identifier
      */
     private static void loadResources(int contentid) {
+        MCA.LOGGER.info("Loaded asset " + contentid);
+
         // Load meta
         try {
             String json = read(contentid + ".json");
