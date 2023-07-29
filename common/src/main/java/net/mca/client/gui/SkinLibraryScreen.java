@@ -238,8 +238,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     "descending", "true",
                     "offset", String.valueOf(selectionPage * CLOTHES_PER_PAGE),
                     "limit", String.valueOf(CLOTHES_PER_PAGE),
-                    "filter_banned", String.valueOf(!isModerator()),
-                    "filter_reported", String.valueOf(!isModerator()),
                     "moderator", String.valueOf(moderatorMode),
                     "token", String.valueOf(Auth.getToken())
             ));
@@ -838,18 +836,20 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 //search
-                TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200 + 65, height / 2 - 110 + 2, 110, 16,
-                        Text.translatable("gui.skin_library.search")));
-                textFieldWidget.setMaxLength(64);
-                textFieldWidget.setText(filteredString);
-                if (filteredString.isEmpty()) {
-                    textFieldWidget.setSuggestion("Search");
+                if (subscriptionFilter == SubscriptionFilter.LIBRARY) {
+                    TextFieldWidget textFieldWidget = addDrawableChild(new TextFieldWidget(this.textRenderer, width / 2 - 200 + 65, height / 2 - 110 + 2, 110, 16,
+                            Text.translatable("gui.skin_library.search")));
+                    textFieldWidget.setMaxLength(64);
+                    textFieldWidget.setText(filteredString);
+                    if (filteredString.isEmpty()) {
+                        textFieldWidget.setSuggestion("Search");
+                    }
+                    textFieldWidget.setChangedListener(s -> {
+                        filteredString = s;
+                        refreshContentList();
+                        textFieldWidget.setSuggestion(null);
+                    });
                 }
-                textFieldWidget.setChangedListener(s -> {
-                    filteredString = s;
-                    refreshContentList();
-                    textFieldWidget.setSuggestion(null);
-                });
 
                 //group
                 addDrawableChild(CyclingButtonWidget.builder(SubscriptionFilter::getText)

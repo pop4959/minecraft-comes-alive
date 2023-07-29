@@ -10,6 +10,7 @@ import net.mca.client.resources.SkinMeta;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
 import org.apache.commons.io.FileUtils;
 
@@ -106,24 +107,22 @@ public class SkinCache {
             return -1;
         });
 
-        boolean loaded = textureIdentifiers.containsKey(contentid);
-
         if (currentVersion == version) {
             // Up to date! Only load a resource if it's not loaded yet
-            if (!loaded) {
+            if (!textureIdentifiers.containsKey(contentid)) {
                 loadResources(contentid);
             }
         } else {
             // Outdated, but we have a cached version, lets use that while we wait for the result
-            if (version > 0 && !loaded) {
+            if (version > 0 && !textureIdentifiers.containsKey(contentid)) {
                 loadResources(contentid);
             }
 
             // Download assets when versions mismatch
-            if (!requested.containsKey(contentid) && (currentVersion > version || !loaded)) {
+            if (!requested.containsKey(contentid) && (currentVersion > version || !textureIdentifiers.containsKey(contentid))) {
                 requested.put(contentid, true);
                 CompletableFuture.runAsync(() -> {
-                    MCA.LOGGER.info("Requested asset " + contentid);
+                    MCA.LOGGER.info("Requested asset " + contentid + " with version " + version + " and current version " + currentVersion);
                     Response response = request(Api.HttpMethod.GET, ContentResponse.class, "content/mca/%s".formatted(contentid));
                     if (response instanceof ContentResponse contentResponse) {
                         int newVersion = contentResponse.content().version();
@@ -132,7 +131,8 @@ public class SkinCache {
                         write(contentid + ".version", Integer.toString(newVersion));
                         cachedVersions.put(contentid, newVersion);
                         requested.remove(contentid);
-                        loadResources(contentid);
+                        textureIdentifiers.remove(contentid);
+                        MCA.LOGGER.warn("Received " + contentid);
                     }
                 });
             }
@@ -154,6 +154,7 @@ public class SkinCache {
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
             enforceSync(contentid);
+            return;
         }
 
         // Load texture
@@ -161,7 +162,10 @@ public class SkinCache {
             // Load new
             NativeImage image = NativeImage.read(stream);
             Identifier identifier = new Identifier("immersive_library", String.valueOf(contentid));
-            MinecraftClient.getInstance().getTextureManager().registerTexture(identifier, new NativeImageBackedTexture(image));
+
+            TextureManager textureManager = MinecraftClient.getInstance().getTextureManager();
+            textureManager.registerTexture(identifier, new NativeImageBackedTexture(image));
+
             textureIdentifiers.put(contentid, identifier);
             images.put(contentid, image);
         } catch (IOException e) {
