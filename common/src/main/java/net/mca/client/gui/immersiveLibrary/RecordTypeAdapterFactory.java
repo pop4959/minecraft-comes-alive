@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import net.mca.MCA;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -16,8 +17,7 @@ import java.util.HashMap;
 public class RecordTypeAdapterFactory implements TypeAdapterFactory {
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-        @SuppressWarnings("unchecked")
-        Class<T> clazz = (Class<T>)type.getRawType();
+        @SuppressWarnings("unchecked") Class<T> clazz = (Class<T>) type.getRawType();
         if (!clazz.isRecord()) {
             return null;
         }
@@ -63,8 +63,10 @@ public class RecordTypeAdapterFactory implements TypeAdapterFactory {
                         constructor = clazz.getDeclaredConstructor(argTypes);
                         constructor.setAccessible(true);
                         return constructor.newInstance(args);
-                    } catch (NoSuchMethodException | InstantiationException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                        throw new RuntimeException(e);
+                    } catch (NoSuchMethodException | InstantiationException | SecurityException |
+                             IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                        MCA.LOGGER.warn(e);
+                        return null;
                     }
                 }
             }

@@ -10,6 +10,11 @@
 * Archers can now equip crossbows
 * The camera height is now correct
 * Added the ancient city as a rumor and starting location
+* Skin library now has...
+    * Much less data transfer
+    * A report system
+    * Filter buttons for hair and clothing
+    * Hopefully less connection issues thanks to a dedicated domain
 
 # 7.5.3
 

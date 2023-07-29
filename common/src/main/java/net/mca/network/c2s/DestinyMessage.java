@@ -11,6 +11,7 @@ import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.Heightmap;
 
@@ -48,7 +49,13 @@ public class DestinyMessage implements Message {
             MCA.executorService.execute(() -> {
                 WorldUtils.getClosestStructurePosition(player.getWorld(), player.getBlockPos(), new Identifier(location), 128).ifPresent(pos -> {
                     player.getWorld().getWorldChunk(pos);
-                    pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
+
+                    if (location.equals("minecraft:ancient_city")) {
+                        pos = new BlockPos(pos.getX(), -50, pos.getZ());
+                    } else {
+                        pos = player.getWorld().getTopPosition(Heightmap.Type.WORLD_SURFACE, pos);
+                    }
+
                     pos = FuzzyPositions.upWhile(pos, player.getWorld().getHeight(), p -> player.getWorld().getBlockState(p).shouldSuffocate(player.getWorld(), p));
                     pos = ExtendedFuzzyPositions.downWhile(pos, 1, p -> !player.getWorld().getBlockState(p.down()).isFullCube(player.getWorld(), p));
 
