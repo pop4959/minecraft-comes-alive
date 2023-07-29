@@ -1,7 +1,7 @@
-package net.mca.client.gui.immersiveLibrary;
+package net.mca.client.gui.immersive_library;
 
 import net.mca.client.gui.SkinLibraryScreen;
-import net.mca.client.gui.immersiveLibrary.types.LiteContent;
+import net.mca.client.gui.immersive_library.types.LiteContent;
 import net.mca.client.resources.SkinMeta;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.data.skin.Clothing;

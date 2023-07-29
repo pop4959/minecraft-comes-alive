@@ -1,11 +1,11 @@
-package net.mca.client.gui.immersiveLibrary;
+package net.mca.client.gui.immersive_library;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import net.mca.MCA;
-import net.mca.client.gui.immersiveLibrary.responses.ContentResponse;
-import net.mca.client.gui.immersiveLibrary.responses.Response;
-import net.mca.client.gui.immersiveLibrary.types.LiteContent;
+import net.mca.client.gui.immersive_library.responses.ContentResponse;
+import net.mca.client.gui.immersive_library.responses.Response;
+import net.mca.client.gui.immersive_library.types.LiteContent;
 import net.mca.client.resources.SkinMeta;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static net.mca.client.gui.immersiveLibrary.Api.request;
+import static net.mca.client.gui.immersive_library.Api.request;
 
 public class SkinCache {
     private static final Identifier DEFAULT_SKIN = MCA.locate("skins/empty.png");

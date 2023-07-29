@@ -1,6 +1,6 @@
 package net.mca.client.render.layer;
 
-import net.mca.client.gui.immersiveLibrary.SkinCache;
+import net.mca.client.gui.immersive_library.SkinCache;
 import net.mca.client.model.CommonVillagerModel;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;

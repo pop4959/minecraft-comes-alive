@@ -1,11 +1,11 @@
-package net.mca.client.gui.immersiveLibrary;
+package net.mca.client.gui.immersive_library;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.mca.Config;
 import net.mca.MCA;
-import net.mca.client.gui.immersiveLibrary.responses.*;
+import net.mca.client.gui.immersive_library.responses.*;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;

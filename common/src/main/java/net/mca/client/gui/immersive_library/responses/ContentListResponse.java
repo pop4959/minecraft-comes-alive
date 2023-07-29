@@ -1,6 +1,6 @@
-package net.mca.client.gui.immersiveLibrary.responses;
+package net.mca.client.gui.immersive_library.responses;
 
-import net.mca.client.gui.immersiveLibrary.types.LiteContent;
+import net.mca.client.gui.immersive_library.types.LiteContent;
 
 import java.util.Arrays;
 

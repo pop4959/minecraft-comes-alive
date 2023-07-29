@@ -3,10 +3,10 @@ package net.mca.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.mca.Config;
 import net.mca.MCA;
-import net.mca.client.gui.immersiveLibrary.*;
-import net.mca.client.gui.immersiveLibrary.responses.*;
-import net.mca.client.gui.immersiveLibrary.types.LiteContent;
-import net.mca.client.gui.immersiveLibrary.types.User;
+import net.mca.client.gui.immersive_library.*;
+import net.mca.client.gui.immersive_library.responses.*;
+import net.mca.client.gui.immersive_library.types.LiteContent;
+import net.mca.client.gui.immersive_library.types.User;
 import net.mca.client.gui.widget.*;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.client.resources.*;
@@ -54,7 +54,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import static net.mca.client.gui.immersiveLibrary.Api.request;
+import static net.mca.client.gui.immersive_library.Api.request;
 
 public class SkinLibraryScreen extends Screen implements SkinListUpdateListener {
     private static final Identifier TEMPLATE_IDENTIFIER = MCA.locate("textures/skin_template.png");
