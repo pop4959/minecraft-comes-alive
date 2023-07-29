@@ -124,7 +124,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private TextFieldWidget textFieldWidget;
     private boolean skipHairWarning;
 
-    private List<LiteContent> contents = new LinkedList<>();
+    private final List<LiteContent> contents = new LinkedList<>();
     private List<LiteContent> libraryContents = new LinkedList<>();
 
     public SkinLibraryScreen() {

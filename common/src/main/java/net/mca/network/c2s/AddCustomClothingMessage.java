@@ -22,9 +22,9 @@ public class AddCustomClothingMessage implements Message {
     @Override
     public void receive(ServerPlayerEntity player) {
         if (entry instanceof Clothing clothing) {
-            CustomClothingManager.getClothing().addEntry(entry.identifier, clothing);
+            CustomClothingManager.getClothing().addEntry(entry.getIdentifier(), clothing);
         } else if (entry instanceof Hair hair) {
-            CustomClothingManager.getHair().addEntry(entry.identifier, hair);
+            CustomClothingManager.getHair().addEntry(entry.getIdentifier(), hair);
         }
     }
 }
