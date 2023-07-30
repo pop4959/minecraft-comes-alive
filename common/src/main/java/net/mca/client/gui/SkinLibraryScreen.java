@@ -314,7 +314,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 drawTextBox(context, Text.translatable("gui.skin_library.delete_confirm"));
             }
             case REPORT -> {
-                drawTextBox(matrices, Text.translatable("gui.skin_library.report_confirm"));
+                drawTextBox(context, Text.translatable("gui.skin_library.report_confirm"));
             }
             case EDITOR -> {
                 if (workspace.isDirty()) {
