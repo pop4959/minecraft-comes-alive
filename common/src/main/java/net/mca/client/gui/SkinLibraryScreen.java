@@ -774,13 +774,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         switch (page) {
             case LIBRARY -> {
                 //page
-                addDrawableChild(new ButtonWidget(width / 2 - 25 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 30 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> {
                     setSelectionPage(selectionPage - 1);
                     refreshContentList();
                 }));
-                pageWidget = addDrawableChild(new ButtonWidget(width / 2 - 25, height / 2 + 80, 50, 20, Text.literal(""), sender -> {
+                pageWidget = addDrawableChild(new ButtonWidget(width / 2 - 30, height / 2 + 80, 60, 20, Text.literal(""), sender -> {
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 25, height / 2 + 80, 30, 20, Text.literal(">>"), sender -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 30, height / 2 + 80, 30, 20, Text.literal(">>"), sender -> {
                     setSelectionPage(selectionPage + 1);
                     refreshContentList();
                 }));
@@ -1520,7 +1520,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private void setSelectionPage(int p) {
         if (pageWidget != null) {
             selectionPage = Math.max(0, p);
-            pageWidget.setMessage(Text.literal(String.valueOf(selectionPage + 1)));
+            pageWidget.setMessage(Text.translatable("gui.villager_editor.page", selectionPage + 1));
         }
     }
 
