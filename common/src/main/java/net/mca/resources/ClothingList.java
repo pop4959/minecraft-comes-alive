@@ -55,9 +55,9 @@ public class ClothingList extends JsonDataLoader {
                 for (int i = 0; i < JsonHelper.getInt(object, "count", 1); i++) {
                     String identifier = String.format(key, i);
 
-                    Clothing c = new Clothing(identifier, object);
+                    object.addProperty("gender", gender.getId());
 
-                    c.gender = gender;
+                    Clothing c = new Clothing(identifier, object);
 
                     if (!clothing.containsKey(identifier) || !object.has("count")) {
                         clothing.put(identifier, c);
@@ -95,10 +95,10 @@ public class ClothingList extends JsonDataLoader {
 
     public WeightedPool<String> getPool(Gender gender, @Nullable String profession) {
         return Stream.concat(clothing.values().stream(), CustomClothingManager.getClothing().getEntries().values().stream())
-                .filter(c -> c.gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.gender == gender)
-                .filter(c -> c.profession == null || profession == null && !c.exclude || c.profession.equals(profession))
+                .filter(c -> c.getGender() == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.getGender() == gender)
+                .filter(c -> c.profession == null || profession == null && !c.exclude || c.profession.equals(profession) || profession != null && c.profession.equals(profession.replace(":", ".")))
                 .collect(() -> new WeightedPool.Mutable<>("mca:missing"),
-                        (list, entry) -> list.add(entry.identifier, entry.chance),
+                        (list, entry) -> list.add(entry.getIdentifier(), entry.getChance()),
                         (a, b) -> {
                             a.entries.addAll(b.entries);
                         });

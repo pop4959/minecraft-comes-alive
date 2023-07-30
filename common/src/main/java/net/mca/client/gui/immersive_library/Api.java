@@ -1,10 +1,11 @@
-package net.mca.client.gui.immersiveLibrary;
+package net.mca.client.gui.immersive_library;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.mca.Config;
-import net.mca.client.gui.immersiveLibrary.responses.*;
+import net.mca.MCA;
+import net.mca.client.gui.immersive_library.responses.*;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class Api {
 
     public static Response request(HttpMethod httpMethod, Class<? extends Response> expectedAnswer, String url, Map<String, String> queryParams, Map<String, String> body) {
         try {
-            String fullUrl = Config.getServerConfig().immersiveLibraryUrl + "/v1/" + url;
+            String fullUrl = Config.getServerConfig().immersiveLibraryUrl + (url.contains("v2") ? "/" : "/v1/") + url;
 
             // Append query params
             if (queryParams != null) {
@@ -80,6 +81,9 @@ public class Api {
 
             return gson.fromJson(response, expectedAnswer);
         } catch (IOException e) {
+            return new ErrorResponse(-1, e.toString());
+        } catch (Exception e) {
+            MCA.LOGGER.error(e);
             return new ErrorResponse(-1, e.toString());
         }
     }

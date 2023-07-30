@@ -69,13 +69,12 @@ public class Traits {
         return builder.addAll(TRAITS);
     }
 
-    private Random random;
+    private Random random = Random.create();
 
     private final VillagerLike<?> entity;
 
     public Traits(VillagerLike<?> entity) {
         this.entity = entity;
-        random = Random.create(entity.asEntity().world.random.nextLong());
     }
 
     public Set<Trait> getTraits() {

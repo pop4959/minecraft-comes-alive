@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReaperSpawner {
-    private static final Direction[] HORIZONTALS = new Direction[] {
+    private static final Direction[] HORIZONTALS = new Direction[]{
             Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
     };
 
@@ -45,7 +45,7 @@ public class ReaperSpawner {
 
     public ReaperSpawner(VillageManager manager, NbtCompound nbt) {
         this.manager = manager;
-        net.mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound)n)).forEach(summon ->
+        net.mca.util.NbtHelper.toList(nbt.getList("summons", NbtElement.COMPOUND_TYPE), n -> new ActiveSummon((NbtCompound) n)).forEach(summon ->
                 activeSummons.put(summon.position.spawnPosition.asLong(), summon)
         );
     }
@@ -64,14 +64,20 @@ public class ReaperSpawner {
             return;
         }
 
-        //make sure the chunks are loaded
-        //should fix deadlock issues we were facing
-        ServerChunkManager manager = world.getChunkManager();
-        int range = 4;
-        if (!(manager.isChunkLoaded((pos.getX() - range) >> 4, (pos.getZ() - range) >> 4) &&
-                manager.isChunkLoaded((pos.getX() + range) >> 4, (pos.getZ() - range) >> 4) &&
-                manager.isChunkLoaded((pos.getX() - range) >> 4, (pos.getZ() + range) >> 4) &&
-                manager.isChunkLoaded((pos.getX() + range) >> 4, (pos.getZ() + range) >> 4))) {
+        // Make sure the neighboring chunks are loaded
+        // Fixes deadlock issues with getBlockState() below
+        ServerChunkManager chunkManager = world.getChunkManager();
+        int chunkX = pos.getX() >> 4;
+        int chunkZ = pos.getZ() >> 4;
+        if (!(chunkManager.isChunkLoaded(chunkX, chunkZ) &&
+                chunkManager.isChunkLoaded(chunkX, chunkZ - 1) &&
+                chunkManager.isChunkLoaded(chunkX, chunkZ + 1) &&
+                chunkManager.isChunkLoaded(chunkX - 1, chunkZ - 1) &&
+                chunkManager.isChunkLoaded(chunkX - 1, chunkZ) &&
+                chunkManager.isChunkLoaded(chunkX - 1, chunkZ + 1) &&
+                chunkManager.isChunkLoaded(chunkX + 1, chunkZ - 1) &&
+                chunkManager.isChunkLoaded(chunkX + 1, chunkZ) &&
+                chunkManager.isChunkLoaded(chunkX + 1, chunkZ + 1))) {
             return;
         }
 
@@ -172,7 +178,7 @@ public class ReaperSpawner {
         public SummonPosition(NbtCompound tag) {
             if (tag.contains("fire") || tag.contains("totems") || tag.contains("spawnPosition")) {
                 fire = NbtHelper.toBlockPos(tag.getCompound("fire"));
-                totems = new HashSet<>(net.mca.util.NbtHelper.toList(tag.getCompound("totems"), v -> NbtHelper.toBlockPos((NbtCompound)v)));
+                totems = new HashSet<>(net.mca.util.NbtHelper.toList(tag.getCompound("totems"), v -> NbtHelper.toBlockPos((NbtCompound) v)));
                 spawnPosition = NbtHelper.toBlockPos(tag.getCompound("spawnPosition"));
             } else {
                 totems = new HashSet<>();

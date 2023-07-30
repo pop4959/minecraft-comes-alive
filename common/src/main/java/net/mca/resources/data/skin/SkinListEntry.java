@@ -8,12 +8,19 @@ import net.minecraft.util.JsonHelper;
 import java.io.Serializable;
 
 public abstract class SkinListEntry implements Serializable {
-    public final String identifier;
-    public Gender gender = Gender.NEUTRAL;
-    public float chance;
+    protected final String identifier;
+    protected final Gender gender;
+    protected final float chance;
 
     public SkinListEntry(String identifier) {
+        this(identifier, Gender.NEUTRAL, 1.0f);
+    }
+
+    public SkinListEntry(String identifier, Gender gender, float chance) {
         this.identifier = identifier;
+
+        this.gender = gender;
+        this.chance = chance;
     }
 
     public SkinListEntry(String identifier, JsonObject object) {
@@ -32,5 +39,21 @@ public abstract class SkinListEntry implements Serializable {
         j.addProperty("gender", gender == null ? Gender.NEUTRAL.getId() : gender.getId());
         j.addProperty("chance", chance);
         return j;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public float getChance() {
+        // I messed up and now we have a lot of 0 chances. Let's define 0 as default as they make no sense otherwise anyways.
+        if (chance <= 0.0f) {
+            return 1.0f;
+        }
+        return chance;
     }
 }

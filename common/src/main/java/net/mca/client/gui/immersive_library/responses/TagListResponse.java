@@ -1,4 +1,4 @@
-package net.mca.client.gui.immersiveLibrary.responses;
+package net.mca.client.gui.immersive_library.responses;
 
 import java.util.Arrays;
 

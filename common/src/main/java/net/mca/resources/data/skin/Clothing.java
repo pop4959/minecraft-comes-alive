@@ -7,20 +7,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class Clothing extends SkinListEntry {
     @Nullable
-    public String profession;
-    public int temperature;
-    public boolean exclude;
+    public final String profession;
+    public final int temperature;
+    public final boolean exclude;
 
     public Clothing(String identifier, @Nullable String profession, int temperature, boolean exclude, Gender gender) {
-        super(identifier);
+        super(identifier, gender, 1.0f);
         this.profession = profession;
         this.temperature = temperature;
         this.exclude = exclude;
-        this.gender = gender;
-    }
-
-    public Clothing(String identifier) {
-        super(identifier);
     }
 
     public Clothing(String identifier, JsonObject object) {

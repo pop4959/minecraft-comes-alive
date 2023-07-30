@@ -48,9 +48,7 @@ public class HairList extends JsonDataLoader {
                 for (int i = 0; i < JsonHelper.getInt(object, "count", 1); i++) {
                     String identifier = String.format(key, i);
 
-                    Hair c = new Hair(identifier);
-                    c.gender = gender;
-                    c.chance = JsonHelper.getFloat(object, "chance", 1.0f);
+                    Hair c = new Hair(identifier, gender, JsonHelper.getFloat(object, "chance", 1.0f));
 
                     if (!hair.containsKey(identifier) || !object.has("count")) {
                         hair.put(identifier, c);
@@ -62,9 +60,9 @@ public class HairList extends JsonDataLoader {
 
     public WeightedPool<String> getPool(Gender gender) {
         return hair.values().stream()
-                .filter(c -> c.gender == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.gender == gender)
+                .filter(c -> c.getGender() == Gender.NEUTRAL || gender == Gender.NEUTRAL || c.getGender() == gender)
                 .collect(() -> new WeightedPool.Mutable<>("mca:missing"),
-                        (list, entry) -> list.add(entry.identifier, entry.chance),
+                        (list, entry) -> list.add(entry.getIdentifier(), entry.getChance()),
                         (a, b) -> {
                             a.entries.addAll(b.entries);
                         });

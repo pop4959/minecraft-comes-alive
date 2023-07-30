@@ -132,7 +132,7 @@ public final class Config implements Serializable {
     public boolean enableAutoScanByDefault = false;
 
     //skin library
-    public String immersiveLibraryUrl = "https://vps-zap359452-1.zap-srv.com:8000";
+    public String immersiveLibraryUrl = "https://mca.conczin.net";
     public boolean allowEveryoneToAddContentGlobally = false;
 
     //gifts
@@ -172,6 +172,7 @@ public final class Config implements Serializable {
     public boolean allowLimitedPlayerEditor = true;
     public boolean allowFullPlayerEditor = false;
     public boolean allowPlayerSizeAdjustment = true;
+    public boolean adjustPlayerEyesToHeight = true;
 
     public boolean useModernUSANamesOnly = false;
 
@@ -226,7 +227,8 @@ public final class Config implements Serializable {
             "minecraft:swamp_hut",
             "minecraft:mineshaft",
             "minecraft:jungle_pyramid",
-            "minecraft:pillager_outpost"
+            "minecraft:pillager_outpost",
+            "minecraft:ancient_city"
     );
 
     public List<String> destinySpawnLocations = List.of(
@@ -236,7 +238,8 @@ public final class Config implements Serializable {
             "minecraft:village_taiga",
             "minecraft:village_snowy",
             "minecraft:village_plains",
-            "minecraft:village_savanna"
+            "minecraft:village_savanna",
+            "minecraft:ancient_city"
     );
 
     public Map<String, String> destinyLocationsToTranslationMap = Map.of(
@@ -252,6 +255,7 @@ public final class Config implements Serializable {
     );
 
     public Map<String, String> playerRendererBlacklist = Map.of(
+            "morph", "arms",
             "firstpersonmod", "arms",
             "firstperson", "arms",
             "epicfight", "all"

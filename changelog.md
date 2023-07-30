@@ -1,3 +1,23 @@
+# 7.5.4
+
+* Removed size requirements of blueprint buildings
+* Restored C2ME compatibility
+* Fixed drunk behavior at fence gates when smart fence AI is disabled (which it is by default)
+* Fixed marriage slider not being saved
+* Fixed fallback translations on 1.19.4+
+* Added morph to the list of don't-render-custom-arms-when-installed list
+* You can no longer squish babies on the ceiling
+* Archers can now equip crossbows
+* The camera height is now correct
+* Added the ancient city as a rumor and starting location
+* Female cultists now also wear robes
+* Skin library now has...
+    * Much less data transfer
+    * A report system
+    * Filter buttons for hair and clothing
+    * Hopefully less connection issues thanks to a dedicated domain
+    * Global skins now actually work
+
 # 7.5.3
 
 * Invalid skins are now hidden by default in the Skin Library

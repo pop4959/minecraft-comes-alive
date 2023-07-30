@@ -30,7 +30,7 @@ abstract class MixinTranslationStorage extends Language {
     }
 
     @Inject(method = "get", at = @At("HEAD"), cancellable = true)
-    private void onGet(String key, String fallback, CallbackInfoReturnable<String> info) {
+    private void mca$onGet(String key, String fallback, CallbackInfoReturnable<String> info) {
         key = DialogueType.applyFallback(key);
 
         Pair<String, String> unpooled = getPool().get(key);
@@ -39,12 +39,14 @@ abstract class MixinTranslationStorage extends Language {
             info.setReturnValue(unpooled.getRight());
         } else {
             CommonSpeechManager.INSTANCE.lastResolvedKey = null;
-            info.setReturnValue(translations.getOrDefault(key, key));
+            if (translations.containsKey(key)) {
+                info.setReturnValue(translations.get(key));
+            }
         }
     }
 
     @Inject(method = "hasTranslation(Ljava/lang/String;)Z", at = @At("HEAD"), cancellable = true)
-    public void onHasTranslation(String key, CallbackInfoReturnable<Boolean> info) {
+    public void mca$onHasTranslation(String key, CallbackInfoReturnable<Boolean> info) {
         if (getPool().contains(key)) {
             info.setReturnValue(true);
         }

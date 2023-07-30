@@ -22,7 +22,6 @@ public final class BuildingType implements Serializable {
     private static final long serialVersionUID = 2215455350801127280L;
 
     private final String name;
-    private final int size;
     private final int margin;
     private final String color;
     private final int priority;
@@ -39,7 +38,6 @@ public final class BuildingType implements Serializable {
 
     public BuildingType() {
         this.name = "?";
-        this.size = 0;
         this.margin = 0;
         this.color = "ffffffff";
         this.priority = 0;
@@ -56,7 +54,6 @@ public final class BuildingType implements Serializable {
 
     public BuildingType(String name, JsonObject value) {
         this.name = name;
-        this.size = JsonHelper.getInt(value, "size", 0);
         this.margin = JsonHelper.getInt(value, "margin", 0);
         this.color = JsonHelper.getString(value, "color", "ffffffff");
         this.priority = JsonHelper.getInt(value, "priority", 0);
@@ -95,10 +92,6 @@ public final class BuildingType implements Serializable {
 
     public String name() {
         return name;
-    }
-
-    public int size() {
-        return size;
     }
 
     public String color() {
