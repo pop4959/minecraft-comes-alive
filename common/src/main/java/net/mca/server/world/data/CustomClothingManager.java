@@ -26,7 +26,7 @@ public class CustomClothingManager {
         Optional<MinecraftServer> server = MCA.getServer();
         if (server.isPresent()) {
             return server.get().getOverworld().getPersistentStateManager()
-                    .getOrCreate((nbt) -> new Storage<>(nbt, Clothing::new), Storage::new, "immersive_library_clothing");
+                    .getOrCreate(nbt -> new Storage<>(nbt, Clothing::new), Storage::new, "immersive_library_clothing");
         } else {
             return CLOTHING_DUMMY;
         }
@@ -36,12 +36,11 @@ public class CustomClothingManager {
         Optional<MinecraftServer> server = MCA.getServer();
         if (server.isPresent()) {
             return server.get().getOverworld().getPersistentStateManager()
-                    .getOrCreate((nbt) -> new Storage<>(nbt, Hair::new), Storage::new, "immersive_library_hair");
+                    .getOrCreate(nbt -> new Storage<>(nbt, Hair::new), Storage::new, "immersive_library_hair");
         } else {
             return HAIR_DUMMY;
         }
     }
-
 
     public static class Storage<T extends SkinListEntry> extends PersistentState {
         final Map<String, T> entries = new HashMap<>();

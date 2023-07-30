@@ -44,7 +44,7 @@ public class Command {
         );
     }
 
-    private static int editor(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int editor(CommandContext<ServerCommandSource> ctx) {
         if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowFullPlayerEditor) {
             NetworkHandler.sendToPlayer(new OpenGuiRequest(OpenGuiRequest.Type.VILLAGER_EDITOR, ctx.getSource().getPlayer()), ctx.getSource().getPlayer());
             return 0;
@@ -57,7 +57,7 @@ public class Command {
         }
     }
 
-    private static int destiny(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int destiny(CommandContext<ServerCommandSource> ctx) {
         if (ctx.getSource().hasPermissionLevel(2) || Config.getInstance().allowDestinyCommandOnce) {
             ServerPlayerEntity player = ctx.getSource().getPlayer();
             if (!PlayerSaveData.get(player).isEntityDataSet() || Config.getInstance().allowDestinyCommandMoreThanOnce) {
@@ -73,7 +73,7 @@ public class Command {
         }
     }
 
-    private static int mail(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int mail(CommandContext<ServerCommandSource> ctx) {
         ServerPlayerEntity player = ctx.getSource().getPlayer();
         PlayerSaveData data = PlayerSaveData.get(player);
         if (data.hasMail()) {
@@ -86,7 +86,7 @@ public class Command {
         return 0;
     }
 
-    private static int verify(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int verify(CommandContext<ServerCommandSource> ctx) {
         ServerPlayerEntity player = ctx.getSource().getPlayer();
 
         CompletableFuture.runAsync(() -> {
@@ -141,18 +141,18 @@ public class Command {
         return 0;
     }
 
-    private static int displayProposal(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int displayProposal(CommandContext<ServerCommandSource> ctx) {
         ServerInteractionManager.getInstance().listProposals(ctx.getSource().getPlayer());
 
         return 0;
     }
 
-    private static int procreate(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int procreate(CommandContext<ServerCommandSource> ctx) {
         ServerInteractionManager.getInstance().procreate(ctx.getSource().getPlayer());
         return 0;
     }
 
-    private static int separate(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+    private static int separate(CommandContext<ServerCommandSource> ctx) {
         ServerInteractionManager.getInstance().endMarriage(ctx.getSource().getPlayer());
         return 0;
     }

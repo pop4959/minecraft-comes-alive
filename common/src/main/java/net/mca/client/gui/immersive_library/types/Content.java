@@ -1,4 +1,4 @@
-package net.mca.client.gui.immersiveLibrary.types;
+package net.mca.client.gui.immersive_library.types;
 
 import java.util.Set;
 

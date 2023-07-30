@@ -325,7 +325,6 @@ public class BlueprintScreen extends ExtendedScreen {
                     context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.waiting"), width / 2, height / 2, 0xffaaaaaa);
                 case "empty" ->
                     context.drawCenteredTextWithShadow(textRenderer, Text.translatable("gui.blueprint.empty"), width / 2, height / 2 - 20, 0xffaaaaaa);
-
             case "map" -> {
                 renderStats(context);
                 renderName(context);

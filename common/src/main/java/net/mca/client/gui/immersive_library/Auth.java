@@ -1,4 +1,4 @@
-package net.mca.client.gui.immersiveLibrary;
+package net.mca.client.gui.immersive_library;
 
 import net.mca.Config;
 import net.minecraft.util.Util;
