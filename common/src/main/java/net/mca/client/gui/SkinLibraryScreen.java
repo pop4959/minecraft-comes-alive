@@ -162,7 +162,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     public void renderBackground(MatrixStack matrices) {
         if (previousScreen instanceof DestinyScreen) {
             assert MinecraftClient.getInstance().world != null;
-            renderBackgroundTexture((int) MinecraftClient.getInstance().world.getTime());
+            renderBackgroundTexture(matrices);
         }
     }
 
