@@ -882,6 +882,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                             drawControls(c, false, cx, cy);
 
+                            //quick invalid toggle
+                            if (isModerator()) {
+                                addDrawableChild(new ToggleableTooltipIconButtonWidget(cx + 16, cy - 48, 10 * 16, 3 * 16,
+                                        false,
+                                        Text.literal("Toggle invalid"),
+                                        v -> setTag(c.contentid(), "invalid", !c.hasTag("invalid"))));
+                            }
+
                             //sorting icons
                             if (c.tags().contains("invalid")) {
                                 addDrawableChild(new ToggleableTooltipIconButtonWidget(cx + 12, cy - 16, 9 * 16, 3 * 16,
@@ -1303,7 +1311,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }
 
         // report
-        if (advanced) {
+        if (advanced && authenticated) {
             widgets.add(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 10 * 16, 3 * 16,
                     true,
                     Text.translatable("gui.skin_library.report"),
@@ -1332,7 +1340,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     v -> {
                         if (isPanning && isModerator()) {
                             //admin tool
-                            removeContent(content.contentid());
+                            reportContent(content.contentid(), "DEFAULT");
+                            refreshContentList();
                         } else {
                             focusedContent = content;
                             setPage(Page.DETAIL);
