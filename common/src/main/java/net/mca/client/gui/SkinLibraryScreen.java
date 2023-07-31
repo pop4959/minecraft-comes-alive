@@ -777,13 +777,13 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         switch (page) {
             case LIBRARY -> {
                 //page
-                addDrawableChild(new ButtonWidget(width / 2 - 25 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> {
+                addDrawableChild(new ButtonWidget(width / 2 - 30 - 30, height / 2 + 80, 30, 20, Text.literal("<<"), sender -> {
                     setSelectionPage(selectionPage - 1);
                     refreshContentList();
                 }));
-                pageWidget = addDrawableChild(new ButtonWidget(width / 2 - 25, height / 2 + 80, 50, 20, Text.literal(""), sender -> {
+                pageWidget = addDrawableChild(new ButtonWidget(width / 2 - 30, height / 2 + 80, 60, 20, Text.literal(""), sender -> {
                 }));
-                addDrawableChild(new ButtonWidget(width / 2 + 25, height / 2 + 80, 30, 20, Text.literal(">>"), sender -> {
+                addDrawableChild(new ButtonWidget(width / 2 + 30, height / 2 + 80, 30, 20, Text.literal(">>"), sender -> {
                     setSelectionPage(selectionPage + 1);
                     refreshContentList();
                 }));
@@ -884,6 +884,14 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             int cy = height / 2 + 15 + (int) ((y - CLOTHES_V / 2.0 + 0.5) * 80);
 
                             drawControls(c, false, cx, cy);
+
+                            //quick invalid toggle
+                            if (isModerator()) {
+                                addDrawableChild(new ToggleableTooltipIconButtonWidget(cx + 16, cy - 48, 10 * 16, 3 * 16,
+                                        false,
+                                        Text.literal("Toggle invalid"),
+                                        v -> setTag(c.contentid(), "invalid", !c.hasTag("invalid"))));
+                            }
 
                             //sorting icons
                             if (c.tags().contains("invalid")) {
@@ -1306,7 +1314,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         }
 
         // report
-        if (advanced) {
+        if (advanced && authenticated) {
             widgets.add(new ToggleableTooltipIconButtonWidget(cx - 12 + 25, cy, 10 * 16, 3 * 16,
                     true,
                     Text.translatable("gui.skin_library.report"),
@@ -1335,7 +1343,8 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                     v -> {
                         if (isPanning && isModerator()) {
                             //admin tool
-                            removeContent(content.contentid());
+                            reportContent(content.contentid(), "DEFAULT");
+                            refreshContentList();
                         } else {
                             focusedContent = content;
                             setPage(Page.DETAIL);
@@ -1503,7 +1512,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // last page reached, go one back
         if (contents.isEmpty() && selectionPage > 0) {
             selectionPage--;
-            refreshContentList();
+            if (subscriptionFilter == SubscriptionFilter.LIBRARY) {
+                loadPage();
+            } else {
+                refreshContentList();
+            }
             return;
         }
 
@@ -1523,7 +1536,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private void setSelectionPage(int p) {
         if (pageWidget != null) {
             selectionPage = Math.max(0, p);
-            pageWidget.setMessage(Text.literal(String.valueOf(selectionPage + 1)));
+            pageWidget.setMessage(Text.translatable("gui.villager_editor.page", selectionPage + 1));
         }
     }
 
