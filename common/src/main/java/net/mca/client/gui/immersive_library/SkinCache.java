@@ -171,7 +171,7 @@ public class SkinCache {
 
     private static void logger(String s) {
         //noinspection ConstantConditions
-        if (true) {
+        if (false) {
             MCA.LOGGER.info(s);
         }
     }
