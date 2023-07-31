@@ -1509,7 +1509,11 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         // last page reached, go one back
         if (contents.isEmpty() && selectionPage > 0) {
             selectionPage--;
-            refreshContentList();
+            if (subscriptionFilter == SubscriptionFilter.LIBRARY) {
+                loadPage();
+            } else {
+                refreshContentList();
+            }
             return;
         }
 
