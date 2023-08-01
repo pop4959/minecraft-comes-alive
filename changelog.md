@@ -1,3 +1,7 @@
+# 7.5.5
+
+* Fixed server crash
+
 # 7.5.4
 
 * Removed size requirements of blueprint buildings
