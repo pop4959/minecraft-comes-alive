@@ -404,7 +404,7 @@
   "gui.skin_library.meta.likes": "%s Likes",
 
   "gui.skin_library.prepare": "What asset type do you want to create?\nClick on '?' BEFORE uploading skins!",
-  "gui.skin_library.prepare.hair": "Create hairstyle",
+  "gui.skin_library.prepare.hair": "Create Hairstyle",
   "gui.skin_library.prepare.clothing": "Create Clothing",
 
   "gui.skin_library.fillToolThreshold": "Fill threshold",
