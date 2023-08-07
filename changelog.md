@@ -1,3 +1,7 @@
+# 7.5.6
+
+* Added missing loot tables for some headstones
+
 # 7.5.5
 
 * Fixed server crash
