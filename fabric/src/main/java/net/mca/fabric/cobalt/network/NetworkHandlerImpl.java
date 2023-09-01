@@ -12,12 +12,12 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkHandlerImpl extends NetworkHandler.Impl {
-    private final Map<Class<?>, Identifier> cache = new HashMap<>();
+    private final Map<Class<?>, Identifier> cache = new ConcurrentHashMap<>();
 
     private Identifier getMessageIdentifier(Message msg) {
         return cache.computeIfAbsent(msg.getClass(), this::getMessageIdentifier);
