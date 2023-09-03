@@ -17,7 +17,7 @@
     "sources": "https://github.com/Luke100000/minecraft-comes-alive",
     "issues": "https://github.com/Luke100000/minecraft-comes-alive/issues"
   },
-  "license": "GNU",
+  "license": "GPL-3.0-only",
   "icon": "mca.png",
   "environment": "*",
   "entrypoints": {

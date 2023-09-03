@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[43,)"
-#issueTrackerURL = ""
-license = "GNU"
+issueTrackerURL = "https://github.com/Luke100000/minecraft-comes-alive/issues"
+license = "GPL-3.0-only"
 
 [[mods]]
 modId = "mca"
