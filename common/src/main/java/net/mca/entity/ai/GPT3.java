@@ -36,7 +36,7 @@ public class GPT3 {
     private static final Map<UUID, UUID> lastInteraction = new HashMap<>();
 
     public static String translate(String phrase) {
-        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
+        return phrase.replace("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
     }
 
     public record Answer(String answer, String error) {
@@ -76,9 +76,9 @@ public class GPT3 {
             lastInteraction.put(player.getUuid(), villager.getUuid());
 
             // remember phrase
-            List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
-            int MEMORY = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
-            while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > MEMORY) {
+            List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), key -> new LinkedList<>());
+            int memory = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
+            while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > memory) {
                 pastDialogue.remove(0);
             }
             pastDialogue.add("$player: " + msg);

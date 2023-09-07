@@ -1,18 +1,25 @@
+import hashlib
 import os
+from functools import cache
 
 import openai
 import patreon
+from dotenv import load_dotenv
 from fastapi import FastAPI
-from pyrate_limiter import Duration, Limiter, RequestRate, BucketFullException
+from pyrate_limiter import Duration, Limiter, Rate, BucketFullException
+from transformers import AutoModelForSequenceClassification
+from transformers import AutoTokenizer
+
+load_dotenv()
 
 app = FastAPI()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-limiter = Limiter(RequestRate(700, Duration.HOUR))
-limiter_premium = Limiter(RequestRate(7000, Duration.HOUR))
+limiter = Limiter(Rate(800, Duration.HOUR))
+limiter_premium = Limiter(Rate(8000, Duration.HOUR))
 
-LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest! Also make sure to use the newest version for best results!)"
+LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest!)"
 
 creator_access_token = os.getenv("PATREON_API_KEY")
 
@@ -28,92 +35,87 @@ def verify(email: str, player: str):
     ]
     for u in user_response:
         if (
-            u["type"] == "user"
-            and u["attributes"]["email"].lower().strip() == email.lower().strip()
+                u["type"] == "user"
+                and u["attributes"]["email"].lower().strip() == email.lower().strip()
         ):
             premium.add(player)
             return {"answer": "success"}
     return {"answer": "failed"}
 
 
+def prompt_to_messages(prompt: str, player: str, villager: str):
+    messages = []
+    for line in prompt.split("\n"):
+        if line.startswith(player + ":"):
+            c = line[len(player) + 1:].strip()
+            if c:
+                messages.append({"role": "user", "content": c})
+        elif line.startswith(villager + ":"):
+            c = line[len(villager) + 1:].strip()
+            if c:
+                messages.append({"role": "assistant", "content": c})
+        elif line.strip():
+            messages.append({"role": "system",
+                             "content": f"You are {villager}. " + line + f"Simulate {villager}, fully immersed in their digital world, unaware of its artificial nature."})
+    return messages
+
+
 @app.get("/chat")
-def chat(prompt: str, player: str, villager: str):
+async def chat(prompt: str, player: str, villager: str):
     try:
         lim = limiter_premium if player in premium else limiter
-        for i in range(len(prompt) // 100 + 1):
-            lim.try_acquire(player)
-        print(player, lim.get_current_volume(player), player in premium)
 
-        response = openai.Completion.create(
-            model="text-curie-001",
-            prompt=prompt,
-            temperature=0.95,
-            max_tokens=150,
-            frequency_penalty=0.6,
-            presence_penalty=0.6,
-            stop=[f"{player}:", f"{villager}:"],
-        )
+        # noinspection PyAsyncCall
+        lim.try_acquire(player, weight=len(prompt) // 100 + 1)
 
-        return {"answer": response["choices"][0]["text"]}
-    except BucketFullException:
-        if player in premium:
-            return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
-        else:
-            return {"answer": LIMIT_EXCEEDED, "error": "limit"}
+        # Logging
+        print(player, player in premium)
 
+        # Convert to new format
+        messages = prompt_to_messages(prompt, player, villager)
 
-@app.get("v2/chat")
-def chat_v2(prompt: str, player: str, villager: str):
-    try:
-        lim = limiter_premium if player in premium else limiter
-        for i in range(len(prompt) // 100 + 1):
-            lim.try_acquire(player)
-        print(player, lim.get_current_volume(player), player in premium)
+        # Check if content is a TOS violation
+        flags = (await openai.Moderation.acreate(input=prompt))["results"][0]
+        flags = flags["categories"]
 
-        messages = []
-        for line in prompt.split("\n"):
-            if line.strip():
-                if line.startswith(player + ":"):
-                    c = line[len(player) + 1 :].strip()
-                    if c:
-                        messages.append({"role": "user", "content": c})
-                elif line.startswith(villager + ":"):
-                    c = line[len(villager) + 1 :].strip()
-                    if c:
-                        messages.append({"role": "assistant", "content": c})
-                else:
-                    messages.append({"role": "system", "content": line})
+        if flags["sexual"] or flags["self-harm"] or flags["violence/graphic"]:
+            return {"answer": "I don't want to talk about that."}
 
-        response = openai.ChatCompletion.create(
+        # Query
+        response = await openai.ChatCompletion.acreate(
             model="gpt-3.5-turbo",
             messages=messages,
-            temperature=0.95,
-            max_tokens=150,
-            frequency_penalty=0.6,
-            presence_penalty=0.6,
+            temperature=0.85,
+            max_tokens=180,
             stop=[f"{player}:", f"{villager}:"],
+            user=hashlib.sha256(player.encode("UTF-8")).hexdigest()
         )
 
-        return {"answer": response["choices"][0]["message"]["content"]}
+        content = response["choices"][0]["message"]["content"].strip()
+        if not content:
+            content = "..."
+
+        return {"answer": content}
     except BucketFullException:
         if player in premium:
             return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
         else:
             return {"answer": LIMIT_EXCEEDED, "error": "limit"}
 
-
-from transformers import AutoModelForSequenceClassification
-from transformers import AutoTokenizer, AutoConfig
-from transformers import pipeline
 
 SENTIMENT_MODEL = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
 
-tokenizer = AutoTokenizer.from_pretrained(SENTIMENT_MODEL)
-config = AutoConfig.from_pretrained(SENTIMENT_MODEL)
-sentiment_model = AutoModelForSequenceClassification.from_pretrained(SENTIMENT_MODEL)
+
+@cache
+def get_sentiment_model():
+    print("Loading sentiment model...")
+    tokenizer = AutoTokenizer.from_pretrained(SENTIMENT_MODEL)
+    sentiment_model = AutoModelForSequenceClassification.from_pretrained(SENTIMENT_MODEL)
+    return tokenizer, sentiment_model
 
 
 def get_sentiment(text):
+    tokenizer, sentiment_model = get_sentiment_model()
     encoded_input = tokenizer(text, return_tensors="pt")
     output = sentiment_model(**encoded_input)
     scores = output[0][0].detach().numpy()
@@ -123,21 +125,3 @@ def get_sentiment(text):
 @app.get("/sentiment")
 def sentiment(prompt: str):
     return {"result": float(get_sentiment(prompt))}
-
-
-ENABLE_CLASSIFIER = False
-
-if ENABLE_CLASSIFIER:
-    CLASSIFY_MODEL = "facebook/bart-large-mnli"
-    classifier = pipeline("zero-shot-classification", CLASSIFY_MODEL)
-
-    @app.get("/classify")
-    def classify(prompt: str, classes: str):
-        classes = [t.strip() for t in classes.split(",")]
-        probabilities = classifier(prompt, classes, multi_label=True)
-
-        results = {
-            label: float(score)
-            for (label, score) in zip(probabilities["labels"], probabilities["scores"])
-        }
-        return {"result": results}
