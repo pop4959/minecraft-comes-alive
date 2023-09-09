@@ -59,7 +59,7 @@ public class SpeechManager {
                 float gene = villager.getGenetics().getGene(Genetics.VOICE_TONE);
                 int tone = Math.min(9, (int)Math.floor(gene * 10.0f));
 
-                Identifier sound = new Identifier("mca_voices", "%s/%s_%d".formatted(phrase, villager.getGenetics().getGender().binary().getStrName(), tone).toLowerCase(Locale.ROOT));
+                Identifier sound = new Identifier("mca_voices", "%s/%s_%d".formatted(phrase, villager.getGenetics().getGender().binary().getDataName(), tone).toLowerCase(Locale.ROOT));
 
                 if (client.world != null && client.player != null) {
                     Collection<Identifier> keys = client.getSoundManager().getKeys();

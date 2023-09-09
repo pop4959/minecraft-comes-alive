@@ -20,7 +20,7 @@ public class SkinLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
     public Identifier getSkin(T villager) {
         Genetics genetics = getVillager(villager).getGenetics();
         int skin = (int) Math.min(4, Math.max(0, genetics.getGene(Genetics.SKIN) * 5));
-        return cached(String.format("%s:skins/skin/%s/%d.png", MCA.MOD_ID, genetics.getGender().getStrName(), skin), Identifier::new);
+        return cached("skins/skin/" + genetics.getGender().getDataName() + "/" + skin + ".png", MCA::locate);
     }
 
     @Override

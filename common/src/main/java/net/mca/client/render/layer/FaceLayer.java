@@ -1,5 +1,6 @@
 package net.mca.client.render.layer;
 
+import net.mca.MCA;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.entity.ai.Genetics;
 import net.mca.entity.ai.Traits;
@@ -39,12 +40,9 @@ public class FaceLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
         int time = villager.age / 2 + (int) (CommonVillagerModel.getVillager(villager).getGenetics().getGene(Genetics.HEMOGLOBIN) * 65536);
         boolean blink = time % 50 == 1 || time % 57 == 1 || villager.isSleeping() || villager.isDead();
         boolean hasHeterochromia = variant.equals("normal") && CommonVillagerModel.getVillager(villager).getTraits().hasTrait(Traits.Trait.HETEROCHROMIA);
+        String gender = CommonVillagerModel.getVillager(villager).getGenetics().getGender().getDataName();
+        String blinkTexture = blink ? "_blink" : (hasHeterochromia ? "_hetero" : "");
 
-        return cached(String.format("mca:skins/face/%s/%s/%d%s.png",
-                variant,
-                CommonVillagerModel.getVillager(villager).getGenetics().getGender().getStrName(),
-                index,
-                blink ? "_blink" : (hasHeterochromia ? "_hetero" : "")
-        ), Identifier::new);
+        return cached("skins/face/" + variant + "/" + gender + "/" + index + blinkTexture + ".png", MCA::locate);
     }
 }
