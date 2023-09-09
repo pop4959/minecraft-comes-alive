@@ -52,8 +52,8 @@ public class GPT3 {
 
             // parse json
             JsonObject map = JsonParser.parseString(body).getAsJsonObject();
-            String answer = map.has("answer") ? map.get("answer").getAsString().trim().replace("\n", "") : "";
-            String error = map.has("error") ? map.get("error").getAsString().trim().replace("\n", "") : null;
+            String answer = map.has("answer") ? map.get("answer").getAsString().trim().replace("\n", " ") : "";
+            String error = map.has("error") ? map.get("error").getAsString().trim().replace("\n", " ") : null;
 
             return new Answer(answer, error);
         } catch (Exception e) {

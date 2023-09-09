@@ -1,6 +1,5 @@
 package net.mca.entity.ai.brain.tasks;
 
-import com.google.common.collect.ImmutableMap;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.server.world.data.Building;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
@@ -13,6 +12,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 
 public class EnterBuildingTask extends Task<VillagerEntityMCA> {
@@ -20,7 +20,7 @@ public class EnterBuildingTask extends Task<VillagerEntityMCA> {
     private final float speed;
 
     public EnterBuildingTask(String building, float speed) {
-        super(ImmutableMap.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_ABSENT, MemoryModuleType.WALK_TARGET, MemoryModuleState.VALUE_ABSENT, MemoryModuleType.LOOK_TARGET, MemoryModuleState.REGISTERED));
+        super(Map.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleState.VALUE_ABSENT, MemoryModuleType.WALK_TARGET, MemoryModuleState.VALUE_ABSENT, MemoryModuleType.LOOK_TARGET, MemoryModuleState.REGISTERED));
         this.building = building;
         this.speed = speed;
     }

@@ -1,3 +1,7 @@
+# 7.5.8
+
+* AI performance improvements
+
 # 7.5.7
 
 * Fixed a crash

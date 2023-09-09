@@ -16,8 +16,8 @@ app = FastAPI()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-limiter = Limiter(Rate(800, Duration.HOUR))
-limiter_premium = Limiter(Rate(8000, Duration.HOUR))
+limiter = Limiter(Rate(1000, Duration.HOUR))
+limiter_premium = Limiter(Rate(10000, Duration.HOUR))
 
 LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest!)"
 
@@ -56,7 +56,7 @@ def prompt_to_messages(prompt: str, player: str, villager: str):
                 messages.append({"role": "assistant", "content": c})
         elif line.strip():
             messages.append({"role": "system",
-                             "content": f"You are {villager}. " + line + f"Simulate {villager}, fully immersed in their digital world, unaware of its artificial nature."})
+                             "content": f"You are {villager}. " + line + f"Simulate {villager}, fully immersed in their digital world, unaware of its artificial nature. Answer one or two sentences."})
     return messages
 
 

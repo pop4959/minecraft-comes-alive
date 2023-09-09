@@ -33,7 +33,7 @@ import static net.minecraft.entity.ai.brain.task.FindPointOfInterestTask.findPat
 
 public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
     private static final int MAX_POSITIONS_PER_RUN = 5;
-    private static final int POSITION_EXPIRE_INTERVAL = 20;
+    private static final int POSITION_EXPIRE_INTERVAL = 200;
     public static final int POI_SORTING_RADIUS = 48;
 
     private final Consumer<VillagerEntityMCA> onFinish;
@@ -103,12 +103,12 @@ public class ExtendedFindPointOfInterestTask extends Task<VillagerEntityMCA> {
         if (path != null && path.reachesTarget()) {
             BlockPos blockPos2 = path.getTarget();
             pointOfInterestStorage.getType(blockPos2).ifPresent(pointOfInterestType -> {
-                pointOfInterestStorage.getPosition(this.poiType, (registryEntryx, otherPos) -> {
+                pointOfInterestStorage.getPosition(this.poiType, (typeRegistryEntry, otherPos) -> {
                     return otherPos.equals(blockPos2);
                 }, blockPos2, 1);
 
                 villager.getBrain().remember(this.targetMemoryModuleType, GlobalPos.create(serverWorld.getRegistryKey(), blockPos2));
-                this.entityStatus.ifPresent(byte_ -> serverWorld.sendEntityStatus(villager, byte_));
+                this.entityStatus.ifPresent(statusByte -> serverWorld.sendEntityStatus(villager, statusByte));
                 this.foundPositionsToExpiry.clear();
                 DebugInfoSender.sendPointOfInterest(serverWorld, blockPos2);
 
