@@ -28,10 +28,11 @@ import java.util.Optional;
 public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
     private static final CDataParameter<Boolean> IS_PROCREATING = CParameter.create("isProcreating", false);
+    private static final CDataParameter<Integer> LAST_PROCREATION = CParameter.create("lastProcreation", 0);
 
     public static <E extends Entity> CDataManager.Builder<E> createTrackedData(CDataManager.Builder<E> builder) {
         return Relationship.createTrackedData(builder)
-                .addAll(IS_PROCREATING)
+                .addAll(IS_PROCREATING, LAST_PROCREATION)
                 .add(Pregnancy::createTrackedData);
     }
 
@@ -52,9 +53,16 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         return entity.getTrackedValue(IS_PROCREATING);
     }
 
-    public void startProcreating() {
+    public boolean mayProcreateAgain(long time) {
+        int intTime = (int) time;
+        int delta = intTime - entity.getTrackedValue(LAST_PROCREATION);
+        return delta < 0 || delta > Config.getInstance().procreationCooldown;
+    }
+
+    public void startProcreating(long time) {
         procreateTick = 60;
         entity.setTrackedValue(IS_PROCREATING, true);
+        entity.setTrackedValue(LAST_PROCREATION, (int) time);
     }
 
     public void tick(int age) {
@@ -105,18 +113,18 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         if (stack.getItem() instanceof SwordItem sword) {
             //swords
             float satisfaction = sword.getAttackDamage();
-            satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
-            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate("swords")));
+            satisfaction = (float) (Math.pow(satisfaction, 1.25) * 2);
+            return Optional.of(new GiftType(stack.getItem(), (int) satisfaction, MCA.locate("swords")));
         } else if (stack.getItem() instanceof RangedWeaponItem ranged) {
             //ranged weapons
             float satisfaction = ranged.getRange();
-            satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
-            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate("archery")));
+            satisfaction = (float) (Math.pow(satisfaction, 1.25) * 2);
+            return Optional.of(new GiftType(stack.getItem(), (int) satisfaction, MCA.locate("archery")));
         } else if (stack.getItem() instanceof ToolItem tool) {
             //tools
             float satisfaction = tool.getMaterial().getMiningSpeedMultiplier();
-            satisfaction = (float)(Math.pow(satisfaction, 1.25) * 2);
-            return Optional.of(new GiftType(stack.getItem(), (int)satisfaction, MCA.locate(
+            satisfaction = (float) (Math.pow(satisfaction, 1.25) * 2);
+            return Optional.of(new GiftType(stack.getItem(), (int) satisfaction, MCA.locate(
                     stack.getItem() instanceof AxeItem ? "swords" :
                             stack.getItem() instanceof HoeItem ? "hoes" :
                                     stack.getItem() instanceof ShovelItem ? "shovels" :
@@ -124,13 +132,13 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
             )));
         } else if (stack.getItem() instanceof ArmorItem armor) {
             //armor
-            int satisfaction = (int)(Math.pow(armor.getProtection(), 1.25) * 1.5 + armor.getMaterial().getToughness() * 5);
+            int satisfaction = (int) (Math.pow(armor.getProtection(), 1.25) * 1.5 + armor.getMaterial().getToughness() * 5);
             return Optional.of(new GiftType(stack.getItem(), satisfaction, MCA.locate("armor")));
         } else if (stack.getItem().isFood()) {
             //food
             FoodComponent component = stack.getItem().getFoodComponent();
             if (component != null) {
-                int satisfaction = (int)(component.getHunger() + component.getSaturationModifier() * 3);
+                int satisfaction = (int) (component.getHunger() + component.getSaturationModifier() * 3);
                 return Optional.of(new GiftType(stack.getItem(), satisfaction, MCA.locate("food")));
             }
         }
@@ -150,7 +158,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
         // desaturation
         int occurrences = getGiftSaturation().get(stack);
-        int penalty = (int)(occurrences * Config.getInstance().giftDesaturationFactor * Math.pow(Math.max(satisfaction, 0.0), Config.getInstance().giftDesaturationExponent));
+        int penalty = (int) (occurrences * Config.getInstance().giftDesaturationFactor * Math.pow(Math.max(satisfaction, 0.0), Config.getInstance().giftDesaturationExponent));
         if (penalty != 0) {
             analysis.add("desaturation", -penalty);
         }
@@ -179,7 +187,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         }
 
         //modify mood and hearts
-        entity.getVillagerBrain().modifyMoodValue((int)(desaturatedSatisfaction * Config.getInstance().giftMoodEffect + Config.getInstance().baseGiftMoodEffect * MathHelper.sign(desaturatedSatisfaction)));
+        entity.getVillagerBrain().modifyMoodValue((int) (desaturatedSatisfaction * Config.getInstance().giftMoodEffect + Config.getInstance().baseGiftMoodEffect * MathHelper.sign(desaturatedSatisfaction)));
         CriterionMCA.HEARTS_CRITERION.trigger(player, memory.getHearts(), desaturatedSatisfaction, "gift");
         memory.modHearts(desaturatedSatisfaction);
     }
@@ -193,7 +201,7 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
         Item item = stack.getItem();
 
         if (item instanceof SpecialCaseGift) {
-            if (((SpecialCaseGift)item).handle(player, entity)) {
+            if (((SpecialCaseGift) item).handle(player, entity)) {
                 stack.decrement(1);
             }
             return true;

@@ -11,7 +11,7 @@ public abstract class RelationshipItem extends TooltippedItem implements Special
         super(properties);
     }
 
-    abstract float getHeartsRequired();
+    abstract int getHeartsRequired();
 
     @Override
     public boolean handle(ServerPlayerEntity player, VillagerEntityMCA villager) {

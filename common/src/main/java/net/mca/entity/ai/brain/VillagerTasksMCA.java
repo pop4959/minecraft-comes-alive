@@ -139,7 +139,7 @@ public class VillagerTasksMCA {
             return brain;
         } else if (age != AgeState.ADULT) {
             brain.setSchedule(Schedule.VILLAGER_BABY);
-            brain.setTaskList(Activity.PLAY, VillagerTasksMCA.getPlayPackage(0.5F));
+            brain.setTaskList(Activity.PLAY, VillagerTasksMCA.getPlayPackage(1.0F));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
         } else if (villager.isGuard()) {
             brain.setSchedule(SchedulesMCA.getTypeSchedule(villager, SchedulesMCA.GUARD, SchedulesMCA.GUARD_NIGHT));
@@ -255,7 +255,7 @@ public class VillagerTasksMCA {
                 Pair.of(0, ForgetCompletedPointOfInterestTask.create(profession.acquirableWorkstation(), MemoryModuleType.POTENTIAL_JOB_SITE)),
                 Pair.of(2, WorkStationCompetitionTask.create()),
                 Pair.of(3, new FollowCustomerTask(speedModifier)),
-                Pair.of(6, FindPointOfInterestTask.create(profession.acquirableWorkstation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
+                Pair.of(6, LazyFindPointOfInterestTask.create(profession.acquirableWorkstation(), MemoryModuleType.JOB_SITE, MemoryModuleType.POTENTIAL_JOB_SITE, true, Optional.empty())),
                 Pair.of(7, new WalkTowardJobSiteTask(speedModifier)),
                 Pair.of(8, TakeJobSiteTask.create(speedModifier)),
                 Pair.of(10, GoToWorkTask.create()),
@@ -442,7 +442,7 @@ public class VillagerTasksMCA {
                         v.sendChatToAllAround("villager.cant_find_bed");
                     }
                     return !forced;
-                }, (v) -> {
+                }, v -> {
                     v.getResidency().seekHome();
                 })),
                 //verify the bed, occupancies state and similar

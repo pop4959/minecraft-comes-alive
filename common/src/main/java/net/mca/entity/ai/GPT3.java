@@ -36,7 +36,7 @@ public class GPT3 {
     private static final Map<UUID, UUID> lastInteraction = new HashMap<>();
 
     public static String translate(String phrase) {
-        return phrase.replaceAll("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
+        return phrase.replace("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
     }
 
     public record Answer(String answer, String error) {
@@ -52,8 +52,8 @@ public class GPT3 {
 
             // parse json
             JsonObject map = JsonParser.parseString(body).getAsJsonObject();
-            String answer = map.has("answer") ? map.get("answer").getAsString().trim().replace("\n", "") : "";
-            String error = map.has("error") ? map.get("error").getAsString().trim().replace("\n", "") : null;
+            String answer = map.has("answer") ? map.get("answer").getAsString().trim().replace("\n", " ") : "";
+            String error = map.has("error") ? map.get("error").getAsString().trim().replace("\n", " ") : null;
 
             return new Answer(answer, error);
         } catch (Exception e) {
@@ -76,9 +76,9 @@ public class GPT3 {
             lastInteraction.put(player.getUuid(), villager.getUuid());
 
             // remember phrase
-            List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), (key) -> new LinkedList<>());
-            int MEMORY = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
-            while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > MEMORY) {
+            List<String> pastDialogue = memory.computeIfAbsent(villager.getUuid(), key -> new LinkedList<>());
+            int memory = MIN_MEMORY + Math.min(5, Config.getInstance().villagerChatAIIntelligence) * (MAX_MEMORY - MIN_MEMORY) / 5;
+            while (pastDialogue.stream().mapToInt(v -> (v.length() / 4)).sum() > memory) {
                 pastDialogue.remove(0);
             }
             pastDialogue.add("$player: " + msg);

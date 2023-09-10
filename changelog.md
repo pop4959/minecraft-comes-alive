@@ -1,3 +1,23 @@
+# 7.5.8
+
+* AI performance improvements
+* Dropped babies in the inventory no longer end up in the backrooms
+* Inverted marriage slider as this is more what people expect
+* Fixed large players receiving damage on the ceiling
+* Married adventurers no longer despawn
+* Added a procreation cooldown (3 in-game days by default)
+* Added attack-text cooldown
+* Fixed trait influenced gender preferences
+* Added gender override config flag for players
+
+# 7.5.7
+
+* Fixed a crash
+
+# 7.5.6
+
+* Added missing loot tables for some headstones
+
 # 7.5.5
 
 * Fixed server crash

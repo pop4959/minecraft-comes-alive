@@ -9,10 +9,10 @@ import net.mca.entity.ai.Chore;
 import net.mca.entity.ai.Memories;
 import net.mca.entity.ai.MoveState;
 import net.mca.entity.ai.relationship.RelationshipState;
-import net.mca.server.world.data.FamilyTree;
-import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.item.ItemsMCA;
 import net.mca.mixin.MixinVillagerEntityInvoker;
+import net.mca.server.world.data.FamilyTree;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.server.world.data.PlayerSaveData;
 import net.mca.util.WorldUtils;
 import net.minecraft.entity.Saddleable;
@@ -87,7 +87,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     entity.stopRiding();
                 } else {
                     entity.world.getOtherEntities(player, player.getBoundingBox()
-                                    .expand(10), e -> e instanceof Saddleable && ((Saddleable)e).isSaddled())
+                                    .expand(10), e -> e instanceof Saddleable && ((Saddleable) e).isSaddled())
                             .stream()
                             .filter(horse -> !horse.hasPassengers())
                             .min(Comparator.comparingDouble(a -> a.squaredDistanceTo(entity))).ifPresentOrElse(horse -> {
@@ -134,8 +134,10 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
             case "procreate" -> {
                 if (memory.getHearts() < 100) {
                     entity.sendChatMessage(player, "interaction.procreate.fail.lowhearts");
+                } else if (entity.getRelationships().mayProcreateAgain(player.getWorld().getTime())) {
+                    entity.getRelationships().startProcreating(player.getWorld().getTime());
                 } else {
-                    entity.getRelationships().startProcreating();
+                    entity.sendChatMessage(player, "interaction.procreate.fail.toosoon");
                 }
                 return true;
             }
@@ -236,7 +238,7 @@ public class VillagerCommandHandler extends EntityCommandHandler<VillagerEntityM
                     }
 
                     //slightly randomly the search center
-                    ServerWorld world = (ServerWorld)entity.world;
+                    ServerWorld world = (ServerWorld) entity.world;
                     String finalArg = arg;
                     MCA.executorService.execute(() -> {
                         Identifier identifier = new Identifier(finalArg);
