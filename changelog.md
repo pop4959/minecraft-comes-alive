@@ -4,6 +4,8 @@
 * Dropped babies in the inventory no longer end up in the backrooms
 * Inverted marriage slider as this is more what people expect
 * Fixed large players receiving damage on the ceiling
+* Married adventurers no longer despawn
+* Added a procreation cooldown (3 in-game days by default)
 
 # 7.5.7
 
