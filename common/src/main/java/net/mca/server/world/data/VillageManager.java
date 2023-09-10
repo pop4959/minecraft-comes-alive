@@ -49,7 +49,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     private final ServerWorld world;
 
     private final ReaperSpawner reapers;
-    private final BabyBunker babies;
 
     private int buildingCooldown = 21;
 
@@ -60,7 +59,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
     VillageManager(ServerWorld world) {
         this.world = world;
         reapers = new ReaperSpawner(this);
-        babies = new BabyBunker(this);
     }
 
     VillageManager(ServerWorld world, NbtCompound nbt) {
@@ -68,7 +66,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         lastBuildingId = nbt.getInt("lastBuildingId");
         lastVillageId = nbt.getInt("lastVillageId");
         reapers = nbt.contains("reapers", NbtElement.COMPOUND_TYPE) ? new ReaperSpawner(this, nbt.getCompound("reapers")) : new ReaperSpawner(this);
-        babies = nbt.contains("babies", NbtElement.COMPOUND_TYPE) ? new BabyBunker(this, nbt.getCompound("babies")) : new BabyBunker(this);
 
         NbtList villageList = nbt.getList("villages", NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < villageList.size(); i++) {
@@ -84,10 +81,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
 
     public ReaperSpawner getReaperSpawner() {
         return reapers;
-    }
-
-    public BabyBunker getBabies() {
-        return babies;
     }
 
     public Optional<Village> getOrEmpty(int id) {
@@ -130,7 +123,6 @@ public class VillageManager extends PersistentState implements Iterable<Village>
         nbt.putInt("lastVillageId", lastVillageId);
         nbt.put("villages", NbtHelper.fromList(villages.values(), Village::save));
         nbt.put("reapers", reapers.writeNbt());
-        nbt.put("babies", babies.writeNbt());
         return nbt;
     }
 

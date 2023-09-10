@@ -2,7 +2,6 @@ package net.mca.fabric;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -49,12 +48,6 @@ public final class MCAFabric implements ModInitializer {
 
         ServerTickEvents.END_WORLD_TICK.register(w -> VillageManager.get(w).tick());
         ServerTickEvents.END_SERVER_TICK.register(s -> ServerInteractionManager.getInstance().tick());
-
-        ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
-            if (!alive) {
-                VillageManager.get(old.getWorld()).getBabies().pop(neu);
-            }
-        });
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 ServerInteractionManager.getInstance().onPlayerJoin(handler.player)
