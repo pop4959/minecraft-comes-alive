@@ -45,6 +45,7 @@ import net.minecraft.village.VillagerDataContainer;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrackedEntity<E>, VillagerDataContainer, Infectable, Messenger {
@@ -139,16 +140,26 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         }
     }
 
-    default boolean canBeAttractedTo(VillagerLike<?> other) {
-        if (getTraits().eitherHaveTrait(Traits.Trait.HOMOSEXUAL, other)) {
-            return getTraits().hasSameTrait(Traits.Trait.HOMOSEXUAL, other) && getGenetics().getGender() == other.getGenetics().getGender();
+    /**
+     * @param villager the villager to check
+     * @return the set of "valid" genders
+     */
+    default Set<Gender> getAttractedGenderSet(VillagerLike<?> villager) {
+        if (villager.getTraits().hasTrait(Traits.Trait.BISEXUAL)) {
+            return Set.of(Gender.MALE, Gender.FEMALE, Gender.NEUTRAL);
+        } else if (villager.getTraits().hasTrait(Traits.Trait.HOMOSEXUAL)) {
+            return Set.of(villager.getGenetics().getGender(), Gender.NEUTRAL);
+        } else {
+            return Set.of(villager.getGenetics().getGender().opposite(), Gender.NEUTRAL);
         }
-        return getTraits().hasSameTrait(Traits.Trait.BISEXUAL, other)
-                || getGenetics().getGender().isMutuallyAttracted(other.getGenetics().getGender());
+    }
+
+    default boolean canBeAttractedTo(VillagerLike<?> other) {
+        return getAttractedGenderSet(this).contains(other.getGenetics().getGender()) && getAttractedGenderSet(other).contains(getGenetics().getGender());
     }
 
     default boolean canBeAttractedTo(PlayerSaveData other) {
-        return canBeAttractedTo(toVillager(other));
+        return !Config.getInstance().enableGenderCheckForPlayers || canBeAttractedTo(toVillager(other));
     }
 
     default Hand getDominantHand() {

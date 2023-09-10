@@ -7,6 +7,8 @@
 * Married adventurers no longer despawn
 * Added a procreation cooldown (3 in-game days by default)
 * Added attack-text cooldown
+* Fixed trait influenced gender preferences
+* Added gender override config flag for players
 
 # 7.5.7
 

@@ -51,6 +51,7 @@ public final class Config implements Serializable {
     public boolean enableVillagerMailingPlayers = true;
     public boolean allowBodyCustomizationInDestiny = true;
     public boolean allowTraitCustomizationInDestiny = true;
+    public boolean enableGenderCheckForPlayers = true;
 
     public float zombieBiteInfectionChance = 0.05f;
     public float infectionChanceDecreasePerLevel = 0.25f;
