@@ -1,6 +1,7 @@
 # 7.5.8
 
 * AI performance improvements
+* Dropped babies in the inventory no longer end up in the backrooms
 
 # 7.5.7
 
