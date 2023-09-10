@@ -3,6 +3,7 @@
 * AI performance improvements
 * Dropped babies in the inventory no longer end up in the backrooms
 * Inverted marriage slider as this is more what people expect
+* Fixed large players receiving damage on the ceiling
 
 # 7.5.7
 
