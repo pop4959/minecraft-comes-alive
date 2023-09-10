@@ -6,6 +6,7 @@
 * Fixed large players receiving damage on the ceiling
 * Married adventurers no longer despawn
 * Added a procreation cooldown (3 in-game days by default)
+* Added attack-text cooldown
 
 # 7.5.7
 
