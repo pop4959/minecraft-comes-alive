@@ -1453,7 +1453,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private void tickDespawnDelay() {
         if (this.despawnDelay > 0 && !this.hasCustomer() && --this.despawnDelay == 0) {
-            if (getVillagerBrain().getMemories().values().stream().anyMatch(m -> random.nextInt(100) < m.getHearts())) {
+            if (getRelationships().getPartner().isPresent() || getVillagerBrain().getMemories().values().stream().anyMatch(m -> random.nextInt(Config.getInstance().marriageHeartsRequirement) < m.getHearts())) {
                 setProfession(VillagerProfession.NONE);
                 setDespawnDelay(0);
             } else {

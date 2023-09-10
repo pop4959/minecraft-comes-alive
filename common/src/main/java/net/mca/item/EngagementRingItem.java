@@ -12,7 +12,7 @@ public class EngagementRingItem extends RelationshipItem {
     }
 
     @Override
-    protected float getHeartsRequired() {
+    protected int getHeartsRequired() {
         return Config.getInstance().engagementHeartsRequirement;
     }
 
