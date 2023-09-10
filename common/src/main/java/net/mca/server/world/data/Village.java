@@ -27,9 +27,9 @@ import java.util.stream.Stream;
 
 public class Village implements Iterable<Building> {
     private static final int MOVE_IN_COOLDOWN = 1200;
-    public final static int PLAYER_BORDER_MARGIN = 32;
-    public final static int BORDER_MARGIN = 48;
-    public final static int MERGE_MARGIN = 64;
+    public static final int PLAYER_BORDER_MARGIN = 32;
+    public static final int BORDER_MARGIN = 48;
+    public static final int MERGE_MARGIN = 64;
     private static final long BED_SYNC_TIME = 200;
 
     @Nullable
@@ -259,7 +259,7 @@ public class Village implements Iterable<Building> {
     public List<VillagerEntityMCA> getResidents(ServerWorld world) {
         return getResidentsUUIDs()
                 .map(world::getEntity)
-                .filter(v -> v instanceof VillagerEntityMCA)
+                .filter(VillagerEntityMCA.class::isInstance)
                 .map(VillagerEntityMCA.class::cast)
                 .collect(Collectors.toList());
     }
@@ -286,7 +286,7 @@ public class Village implements Iterable<Building> {
     }
 
     public boolean hasStoredResource() {
-        return storageBuffer.size() > 0;
+        return !storageBuffer.isEmpty();
     }
 
     public boolean hasBuilding(String building) {
