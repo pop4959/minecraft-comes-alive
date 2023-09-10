@@ -560,7 +560,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // TODO: Verify the `isUnblockable` replacement for 1.19.4, ensure same behavior
         if (!Config.getInstance().canHurtBabies && !source.isIn(DamageTypeTags.BYPASSES_SHIELD) && getAgeState() == AgeState.BABY) {
             if (source.getAttacker() instanceof PlayerEntity) {
-                sendEventMessage(Text.translatable("villager.baby_hit"));
+                if (requestCooldown()) {
+                    sendEventMessage(Text.translatable("villager.baby_hit"));
+                }
             }
             return super.damage(source, 0.0f);
         }
@@ -578,10 +580,12 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 if (getWorld().getTime() - lastHit > 40) {
                     lastHit = getWorld().getTime();
                     if (!isGuard() || getSmallBounty() == 0) {
-                        if (getHealth() < getMaxHealth() / 2) {
-                            sendChatMessage(player, "villager.badly_hurt");
-                        } else {
-                            sendChatMessage(player, "villager.hurt");
+                        if (requestCooldown()) {
+                            if (getHealth() < getMaxHealth() / 2) {
+                                sendChatMessage(player, "villager.badly_hurt");
+                            } else {
+                                sendChatMessage(player, "villager.hurt");
+                            }
                         }
                     }
                 }
@@ -657,6 +661,17 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         }
 
         return super.damage(source, damageAmount);
+    }
+
+    long lastCooldown = 0L;
+
+    private boolean requestCooldown() {
+        if (getWorld().getTime() - lastCooldown > 100) {
+            lastCooldown = getWorld().getTime();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean isGuard() {
@@ -1455,7 +1470,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     private void tickDespawnDelay() {
         if (this.despawnDelay > 0 && !this.hasCustomer() && --this.despawnDelay == 0) {
-            if (getVillagerBrain().getMemories().values().stream().anyMatch(m -> random.nextInt(100) < m.getHearts())) {
+            if (getRelationships().getPartner().isPresent() || getVillagerBrain().getMemories().values().stream().anyMatch(m -> random.nextInt(Config.getInstance().marriageHeartsRequirement) < m.getHearts())) {
                 setProfession(VillagerProfession.NONE);
                 setDespawnDelay(0);
             } else {

@@ -52,13 +52,6 @@ public final class MCAQuilt implements ModInitializer {
         ServerWorldTickEvents.END.register((s, w) -> VillageManager.get(w).tick());
         ServerTickEvents.END.register(s -> ServerInteractionManager.getInstance().tick());
 
-        // TODO: Replace with QSL equivalent, once they get around to doing that
-        ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
-            if (!alive) {
-                VillageManager.get(old.getServerWorld()).getBabies().pop(neu);
-            }
-        });
-
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 ServerInteractionManager.getInstance().onPlayerJoin(handler.player)
         );

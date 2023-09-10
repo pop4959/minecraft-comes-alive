@@ -15,19 +15,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum Gender {
-    UNASSIGNED(0xFFFFFF),
-    MALE(0x01A6EA),
-    FEMALE(0xA649A4),
-    NEUTRAL(0xFFFFFF);
+    UNASSIGNED(0xFFFFFF, "unassigned"),
+    MALE(0x01A6EA, "male"),
+    FEMALE(0xA649A4, "female"),
+    NEUTRAL(0xFFFFFF, "neutral");
 
     private static final Random RNG = Random.create();
     private static final Gender[] VALUES = values();
     private static final Map<String, Gender> REGISTRY = Stream.of(VALUES).collect(Collectors.toMap(Gender::name, Function.identity()));
 
     private final int color;
+    private final String dataName;
 
-    Gender(int color) {
+    Gender(int color, String dataName) {
         this.color = color;
+        this.dataName = dataName;
     }
 
     public EntityType<VillagerEntityMCA> getVillagerType() {
@@ -46,16 +48,8 @@ public enum Gender {
         return ordinal();
     }
 
-    public String getStrName() {
-        return name().toLowerCase(Locale.ENGLISH);
-    }
-
-    public boolean isNonBinary() {
-        return this == NEUTRAL || this == UNASSIGNED;
-    }
-
-    public Stream<Gender> getTransients() {
-        return isNonBinary() ? Stream.of(MALE, FEMALE) : Stream.of(this);
+    public String getDataName() {
+        return dataName;
     }
 
     public Gender binary() {
@@ -64,20 +58,6 @@ public enum Gender {
 
     public Gender opposite() {
         return this == FEMALE ? MALE : FEMALE;
-    }
-
-    /**
-     * Checks whether this gender is attracted to another.
-     */
-    public boolean isAttractedTo(Gender other) {
-        return other == UNASSIGNED || this == NEUTRAL || other != this;
-    }
-
-    /**
-     * Checks whether both genders are mutually attracted to each other.
-     */
-    public boolean isMutuallyAttracted(Gender other) {
-        return isAttractedTo(other) && other.isAttractedTo(this);
     }
 
     public static Gender byId(int id) {

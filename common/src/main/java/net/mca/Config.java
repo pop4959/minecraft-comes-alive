@@ -51,6 +51,7 @@ public final class Config implements Serializable {
     public boolean enableVillagerMailingPlayers = true;
     public boolean allowBodyCustomizationInDestiny = true;
     public boolean allowTraitCustomizationInDestiny = true;
+    public boolean enableGenderCheckForPlayers = true;
 
     public float zombieBiteInfectionChance = 0.05f;
     public float infectionChanceDecreasePerLevel = 0.25f;
@@ -58,9 +59,9 @@ public final class Config implements Serializable {
 
     //villager behavior
     public float twinBabyChance = 0.02f;
-    public float marriageHeartsRequirement = 100;
-    public float engagementHeartsRequirement = 50;
-    public float bouquetHeartsRequirement = 10;
+    public int marriageHeartsRequirement = 100;
+    public int engagementHeartsRequirement = 50;
+    public int bouquetHeartsRequirement = 10;
     public int babyItemGrowUpTime = 24000;
     public int villagerMaxAgeTime = 384000;
     public int villagerMaxHealth = 20;
@@ -95,6 +96,7 @@ public final class Config implements Serializable {
     public float coloredHairChance = 0.02f;
     public int heartsRequiredToAutoSpawnGravestone = 10;
     public boolean useSmarterDoorAI = false;
+    public int procreationCooldown = 72000;
 
     //tracker
     public boolean trackVillagerPosition = true;

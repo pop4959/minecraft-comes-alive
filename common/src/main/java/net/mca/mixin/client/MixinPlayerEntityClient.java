@@ -23,17 +23,19 @@ abstract class MixinPlayerEntityClient extends LivingEntity {
     public void mca$getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions, CallbackInfoReturnable<Float> cir) {
         if (Config.getInstance().adjustPlayerEyesToHeight) {
             MCAClient.getPlayerData(getUuid()).ifPresent(data -> {
+                float height;
                 switch (pose) {
                     case SWIMMING, FALL_FLYING, SPIN_ATTACK -> {
-                        cir.setReturnValue(0.4f * data.getRawScaleFactor());
+                        height = 0.4f;
                     }
                     case CROUCHING -> {
-                        cir.setReturnValue(1.27f * data.getRawScaleFactor());
+                        height = 1.27f;
                     }
                     default -> {
-                        cir.setReturnValue(1.62f * data.getRawScaleFactor());
+                        height = 1.62f;
                     }
                 }
+                cir.setReturnValue(Math.min(this.getHeight() - 1.0f / 16.0f, height * data.getRawScaleFactor()));
             });
         }
     }

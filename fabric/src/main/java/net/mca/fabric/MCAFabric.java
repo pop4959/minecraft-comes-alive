@@ -50,12 +50,6 @@ public final class MCAFabric implements ModInitializer {
         ServerTickEvents.END_WORLD_TICK.register(w -> VillageManager.get(w).tick());
         ServerTickEvents.END_SERVER_TICK.register(s -> ServerInteractionManager.getInstance().tick());
 
-        ServerPlayerEvents.AFTER_RESPAWN.register((old, neu, alive) -> {
-            if (!alive) {
-                VillageManager.get(old.getServerWorld()).getBabies().pop(neu);
-            }
-        });
-
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
                 ServerInteractionManager.getInstance().onPlayerJoin(handler.player)
         );
