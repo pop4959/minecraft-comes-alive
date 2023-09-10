@@ -141,7 +141,7 @@ public class VillagerTasksMCA {
             return brain;
         } else if (age != AgeState.ADULT) {
             brain.setSchedule(Schedule.VILLAGER_BABY);
-            brain.setTaskList(Activity.PLAY, VillagerTasksMCA.getPlayPackage(0.5F));
+            brain.setTaskList(Activity.PLAY, VillagerTasksMCA.getPlayPackage(1.0F));
             brain.setTaskList(Activity.CORE, VillagerTasksMCA.getSelfDefencePackage());
         } else if (villager.isGuard()) {
             brain.setSchedule(SchedulesMCA.getTypeSchedule(villager, SchedulesMCA.GUARD, SchedulesMCA.GUARD_NIGHT));
@@ -441,7 +441,7 @@ public class VillagerTasksMCA {
                         v.sendChatToAllAround("villager.cant_find_bed");
                     }
                     return !forced;
-                }, (v) -> {
+                }, v -> {
                     v.getResidency().seekHome();
                 })),
                 //verify the bed, occupancies state and similar
