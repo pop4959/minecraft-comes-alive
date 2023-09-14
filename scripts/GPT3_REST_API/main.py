@@ -1,5 +1,6 @@
 import hashlib
 import os
+from collections import defaultdict
 from functools import cache
 
 import openai
@@ -16,8 +17,9 @@ app = FastAPI()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-limiter = Limiter(Rate(1000, Duration.HOUR))
-limiter_premium = Limiter(Rate(10000, Duration.HOUR))
+limiter = defaultdict(lambda: Limiter(Rate(800, Duration.HOUR)))
+limiter_premium = defaultdict(lambda: Limiter(Rate(8000, Duration.HOUR)))
+stats = defaultdict(int)
 
 LIMIT_EXCEEDED = "(You exceeded your hourly rate, give the AI some rest!)"
 
@@ -63,13 +65,16 @@ def prompt_to_messages(prompt: str, player: str, villager: str):
 @app.get("/chat")
 async def chat(prompt: str, player: str, villager: str):
     try:
-        lim = limiter_premium if player in premium else limiter
+        lim = (limiter_premium if player in premium else limiter)[player]
+
+        weight = len(prompt) // 100 + 1
 
         # noinspection PyAsyncCall
-        lim.try_acquire(player, weight=len(prompt) // 100 + 1)
+        lim.try_acquire(player, weight=weight * 10)
 
         # Logging
-        print(player, player in premium)
+        print(player, player in premium, weight)
+        stats[player] += weight
 
         # Convert to new format
         messages = prompt_to_messages(prompt, player, villager)
@@ -86,7 +91,7 @@ async def chat(prompt: str, player: str, villager: str):
             model="gpt-3.5-turbo",
             messages=messages,
             temperature=0.85,
-            max_tokens=180,
+            max_tokens=150,
             stop=[f"{player}:", f"{villager}:"],
             user=hashlib.sha256(player.encode("UTF-8")).hexdigest()
         )
@@ -101,6 +106,11 @@ async def chat(prompt: str, player: str, villager: str):
             return {"answer": LIMIT_EXCEEDED, "error": "limit_premium"}
         else:
             return {"answer": LIMIT_EXCEEDED, "error": "limit"}
+
+
+@app.get("/stats")
+def get_stats():
+    return stats
 
 
 SENTIMENT_MODEL = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
