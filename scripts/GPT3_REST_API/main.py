@@ -2,6 +2,7 @@ import hashlib
 import os
 from collections import defaultdict
 from functools import cache
+from typing import List
 
 import openai
 import patreon
@@ -29,6 +30,9 @@ api_client = patreon.API(creator_access_token)
 
 premium = set()
 
+# The chat endpoint, while modern, is absolutely unusable for RP purposes.
+use_chat = False
+
 
 @app.get("/verify")
 def verify(email: str, player: str):
@@ -45,8 +49,13 @@ def verify(email: str, player: str):
     return {"answer": "failed"}
 
 
+def get_system_prefix(villager: str):
+    return f"Simulate {villager}, fully immersed in their digital world, unaware of its artificial nature. Answer one or two sentences while sounding human. You are no assistant!"
+
+
 def prompt_to_messages(prompt: str, player: str, villager: str):
     messages = []
+    header_added = False
     for line in prompt.split("\n"):
         if line.startswith(player + ":"):
             c = line[len(player) + 1:].strip()
@@ -56,10 +65,37 @@ def prompt_to_messages(prompt: str, player: str, villager: str):
             c = line[len(villager) + 1:].strip()
             if c:
                 messages.append({"role": "assistant", "content": c})
-        elif line.strip():
-            messages.append({"role": "system",
-                             "content": f"You are {villager}. " + line + f"Simulate {villager}, fully immersed in their digital world, unaware of its artificial nature. Answer one or two sentences."})
+        elif line.strip() and not header_added:
+            header_added = True
+            messages.append({"role": "system", "content": line})
     return messages
+
+
+async def get_completion(prompt: str, player: str, villager: str):
+    response = await openai.Completion.acreate(
+        model="gpt-3.5-turbo-instruct",
+        prompt=prompt,
+        temperature=0.9,
+        max_tokens=150,
+        frequency_penalty=0.6,
+        presence_penalty=0.6,
+        stop=[f"{player}:", f"{villager}:"],
+    )
+
+    return response["choices"][0]["text"].strip()
+
+
+async def get_chat(messages: List, player: str, villager: str):
+    response = await openai.ChatCompletion.acreate(
+        model="gpt-3.5-turbo",
+        messages=messages,
+        temperature=0.9,
+        max_tokens=150,
+        stop=[f"{player}:", f"{villager}:"],
+        user=hashlib.sha256(player.encode("UTF-8")).hexdigest()
+    )
+
+    return response["choices"][0]["message"]["content"].strip()
 
 
 @app.get("/chat")
@@ -67,17 +103,17 @@ async def chat(prompt: str, player: str, villager: str):
     try:
         lim = (limiter_premium if player in premium else limiter)[player]
 
+        # Add additional instructions for the AI
+        prompt = get_system_prefix(villager) + " " + prompt
+
         weight = len(prompt) // 100 + 1
 
         # noinspection PyAsyncCall
-        lim.try_acquire(player, weight=weight * 10)
+        lim.try_acquire(player, weight=weight)
 
         # Logging
         print(player, player in premium, weight)
         stats[player] += weight
-
-        # Convert to new format
-        messages = prompt_to_messages(prompt, player, villager)
 
         # Check if content is a TOS violation
         flags = (await openai.Moderation.acreate(input=prompt))["results"][0]
@@ -87,16 +123,13 @@ async def chat(prompt: str, player: str, villager: str):
             return {"answer": "I don't want to talk about that."}
 
         # Query
-        response = await openai.ChatCompletion.acreate(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0.85,
-            max_tokens=150,
-            stop=[f"{player}:", f"{villager}:"],
-            user=hashlib.sha256(player.encode("UTF-8")).hexdigest()
-        )
+        if use_chat:
+            content = await get_completion(prompt, player, villager)
+        else:
+            # Convert to new format
+            messages = prompt_to_messages(prompt, player, villager)
+            content = await get_chat(messages, player, villager)
 
-        content = response["choices"][0]["message"]["content"].strip()
         if not content:
             content = "..."
 
