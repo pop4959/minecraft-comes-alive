@@ -1,3 +1,7 @@
+# 7.5.9
+
+* Wrong procreation cooldown on new worlds
+
 # 7.5.8
 
 * AI performance improvements
