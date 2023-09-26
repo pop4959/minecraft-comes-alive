@@ -145,9 +145,9 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
      * @return the set of "valid" genders
      */
     default Set<Gender> getAttractedGenderSet(VillagerLike<?> villager) {
-        if (villager.getTraits().hasTrait(Traits.Trait.BISEXUAL)) {
+        if (villager.getTraits().hasTrait(Traits.BISEXUAL)) {
             return Set.of(Gender.MALE, Gender.FEMALE, Gender.NEUTRAL);
-        } else if (villager.getTraits().hasTrait(Traits.Trait.HOMOSEXUAL)) {
+        } else if (villager.getTraits().hasTrait(Traits.HOMOSEXUAL)) {
             return Set.of(villager.getGenetics().getGender(), Gender.NEUTRAL);
         } else {
             return Set.of(villager.getGenetics().getGender().opposite(), Gender.NEUTRAL);
@@ -163,7 +163,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default Hand getDominantHand() {
-        return getTraits().hasTrait(Traits.Trait.LEFT_HANDED) ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        return getTraits().hasTrait(Traits.LEFT_HANDED) ? Hand.OFF_HAND : Hand.MAIN_HAND;
     }
 
     default Hand getOpposingHand() {

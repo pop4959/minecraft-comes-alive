@@ -440,7 +440,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
     }
 
     private Traits.Trait[] getValidTraits() {
-        return Arrays.stream(Traits.Trait.values()).filter(e -> {
+        return (Traits.Trait.values().stream()).filter(e -> {
             if (villagerUUID.equals(playerUUID)) {
                 return (Config.getInstance().bypassTraitRestrictions || e.isUsableOnPlayer()) && e.isEnabled();
             }
