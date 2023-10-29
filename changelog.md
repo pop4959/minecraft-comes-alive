@@ -1,6 +1,7 @@
 # 7.5.10
 
 * Fixed data loading issues on systems with locales having non-western digits.
+* Villagers no longer harvest blocks in claimed regions
 
 # 7.5.9
 

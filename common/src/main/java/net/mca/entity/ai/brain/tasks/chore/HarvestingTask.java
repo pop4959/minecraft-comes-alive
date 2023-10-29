@@ -244,7 +244,7 @@ public class HarvestingTask extends AbstractChoreTask {
         }
 
         stack.ifPresentOrElse(s -> {
-            world.setBlockState(hitResult.getBlockPos(), ((BlockItem)s.getItem()).getBlock().getDefaultState(), Block.NOTIFY_ALL);
+            world.setBlockState(hitResult.getBlockPos(), ((BlockItem) s.getItem()).getBlock().getDefaultState(), Block.NOTIFY_ALL);
             s.decrement(1);
             villager.swingHand(villager.getDominantHand());
             bonemealable.add(target);
@@ -260,20 +260,20 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private void harvestCrops(ServerWorld world, BlockPos pos) {
-        BlockState state = world.getBlockState(pos);
-        LootContext.Builder lootContext$builder = new LootContext.Builder(world)
-                .parameter(LootContextParameters.ORIGIN, villager.getPos())
-                .parameter(LootContextParameters.TOOL, ItemStack.EMPTY)
-                .parameter(LootContextParameters.THIS_ENTITY, villager)
-                .parameter(LootContextParameters.BLOCK_STATE, state)
-                .random(villager.getRandom())
-                .luck(0);
+        if (world.breakBlock(pos, false, villager)) {
+            BlockState state = world.getBlockState(pos);
+            LootContext.Builder builder = new LootContext.Builder(world)
+                    .parameter(LootContextParameters.ORIGIN, villager.getPos())
+                    .parameter(LootContextParameters.TOOL, ItemStack.EMPTY)
+                    .parameter(LootContextParameters.THIS_ENTITY, villager)
+                    .parameter(LootContextParameters.BLOCK_STATE, state)
+                    .random(villager.getRandom())
+                    .luck(0);
 
-        List<ItemStack> drops = world.getServer().getLootManager().getTable(state.getBlock().getLootTableId()).generateLoot(lootContext$builder.build(LootContextTypes.BLOCK));
-        for (ItemStack stack : drops) {
-            villager.getInventory().addStack(stack);
+            List<ItemStack> drops = world.getServer().getLootManager().getTable(state.getBlock().getLootTableId()).generateLoot(builder.build(LootContextTypes.BLOCK));
+            for (ItemStack stack : drops) {
+                villager.getInventory().addStack(stack);
+            }
         }
-
-        world.breakBlock(pos, false, villager);
     }
 }

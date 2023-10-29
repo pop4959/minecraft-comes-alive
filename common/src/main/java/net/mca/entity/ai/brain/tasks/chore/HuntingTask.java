@@ -56,7 +56,6 @@ public class HuntingTask extends AbstractChoreTask {
                 villager.setStackInHand(villager.getDominantHand(), stack);
             }
         }
-
     }
 
     @Override
@@ -78,8 +77,8 @@ public class HuntingTask extends AbstractChoreTask {
                 ticks = 0;
                 if (villager.world.random.nextFloat() >= 0.0D) {
                     villager.world.getNonSpectatingEntities(AnimalEntity.class, villager.getBoundingBox().expand(15, 3, 15)).stream()
-                            .filter((a) -> !(a instanceof TameableEntity))
-                            .filter((a) -> !a.isBaby())
+                            .filter(a -> !(a instanceof TameableEntity))
+                            .filter(a -> !a.isBaby())
                             .min(Comparator.comparingDouble(villager::squaredDistanceTo))
                             .ifPresent(animal -> {
                                 target = animal;
@@ -98,7 +97,7 @@ public class HuntingTask extends AbstractChoreTask {
 
             if (target.isDead()) {
                 // search for EntityItems around the target and grab them
-                villager.world.getNonSpectatingEntities(ItemEntity.class, villager.getBoundingBox().expand(15, 3, 15)).forEach((item) -> {
+                villager.world.getNonSpectatingEntities(ItemEntity.class, villager.getBoundingBox().expand(15, 3, 15)).forEach(item -> {
                     villager.getInventory().addStack(item.getStack());
                     item.discard();
                 });

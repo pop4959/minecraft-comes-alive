@@ -125,15 +125,19 @@ public class ChoppingTask extends AbstractChoreTask {
      * Returns trues if origin is bottom point of tree.
      */
     private boolean isTreeStartLog(ServerWorld world, BlockPos origin) {
-        if (!world.getBlockState(origin).isIn(BlockTags.LOGS)) {return false;}
+        if (!world.getBlockState(origin).isIn(BlockTags.LOGS)) {
+            return false;
+        }
 
         // ensure we're looking at a valid tree before continuing
-        if (!isValidTree(world, origin.down())) {return false;}
+        if (!isValidTree(world, origin.down())) {
+            return false;
+        }
 
         // check upside continues and valid leaves exist.
-        BlockPos.Mutable pos_up = origin.mutableCopy(); // copy as mutable for reduce resources
+        BlockPos.Mutable posUp = origin.mutableCopy(); // copy as mutable for reduce resources
         for (int y = 0; y < Config.getInstance().maxTreeHeight; y++) {
-            BlockState up = world.getBlockState(pos_up.setY(pos_up.getY() + 1)); // use set directly instead of "pos_up.move(Direction.UP)" (set is faster)
+            BlockState up = world.getBlockState(posUp.setY(posUp.getY() + 1)); // use set directly instead of "pos_up.move(Direction.UP)" (set is faster)
             if (!up.isIn(BlockTags.LOGS)) return up.isIn(BlockTags.LEAVES);
         }
         return false;
@@ -145,10 +149,13 @@ public class ChoppingTask extends AbstractChoreTask {
         BlockState state;
 
         while ((state = world.getBlockState(pos)).isIn(BlockTags.LOGS)) {
-            world.breakBlock(pos, false, villager);
-            pos = pos.add(0, 1, 0);
-            villager.getInventory().addStack(new ItemStack(state.getBlock(), 1));
-            stack.damage(1, villager, e -> e.sendEquipmentBreakStatus(e.getDominantSlot()));
+            if (world.breakBlock(pos, false, villager)) {
+                pos = pos.add(0, 1, 0);
+                villager.getInventory().addStack(new ItemStack(state.getBlock(), 1));
+                stack.damage(1, villager, e -> e.sendEquipmentBreakStatus(e.getDominantSlot()));
+            } else {
+                break;
+            }
         }
     }
 
