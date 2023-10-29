@@ -4,13 +4,19 @@
       "profession": "mca:baker",
       "satisfaction_boost": 10
     },
-        {
+    {
       "age_group": "child",
       "satisfaction_boost": 10
     },
     {
       "trait": "diabetes",
+      "satisfaction_boost": -15
+    },
+    {
       "trait": "lactose_intolerant",
+      "satisfaction_boost": -15
+    },
+    {
       "trait": "coeliac_disease",
       "satisfaction_boost": -15
     }
@@ -26,7 +32,6 @@
     "bakery:sweetberry_glazed_cookie": 10,
     "bakery:strawberry_glazed_cookie": 10,
     "bakery:jam_roll": 10,
-    "bakery:chocolate_cake_slice": 15,
     "bakery:strawberry_cake_slice": 15,
     "bakery:pudding_slice": 15,
     "bakery:bundt_cake_slice": 12,
@@ -49,6 +54,6 @@
     "bakery:chocolate_tart": 18,
     "bakery:sweet_dough": -5,
     "bakery:chocolate_truffle": 3,
-    "bakery:chocolate_box": 19,
+    "bakery:chocolate_box": 19
   }
 }

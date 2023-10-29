@@ -2,6 +2,7 @@
 
 * Fixed data loading issues on systems with locales having non-western digits.
 * Villagers no longer harvest blocks in claimed regions
+* Added support for Let's Do Bakery
 
 # 7.5.9
 
