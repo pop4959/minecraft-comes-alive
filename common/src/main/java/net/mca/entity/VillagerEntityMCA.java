@@ -97,10 +97,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static net.mca.client.model.CommonVillagerModel.getVillager;
@@ -559,10 +556,8 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // you can't hit babies!
         // TODO: Verify the `isUnblockable` replacement for 1.19.4, ensure same behavior
         if (!Config.getInstance().canHurtBabies && !source.isIn(DamageTypeTags.BYPASSES_SHIELD) && getAgeState() == AgeState.BABY) {
-            if (source.getAttacker() instanceof PlayerEntity) {
-                if (requestCooldown()) {
-                    sendEventMessage(Text.translatable("villager.baby_hit"));
-                }
+            if (source.getAttacker() instanceof PlayerEntity && (requestCooldown())) {
+                sendEventMessage(Text.translatable("villager.baby_hit"));
             }
             return super.damage(source, 0.0f);
         }
@@ -579,13 +574,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (source.getAttacker() instanceof PlayerEntity player) {
                 if (getWorld().getTime() - lastHit > 40) {
                     lastHit = getWorld().getTime();
-                    if (!isGuard() || getSmallBounty() == 0) {
-                        if (requestCooldown()) {
-                            if (getHealth() < getMaxHealth() / 2) {
-                                sendChatMessage(player, "villager.badly_hurt");
-                            } else {
-                                sendChatMessage(player, "villager.hurt");
-                            }
+                    if ((!isGuard() || getSmallBounty() == 0) && requestCooldown()) {
+                        if (getHealth() < getMaxHealth() / 2) {
+                            sendChatMessage(player, "villager.badly_hurt");
+                        } else {
+                            sendChatMessage(player, "villager.hurt");
                         }
                     }
                 }
@@ -679,11 +672,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
     }
 
     public int getSmallBounty() {
-        return getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY.get()).orElse(0);
+        return Objects.requireNonNull(getBrain().getOptionalMemory(MemoryModuleTypeMCA.SMALL_BOUNTY.get())).orElse(0);
     }
 
     public boolean isHitBy(ServerPlayerEntity player) {
-        return getBrain().getOptionalMemory(MemoryModuleTypeMCA.HIT_BY_PLAYER.get()).filter(v -> v == player).isPresent();
+        return Objects.requireNonNull(getBrain().getOptionalMemory(MemoryModuleTypeMCA.HIT_BY_PLAYER.get())).filter(v -> v == player).isPresent();
     }
 
     private int getMaxWarnings(PlayerEntity attacker) {

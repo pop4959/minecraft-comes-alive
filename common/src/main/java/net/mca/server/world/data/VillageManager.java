@@ -143,7 +143,7 @@ public class VillageManager extends PersistentState implements Iterable<Village>
                 if (world.random.nextInt(10) == 0 && !isWithinHorizontalBoundaries(player.getBlockPos()) && !player.isCreative()) {
                     villages.values().stream()
                             .filter(v -> v.getPopulation() >= 3)
-                            .filter(v -> v.getReputation(player) < Config.getInstance().bountyHunterHeartsInterval)
+                            .filter(v -> v.getReputation(player) < Config.getInstance().bountyHunterHearts)
                             .min(Comparator.comparingInt(v -> v.getReputation(player)))
                             .ifPresent(buildings -> startBountyHunterWave(player, buildings));
                 }

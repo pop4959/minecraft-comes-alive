@@ -533,7 +533,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     @Override
     public void mouseMoved(double mouseX, double mouseY) {
-        mouseMoved(mouseX, mouseY, lastMouseX - mouseX, lastMouseY - mouseY);
+        mouseDeltaMoved(lastMouseX - mouseX, lastMouseY - mouseY);
 
         lastMouseX = mouseX;
         lastMouseY = mouseY;
@@ -541,8 +541,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
         super.mouseMoved(mouseX, mouseY);
     }
 
-    @SuppressWarnings("unused")
-    protected void mouseMoved(double x, double y, double deltaX, double deltaY) {
+    protected void mouseDeltaMoved(double deltaX, double deltaY) {
         if (isPanning) {
             float ox = (float) (deltaX / 64 / CANVAS_SCALE);
             x0 -= ox;

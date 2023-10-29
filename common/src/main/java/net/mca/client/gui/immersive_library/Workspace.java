@@ -36,7 +36,6 @@ public final class Workspace {
     private boolean dirty;
     private boolean dirtySinceSnapshot;
 
-
     public Workspace(NativeImage image) {
         this.currentImage = image;
         this.backendTexture = new NativeImageBackedTexture(currentImage);
@@ -91,7 +90,7 @@ public final class Workspace {
                 int g = currentImage.getGreen(x, y) & 0xFF;
                 int b = currentImage.getBlue(x, y) & 0xFF;
                 int a = currentImage.getOpacity(x, y) & 0xFF;
-                int l = MathHelper.clamp((int)(0.2126 * r + 0.7152 * g + 0.0722 * b), 0, 255);
+                int l = MathHelper.clamp((int) (0.2126 * r + 0.7152 * g + 0.0722 * b), 0, 255);
                 currentImage.setColor(x, y, a << 24 | l << 16 | l << 8 | l);
             }
         }
@@ -135,9 +134,9 @@ public final class Workspace {
 
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
-                int r = MathHelper.clamp((int)(((currentImage.getRed(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
-                int g = MathHelper.clamp((int)(((currentImage.getGreen(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
-                int b = MathHelper.clamp((int)(((currentImage.getBlue(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
+                int r = MathHelper.clamp((int) (((currentImage.getRed(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
+                int g = MathHelper.clamp((int) (((currentImage.getGreen(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
+                int b = MathHelper.clamp((int) (((currentImage.getBlue(x, y) & 0xFF) - average) * (1.0f + c) + average), 0, 255);
                 int a = currentImage.getOpacity(x, y) & 0xFF;
                 currentImage.setColor(x, y, a << 24 | r << 16 | g << 8 | b);
             }

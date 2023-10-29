@@ -116,7 +116,7 @@ public final class Config implements Serializable {
     public int adventurerStayTime = 48000;
     public float villagerProcreationChancePerMinute = 0.05f;
     public int bountyHunterInterval = 48000;
-    public int bountyHunterHeartsInterval = -150;
+    public int bountyHunterHearts = -150;
     public boolean innSpawnsAdventurers = true;
     public boolean innSpawnsCultists = true;
     public boolean innSpawnsWanderingTraders = true;
