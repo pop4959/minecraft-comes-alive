@@ -14,11 +14,11 @@ import net.mca.entity.ai.relationship.AgeState;
 import net.mca.entity.ai.relationship.EntityRelationship;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.entity.ai.relationship.VillagerDimensions;
-import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.entity.interaction.EntityCommandHandler;
 import net.mca.resources.ClothingList;
 import net.mca.resources.HairList;
 import net.mca.resources.Names;
+import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.server.world.data.PlayerSaveData;
 import net.mca.util.network.datasync.*;
 import net.minecraft.client.MinecraftClient;
@@ -43,10 +43,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.village.VillagerDataContainer;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrackedEntity<E>, VillagerDataContainer, Infectable, Messenger {
     CDataParameter<String> VILLAGER_NAME = CParameter.create("villagerName", "");
@@ -258,7 +255,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     }
 
     default float[] getHairDye() {
-        return new float[] {
+        return new float[]{
                 getTrackedValue(HAIR_COLOR_RED),
                 getTrackedValue(HAIR_COLOR_GREEN),
                 getTrackedValue(HAIR_COLOR_BLUE)
@@ -389,17 +386,17 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
                     if (ClothingList.getInstance().clothing.containsKey(id)) {
                         setClothes(id);
                     } else {
-                        MCA.LOGGER.info(String.format("Villagers clothing %s does not exist!", getClothes()));
+                        MCA.LOGGER.info(String.format(Locale.ROOT, "Villagers clothing %s does not exist!", getClothes()));
                         randomizeClothes();
                     }
                 } else {
-                    MCA.LOGGER.info(String.format("Villagers clothing %s does not exist!", getClothes()));
+                    MCA.LOGGER.info(String.format(Locale.ROOT, "Villagers clothing %s does not exist!", getClothes()));
                     randomizeClothes();
                 }
             }
 
             if (!getHair().startsWith("immersive_library") && !HairList.getInstance().hair.containsKey(getHair())) {
-                MCA.LOGGER.info(String.format("Villagers hair %s does not exist!", getHair()));
+                MCA.LOGGER.info(String.format(Locale.ROOT, "Villagers hair %s does not exist!", getHair()));
                 randomizeHair();
             }
         }
@@ -408,13 +405,13 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
     @SuppressWarnings({"unchecked", "RedundantSuppression"})
     default NbtCompound toNbtForConversion(EntityType<?> convertingTo) {
         NbtCompound output = new NbtCompound();
-        this.getTypeDataManager().save((E)asEntity(), output);
+        this.getTypeDataManager().save((E) asEntity(), output);
         return output;
     }
 
     @SuppressWarnings({"unchecked", "RedundantSuppression"})
     default void readNbtForConversion(EntityType<?> convertingFrom, NbtCompound input) {
-        this.getTypeDataManager().load((E)asEntity(), input);
+        this.getTypeDataManager().load((E) asEntity(), input);
     }
 
     default void copyVillagerAttributesFrom(VillagerLike<?> other) {
@@ -431,7 +428,7 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
 
     static VillagerLike<?> toVillager(Entity entity) {
         if (entity instanceof VillagerLike<?>) {
-            return (VillagerLike<?>)entity;
+            return (VillagerLike<?>) entity;
         } else if (entity instanceof ServerPlayerEntity playerEntity) {
             return toVillager(PlayerSaveData.get(playerEntity));
         } else {

@@ -1603,7 +1603,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 if (Auth.getToken() != null) {
                     Response request = null;
                     try {
-                        request = request(workspace.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, workspace.contentid == -1 ? ContentIdResponse.class : SuccessResponse.class, workspace.contentid == -1 ? "content/mca" : "content/mca/%s".formatted(workspace.contentid), Map.of(
+                        request = request(workspace.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, workspace.contentid == -1 ? ContentIdResponse.class : SuccessResponse.class, workspace.contentid == -1 ? "content/mca" : ("content/mca/" + workspace.contentid), Map.of(
                                 "token", Auth.getToken()
                         ), Map.of(
                                 "title", workspace.title,
@@ -1664,7 +1664,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void setTag(int contentid, String tag, boolean add) {
         if (Auth.getToken() != null) {
-            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "tag/mca/%s/%s".formatted(contentid, tag), Map.of(
+            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "tag/mca/" + contentid + "/" + tag, Map.of(
                     "token", Auth.getToken()
             ));
             getContentById(contentid).ifPresent(c -> {
@@ -1686,7 +1686,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void removeContent(int contentId) {
         if (Auth.getToken() != null) {
-            request(Api.HttpMethod.DELETE, SuccessResponse.class, "content/mca/%s".formatted(contentId), Map.of(
+            request(Api.HttpMethod.DELETE, SuccessResponse.class, "content/mca/" + contentId, Map.of(
                     "token", Auth.getToken()
             ));
             removeContentLocally(contentId);
@@ -1704,7 +1704,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void reportContent(int contentId, String reason) {
         if (Auth.getToken() != null) {
-            request(Api.HttpMethod.POST, SuccessResponse.class, "report/mca/%s/%s".formatted(contentId, reason), Map.of(
+            request(Api.HttpMethod.POST, SuccessResponse.class, "report/mca/" + contentId + "/" + reason, Map.of(
                     "token", Auth.getToken()
             ));
 
@@ -1718,7 +1718,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void setLike(int contentid, boolean add) {
         if (Auth.getToken() != null && currentUser != null) {
-            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "like/mca/%s".formatted(contentid), Map.of(
+            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "like/mca/" + contentid, Map.of(
                     "token", Auth.getToken()
             ));
 
@@ -1732,7 +1732,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void setBan(int userid, boolean banned) {
         if (Auth.getToken() != null && currentUser != null) {
-            request(Api.HttpMethod.PUT, SuccessResponse.class, "user/%s".formatted(userid), Map.of(
+            request(Api.HttpMethod.PUT, SuccessResponse.class, "user/" + userid, Map.of(
                     "token", Auth.getToken(),
                     "banned", Boolean.toString(banned)
             ));

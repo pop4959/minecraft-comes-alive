@@ -660,7 +660,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
     }
 
     protected void eventCallback(String event) {
-
+        // nop
     }
 
     protected boolean shouldUsePlayerModel() {
@@ -740,11 +740,6 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
         }
 
         super.render(matrices, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     protected boolean shouldDrawEntity() {

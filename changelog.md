@@ -1,3 +1,7 @@
+# 7.5.10
+
+* Fixed data loading issues on systems with locales having non-western digits.
+
 # 7.5.9
 
 * Wrong procreation cooldown on new worlds
