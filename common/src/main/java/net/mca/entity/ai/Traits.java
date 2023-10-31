@@ -89,7 +89,7 @@ public class Traits {
         }
 
         public boolean isEnabled() {
-            return Config.getInstance().enabledTraits.get(name());
+            return Config.getServerConfig().enabledTraits.get(name());
         }
     }
 
