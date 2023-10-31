@@ -5,6 +5,7 @@
 * Added support for Let's Do Bakery
 * Fixed root advancement to appear on world load
 * Fixed villager marriage limit math
+* You can no longer restrict bells or gravestones, causing them to get stuck
 
 # 7.5.9
 

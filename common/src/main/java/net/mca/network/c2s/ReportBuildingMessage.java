@@ -43,23 +43,26 @@ public class ReportBuildingMessage implements Message {
             );
             case FORCE_TYPE, REMOVE -> {
                 Optional<Village> village = villages.findNearestVillage(player);
-                Optional<Building> building = village.flatMap(v -> v.getBuildings().values().stream().filter((b) ->
-                        b.containsPos(player.getBlockPos())).findAny());
-                if (building.isPresent()) {
+                Optional<Building> building = village.flatMap(v -> v.getBuildings().values().stream()
+                        .filter(b -> b.containsPos(player.getBlockPos()))
+                        .filter(b -> action != Action.FORCE_TYPE || !b.getBuildingType().grouped())
+                        .findAny());
+                building.ifPresentOrElse(b -> {
                     if (action == Action.FORCE_TYPE) {
-                        if (building.get().getType().equals(data)) {
-                            building.get().setTypeForced(false);
-                            building.get().determineType();
+                        if (b.getType().equals(data)) {
+                            b.setTypeForced(false);
+                            b.determineType();
                         } else {
-                            building.get().setTypeForced(true);
-                            building.get().setType(data);
+                            b.setTypeForced(true);
+                            b.setType(data);
                         }
                     } else {
-                        village.get().removeBuilding(building.get().getId());
+                        //noinspection OptionalGetWithoutIsPresent
+                        village.get().removeBuilding(b.getId());
                     }
-                } else {
+                }, () -> {
                     player.sendMessage(Text.translatable("blueprint.noBuilding"), true);
-                }
+                });
             }
         }
     }
