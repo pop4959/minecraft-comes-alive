@@ -33,7 +33,7 @@ public class VillageMarriageManager {
                 .filter(v -> !v.getRelationships().isPromised())
                 .collect(Collectors.toList());
 
-        if (availableVillagers.size() <= 1 || availableVillagers.size() > allVillagers.size() * village.getMarriageThreshold()) {
+        if (availableVillagers.size() <= 1 || availableVillagers.size() <= allVillagers.size() * (1.0 - village.getMarriageThreshold())) {
             return; // The village is too small.
         }
 

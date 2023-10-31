@@ -4,6 +4,7 @@
 * Villagers no longer harvest blocks in claimed regions
 * Added support for Let's Do Bakery
 * Fixed root advancement to appear on world load
+* Fixed villager marriage limit math
 
 # 7.5.9
 
