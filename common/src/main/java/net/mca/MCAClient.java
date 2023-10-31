@@ -61,4 +61,14 @@ public class MCAClient {
             MinecraftClient.getInstance().setScreen(new SkinLibraryScreen());
         }
     }
+
+    public static void addPlayerData(UUID uuid, VillagerEntityMCA villager) {
+        playerData.put(uuid, villager);
+
+        // Refresh eye height
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player != null) {
+            client.player.calculateDimensions();
+        }
+    }
 }

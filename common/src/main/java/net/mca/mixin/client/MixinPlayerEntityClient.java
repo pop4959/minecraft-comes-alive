@@ -20,7 +20,7 @@ abstract class MixinPlayerEntityClient extends LivingEntity {
         super(entityType, world);
     }
 
-    @Inject(method = "getActiveEyeHeight(Lnet/minecraft/entity/EntityPose;Lnet/minecraft/entity/EntityDimensions;)F", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getActiveEyeHeight(Lnet/minecraft/entity/EntityPose;Lnet/minecraft/entity/EntityDimensions;)F", at = @At("RETURN"), cancellable = true)
     public void mca$getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions, CallbackInfoReturnable<Float> cir) {
         if (Config.getInstance().adjustPlayerEyesToHeight) {
             MCAClient.getPlayerData(getUuid()).ifPresent(data -> {

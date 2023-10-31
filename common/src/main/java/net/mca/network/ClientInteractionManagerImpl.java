@@ -52,7 +52,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
                     ItemStack item = client.player.getStackInHand(Hand.MAIN_HAND);
                     boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registry.ITEM.getId(item.getItem()).toString());
                     if (!isOnBlacklist) {
-                        VillagerLike<?> villager = (VillagerLike<?>)client.world.getEntityById(message.villager);
+                        VillagerLike<?> villager = (VillagerLike<?>) client.world.getEntityById(message.villager);
                         client.setScreen(new InteractScreen(villager));
                     }
                 }
@@ -210,7 +210,7 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
         VillagerEntityMCA villager = EntitiesMCA.MALE_VILLAGER.get().create(MinecraftClient.getInstance().world);
         assert villager != null;
         villager.readCustomDataFromNbt(response.getData());
-        MCAClient.playerData.put(response.uuid, villager);
+        MCAClient.addPlayerData(response.uuid, villager);
     }
 
     @Override
@@ -249,10 +249,8 @@ public class ClientInteractionManagerImpl implements ClientInteractionManager {
     @Override
     public void handleCivilRegistryResponse(CivilRegistryResponse response) {
         Screen screen = client.currentScreen;
-        if (screen instanceof ExtendedBookScreen extendedBookScreen) {
-            if (extendedBookScreen.getBook() instanceof CivilRegistryBook civilRegistryBook) {
-                civilRegistryBook.receive(response.getIndex(), response.getLines());
-            }
+        if (screen instanceof ExtendedBookScreen extendedBookScreen && (extendedBookScreen.getBook() instanceof CivilRegistryBook civilRegistryBook)) {
+            civilRegistryBook.receive(response.getIndex(), response.getLines());
         }
     }
 }
