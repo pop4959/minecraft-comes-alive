@@ -11,6 +11,7 @@
 * The editor now tells you if an incompatible mod disabled custom models
 * Removed vanilla mechanics for turning villagers into zombie villagers as this causes undefined behavior
 * Added HSV hair color option to editor
+* Added loot tables in case mods rely on them and let zombie villagers drop some flesh
 
 # 7.5.9
 

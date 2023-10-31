@@ -130,9 +130,9 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
     @Override
     protected void dropEquipment(DamageSource source, int lootingLvl, boolean hitByPlayer) {
         super.dropEquipment(source, lootingLvl, hitByPlayer);
-        ItemEntity itementity = dropItem(ItemsMCA.SCYTHE.get());
-        if (itementity != null) {
-            itementity.setCovetedItem();
+        ItemEntity itemEntity = dropItem(ItemsMCA.SCYTHE.get());
+        if (itemEntity != null) {
+            itemEntity.setCovetedItem();
         }
     }
 
@@ -151,8 +151,6 @@ public class GrimReaperEntity extends PathAwareEntity implements CTrackedEntity<
         switch (state) {
             case PRE -> playSound(SoundsMCA.REAPER_SCYTHE_OUT.get(), 1, 1);
             case POST -> playSound(SoundsMCA.REAPER_SCYTHE_SWING.get(), 1, 1);
-            default -> {
-            }
         }
     }
 
