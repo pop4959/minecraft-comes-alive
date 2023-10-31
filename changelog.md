@@ -10,6 +10,7 @@
 * Player eye height now automatically refreshes on world join and editor changes
 * The editor now tells you if an incompatible mod disabled custom models
 * Removed vanilla mechanics for turning villagers into zombie villagers as this causes undefined behavior
+* Added HSV hair color option to editor
 
 # 7.5.9
 

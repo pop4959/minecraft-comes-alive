@@ -681,6 +681,10 @@
   "gui.villager_editor.model_hint": "(Customization only used for offspring)",
   "gui.villager_editor.model_blacklist_hint": "(Custom models not available)",
   "gui.villager_editor.model_blacklist_hint.tooltip": "An installed mod is incompatible with MCAs custom player models.",
+  "gui.villager_editor.hair_genetic": "Genetic hair",
+  "gui.villager_editor.hair_hsv": "HSV Hair",
+  "gui.villager_editor.hair_mode.tooltip": "Toggles HSV dyed hair. Only the underlying genetic hair color is inherited.",
+  "gui.villager_editor.clear_hair": "Clear HSV color",
 
   "command.verify.success": "Verified! Limit increased.",
   "command.verify.failed": "Whoops, the given email is wrong.",

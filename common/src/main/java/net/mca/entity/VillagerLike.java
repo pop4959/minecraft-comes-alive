@@ -248,10 +248,14 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
         setTrackedValue(HAIR_COLOR_BLUE, components[2]);
     }
 
+    default void setHairDye(float r, float g, float b) {
+        setTrackedValue(HAIR_COLOR_RED, r);
+        setTrackedValue(HAIR_COLOR_GREEN, g);
+        setTrackedValue(HAIR_COLOR_BLUE, b);
+    }
+
     default void clearHairDye() {
-        setTrackedValue(HAIR_COLOR_RED, 0.0f);
-        setTrackedValue(HAIR_COLOR_GREEN, 0.0f);
-        setTrackedValue(HAIR_COLOR_BLUE, 0.0f);
+        setHairDye(0.0f, 0.0f, 0.0f);
     }
 
     default float[] getHairDye() {

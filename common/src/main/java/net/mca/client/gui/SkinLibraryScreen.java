@@ -118,9 +118,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private boolean uploading = false;
     private Thread thread;
 
-    private HorizontalColorPickerWidget hueWidget;
-    private HorizontalColorPickerWidget saturationWidget;
-    private HorizontalColorPickerWidget brightnessWidget;
     private TextFieldWidget textFieldWidget;
     private boolean skipHairWarning;
 
@@ -1116,7 +1113,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 if (workspace.skinType == SkinType.CLOTHING) {
                     //hue
-                    hueWidget = addDrawableChild(new HorizontalColorPickerWidget(width / 2 + 100, y, 100, 15,
+                    color.hueWidget = addDrawableChild(new HorizontalColorPickerWidget(width / 2 + 100, y, 100, 15,
                             color.hue / 360.0,
                             MCA.locate("textures/colormap/hue.png"),
                             (vx, vy) -> {
@@ -1128,7 +1125,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             }));
 
                     //saturation
-                    saturationWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 20, 100, 15,
+                    color.saturationWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 20, 100, 15,
                             color.saturation,
                             () -> {
                                 double[] doubles = ClientUtils.HSV2RGB(color.hue, 0.0, 1.0);
@@ -1152,7 +1149,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 //brightness
-                brightnessWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 40, 100, 15,
+                color.brightnessWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 40, 100, 15,
                         color.brightness,
                         () -> {
                             double[] doubles = ClientUtils.HSV2RGB(color.hue, color.saturation, 0.0);
@@ -1821,75 +1818,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         public static Text getText(SubscriptionFilter t) {
             return Text.translatable("gui.skin_library.subscription_filter." + t.name().toLowerCase(Locale.ROOT));
-        }
-    }
-
-    class ColorSelector {
-        double red, green, blue;
-        double hue, saturation, brightness;
-
-        public ColorSelector() {
-            setHSV(0.5, 0.5, 0.5);
-        }
-
-        public void setRGB(double red, double green, double blue) {
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
-            updateHSV();
-        }
-
-        public void setHSV(double hue, double saturation, double brightness) {
-            this.hue = hue;
-            this.saturation = saturation;
-            this.brightness = brightness;
-            updateRGB();
-
-            if (hueWidget != null) {
-                hueWidget.setValueX(hue / 360.0);
-                saturationWidget.setValueX(saturation);
-            }
-            if (brightnessWidget != null) {
-                brightnessWidget.setValueX(brightness);
-            }
-        }
-
-        private void updateRGB() {
-            double[] doubles = ClientUtils.HSV2RGB(hue, saturation, brightness);
-            this.red = doubles[0];
-            this.green = doubles[1];
-            this.blue = doubles[2];
-        }
-
-        private void updateHSV() {
-            double[] doubles = ClientUtils.RGB2HSV(red, green, blue);
-            this.hue = doubles[0];
-            this.saturation = doubles[1];
-            this.brightness = doubles[2];
-
-            if (hueWidget != null) {
-                hueWidget.setValueX(hue / 360.0);
-                saturationWidget.setValueX(saturation);
-            }
-            if (brightnessWidget != null) {
-                brightnessWidget.setValueX(brightness);
-            }
-        }
-
-        public int getRed() {
-            return (int) (red * 255);
-        }
-
-        public int getGreen() {
-            return (int) (green * 255);
-        }
-
-        public int getBlue() {
-            return (int) (blue * 255);
-        }
-
-        public int getColor() {
-            return 0xFF000000 | getBlue() << 16 | getGreen() << 8 | getRed();
         }
     }
 }

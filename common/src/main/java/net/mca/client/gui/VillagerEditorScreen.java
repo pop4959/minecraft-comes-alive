@@ -4,10 +4,8 @@ import net.mca.Config;
 import net.mca.MCA;
 import net.mca.MCAClient;
 import net.mca.ProfessionsMCA;
-import net.mca.client.gui.widget.ColorPickerWidget;
-import net.mca.client.gui.widget.GeneSliderWidget;
-import net.mca.client.gui.widget.NamedTextFieldWidget;
-import net.mca.client.gui.widget.TooltipButtonWidget;
+import net.mca.client.gui.widget.*;
+import net.mca.client.resources.ClientUtils;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
@@ -58,6 +56,8 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
     private static final int TRAITS_PER_PAGE = 8;
     protected NbtCompound villagerData;
     private TextFieldWidget villagerNameField;
+    private boolean hsvColoredHair;
+    private final ColorSelector color = new ColorSelector();
 
     private int clothingPage;
     private int clothingPageCount;
@@ -258,6 +258,15 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                         }));
             }
             case "head" -> {
+                // HSV Hair selector
+                addDrawableChild(new TooltipButtonWidget(width / 2 + DATA_WIDTH / 2, y, DATA_WIDTH / 2, 20,
+                        Text.translatable(hsvColoredHair ? "gui.villager_editor.hair_hsv" : "gui.villager_editor.hair_genetic"),
+                        Text.translatable("gui.villager_editor.hair_mode.tooltip"),
+                        b -> {
+                            hsvColoredHair = !hsvColoredHair;
+                            init();
+                        }));
+
                 //genes
                 y = doubleGeneSliders(y, Genetics.FACE);
                 y = doubleGeneSliders(y, Genetics.VOICE_TONE, Genetics.VOICE);
@@ -283,14 +292,88 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                 y += 22;
 
                 //hair color
-                addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
-                        genetics.getGene(Genetics.PHEOMELANIN),
-                        genetics.getGene(Genetics.EUMELANIN),
-                        MCA.locate("textures/colormap/villager_hair.png"),
-                        (vx, vy) -> {
-                            genetics.setGene(Genetics.PHEOMELANIN, vx.floatValue());
-                            genetics.setGene(Genetics.EUMELANIN, vy.floatValue());
-                        }));
+                if (hsvColoredHair) {
+                    //hue
+                    color.hueWidget = addDrawableChild(new HorizontalColorPickerWidget(width / 2 + 20, y, DATA_WIDTH - 40, 15,
+                            color.hue / 360.0,
+                            MCA.locate("textures/colormap/hue.png"),
+                            (vx, vy) -> {
+                                color.setHSV(
+                                        vx * 360,
+                                        color.saturation,
+                                        color.brightness
+                                );
+                                refreshHairColor();
+                            }));
+
+                    //saturation
+                    color.saturationWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 20, y + 20, DATA_WIDTH - 40, 15,
+                            color.saturation,
+                            () -> {
+                                double[] doubles = ClientUtils.HSV2RGB(color.hue, 0.0, 1.0);
+                                return new float[]{
+                                        (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
+                                };
+                            },
+                            () -> {
+                                double[] doubles = ClientUtils.HSV2RGB(color.hue, 1.0, 1.0);
+                                return new float[]{
+                                        (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
+                                };
+                            },
+                            (vx, vy) -> {
+                                color.setHSV(
+                                        color.hue,
+                                        vx,
+                                        color.brightness
+                                );
+                                refreshHairColor();
+                            }));
+
+
+                    //brightness
+                    color.brightnessWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 20, y + 40, DATA_WIDTH - 40, 15,
+                            color.brightness,
+                            () -> {
+                                double[] doubles = ClientUtils.HSV2RGB(color.hue, color.saturation, 0.0);
+                                return new float[]{
+                                        (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
+                                };
+                            },
+                            () -> {
+                                double[] doubles = ClientUtils.HSV2RGB(color.hue, color.saturation, 1.0);
+                                return new float[]{
+                                        (float) doubles[0], (float) doubles[1], (float) doubles[2], 1.0f,
+                                };
+                            },
+                            (vx, vy) -> {
+                                color.setHSV(
+                                        color.hue,
+                                        color.saturation,
+                                        vx
+                                );
+                                refreshHairColor();
+                            }));
+
+                    y += 65;
+
+                    // Clear hair
+                    addDrawableChild(new ButtonWidget(width / 2, y, DATA_WIDTH, 20,
+                            Text.translatable("gui.villager_editor.clear_hair"),
+                            b -> {
+                                villager.clearHairDye();
+                                init();
+                            }));
+                } else {
+                    addDrawableChild(new ColorPickerWidget(width / 2 + margin, y, DATA_WIDTH - margin * 2, DATA_WIDTH - margin * 2,
+                            genetics.getGene(Genetics.PHEOMELANIN),
+                            genetics.getGene(Genetics.EUMELANIN),
+                            MCA.locate("textures/colormap/villager_hair.png"),
+                            (vx, vy) -> {
+                                genetics.setGene(Genetics.PHEOMELANIN, vx.floatValue());
+                                genetics.setGene(Genetics.EUMELANIN, vy.floatValue());
+                            }));
+                }
             }
             case "personality" -> {
                 //personality
@@ -437,6 +520,17 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                 filter();
             }
         }
+    }
+
+    private void refreshHairColor() {
+        if (villager.getHairDye()[0] == 0.0f) {
+            color.setHSV(0.0, 0.5, 0.5);
+        }
+        villager.setHairDye(
+                Math.max(1.0f / 255.0f, (float) color.red),
+                Math.max(1.0f / 255.0f, (float) color.green),
+                Math.max(1.0f / 255.0f, (float) color.blue)
+        );
     }
 
     private Traits.Trait[] getValidTraits() {
@@ -762,6 +856,11 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
         if (villager != null) {
             this.villagerData = villagerData;
             villager.readCustomDataFromNbt(villagerData);
+
+            float[] hairDye = villager.getHairDye();
+            hsvColoredHair = hairDye[0] > 0.0f;
+            color.setRGB(hairDye[0], hairDye[1], hairDye[2]);
+
             villagerBreedingAge = villagerData.getInt("Age");
             villager.setBreedingAge(villagerBreedingAge);
             if (client != null && client.player != null) {
