@@ -41,6 +41,7 @@ import net.minecraft.village.VillagerProfession;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 public class VillagerEditorScreen extends Screen implements SkinListUpdateListener {
@@ -121,7 +122,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
         return y + 4 + (right ? 20 : 0);
     }
 
-    private int integerChanger(int y, Consumer<Integer> onClick, Supplier<Text> content) {
+    private int integerChanger(int y, IntConsumer onClick, Supplier<Text> content) {
         int bw = 22;
         ButtonWidget current = addDrawableChild(new ButtonWidget(width / 2 + bw * 2, y, DATA_WIDTH - bw * 4, 20, content.get(), b -> {
         }));
@@ -186,7 +187,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                 y += 22;
 
                 if (villagerUUID.equals(playerUUID)) {
-                    drawModel(width / 2, y);
+                    addModelSelectionWidgets(width / 2, y);
                     y += 22;
                 }
 
@@ -589,7 +590,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
         genderButtonMale.active = villager.getGenetics().getGender() != Gender.MALE;
     }
 
-    void drawModel(int x, int y) {
+    void addModelSelectionWidgets(int x, int y) {
         if (allowPlayerModel && allowVillagerModel) {
             villagerSkinWidget = addDrawableChild(new TooltipButtonWidget(x, y, DATA_WIDTH / 3, 20, "gui.villager_editor.villager_skin", b -> {
                 villagerData.putInt("playerModel", VillagerLike.PlayerModel.VILLAGER.ordinal());
@@ -617,6 +618,9 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
                 vanillaSkinWidget.active = false;
             }));
             vanillaSkinWidget.active = villagerData.getInt("playerModel") != VillagerLike.PlayerModel.VANILLA.ordinal();
+        } else {
+            addDrawableChild(new TooltipButtonWidget(x, y, DATA_WIDTH, 20, "gui.villager_editor.model_blacklist_hint", b -> {
+            })).active = false;
         }
     }
 

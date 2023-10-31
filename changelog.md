@@ -8,6 +8,7 @@
 * You can no longer restrict bells or gravestones, causing them to get stuck
 * Vanilla player models no longer modify your eye height
 * Player eye height now automatically refreshes on world join and editor changes
+* The editor now tells you if an incompatible mod disabled custom models
 
 # 7.5.9
 
