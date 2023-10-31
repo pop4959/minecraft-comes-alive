@@ -10,42 +10,70 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Traits {
     private static final CDataParameter<NbtCompound> TRAITS = CParameter.create("traits", new NbtCompound());
 
-    public enum Trait {
-        LEFT_HANDED(1.0f, 0.5f, false),
-        COLOR_BLIND(1.0f, 0.5f),
-        HETEROCHROMIA(1.0f, 2.0f),
-        LACTOSE_INTOLERANCE(1.0f, 1.0f),
-        COELIAC_DISEASE(1.0f, 1.0f, false), // TODO: Implement for 7.4
-        DIABETES(1.0f, 1.0f, false), // TODO: Implement for 7.4
-        DWARFISM(1.0f, 1.0f),
-        ALBINISM(1.0f, 1.0f),
-        VEGETARIAN(1.0f, 0.0f, false), // TODO: Implement for 7.4
-        BISEXUAL(1.0f, 0.0f),
-        HOMOSEXUAL(1.0f, 0.0f),
-        ELECTRIFIED(0.0f, 0.0f, false),
-        SIRBEN(0.025f, 1.0f, true),
-        RAINBOW(0.05f, 0.0f);
+    public static final List<Trait> TRAIT_LIST = new ArrayList<>();
 
+    public static Trait LEFT_HANDED = registerTrait("left_handed", 1.0F, 0.5F, false);
+    public static Trait COLOR_BLIND = registerTrait("color_blind", 1.0F, 0.5F);
+    public static Trait HETEROCHROMIA = registerTrait("heterochromia", 1.0F, 0.5F);
+    public static Trait LACTOSE_INTOLERANCE = registerTrait("lactose_intolerance", 1.0F, 1.0F);
+    public static Trait COELIAC_DISEASE = registerTrait("coeliac_disease", 1.0F, 1.0F, false); // TODO: Implement for 7.4
+    public static Trait DIABETES = registerTrait("diabetes", 1.0F, 1.0F, false); // TODO: Implement for 7.4
+    public static Trait DWARFISM = registerTrait("dwarfism", 1.0F, 1.0F);
+    public static Trait ALBINISM = registerTrait("albinism", 1.0F ,1.0F);
+    public static Trait VEGETARIAN = registerTrait("vegetarian", 1.0F, 1.0F, false); // TODO: Implement for 7.4
+    public static Trait BISEXUAL = registerTrait("bisexual", 1.0F, 0.0F);
+    public static Trait HOMOSEXUAL = registerTrait("homosexual", 1.0F, 0.0F);
+    public static Trait ELECTRIFIED = registerTrait("electrified", 0.0F, 0.0F, false);
+    public static Trait SIRBEN = registerTrait("sirben", 0.025F, 1.0F, true);
+    public static Trait RAINBOW = registerTrait("rainbow", 0.05F, 0.0F);
+
+    public static Trait registerTrait(String id, float chance, float inherit, boolean usableOnPlayer) {
+        Trait trait = new Trait(id, chance, inherit, usableOnPlayer);
+        TRAIT_LIST.add(trait);
+        return trait;
+    }
+    public static Trait registerTrait(String id, float chance, float inherit) {
+        Trait trait = new Trait(id, chance, inherit);
+        TRAIT_LIST.add(trait);
+        return trait;
+    }
+
+    public static class Trait {
+        private final String id;
         private final float chance;
         private final float inherit;
         private final boolean usableOnPlayer;
 
-        Trait(float chance, float inherit, boolean usableOnPlayer) {
+        Trait(String id, float chance, float inherit, boolean usableOnPlayer) {
+            this.id = id;
             this.chance = chance;
             this.inherit = inherit;
             this.usableOnPlayer = usableOnPlayer;
         }
 
-        Trait(float chance, float inherit) {
-            this(chance, inherit, true);
+        Trait(String id, float chance, float inherit) {
+            this(id, chance, inherit, true);
+        }
+
+        public String name() {
+            return this.id;
+        }
+
+        public static List<Trait> values() {
+            return TRAIT_LIST;
+        }
+
+        public static Trait valueOf(String id) {
+            for (Trait t : TRAIT_LIST) {
+                if (t.name().equals(id)) return t;
+            }
+            return null;
         }
 
         public Text getName() {
@@ -61,7 +89,7 @@ public class Traits {
         }
 
         public boolean isEnabled() {
-            return Config.getInstance().enabledTraits.get(name());
+            return Config.getServerConfig().enabledTraits.get(name());
         }
     }
 
@@ -94,7 +122,10 @@ public class Traits {
     }
 
     public boolean hasTrait(String trait) {
-        return hasTrait(entity, Trait.valueOf(trait.toUpperCase(Locale.ROOT)));
+        if (Trait.valueOf(trait) != null ) {
+            return hasTrait(entity, Trait.valueOf(trait));
+        }
+        return false;
     }
 
     public boolean eitherHaveTrait(Trait trait, VillagerLike<?> other) {
@@ -119,7 +150,7 @@ public class Traits {
 
     //initializes the genes with random numbers
     public void randomize() {
-        float total = (float)Arrays.stream(Trait.values()).mapToDouble(tr -> tr.chance).sum();
+        float total = (float)Trait.values().stream().mapToDouble(tr -> tr.chance).sum();
         for (Trait t : Trait.values()) {
             float chance = Config.getInstance().traitChance / total * t.chance;
             if (random.nextFloat() < chance && t.isEnabled()) {
@@ -142,10 +173,10 @@ public class Traits {
     }
 
     public float getVerticalScaleFactor() {
-        return hasTrait(Trait.DWARFISM) ? 0.65f : 1.0f;
+        return hasTrait(Traits.DWARFISM) ? 0.65f : 1.0f;
     }
 
     public float getHorizontalScaleFactor() {
-        return hasTrait(Trait.DWARFISM) ? 0.85f : 1.0f;
+        return hasTrait(Traits.DWARFISM) ? 0.85f : 1.0f;
     }
 }

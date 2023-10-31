@@ -41,7 +41,7 @@ public class LimitedVillagerEditorScreen extends VillagerEditorScreen {
 
             //which model to use
             if (villagerUUID.equals(playerUUID)) {
-                drawModel(width / 2, y);
+                addModelSelectionWidgets(width / 2, y);
             }
         }
     }

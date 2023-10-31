@@ -21,7 +21,8 @@ public class ChanceAnalysis extends Analysis<Integer> {
     public String getTotalAsString() {
         float positive = getSummands().stream().mapToInt(SerializablePair::getRight).filter(v -> v > 0).sum();
         float negative = -getSummands().stream().mapToInt(SerializablePair::getRight).filter(v -> v < 0).sum();
-        return String.format("%d%% chance", (int)(positive / (positive + negative) * 100.0f));
+        int chance = (int) (positive / (positive + negative) * 100.0f);
+        return chance + "% chance";
     }
 
     @Override

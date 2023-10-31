@@ -27,7 +27,7 @@ public class MCAClient {
     }
 
     public static Optional<VillagerLike<?>> getPlayerData(UUID uuid) {
-        if (MCA.isPlayerRendererAllowed()) {
+        if (isPlayerRendererAllowed()) {
             if (!MCAClient.playerDataRequests.contains(uuid) && MinecraftClient.getInstance().getNetworkHandler() != null) {
                 MCAClient.playerDataRequests.add(uuid);
                 NetworkHandler.sendToServer(new PlayerDataRequest(uuid));
@@ -60,5 +60,40 @@ public class MCAClient {
         if (KeyBindings.SKIN_LIBRARY.wasPressed()) {
             MinecraftClient.getInstance().setScreen(new SkinLibraryScreen());
         }
+    }
+
+    public static void addPlayerData(UUID uuid, VillagerEntityMCA villager) {
+        playerData.put(uuid, villager);
+
+        // Refresh eye height
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player != null) {
+            client.player.calculateDimensions();
+        }
+    }
+
+    public static boolean isPlayerRendererAllowed() {
+        return Config.getInstance().enableVillagerPlayerModel &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals("all") || entry.getValue().equals("block_player"))
+                        .noneMatch(entry -> MCA.doesModExist(entry.getKey()));
+    }
+
+    public static boolean isVillagerRendererAllowed() {
+        return !Config.getInstance().forceVillagerPlayerModel &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals("all") || entry.getValue().equals("block_villager"))
+                        .noneMatch(entry -> MCA.doesModExist(entry.getKey()));
+    }
+
+    public static boolean areShadersAllowed(String key) {
+        return Config.getInstance().enablePlayerShaders &&
+                Config.getInstance().playerRendererBlacklist.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals("shaders") || entry.getValue().equals(key))
+                        .noneMatch(entry -> MCA.doesModExist(entry.getKey()));
+    }
+
+    public static boolean areShadersAllowed() {
+        return areShadersAllowed("shaders");
     }
 }

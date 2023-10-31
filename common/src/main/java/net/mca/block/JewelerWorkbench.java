@@ -67,16 +67,6 @@ public class JewelerWorkbench extends Block/* implements BlockEntityProvider*/ {
         return SHAPE;
     }
 
-    public VoxelShape getRayTraceShape(BlockState state, BlockView reader, BlockPos pos, ShapeContext context) {
-        return SHAPE;
-    }
-
-    public void addInformation(ItemStack item, @Nullable BlockView iBlock, List<Text> tooltip, TooltipContext iTooltipFlag) {
-        tooltip.add(Text.literal("Workbench allows you to buy rings from Jeweler").formatted(Formatting.GRAY));
-        tooltip.add(Text.translatable(String.format("tooltip.%s.block.statue.line1", MCA.MOD_ID)).formatted(Formatting.GRAY));
-        tooltip.add(Text.translatable(String.format("tooltip.%s.block.statue.line2", MCA.MOD_ID)).formatted(Formatting.GRAY));
-    }
-
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {

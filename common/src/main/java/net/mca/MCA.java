@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 public final class MCA {
     public static final String MOD_ID = "mca";
     public static final Logger LOGGER = LogManager.getLogger();
-    private static final Map<String, Boolean> modCacheMap = new HashMap<>();
+    private static final Map<String, Boolean> MOD_CACHE = new HashMap<>();
 
     public static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -30,42 +30,17 @@ public final class MCA {
         return string == null || string.trim().isEmpty();
     }
 
-    public static boolean isPlayerRendererAllowed() {
-        return Config.getInstance().enableVillagerPlayerModel &&
-                Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals("all") || entry.getValue().equals("block_player"))
-                        .noneMatch(entry -> doesModExist(entry.getKey()));
-    }
-
-    public static boolean isVillagerRendererAllowed() {
-        return !Config.getInstance().forceVillagerPlayerModel &&
-                Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals("all") || entry.getValue().equals("block_villager"))
-                        .noneMatch(entry -> doesModExist(entry.getKey()));
-    }
-
-    public static boolean areShadersAllowed(String key) {
-        return Config.getInstance().enablePlayerShaders &&
-                Config.getInstance().playerRendererBlacklist.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals("shaders") || entry.getValue().equals(key))
-                        .noneMatch(entry -> doesModExist(entry.getKey()));
-    }
-
-    public static boolean areShadersAllowed() {
-        return areShadersAllowed("shaders");
-    }
-
     public static boolean doesModExist(String modId) {
-        if (!modCacheMap.containsKey(modId)) {
+        if (!MOD_CACHE.containsKey(modId)) {
             Optional<Mod> modData;
             try {
                 modData = Optional.of(Platform.getMod(modId));
             } catch (Exception ignored) {
                 modData = Optional.empty();
             }
-            modCacheMap.put(modId, modData.isPresent());
+            MOD_CACHE.put(modId, modData.isPresent());
         }
-        return modCacheMap.get(modId);
+        return MOD_CACHE.get(modId);
     }
 
     public static void setServer(MinecraftServer server) {

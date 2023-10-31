@@ -60,7 +60,7 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
 
     @Override
     public float[] getColor(T villager, float tickDelta) {
-        if (getVillager(villager).getTraits().hasTrait(Traits.Trait.RAINBOW)) {
+        if (getVillager(villager).getTraits().hasTrait(Traits.RAINBOW)) {
             return getRainbow(villager, tickDelta);
         }
 
@@ -69,7 +69,7 @@ public class HairLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
             return hairDye;
         }
 
-        float albinism = getVillager(villager).getTraits().hasTrait(Traits.Trait.ALBINISM) ? 0.1f : 1.0f;
+        float albinism = getVillager(villager).getTraits().hasTrait(Traits.ALBINISM) ? 0.1f : 1.0f;
 
         return ColorPalette.HAIR.getColor(
                 getVillager(villager).getGenetics().getGene(Genetics.EUMELANIN) * albinism,

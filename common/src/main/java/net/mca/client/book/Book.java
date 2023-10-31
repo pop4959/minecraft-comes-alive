@@ -20,7 +20,7 @@ public class Book {
     private boolean pageTurnSound = true;
 
     public Book(String bookName) {
-        this(bookName, Text.translatable(String.format("mca.books.%s.author", bookName)).formatted(Formatting.GRAY));
+        this(bookName, Text.translatable("mca.books." + bookName + ".author").formatted(Formatting.GRAY));
     }
 
     public Book(String bookName, Text bookAuthor) {

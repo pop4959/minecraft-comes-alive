@@ -55,8 +55,9 @@ public class BreedableRelationship extends Relationship<VillagerEntityMCA> {
 
     public boolean mayProcreateAgain(long time) {
         int intTime = (int) time;
-        int delta = intTime - entity.getTrackedValue(LAST_PROCREATION);
-        return delta < 0 || delta > Config.getInstance().procreationCooldown;
+        Integer trackedValue = entity.getTrackedValue(LAST_PROCREATION);
+        int delta = intTime - trackedValue;
+        return trackedValue == 0 || delta < 0 || delta > Config.getInstance().procreationCooldown;
     }
 
     public void startProcreating(long time) {

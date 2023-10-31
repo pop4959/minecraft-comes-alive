@@ -10,14 +10,9 @@ import net.mca.Config;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.RelationshipState;
-import net.mca.server.world.data.FamilyTree;
-import net.mca.server.world.data.FamilyTreeNode;
 import net.mca.item.BabyItem;
 import net.mca.server.SpawnQueue;
-import net.mca.server.world.data.Building;
-import net.mca.server.world.data.PlayerSaveData;
-import net.mca.server.world.data.Village;
-import net.mca.server.world.data.VillageManager;
+import net.mca.server.world.data.*;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -37,10 +32,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static net.minecraft.util.Formatting.*;
@@ -75,7 +67,7 @@ public class AdminCommand {
     private static int listVillages(CommandContext<ServerCommandSource> ctx) {
         for (Village village : VillageManager.get(ctx.getSource().getWorld())) {
             final BlockPos pos = village.getBox().getCenter();
-            success(String.format("%d: %s with %d buildings and %d/%d villager(s)",
+            success(String.format(Locale.ROOT, "%d: %s with %d buildings and %d/%d villager(s)",
                             village.getId(),
                             village.getName(),
                             village.getBuildings().size(),
@@ -255,13 +247,13 @@ public class AdminCommand {
         if (player != null) {
             heldStack = player.getMainHandStack();
 
-        if (heldStack.getItem() instanceof BabyItem) {
-            NbtCompound nbt = BabyItem.getBabyNbt(heldStack);
-            nbt.putInt("age", Config.getInstance().babyItemGrowUpTime);
-            success("Baby is old enough to place now.", ctx);
-        } else {
-            fail("Hold a baby first.", ctx);
-        }
+            if (heldStack.getItem() instanceof BabyItem) {
+                NbtCompound nbt = BabyItem.getBabyNbt(heldStack);
+                nbt.putInt("age", Config.getInstance().babyItemGrowUpTime);
+                success("Baby is old enough to place now.", ctx);
+            } else {
+                fail("Hold a baby first.", ctx);
+            }
         }
         return 0;
     }
@@ -269,9 +261,9 @@ public class AdminCommand {
     private static int forceFullHearts(CommandContext<ServerCommandSource> ctx) {
         PlayerEntity player = ctx.getSource().getPlayer();
         if (player != null) {
-        getLoadedVillagers(ctx).forEach(v -> {
+            getLoadedVillagers(ctx).forEach(v -> {
                 v.getVillagerBrain().getMemoriesForPlayer(player).setHearts(1000);
-        });
+            });
         }
         return 0;
     }

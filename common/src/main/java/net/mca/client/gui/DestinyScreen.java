@@ -133,7 +133,7 @@ public class DestinyScreen extends VillagerEditorScreen {
                 });
                 drawGender(width / 2 - DATA_WIDTH / 2, height / 2 + 24);
 
-                drawModel(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
+                addModelSelectionWidgets(width / 2 - DATA_WIDTH / 2, height / 2 + 24 + 22);
 
                 acceptWidget = addDrawableChild(new ButtonWidget(width / 2 - 32, height / 2 + 60 + 22, 64, 20, Text.translatable("gui.button.accept"), sender -> {
                     if (Config.getInstance().allowBodyCustomizationInDestiny) {

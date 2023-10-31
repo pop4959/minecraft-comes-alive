@@ -20,7 +20,7 @@ public class SirbenBabyItem extends BabyItem {
     @Override
     protected VillagerEntityMCA birthChild(ItemStack stack, ServerWorld world, ServerPlayerEntity player) {
         VillagerEntityMCA child = super.birthChild(stack, world, player);
-        child.getTraits().addTrait(Traits.Trait.SIRBEN);
+        child.getTraits().addTrait(Traits.SIRBEN);
         return child;
     }
 }

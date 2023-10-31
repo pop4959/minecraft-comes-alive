@@ -809,7 +809,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             }
 
             // sirben noises
-            if (this.age % 60 == 0 && random.nextInt(50) == 0 && traits.hasTrait(Traits.Trait.SIRBEN)) {
+            if (this.age % 60 == 0 && random.nextInt(50) == 0 && traits.hasTrait(Traits.SIRBEN)) {
                 sendChatToAllAround("sirben");
             }
 
@@ -1051,7 +1051,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             }
 
             //sirben
-            if (random.nextBoolean() && getTraits().hasTrait(Traits.Trait.SIRBEN)) {
+            if (random.nextBoolean() && getTraits().hasTrait(Traits.SIRBEN)) {
                 return SoundsMCA.SIRBEN.get();
             }
 
@@ -1426,7 +1426,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
-        getTraits().addTrait(Traits.Trait.ELECTRIFIED);
+        getTraits().addTrait(Traits.ELECTRIFIED);
     }
 
     @Override
