@@ -2,6 +2,7 @@ package net.mca.mixin.client;
 
 import net.mca.Config;
 import net.mca.MCAClient;
+import net.mca.entity.VillagerLike;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -23,19 +24,9 @@ abstract class MixinPlayerEntityClient extends LivingEntity {
     public void mca$getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions, CallbackInfoReturnable<Float> cir) {
         if (Config.getInstance().adjustPlayerEyesToHeight) {
             MCAClient.getPlayerData(getUuid()).ifPresent(data -> {
-                float height;
-                switch (pose) {
-                    case SWIMMING, FALL_FLYING, SPIN_ATTACK -> {
-                        height = 0.4f;
-                    }
-                    case CROUCHING -> {
-                        height = 1.27f;
-                    }
-                    default -> {
-                        height = 1.62f;
-                    }
+                if (data.getPlayerModel() != VillagerLike.PlayerModel.VANILLA) {
+                    cir.setReturnValue(Math.min(this.getHeight() - 1.0f / 16.0f, cir.getReturnValue() * data.getRawScaleFactor()));
                 }
-                cir.setReturnValue(Math.min(this.getHeight() - 1.0f / 16.0f, height * data.getRawScaleFactor()));
             });
         }
     }

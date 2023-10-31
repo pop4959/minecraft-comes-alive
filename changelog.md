@@ -6,6 +6,7 @@
 * Fixed root advancement to appear on world load
 * Fixed villager marriage limit math
 * You can no longer restrict bells or gravestones, causing them to get stuck
+* Vanilla player models no longer modify your eye height
 
 # 7.5.9
 
