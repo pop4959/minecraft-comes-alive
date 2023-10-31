@@ -3,6 +3,7 @@
 * Fixed data loading issues on systems with locales having non-western digits.
 * Villagers no longer harvest blocks in claimed regions
 * Added support for Let's Do Bakery
+* Fixed root advancement to appear on world load
 
 # 7.5.9
 
