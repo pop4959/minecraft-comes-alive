@@ -2,6 +2,7 @@ package net.mca.client.gui;
 
 import net.mca.Config;
 import net.mca.MCA;
+import net.mca.MCAClient;
 import net.mca.ProfessionsMCA;
 import net.mca.client.gui.widget.ColorPickerWidget;
 import net.mca.client.gui.widget.GeneSliderWidget;
@@ -94,9 +95,7 @@ public class VillagerEditorScreen extends Screen implements SkinListUpdateListen
     }
 
     public VillagerEditorScreen(UUID villagerUUID, UUID playerUUID) {
-        this(villagerUUID, playerUUID,
-                MCA.isPlayerRendererAllowed(), MCA.isVillagerRendererAllowed()
-        );
+        this(villagerUUID, playerUUID, MCAClient.isPlayerRendererAllowed(), MCAClient.isVillagerRendererAllowed());
     }
 
     @Override

@@ -1,7 +1,7 @@
 package net.mca.mixin.client;
 
 import net.mca.Config;
-import net.mca.MCA;
+import net.mca.MCAClient;
 import net.mca.client.model.CommonVillagerModel;
 import net.mca.entity.VillagerLike;
 import net.minecraft.client.MinecraftClient;
@@ -31,7 +31,7 @@ public abstract class MixinGameRenderer {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void onCameraSet(CallbackInfo ci) {
-        if (MCA.areShadersAllowed()) {
+        if (MCAClient.areShadersAllowed()) {
             if (this.client.cameraEntity != null) {
                 VillagerLike<?> villagerLike = CommonVillagerModel.getVillager(this.client.cameraEntity);
                 if (villagerLike != null) {
@@ -41,7 +41,7 @@ public abstract class MixinGameRenderer {
                         } else {
                             Config.getInstance().shaderLocationsMap.entrySet().stream()
                                     .filter(entry -> villagerLike.getTraits().hasTrait(entry.getKey()))
-                                    .filter(entry -> MCA.areShadersAllowed(entry.getKey() + "_shader"))
+                                    .filter(entry -> MCAClient.areShadersAllowed(entry.getKey() + "_shader"))
                                     .findFirst().ifPresent(entry -> {
                                         Identifier shaderId = new Identifier(entry.getValue());
                                         currentShader = new Pair<>(entry.getKey(), shaderId);
