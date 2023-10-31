@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VillageModule {
-    private final static Map<String, String> nameExceptions = Map.of(
+    private static final Map<String, String> nameExceptions = Map.of(
             "fishermans_hut", "fisherman's hut",
             "weaving_mill", "weaving mill",
             "big_house", "big house",
@@ -42,7 +42,7 @@ public class VillageModule {
                 }
             }
 
-            input.add(String.format("$villager lives in a " + size + ", medieval village in a %s biom. ", biome.replace("_", " ")));
+            input.add("$villager lives in a " + size + ", medieval village in a " + biome.replace("_", " ") + " biom. ");
         }
 
         // Buildings

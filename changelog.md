@@ -1,3 +1,22 @@
+# 7.5.10
+
+* Fixed data loading issues on systems with locales having non-western digits.
+* Villagers no longer harvest blocks in claimed regions
+* Added support for Let's Do Bakery
+* Fixed root advancement to appear on world load
+* Fixed villager marriage limit math
+* You can no longer restrict bells or gravestones, causing them to get stuck
+* Vanilla player models no longer modify your eye height
+* Player eye height now automatically refreshes on world join and editor changes
+* The editor now tells you if an incompatible mod disabled custom models
+* Removed vanilla mechanics for turning villagers into zombie villagers as this causes undefined behavior
+* Added HSV hair color option to editor
+* Added loot tables in case mods rely on them and let zombie villagers drop some flesh
+
+# 7.5.9
+
+* Wrong procreation cooldown on new worlds
+
 # 7.5.8
 
 * AI performance improvements

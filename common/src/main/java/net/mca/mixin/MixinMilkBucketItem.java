@@ -20,7 +20,7 @@ public class MixinMilkBucketItem {
     public void onFinishedUsing(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
         VillagerLike<?> villagerLike = world.isClient ? CommonVillagerModel.getVillager(user) : VillagerLike.toVillager(user);
         if (villagerLike != null) {
-            if (villagerLike.getTraits().hasTrait(Traits.Trait.LACTOSE_INTOLERANCE)) {
+            if (villagerLike.getTraits().hasTrait(Traits.LACTOSE_INTOLERANCE)) {
                 user.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 100, 0));
             }
         }

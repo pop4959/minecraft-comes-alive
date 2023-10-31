@@ -245,7 +245,7 @@ public class HarvestingTask extends AbstractChoreTask {
         }
 
         stack.ifPresentOrElse(s -> {
-            world.setBlockState(hitResult.getBlockPos(), ((BlockItem)s.getItem()).getBlock().getDefaultState(), Block.NOTIFY_ALL);
+            world.setBlockState(hitResult.getBlockPos(), ((BlockItem) s.getItem()).getBlock().getDefaultState(), Block.NOTIFY_ALL);
             s.decrement(1);
             villager.swingHand(villager.getDominantHand());
             bonemealable.add(target);
@@ -261,19 +261,19 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private void harvestCrops(ServerWorld world, BlockPos pos) {
-        BlockState state = world.getBlockState(pos);
-        LootContextParameterSet.Builder lootContext$builder = new LootContextParameterSet.Builder(world)
-                .add(LootContextParameters.ORIGIN, villager.getPos())
-                .add(LootContextParameters.TOOL, ItemStack.EMPTY)
-                .add(LootContextParameters.THIS_ENTITY, villager)
-                .add(LootContextParameters.BLOCK_STATE, state)
-                .luck(0);
+        if (world.breakBlock(pos, false, villager)) {
+            BlockState state = world.getBlockState(pos);
+            LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder(world)
+                    .add(LootContextParameters.ORIGIN, villager.getPos())
+                    .add(LootContextParameters.TOOL, ItemStack.EMPTY)
+                    .add(LootContextParameters.THIS_ENTITY, villager)
+                    .add(LootContextParameters.BLOCK_STATE, state)
+                    .luck(0);
 
-        List<ItemStack> drops = world.getServer().getLootManager().getLootTable(state.getBlock().getLootTableId()).generateLoot(lootContext$builder.build(LootContextTypes.BLOCK));
-        for (ItemStack stack : drops) {
-            villager.getInventory().addStack(stack);
+            List<ItemStack> drops = world.getServer().getLootManager().getLootTable(state.getBlock().getLootTableId()).generateLoot(builder.build(LootContextTypes.BLOCK));
+            for (ItemStack stack : drops) {
+                villager.getInventory().addStack(stack);
+            }
         }
-
-        world.breakBlock(pos, false, villager);
     }
 }

@@ -25,7 +25,7 @@ public class SkinLayer<T extends LivingEntity, M extends BipedEntityModel<T>> ex
 
     @Override
     public float[] getColor(T villager, float tickDelta) {
-        float albinism = getVillager(villager).getTraits().hasTrait(Traits.Trait.ALBINISM) ? 0.1f : 1.0f;
+        float albinism = getVillager(villager).getTraits().hasTrait(Traits.ALBINISM) ? 0.1f : 1.0f;
 
         return ColorPalette.SKIN.getColor(
                 getVillager(villager).getGenetics().getGene(Genetics.MELANIN) * albinism,

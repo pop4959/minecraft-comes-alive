@@ -119,9 +119,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
     private boolean uploading = false;
     private Thread thread;
 
-    private HorizontalColorPickerWidget hueWidget;
-    private HorizontalColorPickerWidget saturationWidget;
-    private HorizontalColorPickerWidget brightnessWidget;
     private TextFieldWidget textFieldWidget;
     private boolean skipHairWarning;
 
@@ -1118,7 +1115,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
                 if (workspace.skinType == SkinType.CLOTHING) {
                     //hue
-                    hueWidget = addDrawableChild(new HorizontalColorPickerWidget(width / 2 + 100, y, 100, 15,
+                    color.hueWidget = addDrawableChild(new HorizontalColorPickerWidget(width / 2 + 100, y, 100, 15,
                             color.hue / 360.0,
                             MCA.locate("textures/colormap/hue.png"),
                             (vx, vy) -> {
@@ -1130,7 +1127,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                             }));
 
                     //saturation
-                    saturationWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 20, 100, 15,
+                    color.saturationWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 20, 100, 15,
                             color.saturation,
                             () -> {
                                 double[] doubles = ClientUtils.HSV2RGB(color.hue, 0.0, 1.0);
@@ -1154,7 +1151,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 }
 
                 //brightness
-                brightnessWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 40, 100, 15,
+                color.brightnessWidget = addDrawableChild(new HorizontalGradientWidget(width / 2 + 100, y + 40, 100, 15,
                         color.brightness,
                         () -> {
                             double[] doubles = ClientUtils.HSV2RGB(color.hue, color.saturation, 0.0);
@@ -1605,7 +1602,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
                 if (Auth.getToken() != null) {
                     Response request = null;
                     try {
-                        request = request(workspace.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, workspace.contentid == -1 ? ContentIdResponse.class : SuccessResponse.class, workspace.contentid == -1 ? "content/mca" : "content/mca/%s".formatted(workspace.contentid), Map.of(
+                        request = request(workspace.contentid == -1 ? Api.HttpMethod.POST : Api.HttpMethod.PUT, workspace.contentid == -1 ? ContentIdResponse.class : SuccessResponse.class, workspace.contentid == -1 ? "content/mca" : ("content/mca/" + workspace.contentid), Map.of(
                                 "token", Auth.getToken()
                         ), Map.of(
                                 "title", workspace.title,
@@ -1666,7 +1663,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void setTag(int contentid, String tag, boolean add) {
         if (Auth.getToken() != null) {
-            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "tag/mca/%s/%s".formatted(contentid, tag), Map.of(
+            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "tag/mca/" + contentid + "/" + tag, Map.of(
                     "token", Auth.getToken()
             ));
             getContentById(contentid).ifPresent(c -> {
@@ -1688,7 +1685,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void removeContent(int contentId) {
         if (Auth.getToken() != null) {
-            request(Api.HttpMethod.DELETE, SuccessResponse.class, "content/mca/%s".formatted(contentId), Map.of(
+            request(Api.HttpMethod.DELETE, SuccessResponse.class, "content/mca/" + contentId, Map.of(
                     "token", Auth.getToken()
             ));
             removeContentLocally(contentId);
@@ -1706,7 +1703,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void reportContent(int contentId, String reason) {
         if (Auth.getToken() != null) {
-            request(Api.HttpMethod.POST, SuccessResponse.class, "report/mca/%s/%s".formatted(contentId, reason), Map.of(
+            request(Api.HttpMethod.POST, SuccessResponse.class, "report/mca/" + contentId + "/" + reason, Map.of(
                     "token", Auth.getToken()
             ));
 
@@ -1720,7 +1717,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void setLike(int contentid, boolean add) {
         if (Auth.getToken() != null && currentUser != null) {
-            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "like/mca/%s".formatted(contentid), Map.of(
+            request(add ? Api.HttpMethod.POST : Api.HttpMethod.DELETE, SuccessResponse.class, "like/mca/" + contentid, Map.of(
                     "token", Auth.getToken()
             ));
 
@@ -1734,7 +1731,7 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
     private void setBan(int userid, boolean banned) {
         if (Auth.getToken() != null && currentUser != null) {
-            request(Api.HttpMethod.PUT, SuccessResponse.class, "user/%s".formatted(userid), Map.of(
+            request(Api.HttpMethod.PUT, SuccessResponse.class, "user/" + userid, Map.of(
                     "token", Auth.getToken(),
                     "banned", Boolean.toString(banned)
             ));
@@ -1823,75 +1820,6 @@ public class SkinLibraryScreen extends Screen implements SkinListUpdateListener 
 
         public static Text getText(SubscriptionFilter t) {
             return Text.translatable("gui.skin_library.subscription_filter." + t.name().toLowerCase(Locale.ROOT));
-        }
-    }
-
-    class ColorSelector {
-        double red, green, blue;
-        double hue, saturation, brightness;
-
-        public ColorSelector() {
-            setHSV(0.5, 0.5, 0.5);
-        }
-
-        public void setRGB(double red, double green, double blue) {
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
-            updateHSV();
-        }
-
-        public void setHSV(double hue, double saturation, double brightness) {
-            this.hue = hue;
-            this.saturation = saturation;
-            this.brightness = brightness;
-            updateRGB();
-
-            if (hueWidget != null) {
-                hueWidget.setValueX(hue / 360.0);
-                saturationWidget.setValueX(saturation);
-            }
-            if (brightnessWidget != null) {
-                brightnessWidget.setValueX(brightness);
-            }
-        }
-
-        private void updateRGB() {
-            double[] doubles = ClientUtils.HSV2RGB(hue, saturation, brightness);
-            this.red = doubles[0];
-            this.green = doubles[1];
-            this.blue = doubles[2];
-        }
-
-        private void updateHSV() {
-            double[] doubles = ClientUtils.RGB2HSV(red, green, blue);
-            this.hue = doubles[0];
-            this.saturation = doubles[1];
-            this.brightness = doubles[2];
-
-            if (hueWidget != null) {
-                hueWidget.setValueX(hue / 360.0);
-                saturationWidget.setValueX(saturation);
-            }
-            if (brightnessWidget != null) {
-                brightnessWidget.setValueX(brightness);
-            }
-        }
-
-        public int getRed() {
-            return (int) (red * 255);
-        }
-
-        public int getGreen() {
-            return (int) (green * 255);
-        }
-
-        public int getBlue() {
-            return (int) (blue * 255);
-        }
-
-        public int getColor() {
-            return 0xFF000000 | getBlue() << 16 | getGreen() << 8 | getRed();
         }
     }
 }

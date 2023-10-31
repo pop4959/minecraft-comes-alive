@@ -118,7 +118,7 @@ public class SkinCache {
                 requested.put(contentid, true);
                 CompletableFuture.runAsync(() -> {
                     logger("Requested asset " + contentid + " with version " + version + " and current version " + currentVersion);
-                    Response response = request(Api.HttpMethod.GET, ContentResponse.class, "content/mca/%s".formatted(contentid));
+                    Response response = request(Api.HttpMethod.GET, ContentResponse.class, "content/mca/" + contentid);
                     if (response instanceof ContentResponse contentResponse) {
                         int newVersion = contentResponse.content().version();
                         write(contentid + ".png", Base64.getDecoder().decode(contentResponse.content().data()));

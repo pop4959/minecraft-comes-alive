@@ -13,7 +13,7 @@ public class TextPage extends Page {
     private List<OrderedText> cachedPage;
 
     public TextPage(String name, int page) {
-        content = String.format("{ \"translate\": \"mca.books.%s.%d\" }", name, page);
+        content = "{ \"translate\": \"mca.books." + name + "." + page + "\" }";
     }
 
     public TextPage(String content) {
