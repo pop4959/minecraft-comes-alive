@@ -16,32 +16,32 @@ import java.util.stream.Collectors;
 public class Traits {
     private static final CDataParameter<NbtCompound> TRAITS = CParameter.create("traits", new NbtCompound());
 
-    public static final List<Trait> TRAIT_LIST = new ArrayList<>();
+    public static final Map<String, Trait> TRAIT_REGISTRY = new HashMap<>();
 
-    public static Trait LEFT_HANDED = registerTrait("left_handed", 1.0F, 0.5F, false);
-    public static Trait COLOR_BLIND = registerTrait("color_blind", 1.0F, 0.5F);
-    public static Trait HETEROCHROMIA = registerTrait("heterochromia", 1.0F, 0.5F);
-    public static Trait LACTOSE_INTOLERANCE = registerTrait("lactose_intolerance", 1.0F, 1.0F);
-    public static Trait COELIAC_DISEASE = registerTrait("coeliac_disease", 1.0F, 1.0F, false); // TODO: Implement for 7.4
-    public static Trait DIABETES = registerTrait("diabetes", 1.0F, 1.0F, false); // TODO: Implement for 7.4
-    public static Trait DWARFISM = registerTrait("dwarfism", 1.0F, 1.0F);
-    public static Trait ALBINISM = registerTrait("albinism", 1.0F ,1.0F);
-    public static Trait VEGETARIAN = registerTrait("vegetarian", 1.0F, 1.0F, false); // TODO: Implement for 7.4
-    public static Trait BISEXUAL = registerTrait("bisexual", 1.0F, 0.0F);
-    public static Trait HOMOSEXUAL = registerTrait("homosexual", 1.0F, 0.0F);
-    public static Trait ELECTRIFIED = registerTrait("electrified", 0.0F, 0.0F, false);
-    public static Trait SIRBEN = registerTrait("sirben", 0.025F, 1.0F, true);
-    public static Trait RAINBOW = registerTrait("rainbow", 0.05F, 0.0F);
+    public static Trait LEFT_HANDED = registerTrait("LEFT_HANDED", 1.0F, 0.5F, false);
+    public static Trait COLOR_BLIND = registerTrait("COLOR_BLIND", 1.0F, 0.5F);
+    public static Trait HETEROCHROMIA = registerTrait("HETEROCHROMIA", 1.0F, 0.5F);
+    public static Trait LACTOSE_INTOLERANCE = registerTrait("LACTOSE_INTOLERANCE", 1.0F, 1.0F);
+    public static Trait COELIAC_DISEASE = registerTrait("COELIAC_DISEASE", 1.0F, 1.0F, false); // TODO: Implement for 7.4
+    public static Trait DIABETES = registerTrait("DIABETES", 1.0F, 1.0F, false); // TODO: Implement for 7.4
+    public static Trait DWARFISM = registerTrait("DWARFISM", 1.0F, 1.0F);
+    public static Trait ALBINISM = registerTrait("ALBINISM", 1.0F, 1.0F);
+    public static Trait VEGETARIAN = registerTrait("VEGETARIAN", 1.0F, 1.0F, false); // TODO: Implement for 7.4
+    public static Trait BISEXUAL = registerTrait("BISEXUAL", 1.0F, 0.0F);
+    public static Trait HOMOSEXUAL = registerTrait("HOMOSEXUAL", 1.0F, 0.0F);
+    public static Trait ELECTRIFIED = registerTrait("ELECTRIFIED", 0.0F, 0.0F, false);
+    public static Trait SIRBEN = registerTrait("SIRBEN", 0.025F, 1.0F);
+    public static Trait RAINBOW = registerTrait("RAINBOW", 0.05F, 0.0F);
+    public static Trait UNKNOWN = registerTrait("UNKNOWN", 0.0F, 0.0F, false);
 
     public static Trait registerTrait(String id, float chance, float inherit, boolean usableOnPlayer) {
         Trait trait = new Trait(id, chance, inherit, usableOnPlayer);
-        TRAIT_LIST.add(trait);
+        TRAIT_REGISTRY.put(id, trait);
         return trait;
     }
+
     public static Trait registerTrait(String id, float chance, float inherit) {
-        Trait trait = new Trait(id, chance, inherit);
-        TRAIT_LIST.add(trait);
-        return trait;
+        return registerTrait(id, chance, inherit, true);
     }
 
     public static class Trait {
@@ -57,31 +57,24 @@ public class Traits {
             this.usableOnPlayer = usableOnPlayer;
         }
 
-        Trait(String id, float chance, float inherit) {
-            this(id, chance, inherit, true);
-        }
-
-        public String name() {
+        public String id() {
             return this.id;
         }
 
-        public static List<Trait> values() {
-            return TRAIT_LIST;
+        public static Collection<Trait> values() {
+            return TRAIT_REGISTRY.values();
         }
 
         public static Trait valueOf(String id) {
-            for (Trait t : TRAIT_LIST) {
-                if (t.name().equals(id)) return t;
-            }
-            return null;
+            return TRAIT_REGISTRY.getOrDefault(id, UNKNOWN);
         }
 
         public Text getName() {
-            return Text.translatable("trait." + name().toLowerCase(Locale.ENGLISH));
+            return Text.translatable("trait." + id().toLowerCase(Locale.ROOT));
         }
 
         public Text getDescription() {
-            return Text.translatable("traitDescription." + name().toLowerCase(Locale.ENGLISH));
+            return Text.translatable("traitDescription." + id().toLowerCase(Locale.ROOT));
         }
 
         public boolean isUsableOnPlayer() {
@@ -89,7 +82,7 @@ public class Traits {
         }
 
         public boolean isEnabled() {
-            return Config.getServerConfig().enabledTraits.get(name());
+            return Config.getServerConfig().enabledTraits.getOrDefault(id(), false);
         }
     }
 
@@ -114,7 +107,7 @@ public class Traits {
     }
 
     public boolean hasTrait(VillagerLike<?> target, Trait trait) {
-        return target.getTrackedValue(TRAITS).contains(trait.name());
+        return target.getTrackedValue(TRAITS).contains(trait.id());
     }
 
     public boolean hasTrait(Trait trait) {
@@ -122,7 +115,7 @@ public class Traits {
     }
 
     public boolean hasTrait(String trait) {
-        if (Trait.valueOf(trait) != null ) {
+        if (Trait.valueOf(trait) != null) {
             return hasTrait(entity, Trait.valueOf(trait));
         }
         return false;
@@ -138,19 +131,19 @@ public class Traits {
 
     public void addTrait(Trait trait) {
         NbtCompound traits = entity.getTrackedValue(TRAITS).copy();
-        traits.putBoolean(trait.name(), true);
+        traits.putBoolean(trait.id(), true);
         entity.setTrackedValue(TRAITS, traits);
     }
 
     public void removeTrait(Trait trait) {
         NbtCompound traits = entity.getTrackedValue(TRAITS).copy();
-        traits.remove(trait.name());
+        traits.remove(trait.id());
         entity.setTrackedValue(TRAITS, traits);
     }
 
     //initializes the genes with random numbers
     public void randomize() {
-        float total = (float)Trait.values().stream().mapToDouble(tr -> tr.chance).sum();
+        float total = (float) Trait.values().stream().mapToDouble(tr -> tr.chance).sum();
         for (Trait t : Trait.values()) {
             float chance = Config.getInstance().traitChance / total * t.chance;
             if (random.nextFloat() < chance && t.isEnabled()) {
