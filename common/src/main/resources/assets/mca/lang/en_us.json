@@ -257,6 +257,7 @@
   "trait.left_handed": "Left Handed",
   "trait.electrified": "Electrified",
   "trait.rainbow": "Rainbow",
+  "trait.unknown": "Unknown",
   "traitDescription.lactose_intolerance": "Intolerant to lactose.",
   "traitDescription.coeliac_disease": "Gets massive diarrhea on gluten.",
   "traitDescription.diabetes": "Sugar bad.",
@@ -270,7 +271,8 @@
   "traitDescription.homosexual": "Can have attraction to the same gender.",
   "traitDescription.left_handed": "Uses their left-hand as their dominant hand.",
   "traitDescription.electrified": "Struck by lightning.",
-  "traitDescription.rainbow": "Colored using Jebs secret source.",
+  "traitDescription.rainbow": "Colored using Jebs secret sauce.",
+  "traitDescription.unknown": "Once this villager had a trait, but is now lost to time.",
 
   "sirben": "*random Sirben noises*",
 

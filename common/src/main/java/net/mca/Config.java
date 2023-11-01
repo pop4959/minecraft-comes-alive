@@ -275,7 +275,7 @@ public final class Config implements Serializable {
 
     public void autocomplete() {
         for (Traits.Trait trait : Traits.Trait.values()) {
-            enabledTraits.putIfAbsent(trait.name(), true);
+            enabledTraits.putIfAbsent(trait.id(), true);
         }
     }
 
