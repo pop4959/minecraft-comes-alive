@@ -32,7 +32,7 @@ public class TraitsModule {
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {
         if (Config.getInstance().villagerChatAIIntelligence >= 1) {
             for (Traits.Trait trait : villager.getTraits().getTraits()) {
-                input.add(traitDescription.getOrDefault(trait.name(), "$villager has " + translate(trait.name()) + ". "));
+                input.add(traitDescription.getOrDefault(trait.id(), "$villager has " + translate(trait.id()) + ". "));
             }
         }
     }
