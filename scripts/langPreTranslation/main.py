@@ -20,7 +20,7 @@ def generate_phrases(system: str, prompt: str):
         ],
         temperature=0.8,
         top_p=1,
-        max_tokens=200,
+        max_tokens=512,
     )
     return response.choices[0].message.content
 
@@ -113,19 +113,26 @@ def process(personality: str):
                     newline_required = False
             else:
                 if valid_phrase(key):
-                    if key in existing_lang:
-                        file.write(f'  "{key}": "{existing_lang[key]}",\n')
+                    personalized_key = personality + "." + key
+                    if personalized_key in existing_lang:
+                        file.write(
+                            f'  "{personalized_key}": "{existing_lang[personalized_key].replace('"', '\\"')}",\n'
+                        )
                     else:
                         stem = to_stem(key)
                         if stem not in processed_groups:
                             processed_groups.add(stem)
                             phrases = []
-                            i = 0
-                            for grouped_key in grouped_layout[stem]:
-                                if grouped_key not in existing_lang:
-                                    i += 1
-                                    phrases.append(f"{i}: {default_lang[grouped_key]}")
+                            filtered_grouped_keys = [
+                                grouped_key
+                                for grouped_key in grouped_layout[stem]
+                                if (personality + "." + grouped_key)
+                                not in existing_lang
+                            ]
+                            for i, grouped_key in enumerate(filtered_grouped_keys):
+                                phrases.append(f"{i}: {default_lang[grouped_key]}")
 
+                            print(f"Requesting {len(phrases)} phrases for {stem}.\n")
                             generated_text = generate_phrases(
                                 system_prompt,
                                 get_prompt(key, personality)
@@ -148,16 +155,16 @@ def process(personality: str):
                                     for phrase in generated_text.split("\n")
                                 ][-len(phrases) :]
 
-                                assert len(generated_phrases) == len(phrases)
-
-                                for i, grouped_key in enumerate(grouped_layout[stem]):
+                                for i, generated_phrase in enumerate(generated_phrases):
                                     file.write(
-                                        f'  "{grouped_key}": "{generated_phrases[i]}",\n'
+                                        f'  "{personality + "." + filtered_grouped_keys[i]}": "{generated_phrase}",\n'
                                     )
                             except Exception as e:
-                                print(e)
+                                print(
+                                    f"Error generating phrases for {stem}: {str(e)}\n"
+                                )
                     newline_required = True
-        file.write('    "_": ""\n')
+        file.write('  "_": ""\n')
         file.write("}")
 
 
