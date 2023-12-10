@@ -13,7 +13,8 @@ load_dotenv()
 
 def generate_phrases(system: str, prompt: str):
     response = openai.chat.completions.create(
-        model="gpt-4-1106-preview",
+        # model="gpt-4-1106-preview",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": prompt},
@@ -92,7 +93,7 @@ def valid_phrase(key: str):
     return False
 
 
-personalities = ["grumpy"]
+personalities = ["grumpy", "flirty"]
 
 
 def process(personality: str):
@@ -115,9 +116,8 @@ def process(personality: str):
                 if valid_phrase(key):
                     personalized_key = personality + "." + key
                     if personalized_key in existing_lang:
-                        file.write(
-                            f'  "{personalized_key}": "{existing_lang[personalized_key].replace('"', '\\"')}",\n'
-                        )
+                        phrase = existing_lang[personalized_key].replace('"', '\\"')
+                        file.write(f'  "{personalized_key}": "{phrase}",\n')
                     else:
                         stem = to_stem(key)
                         if stem not in processed_groups:
@@ -132,7 +132,7 @@ def process(personality: str):
                             for i, grouped_key in enumerate(filtered_grouped_keys):
                                 phrases.append(f"{i}: {default_lang[grouped_key]}")
 
-                            print(f"Requesting {len(phrases)} phrases for {stem}.\n")
+                            print(f"\nRequesting {len(phrases)} phrases for {stem}.\n")
                             generated_text = generate_phrases(
                                 system_prompt,
                                 get_prompt(key, personality)
@@ -153,7 +153,13 @@ def process(personality: str):
                                         .replace("1. ", "")
                                     )
                                     for phrase in generated_text.split("\n")
-                                ][-len(phrases) :]
+                                ]
+
+                                generated_phrases = [
+                                    p for p in generated_phrases if len(p) > 0
+                                ]
+
+                                generated_phrases = generated_phrases[-len(phrases) :]
 
                                 for i, generated_phrase in enumerate(generated_phrases):
                                     file.write(
