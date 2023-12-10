@@ -13,7 +13,7 @@ load_dotenv()
 
 def generate_phrases(system: str, prompt: str):
     response = openai.chat.completions.create(
-        model="gpt-4-turbo",
+        model="gpt-4-1106-preview",
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": prompt},
@@ -132,14 +132,18 @@ def process(personality: str):
                                 + "\n"
                                 + "\n".join(phrases),
                             )
-                            print("Requested generation.")
 
                             try:
                                 generated_phrases = [
                                     (
-                                        phrase.strip().split(":")[1]
-                                        if ":" in phrase
-                                        else phrase.strip()
+                                        (
+                                            phrase.split(":")[1]
+                                            if ":" in phrase
+                                            else phrase
+                                        )
+                                        .strip()
+                                        .replace('"', '\\"')
+                                        .replace("1. ", "")
                                     )
                                     for phrase in generated_text.split("\n")
                                 ][-len(phrases) :]
@@ -153,7 +157,7 @@ def process(personality: str):
                             except Exception as e:
                                 print(e)
                     newline_required = True
-        file.write('"_": ""\n')
+        file.write('    "_": ""\n')
         file.write("}")
 
 
