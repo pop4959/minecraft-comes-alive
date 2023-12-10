@@ -198,9 +198,9 @@
 
   "interaction.relationship.fail.marriedtogiver/1": "I am already married to you, silly.",
   "interaction.relationship.fail.marriedtogiver/2": "We are already married. Did you forget?",
-  "interaction.relationship.fail.marriedtogiver3": "It's a pretty ring, but I am already married to you, stupid.",
-  "interaction.relationship.fail.marriedtogiver4": "I'm getting deja vu...",
-  "interaction.relationship.fail.marriedtogiver5": "I really like the way you did it the first time though!",
+  "interaction.relationship.fail.marriedtogiver/3": "It's a pretty ring, but I am already married to you, stupid.",
+  "interaction.relationship.fail.marriedtogiver/4": "I'm getting deja vu...",
+  "interaction.relationship.fail.marriedtogiver/5": "I really like the way you did it the first time though!",
 
   "interaction.relationship.fail.married/1": "I'm sorry, no...I'm already married.",
   "interaction.relationship.fail.married/2": "Oh, I thought you knew...I'm already married to someone.",
@@ -269,7 +269,6 @@
   "interaction.promise.success/3": "Oh! I guess we're locked down now, huh? I'm glad you finally made us official.",
   "interaction.promise.success/4": "Really? You took your time! I was wondering if I had to ask you out first!",
   "interaction.promise.success/5": "What pretty flowers! Oh, they're for me? I didn't know you felt that way. I'd love to be with you.",
-  "interaction.promise.success/6": "You must promise, tooooo love me, and damn it if you screw me.. over I will rip your ugly.. face.. apart!",
 
   "adult.interaction.matchmaker.fail.married/1": "I am already married to someone.",
   "adult.interaction.matchmaker.fail.married/2": "I'm happily married, I do not want another spouse.",
@@ -335,6 +334,7 @@
   "interaction.sethome.bedfail/1": "Nice home, but all beds seem to be reserved.",
   "interaction.sethome.bedfail/2": "There are no empty beds!",
   "interaction.sethome.bedfail.infirmary/1": "This is a infirmary, the bed is reserved for sick people.",
+  "interaction.sethome.bedfail.inn/1": "Looks nice, but this is an inn. I would prefer an own home.",
   "interaction.sethome.bedfail.blocked/1": "This building has been marked as blocked.",
 
   "interaction.setworkplace.success/1": "Sure thing, %1$s.",

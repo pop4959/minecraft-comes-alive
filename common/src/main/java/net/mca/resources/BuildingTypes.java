@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class BuildingTypes extends JsonDataLoader implements Iterable<BuildingType> {
-    protected static final Identifier ID = new Identifier(MCA.MOD_ID, "building_types");
+    protected static final Identifier ID = MCA.locate("building_types");
 
     private final Map<String, BuildingType> buildingTypes = new HashMap<>();
     private final Map<String, BuildingType> buildingTypesClient = new HashMap<>();
