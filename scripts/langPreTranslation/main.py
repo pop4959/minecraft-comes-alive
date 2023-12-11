@@ -93,7 +93,27 @@ def valid_phrase(key: str):
     return False
 
 
-personalities = ["grumpy", "flirty"]
+personalities = [
+    "athletic",
+    "confident",
+    "strong",
+    # "friendly",
+    "tough",
+    "curious",
+    "peaceful",
+    "flirty",
+    "witty",
+    "shy",
+    "gloomy",
+    "sensitive",
+    "greedy",
+    "stubborn",
+    "odd",
+    "sleepy",
+    "fragile",
+    "weak",
+    "grumpy",
+]
 
 
 def process(personality: str):
