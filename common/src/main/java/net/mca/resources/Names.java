@@ -33,7 +33,7 @@ public class Names extends JsonDataLoader {
             String[] split = entry.getKey().getPath().split("/");
             Gender gender = Gender.byName(split[1]);
 
-            Map<Gender, WeightedPool<String>> map = NAMES_MAP.computeIfAbsent(split[0], (a) -> new HashMap<>());
+            Map<Gender, WeightedPool<String>> map = NAMES_MAP.computeIfAbsent(split[0], a -> new HashMap<>());
 
             WeightedPool.Mutable<String> names = new WeightedPool.Mutable<>("?");
             for (Map.Entry<String, JsonElement> elementEntry : entry.getValue().getAsJsonObject().entrySet()) {
@@ -59,10 +59,10 @@ public class Names extends JsonDataLoader {
     }
 
     public static String pickCitizenName(@NotNull Gender gender, Entity entity) {
-        return NAMES_MAP.get(getCitizenNation(entity)).get(gender.binary()).pickOne();
+        return NAMES_MAP.isEmpty() ? "Unnamed" : NAMES_MAP.get(getCitizenNation(entity)).get(gender.binary()).pickOne();
     }
 
     public static String pickCitizenName(@NotNull Gender gender) {
-        return NAMES_MAP.get(REGION_NAMES.get(random.nextInt(REGION_NAMES.size()))).get(gender.binary()).pickOne();
+        return NAMES_MAP.isEmpty() ? "Unnamed" : NAMES_MAP.get(REGION_NAMES.get(random.nextInt(REGION_NAMES.size()))).get(gender.binary()).pickOne();
     }
 }
