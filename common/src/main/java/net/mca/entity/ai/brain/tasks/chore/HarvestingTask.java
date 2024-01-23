@@ -13,7 +13,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.BoneMealItem;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
@@ -261,8 +260,8 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private void harvestCrops(ServerWorld world, BlockPos pos) {
+        BlockState state = world.getBlockState(pos);
         if (world.breakBlock(pos, false, villager)) {
-            BlockState state = world.getBlockState(pos);
             LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder(world)
                     .add(LootContextParameters.ORIGIN, villager.getPos())
                     .add(LootContextParameters.TOOL, ItemStack.EMPTY)
