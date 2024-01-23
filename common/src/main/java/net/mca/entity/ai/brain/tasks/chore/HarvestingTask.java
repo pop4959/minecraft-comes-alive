@@ -260,8 +260,8 @@ public class HarvestingTask extends AbstractChoreTask {
     }
 
     private void harvestCrops(ServerWorld world, BlockPos pos) {
+        BlockState state = world.getBlockState(pos);
         if (world.breakBlock(pos, false, villager)) {
-            BlockState state = world.getBlockState(pos);
             LootContext.Builder builder = new LootContext.Builder(world)
                     .parameter(LootContextParameters.ORIGIN, villager.getPos())
                     .parameter(LootContextParameters.TOOL, ItemStack.EMPTY)
