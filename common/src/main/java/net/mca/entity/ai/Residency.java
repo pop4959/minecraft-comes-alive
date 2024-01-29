@@ -49,8 +49,8 @@ public class Residency {
 
     public void setWorkplace(ServerPlayerEntity player) {
         PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
-        pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.acquirableWorkstation(), (a) -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
-                    pointOfInterestStorage.getType(blockPos).ifPresent((pointOfInterestType) -> {
+        pointOfInterestStorage.getNearestPosition(VillagerProfession.NONE.acquirableWorkstation(), a -> true, entity.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).ifPresentOrElse(blockPos -> {
+                    pointOfInterestStorage.getType(blockPos).ifPresent(pointOfInterestType -> {
                         pointOfInterestStorage.getPosition(VillagerProfession.NONE.acquirableWorkstation(), (registryEntry, blockPos2) -> {
                             return blockPos2.equals(blockPos);
                         }, blockPos, 1);
@@ -66,16 +66,17 @@ public class Residency {
                         entity.getBrain().remember(MemoryModuleType.JOB_SITE, globalPos);
                         player.getWorld().sendEntityStatus(entity, (byte) 14);
                         MinecraftServer minecraftServer = player.getWorld().getServer();
-                        Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension())).flatMap((world) -> {
+                        Optional.ofNullable(minecraftServer.getWorld(globalPos.getDimension())).flatMap(world -> {
                             return world.getPointOfInterestStorage().getType(globalPos.getPos());
-                        }).flatMap((registryEntry) -> {
-                            return Registry.VILLAGER_PROFESSION.stream().filter((profession) -> {
+                        }).flatMap(registryEntry -> {
+                            return Registry.VILLAGER_PROFESSION.stream().filter(profession -> {
                                 return profession.heldWorkstation().test(registryEntry);
                             }).findFirst();
-                        }).ifPresent((profession) -> {
+                        }).ifPresent(profession -> {
                             int level = entity.getVillagerData().getLevel();
                             entity.setVillagerData(entity.getVillagerData().withProfession(profession).withLevel(1));
                             entity.setOffers(null);
+                            entity.getOffers();
                             for (int l = 1; l < level; l++) {
                                 entity.customLevelUp();
                             }
@@ -165,8 +166,8 @@ public class Residency {
 
         //fetch all near POIs
         Stream<BlockPos> stream = ((ServerWorld) entity.world).getPointOfInterestStorage().getPositions(
-                (type) -> true,
-                (p) -> !manager.cache.contains(p),
+                type -> true,
+                p -> !manager.cache.contains(p),
                 entity.getBlockPos(),
                 48,
                 PointOfInterestStorage.OccupationStatus.ANY);
@@ -192,7 +193,7 @@ public class Residency {
 
         //check if a bed can be found
         PointOfInterestStorage pointOfInterestStorage = player.getWorld().getPointOfInterestStorage();
-        Optional<BlockPos> position = pointOfInterestStorage.getPositions(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), (p) -> true, player.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
+        Optional<BlockPos> position = pointOfInterestStorage.getPositions(registryEntry -> registryEntry.matchesKey(PointOfInterestTypes.HOME), p -> true, player.getBlockPos(), 8, PointOfInterestStorage.OccupationStatus.HAS_SPACE).findAny();
         if (position.isPresent()) {
             entity.sendChatMessage(player, "interaction.sethome.success");
 

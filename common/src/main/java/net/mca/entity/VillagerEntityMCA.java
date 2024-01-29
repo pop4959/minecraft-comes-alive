@@ -557,17 +557,15 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         // you can't hit babies!
         if (!Config.getInstance().canHurtBabies && !source.isUnblockable() && getAgeState() == AgeState.BABY) {
-            if (source.getAttacker() instanceof PlayerEntity) {
-                if (requestCooldown()) {
-                    sendEventMessage(Text.translatable("villager.baby_hit"));
-                }
+            if (source.getAttacker() instanceof PlayerEntity && requestCooldown()) {
+                sendEventMessage(Text.translatable("villager.baby_hit"));
             }
             return super.damage(source, 0.0f);
         }
 
         // Guards take 50% less damage
         if (getProfession() == ProfessionsMCA.GUARD.get()) {
-            damageAmount *= 0.5;
+            damageAmount *= 0.5f;
         }
 
         damageAmount *= mcaBrain.getPersonality().getWeaknessModifier();
@@ -577,13 +575,11 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
             if (source.getAttacker() instanceof PlayerEntity player) {
                 if (world.getTime() - lastHit > 40) {
                     lastHit = world.getTime();
-                    if (!isGuard() || getSmallBounty() == 0) {
-                        if (requestCooldown()) {
-                            if (getHealth() < getMaxHealth() / 2) {
-                                sendChatMessage(player, "villager.badly_hurt");
-                            } else {
-                                sendChatMessage(player, "villager.hurt");
-                            }
+                    if ((!isGuard() || getSmallBounty() == 0) && requestCooldown()) {
+                        if (getHealth() < getMaxHealth() / 2) {
+                            sendChatMessage(player, "villager.badly_hurt");
+                        } else {
+                            sendChatMessage(player, "villager.hurt");
                         }
                     }
                 }
@@ -655,7 +651,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 //nop
             }
 
-            damageAmount *= 0.0;
+            damageAmount *= 0.0f;
         }
 
         return super.damage(source, damageAmount);
