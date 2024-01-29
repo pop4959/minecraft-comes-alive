@@ -174,7 +174,7 @@ public final class Config implements Serializable {
     public boolean allowLimitedPlayerEditor = true;
     public boolean allowFullPlayerEditor = false;
     public boolean allowPlayerSizeAdjustment = true;
-    public boolean adjustPlayerEyesToHeight = true;
+    public boolean adjustPlayerEyesToHeight = false;
 
     public boolean useModernUSANamesOnly = false;
 

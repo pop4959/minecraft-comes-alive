@@ -93,7 +93,7 @@ public interface ItemsMCA {
     RegistrySupplier<Item> BOOK_ROSE_GOLD = register("book_rose_gold", () -> new ExtendedWrittenBookItem(baseProps(), new Book("rose_gold")
             .setBackground(MCA.locate("textures/gui/books/rose_gold.png"))
             .addPage(new TitlePage("rose_gold"))
-            .addSimplePages(5)));
+            .addSimplePages(4)));
 
     RegistrySupplier<Item> BOOK_INFECTION = register("book_infection", () -> new ExtendedWrittenBookItem(baseProps(), new Book("infection")
             .setBackground(MCA.locate("textures/gui/books/infection.png"))

@@ -556,7 +556,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         // you can't hit babies!
         // TODO: Verify the `isUnblockable` replacement for 1.19.4, ensure same behavior
         if (!Config.getInstance().canHurtBabies && !source.isIn(DamageTypeTags.BYPASSES_SHIELD) && getAgeState() == AgeState.BABY) {
-            if (source.getAttacker() instanceof PlayerEntity && (requestCooldown())) {
+            if (source.getAttacker() instanceof PlayerEntity && requestCooldown()) {
                 sendEventMessage(Text.translatable("villager.baby_hit"));
             }
             return super.damage(source, 0.0f);
@@ -564,7 +564,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
         // Guards take 50% less damage
         if (getProfession() == ProfessionsMCA.GUARD.get()) {
-            damageAmount *= 0.5;
+            damageAmount *= 0.5f;
         }
 
         damageAmount *= mcaBrain.getPersonality().getWeaknessModifier();
@@ -650,7 +650,7 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
                 //nop
             }
 
-            damageAmount *= 0.0;
+            damageAmount *= 0.0f;
         }
 
         return super.damage(source, damageAmount);

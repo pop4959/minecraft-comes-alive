@@ -1,3 +1,10 @@
+# 7.5.12
+
+* Fixed various smaller issues
+* Personalities now have a few more phrases
+* Fixed harvest task not dropping items
+* Set workplace no longer messes up trades
+
 # 7.5.11
 
 * Fixed a crash
