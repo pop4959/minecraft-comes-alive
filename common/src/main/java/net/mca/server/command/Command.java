@@ -11,6 +11,7 @@ import net.mca.MCA;
 import net.mca.client.OnlineSpeechManager;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.GPT3;
+import net.mca.entity.ai.relationship.Personality;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
 import net.mca.server.world.data.PlayerSaveData;
@@ -24,6 +25,7 @@ import net.minecraft.util.Formatting;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -70,9 +72,19 @@ public class Command {
         }
     }
 
+    private static boolean couldBePersonalityRelated(String phrase) {
+        for (Personality value : Personality.values()) {
+            if (phrase.contains(value.name().toLowerCase(Locale.ROOT))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static int ttsScan(CommandContext<ServerCommandSource> ctx) {
         for (Map.Entry<String, String> text : MCA.translations.entrySet()) {
-            if (text.getKey().contains("dialogue.") || text.getKey().contains("interaction.") || text.getKey().contains("villager.")) {
+            String key = text.getKey();
+            if ((key.contains("dialogue.") || key.contains("interaction.") || key.contains("villager.")) && !couldBePersonalityRelated(key)) {
                 String hash = OnlineSpeechManager.INSTANCE.getHash(text.getValue());
                 String language = Config.getInstance().onlineTTSLanguage;
                 CompletableFuture.runAsync(() -> {
