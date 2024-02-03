@@ -1,5 +1,6 @@
 package net.mca.client;
 
+import net.mca.Config;
 import net.mca.entity.CommonSpeechManager;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.Genetics;
@@ -10,7 +11,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextContent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Language;
 import net.minecraft.util.math.random.Random;
 
 import java.util.Collection;
@@ -22,11 +25,13 @@ public class SpeechManager {
 
     private final LimitedLinkedHashMap<UUID, EntityTrackingSoundInstance> currentlyPlaying = new LimitedLinkedHashMap<>(10);
 
+    @SuppressWarnings("deprecation")
     private final Random threadSafeRandom = Random.createThreadSafe();
 
     public void onChatMessage(Text message, UUID sender) {
-        if (CommonSpeechManager.INSTANCE.translations.containsKey(message.getContent())) {
-            speak(CommonSpeechManager.INSTANCE.translations.get(message.getContent()), sender);
+        TextContent content = message.getContent();
+        if (CommonSpeechManager.INSTANCE.translations.containsKey(content)) {
+            speak(CommonSpeechManager.INSTANCE.translations.get(content), sender);
         } else {
             for (Text sibling : message.getSiblings()) {
                 if (CommonSpeechManager.INSTANCE.translations.containsKey(sibling.getContent())) {
@@ -36,6 +41,17 @@ public class SpeechManager {
         }
     }
 
+    private VillagerEntityMCA getSpeaker(MinecraftClient client, UUID sender) {
+        if (client.world != null) {
+            for (Entity entity : client.world.getEntities()) {
+                if (entity instanceof VillagerEntityMCA v && entity.getUuid().equals(sender)) {
+                    return v;
+                }
+            }
+        }
+        return null;
+    }
+
     private void speak(String phrase, UUID sender) {
         if (currentlyPlaying.containsKey(sender) && MinecraftClient.getInstance().getSoundManager().isPlaying(currentlyPlaying.get(sender))) {
             return;
@@ -43,31 +59,31 @@ public class SpeechManager {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world != null) {
-            VillagerEntityMCA villager = null;
-            for (Entity entity : client.world.getEntities()) {
-                if (entity instanceof VillagerEntityMCA v && entity.getUuid().equals(sender)) {
-                    villager = v;
-                    break;
-                }
-            }
-
+            VillagerEntityMCA villager = getSpeaker(client, sender);
             if (villager != null) {
                 if (villager.isSpeechImpaired()) return;
                 if (villager.isToYoungToSpeak()) return;
 
                 float pitch = villager.getSoundPitch();
                 float gene = villager.getGenetics().getGene(Genetics.VOICE_TONE);
-                int tone = Math.min(9, (int) Math.floor(gene * 10.0f));
 
                 String gender = villager.getGenetics().getGender().binary().getDataName();
-                Identifier sound = new Identifier("mca_voices", phrase.toLowerCase(Locale.ROOT) + "/" + gender + "_" + tone);
+                if (Config.getInstance().enableOnlineTTS) {
+                    String content = Language.getInstance().get(phrase);
+                    int tone = Math.min(24, (int) Math.floor(gene * 25.0f));
+                    String voice = gender + "_" + tone;
+                    OnlineSpeechManager.INSTANCE.play(voice, pitch, content, villager);
+                } else {
+                    int tone = Math.min(9, (int) Math.floor(gene * 10.0f));
+                    Identifier sound = new Identifier("mca_voices", phrase.toLowerCase(Locale.ROOT) + "/" + gender + "_" + tone);
 
-                if (client.world != null && client.player != null) {
-                    Collection<Identifier> keys = client.getSoundManager().getKeys();
-                    if (keys.contains(sound)) {
-                        EntityTrackingSoundInstance instance = new EntityTrackingSoundInstance(new SoundEvent(sound), SoundCategory.NEUTRAL, 1.0f, pitch, villager, threadSafeRandom.nextLong());
-                        currentlyPlaying.put(sender, instance);
-                        client.getSoundManager().play(instance);
+                    if (client.world != null && client.player != null) {
+                        Collection<Identifier> keys = client.getSoundManager().getKeys();
+                        if (keys.contains(sound)) {
+                            EntityTrackingSoundInstance instance = new EntityTrackingSoundInstance(new SoundEvent(sound), SoundCategory.NEUTRAL, 1.0f, pitch, villager, threadSafeRandom.nextLong());
+                            currentlyPlaying.put(sender, instance);
+                            client.getSoundManager().play(instance);
+                        }
                     }
                 }
             }

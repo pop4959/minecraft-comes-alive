@@ -57,7 +57,7 @@ public class GPT3 {
 
             return new Answer(answer, error);
         } catch (Exception e) {
-            e.printStackTrace();
+            MCA.LOGGER.error(e);
             return new Answer(null, "unknown");
         }
     }

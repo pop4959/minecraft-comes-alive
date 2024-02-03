@@ -105,7 +105,10 @@ public final class Config implements Serializable {
     //AI
     public boolean enableVillagerChatAI = false;
     public int villagerChatAIIntelligence = 4;
+    public boolean enableOnlineTTS = false;
+    public String onlineTTSLanguage = "en";
     public String villagerChatAIServer = "http://snoweagle.tk/";
+    public String villagerTTSServer = "http://localhost:8000/";
 
     //village behavior
     public float guardSpawnFraction = 0.175f;
