@@ -1365,6 +1365,10 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         if (nbt.contains("clothes")) {
             validateClothes();
         }
+
+        if (getVillagerBrain().getPersonality() == Personality.UNASSIGNED) {
+            getVillagerBrain().randomize();
+        }
     }
 
     @Override

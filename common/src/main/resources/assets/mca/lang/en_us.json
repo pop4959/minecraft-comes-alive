@@ -217,6 +217,7 @@
   "personality.gloomy": "Gloomy",
   "personality.peppy": "Peppy",
 
+  "personalityDescription.unassigned": "Something went wrong",
   "personalityDescription.athletic": "Runs faster",
   "personalityDescription.confident": "Deals more damage",
   "personalityDescription.strong": "Deals far more damage",

@@ -78,9 +78,6 @@ public interface VillagerLike<E extends Entity & VillagerLike<E>> extends CTrack
             }
 
             initializeSkin(false);
-        }
-
-        if (getVillagerBrain().getPersonality() == Personality.UNASSIGNED) {
             getVillagerBrain().randomize();
         }
 
