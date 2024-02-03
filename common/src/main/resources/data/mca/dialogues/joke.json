@@ -24,8 +24,12 @@
               "mood": "sad"
             },
             {
+              "chance": 7,
+              "personality": "gloomy"
+            },
+            {
               "chance": 4,
-              "mood": "giggly"
+              "personality": "peppy"
             }
           ],
           "actions": {
@@ -37,6 +41,10 @@
           "baseChance": 2,
           "applyFatigue": true,
           "conditions": [
+            {
+              "chance": 5,
+              "personality": "grumpy"
+            }
           ],
           "actions": {
             "next": "joke.creative.failed",
@@ -69,15 +77,11 @@
             },
             {
               "chance": 7,
-              "mood": "depressed"
-            },
-            {
-              "chance": 5,
-              "mood": "sad"
+              "personality": "gloomy"
             },
             {
               "chance": 4,
-              "mood": "giggly"
+              "personality": "peppy"
             }
           ],
           "actions": {
@@ -89,6 +93,10 @@
           "baseChance": 2,
           "applyFatigue": true,
           "conditions": [
+            {
+              "chance": 5,
+              "personality": "grumpy"
+            }
           ],
           "actions": {
             "next": "joke.creative.failed",
@@ -125,15 +133,11 @@
             },
             {
               "chance": 7,
-              "mood": "depressed"
-            },
-            {
-              "chance": 5,
-              "mood": "sad"
+              "personality": "gloomy"
             },
             {
               "chance": 4,
-              "mood": "giggly"
+              "personality": "peppy"
             }
           ],
           "actions": {
@@ -145,6 +149,10 @@
           "baseChance": 2,
           "applyFatigue": true,
           "conditions": [
+            {
+              "chance": 5,
+              "personality": "grumpy"
+            }
           ],
           "actions": {
             "next": "joke.creative.failed",

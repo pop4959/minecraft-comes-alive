@@ -123,7 +123,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
 
     public void randomize() {
         entity.setTrackedValue(PERSONALITY, Personality.getRandom());
-        entity.setTrackedValue(MOOD, entity.world.random.nextInt(MoodGroup.maxLevel - MoodGroup.normalMinLevel + 1) + MoodGroup.normalMinLevel);
+        entity.setTrackedValue(MOOD, entity.world.random.nextInt(MoodGroup.MAX_LEVEL - MoodGroup.NORMAL_MIN_LEVEL + 1) + MoodGroup.NORMAL_MIN_LEVEL);
     }
 
     public void setPersonality(Personality p) {
@@ -165,7 +165,7 @@ public class VillagerBrain<E extends MobEntity & VillagerLike<E>> {
     }
 
     public Mood getMood() {
-        return getPersonality().getMoodGroup().getMood(entity.getTrackedValue(MOOD));
+        return MoodGroup.INSTANCE.getMood(entity.getTrackedValue(MOOD));
     }
 
     public boolean isPanicking() {
