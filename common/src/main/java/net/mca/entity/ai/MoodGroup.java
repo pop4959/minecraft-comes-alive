@@ -72,9 +72,9 @@ public enum MoodGroup {
     );
 
     //-15 to 15 is a range create normal interactions, but mood can go -15 to -100 due to player interactions.
-    public final static int normalMinLevel = -15;
-    public final static int absoluteMinLevel = -100;
-    public final static int maxLevel = 15;
+    public static final int normalMinLevel = -15;
+    public static final int absoluteMinLevel = -100;
+    public static final int maxLevel = 15;
 
     private final List<Mood> moods;
 

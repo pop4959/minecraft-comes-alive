@@ -37,10 +37,6 @@
               "personality": "odd"
             },
             {
-              "chance": 4,
-              "personality": "stubborn"
-            },
-            {
               "chance": 1,
               "personality": "flirty"
             }

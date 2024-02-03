@@ -61,11 +61,7 @@
             },
             {
               "chance": 2,
-              "personality": "weak"
-            },
-            {
-              "chance": 2,
-              "personality": "fragile"
+              "trait": "weak"
             },
             {
               "chance": -4,
@@ -121,15 +117,11 @@
             },
             {
               "chance": 2,
-              "personality": "tough"
-            },
-            {
-              "chance": 2,
-              "personality": "strong"
+              "trait": "tough"
             },
             {
               "chance": -5,
-              "personality": "peaceful"
+              "personality": "sensitive"
             },
             {
               "chance": 7,

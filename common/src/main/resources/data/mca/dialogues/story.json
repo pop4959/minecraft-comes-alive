@@ -3,10 +3,6 @@
   "baseConditions": [
     [
       {
-        "chance": 4,
-        "personality": "curious"
-      },
-      {
         "chance": 1,
         "personality": "friendly"
       },
@@ -21,8 +17,8 @@
     ],
     [
       {
-        "chance": 2,
-        "personality": "stubborn"
+        "chance": 1,
+        "personality": "confident"
       }
     ]
   ],
