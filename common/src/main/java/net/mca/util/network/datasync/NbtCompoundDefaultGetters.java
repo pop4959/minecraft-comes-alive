@@ -1,5 +1,6 @@
 package net.mca.util.network.datasync;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
 public class NbtCompoundDefaultGetters {
@@ -42,5 +43,15 @@ public class NbtCompoundDefaultGetters {
         } catch (ClassCastException ignored) {
         }
         return def.copy();
+    }
+
+    public static ItemStack getItemStack(NbtCompound nbt, String key, ItemStack def) {
+        try {
+            if (nbt.contains(key, 10)) {
+                return ItemStack.fromNbt(nbt.getCompound(key));
+            }
+        } catch (ClassCastException ignored) {
+        }
+        return def;
     }
 }

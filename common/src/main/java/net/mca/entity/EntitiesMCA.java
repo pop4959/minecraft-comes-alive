@@ -1,5 +1,7 @@
 package net.mca.entity;
 
+import java.util.function.Supplier;
+
 import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -9,14 +11,13 @@ import net.mca.entity.ai.ActivityMCA;
 import net.mca.entity.ai.MemoryModuleTypeMCA;
 import net.mca.entity.ai.SchedulesMCA;
 import net.mca.entity.ai.relationship.Gender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-
-import java.util.function.Supplier;
 
 public interface EntitiesMCA {
 
@@ -43,6 +44,11 @@ public interface EntitiesMCA {
             .setDimensions(1, 2.6F)
             .makeFireImmune(), GrimReaperEntity::createAttributes
     );
+    RegistrySupplier<EntityType<CribEntity>> CRIB = registerNonLiving("crib", EntityType.Builder
+    		.<CribEntity>create((t, w) -> new CribEntity(t, w), SpawnGroup.MISC)
+            .setDimensions(1.4F, 1.2F)
+            .makeFireImmune()
+    );
 
     static void bootstrap() {
         ENTITY_TYPES.register();
@@ -50,6 +56,14 @@ public interface EntitiesMCA {
         ActivityMCA.bootstrap();
         SchedulesMCA.bootstrap();
         ProfessionsMCA.bootstrap();
+    }
+    
+    static<T extends Entity> RegistrySupplier<EntityType<T>> registerNonLiving(String name, EntityType.Builder<T> builder) {
+        Identifier id = new Identifier(MCA.MOD_ID, name);
+        return ENTITY_TYPES.register(id, () -> {
+            EntityType<T> result = builder.build(id.toString());
+            return result;
+        });
     }
 
     static <T extends LivingEntity> RegistrySupplier<EntityType<T>> register(String name, EntityType.Builder<T> builder, Supplier<DefaultAttributeContainer.Builder> attributes) {

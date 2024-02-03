@@ -26,6 +26,9 @@
     ],
     "client": [
       "net.mca.fabric.MCAFabricClient"
+    ],
+    "fabric-datagen": [
+      "net.mca.fabric.CribRecipeDatagen"
     ]
   },
   "mixins": [

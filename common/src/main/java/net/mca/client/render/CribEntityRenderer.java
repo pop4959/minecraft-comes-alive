@@ -1,0 +1,101 @@
+package net.mca.client.render;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
+import net.mca.MCA;
+import net.mca.client.model.CribEntityModel;
+import net.mca.entity.CribEntity;
+import net.mca.entity.CribWoodType;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.Dilation;
+import net.minecraft.client.model.TexturedModelData;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.RotationAxis;
+
+public class CribEntityRenderer extends EntityRenderer<CribEntity>
+{
+	private final int TEXTURE_WIDTH = 88;
+	private final int TEXTURE_HEIGHT = 60;
+	
+	private final Map<String, Identifier> REGISTERED_TEXTURES = new HashMap<>();
+	
+    protected CribEntityModel<CribEntity> model;
+
+    public CribEntityRenderer(EntityRendererFactory.Context ctx)
+    {
+    	super(ctx);
+        this.model = new CribEntityModel<CribEntity>(TexturedModelData.of(CribEntityModel.getModelData(Dilation.NONE), TEXTURE_WIDTH, TEXTURE_HEIGHT).createModel());
+        this.shadowRadius = 0.75F;
+        
+        for(CribWoodType woodType : CribWoodType.values())
+        {
+        	for(DyeColor color : DyeColor.values())
+        	{
+        		try { REGISTERED_TEXTURES.put(getTextureID(woodType, color), generateMultiTexture(woodType, color)); }
+        		catch (IOException e) { MCA.LOGGER.warn("And error occured while loading dynamic crib texture! Skipping...\n" + e.getMessage()); }
+        	}
+        }
+	}
+
+    @Override
+    public void render(CribEntity cribEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i)
+    {
+    	Identifier texture = REGISTERED_TEXTURES.get(getTextureID(cribEntity));
+    	
+        matrixStack.push();
+        matrixStack.translate(0.0, 0.375, 0.0);
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0f - f));
+        
+        matrixStack.scale(-1.0f, -1.0f, 1.0f);
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f));
+        this.model.setAngles(cribEntity, g, 0.0f, -0.1f, 0.0f, 0.0f);
+        VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(texture));
+        this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0f, 1.0f, 1.0f, 1.0f);
+        
+        matrixStack.pop();
+        super.render(cribEntity, f, g, matrixStack, vertexConsumerProvider, i);
+    }
+    
+    private String getTextureID(CribEntity cribEntity) { return getTextureID(cribEntity.getWoodType(), cribEntity.getColor()); }
+    private String getTextureID(CribWoodType wood, DyeColor color) { return wood.toString().toLowerCase() + "-" + color.getName(); }
+    
+    // Create the crib texture from multiple layers depending on crib wood material and wool color
+    private Identifier generateMultiTexture(CribWoodType wood, DyeColor color) throws IOException
+    {
+		BufferedImage frame = ImageIO.read(getClass().getResourceAsStream("/assets/mca/textures/entity/crib/frames/" + wood.toString().toLowerCase() + ".png"));
+		BufferedImage bed = ImageIO.read(getClass().getResourceAsStream("/assets/mca/textures/entity/crib/beds/" + color.getName() + ".png"));
+    	
+    	BufferedImage combined = new BufferedImage(TEXTURE_WIDTH, TEXTURE_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    	Graphics g = combined.getGraphics();
+    	g.drawImage(frame, 0, 0, null);
+    	g.drawImage(bed, 0, 0, null);
+    	g.dispose();
+    	
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(combined, "png", baos);
+        byte[] bytes = baos.toByteArray();
+    	
+    	NativeImageBackedTexture dynTex = new NativeImageBackedTexture(NativeImage.read(bytes));
+    	
+    	return MinecraftClient.getInstance().getTextureManager().registerDynamicTexture(MCA.MOD_ID, dynTex);
+    }
+
+    @Override
+    public Identifier getTexture(CribEntity crib) { return REGISTERED_TEXTURES.get(getTextureID(crib)); }
+}

@@ -1,5 +1,10 @@
 package net.mca.item;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import dev.architectury.core.item.ArchitecturySpawnEggItem;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -13,20 +18,21 @@ import net.mca.client.book.pages.CenteredTextPage;
 import net.mca.client.book.pages.DynamicListPage;
 import net.mca.client.book.pages.ScribbleTextPage;
 import net.mca.client.book.pages.TitlePage;
+import net.mca.entity.CribWoodType;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.Supporters;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public interface ItemsMCA {
     DeferredRegister<Item> ITEMS = DeferredRegister.create(MCA.MOD_ID, RegistryKeys.ITEM);
@@ -63,6 +69,10 @@ public interface ItemsMCA {
     RegistrySupplier<Item> FAMILY_TREE = register("family_tree", () -> new FamilyTreeItem(baseProps()));
 
     RegistrySupplier<Item> BOUQUET = register("bouquet", () -> new BouquetItem(baseProps()));
+
+//    RegistrySupplier<Item> CRIB = register("crib", () -> new CribItem(unstackableProps(), CribWoodType.OAK, DyeColor.RED));
+    
+    List<RegistrySupplier<Item>> CRIBS = registerAllCribTypes();
 
     RegistrySupplier<Item> POTION_OF_FEMINITY = register("potion_of_feminity", () -> new PotionOfMetamorphosisItem(baseProps().maxCount(1), Gender.FEMALE));
     RegistrySupplier<Item> POTION_OF_MASCULINITY = register("potion_of_masculinity", () -> new PotionOfMetamorphosisItem(baseProps().maxCount(1), Gender.MALE));
@@ -196,6 +206,21 @@ public interface ItemsMCA {
         ITEM_GROUPS.register();
         ITEMS.register();
         TagsMCA.Blocks.bootstrap();
+    }
+    
+    static List<RegistrySupplier<Item>> registerAllCribTypes()
+    {
+    	List<RegistrySupplier<Item>> cribs = new ArrayList<>();
+    	
+		for(CribWoodType wood : CribWoodType.values())
+		{
+			for(DyeColor color : DyeColor.values())
+			{
+				cribs.add(register(wood.toString().toLowerCase() + "_" + color.getName() + "_crib", () -> new CribItem(unstackableProps(), wood, color)));
+			}
+		}
+		
+		return cribs;
     }
 
     static RegistrySupplier<Item> register(String name, Supplier<Item> item) {

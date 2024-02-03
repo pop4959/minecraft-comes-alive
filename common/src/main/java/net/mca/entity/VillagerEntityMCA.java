@@ -442,6 +442,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public final ActionResult interactAt(PlayerEntity player, Vec3d pos, @NotNull Hand hand) {
+    	// This allows hitbox interactions to be ignored if the player is carrying a child villager.
+    	if(getVehicle() != null && getVehicle().equals(player)) return ActionResult.PASS;
+    	
         ItemStack stack = player.getStackInHand(hand);
         boolean isOnBlacklist = Config.getInstance().villagerInteractionItemBlacklist.contains(Registries.ITEM.getId(stack.getItem()).toString());
         if (hand.equals(Hand.MAIN_HAND) && !isOnBlacklist && !stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && canInteractWithItemStackInHand(stack) && !getVillagerBrain().isPanicking()) {
@@ -463,6 +466,9 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
 
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
+    	// This allows hitbox interactions to be ignored if the player is carrying a child villager.
+    	if(getVehicle() != null && getVehicle().equals(player)) return ActionResult.PASS;
+    	
         ItemStack stack = player.getStackInHand(hand);
         if (!stack.isIn(TagsMCA.Items.VILLAGER_EGGS) && isAlive() && !hasCustomer() && !isSleeping() && canInteractWithItemStackInHand(stack) && !getVillagerBrain().isPanicking()) {
             if (isBaby()) {

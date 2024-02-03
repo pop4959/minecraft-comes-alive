@@ -9,10 +9,16 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.mca.*;
+import net.mca.ClientProxyAbstractImpl;
+import net.mca.Config;
+import net.mca.KeyBindings;
+import net.mca.MCAClient;
+import net.mca.ModelPredicatesMCA;
+import net.mca.ParticleTypesMCA;
 import net.mca.block.BlockEntityTypesMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.particle.InteractionParticle;
+import net.mca.client.render.CribEntityRenderer;
 import net.mca.client.render.GrimReaperRenderer;
 import net.mca.client.render.TombstoneBlockEntityRenderer;
 import net.mca.client.render.VillagerEntityMCARenderer;
@@ -48,6 +54,7 @@ public final class MCAFabricClient extends ClientProxyAbstractImpl implements Cl
         }
 
         EntityRendererRegistry.register(EntitiesMCA.GRIM_REAPER, GrimReaperRenderer::new);
+        EntityRendererRegistry.register(EntitiesMCA.CRIB, CribEntityRenderer::new);
 
         ParticleProviderRegistry.register(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
         ParticleProviderRegistry.register(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);

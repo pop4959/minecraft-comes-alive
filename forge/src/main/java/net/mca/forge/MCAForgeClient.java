@@ -1,10 +1,12 @@
 package net.mca.forge;
 
+import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import net.mca.*;
 import net.mca.block.BlockEntityTypesMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.gui.MCAScreens;
 import net.mca.client.particle.InteractionParticle;
+import net.mca.client.render.CribEntityRenderer;
 import net.mca.client.render.GrimReaperRenderer;
 import net.mca.client.render.TombstoneBlockEntityRenderer;
 import net.mca.client.render.VillagerEntityMCARenderer;
@@ -59,6 +61,7 @@ public final class MCAForgeClient {
         }
 
         EntityRenderers.register(EntitiesMCA.GRIM_REAPER.get(), GrimReaperRenderer::new);
+        EntityRendererRegistry.register(EntitiesMCA.CRIB, CribEntityRenderer::new);
 
         BlockEntityRendererFactories.register(BlockEntityTypesMCA.TOMBSTONE.get(), TombstoneBlockEntityRenderer::new);
 

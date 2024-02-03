@@ -8,6 +8,7 @@ import net.mca.*;
 import net.mca.block.BlockEntityTypesMCA;
 import net.mca.block.BlocksMCA;
 import net.mca.client.particle.InteractionParticle;
+import net.mca.client.render.CribEntityRenderer;
 import net.mca.client.render.GrimReaperRenderer;
 import net.mca.client.render.TombstoneBlockEntityRenderer;
 import net.mca.client.render.VillagerEntityMCARenderer;
@@ -50,6 +51,7 @@ public final class MCAQuiltClient extends ClientProxyAbstractImpl implements Cli
         }
 
         EntityRendererRegistry.register(EntitiesMCA.GRIM_REAPER, GrimReaperRenderer::new);
+        EntityRendererRegistry.register(EntitiesMCA.CRIB, CribEntityRenderer::new);
 
         ParticleProviderRegistry.register(ParticleTypesMCA.NEG_INTERACTION.get(), InteractionParticle.Factory::new);
         ParticleProviderRegistry.register(ParticleTypesMCA.POS_INTERACTION.get(), InteractionParticle.Factory::new);

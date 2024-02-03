@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
@@ -29,6 +30,16 @@ public interface CParameter<T, TrackedType> {
 
     static CDataParameter<NbtCompound> create(String id, NbtCompound def) {
         return new CDataParameter<>(id, TrackedDataHandlerRegistry.NBT_COMPOUND, def, (nbt, key) -> NbtCompoundDefaultGetters.getCompound(nbt, key, def), NbtCompound::put);
+    }
+
+    static CDataParameter<ItemStack> create(String id, ItemStack def) {
+    	return new CDataParameter<>("babyItem", TrackedDataHandlerRegistry.ITEM_STACK, ItemStack.EMPTY,
+			(nbt, key) -> NbtCompoundDefaultGetters.getItemStack(nbt, key, ItemStack.EMPTY), (nbt, key, stack) ->
+			{
+				NbtCompound item = new NbtCompound();
+				stack.writeNbt(item);
+				nbt.put(key, item);
+			});
     }
 
     static CDataParameter<BlockPos> create(String id, BlockPos def) {
