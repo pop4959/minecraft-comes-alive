@@ -53,6 +53,8 @@ public class CribEntity extends Entity implements CTrackedEntity<CribEntity>
 	
 	public DyeColor getColor() { return getTrackedValue(COLOR); }
 	public void setColor(DyeColor color) { setTrackedValue(COLOR, color); }
+
+	public ItemStack getBabyItem() { return getTrackedValue(BABY); }
 	
 	private boolean isOccupied() { return !getTrackedValue(BABY).equals(ItemStack.EMPTY) || infant != null; }
 

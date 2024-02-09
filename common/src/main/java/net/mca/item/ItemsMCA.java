@@ -22,11 +22,9 @@ import net.mca.entity.CribWoodType;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.resources.Supporters;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -69,8 +67,6 @@ public interface ItemsMCA {
     RegistrySupplier<Item> FAMILY_TREE = register("family_tree", () -> new FamilyTreeItem(baseProps()));
 
     RegistrySupplier<Item> BOUQUET = register("bouquet", () -> new BouquetItem(baseProps()));
-
-//    RegistrySupplier<Item> CRIB = register("crib", () -> new CribItem(unstackableProps(), CribWoodType.OAK, DyeColor.RED));
     
     List<RegistrySupplier<Item>> CRIBS = registerAllCribTypes();
 
@@ -216,7 +212,7 @@ public interface ItemsMCA {
 		{
 			for(DyeColor color : DyeColor.values())
 			{
-				cribs.add(register(wood.toString().toLowerCase() + "_" + color.getName() + "_crib", () -> new CribItem(unstackableProps(), wood, color)));
+				cribs.add(register(color.getName() + "_" + wood.toString().toLowerCase() + "_crib", () -> new CribItem(unstackableProps(), wood, color)));
 			}
 		}
 		

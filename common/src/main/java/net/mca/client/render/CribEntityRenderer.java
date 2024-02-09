@@ -21,9 +21,12 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
@@ -36,10 +39,15 @@ public class CribEntityRenderer extends EntityRenderer<CribEntity>
 	private final Map<String, Identifier> REGISTERED_TEXTURES = new HashMap<>();
 	
     protected CribEntityModel<CribEntity> model;
+    
+    private final ItemRenderer itemRenderer;
 
     public CribEntityRenderer(EntityRendererFactory.Context ctx)
     {
     	super(ctx);
+    	
+        this.itemRenderer = ctx.getItemRenderer();
+        
         this.model = new CribEntityModel<CribEntity>(TexturedModelData.of(CribEntityModel.getModelData(Dilation.NONE), TEXTURE_WIDTH, TEXTURE_HEIGHT).createModel());
         this.shadowRadius = 0.75F;
         
@@ -67,6 +75,17 @@ public class CribEntityRenderer extends EntityRenderer<CribEntity>
         this.model.setAngles(cribEntity, g, 0.0f, -0.1f, 0.0f, 0.0f);
         VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(texture));
         this.model.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0f, 1.0f, 1.0f, 1.0f);
+        
+        ItemStack babyItem = cribEntity.getBabyItem();
+        if(!babyItem.equals(ItemStack.EMPTY))
+        {
+        	matrixStack.translate(0.0f, 0.05f, 0f);
+            matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90.0f));
+            matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
+            matrixStack.scale(0.75f, 0.75f, 0.75f);
+            
+            this.itemRenderer.renderItem(babyItem, ModelTransformationMode.FIXED, i, OverlayTexture.DEFAULT_UV, matrixStack, vertexConsumerProvider, cribEntity.getWorld(), cribEntity.getId());
+        }
         
         matrixStack.pop();
         super.render(cribEntity, f, g, matrixStack, vertexConsumerProvider, i);
