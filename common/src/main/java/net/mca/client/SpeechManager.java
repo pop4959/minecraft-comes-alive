@@ -23,6 +23,8 @@ import java.util.UUID;
 public class SpeechManager {
     public static final SpeechManager INSTANCE = new SpeechManager();
 
+    public static final int TOTAL_VOICES = 10;
+
     private final LimitedLinkedHashMap<UUID, EntityTrackingSoundInstance> currentlyPlaying = new LimitedLinkedHashMap<>(10);
 
     @SuppressWarnings("deprecation")
@@ -70,7 +72,7 @@ public class SpeechManager {
                 String gender = villager.getGenetics().getGender().binary().getDataName();
                 if (Config.getInstance().enableOnlineTTS) {
                     String content = Language.getInstance().get(phrase);
-                    int tone = Math.min(24, (int) Math.floor(gene * 25.0f));
+                    int tone = Math.min(TOTAL_VOICES - 1, (int) Math.floor(gene * TOTAL_VOICES));
                     String voice = gender + "_" + tone;
                     OnlineSpeechManager.INSTANCE.play(voice, pitch, content, villager);
                 } else {

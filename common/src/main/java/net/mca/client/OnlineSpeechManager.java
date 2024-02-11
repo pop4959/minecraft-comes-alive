@@ -102,12 +102,12 @@ public class OnlineSpeechManager {
         file.getParentFile().mkdirs();
         try (FileOutputStream stream = new FileOutputStream(file)) {
             Map<String, String> params = Map.of(
-                    "text", text,
+                    "text", cleanPhrase(text),
                     "language", language,
                     "speaker", voice,
                     "file_format", "ogg",
                     "cache", "true",
-                    "prepare_languages", "true",
+                    "prepare_speakers", String.valueOf(SpeechManager.TOTAL_VOICES),
                     "load_async", "true"
             );
             String encodedURL = params.keySet().stream()
@@ -143,5 +143,35 @@ public class OnlineSpeechManager {
             MCA.LOGGER.warn("Failed to download " + url + ": " + e.getMessage());
             return false;
         }
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    public String cleanPhrase(String p) {
+        p = p.replaceAll("\\*.*\\*", "");
+        p = p.replace("%supporter%", "someone");
+        p = p.replace("%Supporter%", "someone");
+        p = p.replace("some %2$s", "something");
+        p = p.replace("at %2$s", "somewhere here");
+        p = p.replace("At %2$s", "Somewhere here");
+        p = p.replace(" to %2$s", " to here");
+        p = p.replace(", %1$s.", ".");
+        p = p.replace(", %1$s!", "!");
+        p = p.replace(" %1$s!", "!");
+        p = p.replace(", %1$s.", ".");
+        p = p.replace("%1$s!", " ");
+        p = p.replace("%1$s, ", " ");
+        p = p.replace("%1$s", " ");
+        p = p.replace("avoid %2$s", "avoid that location");
+        p = p.replace(" Should be around %2$s.", "");
+        p = p.replace("  ", " ");
+        p = p.replace(" ,", ",");
+        p = p.replace("Bahaha! ", "");
+        p = p.replace("Run awaaaaaay! ", "Run!");
+        p = p.replace("Aaaaaaaahhh! ", "");
+        p = p.replace("Aaaaaaahhh! ", "");
+        p = p.replace("Aaaaaaaaaaahhh! ", "");
+        p = p.replace("AAAAAAAAAAAAAAAAAAAHHHHHH!!!!!! ", "");
+        p = p.trim();
+        return p;
     }
 }

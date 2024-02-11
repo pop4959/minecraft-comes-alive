@@ -9,6 +9,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.mca.Config;
 import net.mca.MCA;
 import net.mca.client.OnlineSpeechManager;
+import net.mca.client.SpeechManager;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.GPT3;
 import net.mca.entity.ai.relationship.Personality;
@@ -88,7 +89,7 @@ public class Command {
                 String hash = OnlineSpeechManager.INSTANCE.getHash(text.getValue());
                 String language = Config.getInstance().onlineTTSLanguage;
                 CompletableFuture.runAsync(() -> {
-                    OnlineSpeechManager.INSTANCE.downloadAudio(language, "male_0", text.getValue(), hash);
+                    OnlineSpeechManager.INSTANCE.downloadAudio(language, "male_" + (SpeechManager.TOTAL_VOICES - 1), text.getValue(), hash);
                 });
             }
         }
