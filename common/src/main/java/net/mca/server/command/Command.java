@@ -20,6 +20,8 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -46,12 +48,36 @@ public class Command {
                 .then(register("destiny", Command::destiny))
                 .then(register("mail", Command::mail))
                 .then(register("verify").then(CommandManager.argument("email", StringArgumentType.greedyString()).executes(Command::verify)))
+                .then(register("chatAI")
+                        .executes(Command::chatAIHelp)
+                        .then(CommandManager.argument("model", StringArgumentType.greedyString())
+                                .executes(c -> Command.chatAI(c.getArgument("model", String.class), (new Config()).villagerChatAIEndpoint, ""))
+                                .then(CommandManager.argument("endpoint", StringArgumentType.greedyString())
+                                        .executes(c -> Command.chatAI(c.getArgument("model", String.class), c.getArgument("endpoint", String.class), ""))
+                                        .then(CommandManager.argument("token", StringArgumentType.greedyString())
+                                                .executes(c -> Command.chatAI(c.getArgument("model", String.class), c.getArgument("endpoint", String.class), c.getArgument("token", String.class)))))))
                 .then(register("tts")
                         .then(CommandManager.literal("enable").then(CommandManager.argument("enabled", BoolArgumentType.bool()).executes(Command::ttsEnable)))
                         .then(CommandManager.literal("language").then(CommandManager.argument("language", StringArgumentType.string()).executes(Command::ttsLanguage)))
                         .then(CommandManager.literal("scan").requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan))
                 )
         );
+    }
+
+    private static int chatAIHelp(CommandContext<ServerCommandSource> context) {
+        MutableText styled = (Text.translatable("mca.ai_help")).styled(s -> s
+                .withColor(Formatting.GOLD)
+                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations")));
+        sendMessage(context, styled);
+        return 0;
+    }
+
+    private static int chatAI(String model, String endpoint, String token) {
+        Config.getInstance().villagerChatAIModel = model;
+        Config.getInstance().villagerChatAIEndpoint = endpoint;
+        Config.getInstance().villagerChatAIToken = token;
+        Config.getInstance().save();
+        return 0;
     }
 
     private static int ttsEnable(CommandContext<ServerCommandSource> ctx) {
@@ -159,7 +185,7 @@ public class Command {
             // encode and create url
             String encodedURL = params.keySet().stream()
                     .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
-                    .collect(Collectors.joining("&", Config.getInstance().villagerChatAIServer + "verify?", ""));
+                    .collect(Collectors.joining("&", Config.getInstance().villagerChatAIEndpoint.replace("v1/mca/chat", "v1/mca/verify") + "?", ""));
 
             GPT3.Answer request = GPT3.request(encodedURL);
 
