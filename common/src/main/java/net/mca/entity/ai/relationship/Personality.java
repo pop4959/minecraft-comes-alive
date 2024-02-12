@@ -14,7 +14,6 @@ public enum Personality {
     ATHLETIC,      //Runs 15% faster
     CONFIDENT,     //Deals way more attack damage
     FRIENDLY,      //Bonus 15% points to all interactions
-    PEACEFUL,      //Will not fight when on full health.
     FLIRTY,        //likes to chat, flirt and kiss
     WITTY,         //likes jokes.
     SHY,           //TODO: 7.4.0

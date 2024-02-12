@@ -357,11 +357,6 @@ public class VillagerEntityMCA extends VillagerEntity implements VillagerLike<Vi
         //player just get a beating
         attackedEntity(target);
 
-        //villager is peaceful and won't hurt as long as not necessary
-        if (mcaBrain.getPersonality() == Personality.PEACEFUL && getHealth() == getMaxHealth()) {
-            return false;
-        }
-
         //base damage // todo attributes?
         float damage = getProfession() == ProfessionsMCA.GUARD.get() ? 9 : 3;
         float knockback = 1;
