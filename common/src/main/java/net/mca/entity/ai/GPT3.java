@@ -56,7 +56,7 @@ public class GPT3 {
 
             // Write the request body to the connection
             try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-                wr.writeBytes(requestBody);
+                wr.write(requestBody.getBytes(StandardCharsets.UTF_8));
                 wr.flush();
             }
 
@@ -168,8 +168,10 @@ public class GPT3 {
 
             if (message.error == null) {
                 // remember
-                pastDialogue.add(new Pair<>("user", msg));
-                pastDialogue.add(new Pair<>("assistant", message.answer));
+                if (message.answer != null) {
+                    pastDialogue.add(new Pair<>("user", msg));
+                    pastDialogue.add(new Pair<>("assistant", message.answer));
+                }
                 return Optional.ofNullable(message.answer);
             } else if (message.error.equals("invalid_model")) {
                 player.sendMessage(Text.literal("Invalid model!").formatted(Formatting.RED), false);
@@ -210,8 +212,10 @@ public class GPT3 {
     }
 
     static String cleanupAnswer(String answer) {
+        answer = answer.replace("\"", "");
+        answer = answer.replace("\n", " ");
         String[] parts = answer.split(":", 2);
-        return parts[parts.length - 1];
+        return parts[parts.length - 1].strip();
     }
 
     public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {

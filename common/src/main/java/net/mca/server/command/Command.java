@@ -49,14 +49,16 @@ public class Command {
                 .then(register("mail", Command::mail))
                 .then(register("verify").then(CommandManager.argument("email", StringArgumentType.greedyString()).executes(Command::verify)))
                 .then(register("chatAI")
+                        .requires(p -> p.hasPermissionLevel(2) || p.getServer().isSingleplayer())
                         .executes(Command::chatAIHelp)
-                        .then(CommandManager.argument("model", StringArgumentType.greedyString())
+                        .then(CommandManager.argument("model", StringArgumentType.string())
                                 .executes(c -> Command.chatAI(c.getArgument("model", String.class), (new Config()).villagerChatAIEndpoint, ""))
-                                .then(CommandManager.argument("endpoint", StringArgumentType.greedyString())
+                                .then(CommandManager.argument("endpoint", StringArgumentType.string())
                                         .executes(c -> Command.chatAI(c.getArgument("model", String.class), c.getArgument("endpoint", String.class), ""))
-                                        .then(CommandManager.argument("token", StringArgumentType.greedyString())
+                                        .then(CommandManager.argument("token", StringArgumentType.string())
                                                 .executes(c -> Command.chatAI(c.getArgument("model", String.class), c.getArgument("endpoint", String.class), c.getArgument("token", String.class)))))))
                 .then(register("tts")
+                        .requires(p -> p.getServer().isSingleplayer())
                         .then(CommandManager.literal("enable").then(CommandManager.argument("enabled", BoolArgumentType.bool()).executes(Command::ttsEnable)))
                         .then(CommandManager.literal("language").then(CommandManager.argument("language", StringArgumentType.string()).executes(Command::ttsLanguage)))
                         .then(CommandManager.literal("scan").requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan))
@@ -69,7 +71,7 @@ public class Command {
                 .withColor(Formatting.GOLD)
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations")));
         sendMessage(context, styled);
-        return 0;
+        return chatAI((new Config()).villagerChatAIModel, (new Config()).villagerChatAIEndpoint, (new Config()).villagerChatAIToken);
     }
 
     private static int chatAI(String model, String endpoint, String token) {
