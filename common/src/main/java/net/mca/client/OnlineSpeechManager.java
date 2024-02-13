@@ -61,9 +61,8 @@ public class OnlineSpeechManager {
         return toHex(MESSAGEDIGEST.digest()).toLowerCase(Locale.ROOT);
     }
 
-    public void play(String voice, float pitch, String text, Entity entity) {
+    public void play(String language, String voice, float pitch, String text, Entity entity) {
         String hash = getHash(text);
-        String language = Config.getInstance().onlineTTSLanguage;
         CompletableFuture.runAsync(() -> {
             if (downloadAudio(language, voice, text, hash)) {
                 play(language, voice, pitch, entity, hash);
