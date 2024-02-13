@@ -1,3 +1,7 @@
+# 7.5.14
+
+* TTS language is now detected automatically
+
 # 7.5.13
 
 * Updated chatAI to v2

@@ -10,8 +10,11 @@ import net.minecraft.client.sound.EntityTrackingSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextContent;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Language;
 import net.minecraft.util.math.random.Random;
@@ -71,10 +74,18 @@ public class SpeechManager {
 
                 String gender = villager.getGenetics().getGender().binary().getDataName();
                 if (Config.getInstance().enableOnlineTTS) {
-                    String content = Language.getInstance().get(phrase);
-                    int tone = Math.min(TOTAL_VOICES - 1, (int) Math.floor(gene * TOTAL_VOICES));
-                    String voice = gender + "_" + tone;
-                    OnlineSpeechManager.INSTANCE.play(voice, pitch, content, villager);
+                    String gameLang = client.options.language;
+                    if (LanguageMap.LANGUAGE_MAP.containsKey(gameLang) && !LanguageMap.LANGUAGE_MAP.get(gameLang).isEmpty()) {
+                        String content = Language.getInstance().get(phrase);
+                        int tone = Math.min(TOTAL_VOICES - 1, (int) Math.floor(gene * TOTAL_VOICES));
+                        String voice = gender + "_" + tone;
+                        OnlineSpeechManager.INSTANCE.play(LanguageMap.LANGUAGE_MAP.get(gameLang), voice, pitch, content, villager);
+                    } else {
+                        MutableText styled = (Text.translatable("command.tts_unsupported_language")).styled(s -> s
+                                .withColor(Formatting.RED)
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/TTS")));
+                        client.inGameHud.getChatHud().addMessage(styled);
+                    }
                 } else {
                     int tone = Math.min(9, (int) Math.floor(gene * 10.0f));
                     Identifier sound = new Identifier("mca_voices", phrase.toLowerCase(Locale.ROOT) + "/" + gender + "_" + tone);

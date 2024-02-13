@@ -30,7 +30,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -60,10 +59,7 @@ public class Command {
                 .then(register("tts")
                         .requires(p -> p.getServer().isSingleplayer())
                         .then(CommandManager.literal("enable").then(CommandManager.argument("enabled", BoolArgumentType.bool()).executes(Command::ttsEnable)))
-                        .then(CommandManager.literal("language").then(CommandManager.argument("language", StringArgumentType.string()).executes(Command::ttsLanguage)))
-                        .then(CommandManager.literal("scan").requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan))
-                )
-        );
+                        .then(CommandManager.literal("scan").then(CommandManager.argument("language", StringArgumentType.string()).requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan)))));
     }
 
     private static int chatAIHelp(CommandContext<ServerCommandSource> context) {
@@ -89,19 +85,6 @@ public class Command {
         return 0;
     }
 
-    private static int ttsLanguage(CommandContext<ServerCommandSource> ctx) {
-        Set<String> languages = Set.of("en", "es", "fr", "de", "it", "pt", "pl", "tr", "ru", "nl", "cs", "ar", "zh-cn", "hu", "ko", "ja", "hi");
-        String language = ctx.getArgument("language", String.class);
-        if (languages.contains(language)) {
-            Config.getInstance().onlineTTSLanguage = language;
-            Config.getInstance().save();
-            return 0;
-        } else {
-            sendMessage(ctx, "Choose one of: " + String.join(", ", languages));
-            return 1;
-        }
-    }
-
     private static boolean couldBePersonalityRelated(String phrase) {
         for (Personality value : Personality.values()) {
             if (phrase.contains(value.name().toLowerCase(Locale.ROOT))) {
@@ -116,7 +99,7 @@ public class Command {
             String key = text.getKey();
             if ((key.contains("dialogue.") || key.contains("interaction.") || key.contains("villager.")) && !couldBePersonalityRelated(key)) {
                 String hash = OnlineSpeechManager.INSTANCE.getHash(text.getValue());
-                String language = Config.getInstance().onlineTTSLanguage;
+                String language = ctx.getArgument("language", String.class);
                 CompletableFuture.runAsync(() -> {
                     OnlineSpeechManager.INSTANCE.downloadAudio(language, "male_" + (SpeechManager.TOTAL_VOICES - 1), text.getValue(), hash);
                 });
