@@ -1,3 +1,11 @@
+# 7.5.13
+
+* Updated chatAI to v2
+    * See https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations
+    * Older versions will no longer work, technical reasons
+* Added TTS v2
+    * See https://github.com/Luke100000/minecraft-comes-alive/wiki/TTS
+
 # 7.5.12
 
 * Fixed various smaller issues

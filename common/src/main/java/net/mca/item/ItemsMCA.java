@@ -88,7 +88,7 @@ public interface ItemsMCA {
     RegistrySupplier<Item> BOOK_FAMILY = register("book_family", () -> new ExtendedWrittenBookItem(baseProps(), new Book("family")
             .setBackground(MCA.locate("textures/gui/books/family.png"))
             .addPage(new TitlePage("family"))
-            .addSimplePages(8)));
+            .addSimplePages(6)));
 
     RegistrySupplier<Item> BOOK_ROSE_GOLD = register("book_rose_gold", () -> new ExtendedWrittenBookItem(baseProps(), new Book("rose_gold")
             .setBackground(MCA.locate("textures/gui/books/rose_gold.png"))

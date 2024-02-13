@@ -103,9 +103,17 @@ public final class Config implements Serializable {
     public int trackVillagerPositionEveryNTicks = 200;
 
     //AI
+    public String _read_this_before_using_villager_ai = "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations";
     public boolean enableVillagerChatAI = false;
     public int villagerChatAIIntelligence = 4;
-    public String villagerChatAIServer = "http://snoweagle.tk/";
+    public String villagerChatAIEndpoint = "https://api.conczin.net/v1/mca/chat";
+    public String villagerChatAIToken = "";
+    public String villagerChatAIModel = "mistral-small";
+
+    // TTS
+    public boolean enableOnlineTTS = false;
+    public String villagerTTSServer = "http://api.rk.conczin.net/";
+    public String onlineTTSLanguage = "en";
 
     //village behavior
     public float guardSpawnFraction = 0.175f;
