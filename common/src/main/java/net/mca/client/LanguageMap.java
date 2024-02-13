@@ -20,8 +20,8 @@ public class LanguageMap {
         LANGUAGE_MAP.put("cs_cz", "cs");
         LANGUAGE_MAP.put("cy_gb", "");
         LANGUAGE_MAP.put("da_dk", "");
-        LANGUAGE_MAP.put("de_at", "de");
-        LANGUAGE_MAP.put("de_ch", "de");
+        LANGUAGE_MAP.put("de_at", "");
+        LANGUAGE_MAP.put("de_ch", "");
         LANGUAGE_MAP.put("de_de", "de");
         LANGUAGE_MAP.put("el_gr", "");
         LANGUAGE_MAP.put("en_au", "en");
@@ -68,7 +68,7 @@ public class LanguageMap {
         LANGUAGE_MAP.put("jbo", "");
         LANGUAGE_MAP.put("ka_ge", "");
         LANGUAGE_MAP.put("ko_kr", "ko");
-        LANGUAGE_MAP.put("ksh_de", "de"); // Kölsch/Ripuarian - mapping to German
+        LANGUAGE_MAP.put("ksh_de", "");
         LANGUAGE_MAP.put("kw_gb", "");
         LANGUAGE_MAP.put("la_va", "");
         LANGUAGE_MAP.put("lb_lu", "");
@@ -82,7 +82,7 @@ public class LanguageMap {
         LANGUAGE_MAP.put("moh_us", "");
         LANGUAGE_MAP.put("ms_my", "");
         LANGUAGE_MAP.put("mt_mt", "");
-        LANGUAGE_MAP.put("nds_de", "de"); // Low German - mapping to German
+        LANGUAGE_MAP.put("nds_de", "de");
         LANGUAGE_MAP.put("nl_be", "nl");
         LANGUAGE_MAP.put("nl_nl", "nl");
         LANGUAGE_MAP.put("nn_no", "");
@@ -106,7 +106,7 @@ public class LanguageMap {
         LANGUAGE_MAP.put("sr_sp", "");
         LANGUAGE_MAP.put("sv_se", "");
         LANGUAGE_MAP.put("swg", "");
-        LANGUAGE_MAP.put("sxu", "de"); // Upper Saxon German - mapping to German
+        LANGUAGE_MAP.put("sxu", "");
         LANGUAGE_MAP.put("szl", "");
         LANGUAGE_MAP.put("ta_IN", "");
         LANGUAGE_MAP.put("th_th", "");
@@ -116,7 +116,7 @@ public class LanguageMap {
         LANGUAGE_MAP.put("tzl_tzl", "");
         LANGUAGE_MAP.put("uk_ua", "");
         LANGUAGE_MAP.put("vi_vn", "");
-        LANGUAGE_MAP.put("vmf_de", "de"); // Franconian - mapping to German
+        LANGUAGE_MAP.put("vmf_de", "");
         LANGUAGE_MAP.put("yo_ng", "");
         LANGUAGE_MAP.put("zh_cn", "zh-cn");
         LANGUAGE_MAP.put("zh_tw", "");

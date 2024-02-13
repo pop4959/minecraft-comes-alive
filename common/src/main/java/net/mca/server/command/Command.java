@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.mca.Config;
 import net.mca.MCA;
+import net.mca.client.LanguageMap;
 import net.mca.client.OnlineSpeechManager;
 import net.mca.client.SpeechManager;
 import net.mca.cobalt.network.NetworkHandler;
@@ -16,6 +17,8 @@ import net.mca.entity.ai.relationship.Personality;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
 import net.mca.server.world.data.PlayerSaveData;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
@@ -31,6 +34,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class Command {
@@ -95,14 +99,24 @@ public class Command {
     }
 
     private static int ttsScan(CommandContext<ServerCommandSource> ctx) {
-        for (Map.Entry<String, String> text : MCA.translations.entrySet()) {
-            String key = text.getKey();
-            if ((key.contains("dialogue.") || key.contains("interaction.") || key.contains("villager.")) && !couldBePersonalityRelated(key)) {
-                String hash = OnlineSpeechManager.INSTANCE.getHash(text.getValue());
-                String language = ctx.getArgument("language", String.class);
-                CompletableFuture.runAsync(() -> {
-                    OnlineSpeechManager.INSTANCE.downloadAudio(language, "male_" + (SpeechManager.TOTAL_VOICES - 1), text.getValue(), hash);
-                });
+        String language = ctx.getArgument("language", String.class);
+        for (LanguageDefinition definition : MinecraftClient.getInstance().getLanguageManager().getAllLanguages()) {
+            String ttsLang = LanguageMap.LANGUAGE_MAP.getOrDefault(definition.getCode(), "");
+            if (!ttsLang.isEmpty() && (language.equals("all") || ttsLang.equals(language))) {
+                MinecraftClient.getInstance().getLanguageManager().setLanguage(definition);
+                try {
+                    MinecraftClient.getInstance().reloadResources().get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+
+                for (Map.Entry<String, String> text : MCA.translations.entrySet()) {
+                    String key = text.getKey();
+                    if ((key.contains("dialogue.") || key.contains("interaction.") || key.contains("villager.")) && !couldBePersonalityRelated(key)) {
+                        String hash = OnlineSpeechManager.INSTANCE.getHash(text.getValue());
+                        OnlineSpeechManager.INSTANCE.downloadAudio(ttsLang, "male_" + (SpeechManager.TOTAL_VOICES - 1), text.getValue(), hash, true);
+                    }
+                }
             }
         }
 
