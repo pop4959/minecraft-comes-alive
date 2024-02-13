@@ -81,7 +81,7 @@ public class OnlineSpeechManager {
         Identifier soundLocation = MCA.locate("tts_cache/" + language + "-" + voice + "/" + hash);
         Sound sound = new Sound(soundLocation.getPath(), ConstantFloatProvider.create(1.0f), ConstantFloatProvider.create(1.0f), 1, Sound.RegistrationType.FILE, true, false, 16);
         SingleWeighedSoundEvents weightedSoundEvents = new SingleWeighedSoundEvents(sound, soundLocation, "");
-        EntityTrackingSoundInstance instance = new CustomEntityBoundSoundInstance(weightedSoundEvents, new SoundEvent(soundLocation), SoundCategory.NEUTRAL, 1.0f, pitch, entity, random.nextLong());
+        EntityTrackingSoundInstance instance = new CustomEntityBoundSoundInstance(weightedSoundEvents, SoundEvent.of(soundLocation), SoundCategory.NEUTRAL, 1.0f, pitch, entity, random.nextLong());
         client.getSoundManager().play(instance);
     }
 
