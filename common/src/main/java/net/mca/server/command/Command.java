@@ -75,6 +75,7 @@ public class Command {
     }
 
     private static int chatAI(String model, String endpoint, String token) {
+        Config.getInstance().enableVillagerChatAI = true;
         Config.getInstance().villagerChatAIModel = model;
         Config.getInstance().villagerChatAIEndpoint = endpoint;
         Config.getInstance().villagerChatAIToken = token;

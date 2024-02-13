@@ -8,12 +8,12 @@
     "MixinGoatEntity", "MixinHorseBaseEntity", "MixinMemoryModuleType", "MixinMilkBucketItem", "MixinPlayerEntity",
     "MixinPlayerInventory", "MixinProtoChunk", "MixinSensorType", "MixinServerPlayNetworkHandler", "MixinServerWorld",
     "MixinTranslatableText", "MixinVillagerEntity", "MixinVillagerEntityInvoker", "MixinVillagerProfession",
-    "MixinZombieEntity", "MixinZombieVillagerEntity", "client.MixinResourceFactory"
+    "MixinZombieEntity", "MixinZombieVillagerEntity"
   ],
   "client": [
     "client.MixinArmorFeatureRenderer", "client.MixinGameRenderer", "client.MixinHeldItemFeatureRenderer",
     "client.MixinLivingEntityRenderer", "client.MixinMessageHandler", "client.MixinPlayerEntityClient",
-    "client.MixinPlayerEntityRenderer", "client.MixinTranslationStorage"
+    "client.MixinPlayerEntityRenderer", "client.MixinSoundLoader", "client.MixinTranslationStorage"
   ],
   "injectors": {
     "defaultRequire": 1
