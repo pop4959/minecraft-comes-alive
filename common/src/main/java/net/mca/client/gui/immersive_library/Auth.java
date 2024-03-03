@@ -115,9 +115,6 @@ public class Auth {
                          data-shape="rectangular"
                          data-logo_alignment="left">
                     </div>
-                        
-                    <br/>
-                    <a href="">Privacy policy</a>
                 </div>
             </div>
             </body>
