@@ -81,3 +81,14 @@ components.java {
         skip()
     }
 }
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = rootProject.artifactId
+            groupId = rootProject.groupId
+            version = version + "+quilt"
+            from components.java
+        }
+    }
+}

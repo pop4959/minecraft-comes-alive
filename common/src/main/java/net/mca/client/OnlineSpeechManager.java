@@ -64,7 +64,7 @@ public class OnlineSpeechManager {
     public void play(String language, String voice, float pitch, String text, Entity entity) {
         String hash = getHash(text);
         CompletableFuture.runAsync(() -> {
-            if (downloadAudio(language, voice, text, hash)) {
+            if (downloadAudio(language, voice, text, hash, false)) {
                 play(language, voice, pitch, entity, hash);
             } else if (!warningIssued) {
                 warningIssued = true;
@@ -84,7 +84,7 @@ public class OnlineSpeechManager {
         client.getSoundManager().play(instance);
     }
 
-    public boolean downloadAudio(String language, String voice, String text, String hash) {
+    public boolean downloadAudio(String language, String voice, String text, String hash, boolean dry) {
         File file = new File("tts_cache/" + language + "-" + voice + "/" + hash + ".ogg");
         if (file.exists()) {
             if (file.length() == 0) {
@@ -112,29 +112,32 @@ public class OnlineSpeechManager {
             String encodedURL = params.keySet().stream()
                     .map(key -> key + "=" + URLEncoder.encode(params.get(key), StandardCharsets.UTF_8))
                     .collect(Collectors.joining("&", Config.getInstance().villagerTTSServer + "v1/tts/xtts-v2?", ""));
-            return downloadFile(encodedURL, stream);
+            return downloadFile(encodedURL, stream, dry);
         } catch (IOException e) {
             MCA.LOGGER.warn("Failed to open file " + file.getPath());
         }
         return false;
     }
 
-    private boolean downloadFile(String url, OutputStream output) {
+    private boolean downloadFile(String url, OutputStream output, boolean dry) {
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
 
             int totalBytesRead = 0;
-
             try (InputStream input = connection.getInputStream()) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = input.read(buffer)) != -1) {
                     output.write(buffer, 0, bytesRead);
                     totalBytesRead += bytesRead;
+                    if (dry) {
+                        break;
+                    }
                 }
             }
+
             connection.disconnect();
 
             return totalBytesRead > 100;

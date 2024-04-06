@@ -185,6 +185,7 @@ public class GPT3 {
             } else if (message.error.equals("limit_premium")) {
                 player.sendMessage(Text.translatable("mca.limit.premium").formatted(Formatting.RED), false);
             } else {
+                MCA.LOGGER.error(message.error);
                 player.sendMessage(Text.translatable("mca.ai_broken").formatted(Formatting.RED), false);
             }
         } catch (Exception e) {
