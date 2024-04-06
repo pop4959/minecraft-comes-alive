@@ -7,3 +7,14 @@ dependencies {
 architectury {
   common(rootProject.enabled_platforms.split(","))
 }
+
+publishing {
+  publications {
+    mavenCommon(MavenPublication) {
+      artifactId = rootProject.artifactId
+      groupId = rootProject.groupId
+      version = version + "+common"
+      from components.java
+    }
+  }
+}
