@@ -1,17 +1,11 @@
 package net.mca.entity.ai;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import net.mca.Config;
 import net.mca.MCA;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.mixin.MixinServerPlayNetworkHandler;
 import net.mca.util.WorldUtils;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Pair;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataOutputStream;
@@ -21,7 +15,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import static net.mca.entity.VillagerLike.VILLAGER_NAME;
 
@@ -30,23 +23,26 @@ import static net.mca.entity.VillagerLike.VILLAGER_NAME;
  * @author CSCMe
  */
 public class InworldAI {
+    private record OpenConversation(String sessionID, Long lastInteractionTime) {}
 
-    private static String INWORLD_BASE_URL = "https://api.inworld.ai/v1/";
+    private final static String INWORLD_BASE_URL = "https://api.inworld.ai/v1/";
+    private final static int CONVERSATION_DISTANCE = 16;
+    private static final int CONVERSATION_TIME = 20 * 60;
 
-    // We don't need conversational memory, Inworld does that for us
+    // We don't need conversational memory. Inworld does that for us.
     // We also don't need to track session timeouts, the response will provide us with a new session_id if the current one is invalid
 
     /** Manages NPC UUID -> character resource name mappings */
     final static Map<UUID, String> managedCharacters = new HashMap<>();
-    /** Holds session IDs for open conversations */
-    final static Map<UUID, String> openConversations = new HashMap<>();
+    /** Map for open conversations */
+    final static Map<UUID, OpenConversation> openConversations = new HashMap<>();
 
     /**
      * Record to hold response data.
      * @param sessionId name does not match API documentation name session_id. The actual response differs from docs
      */
-    private record ResponseData(String name, String[] textList, String sessionId, RelationshipUpdate relationshipUpdate) {};
-    private record RelationshipUpdate(int trust, int respect, int familiar, int flirtatious, int attraction) {};
+    private record ResponseData(String name, String[] textList, String sessionId, RelationshipUpdate relationshipUpdate) {}
+    private record RelationshipUpdate(int trust, int respect, int familiar, int flirtatious, int attraction) {}
 
     /**
      * Sends a simpleSendTextRequest to INWORLD_BASE_URL + resourceName
@@ -75,7 +71,7 @@ public class InworldAI {
         // Create endpoint
         URL endpoint = new URL(INWORLD_BASE_URL + resourceName + ":simpleSendText");
         // Log request
-        MCA.LOGGER.debug("Sending %s to %s".formatted(requestBody, endpoint.toString()));
+        MCA.LOGGER.debug("InworldAI: Sending %s to %s".formatted(requestBody, endpoint.toString()));
         // Create connection
         HttpsURLConnection con = (HttpsURLConnection) endpoint.openConnection();
         // Set connection properties
@@ -96,29 +92,29 @@ public class InworldAI {
         // Convert response to record
         ResponseData responseData = new Gson().fromJson(responseString, ResponseData.class);
         // Log response
-        MCA.LOGGER.debug("Received %s".formatted(responseString));
+        MCA.LOGGER.debug("InworldAI: Received %s".formatted(responseString));
         return responseData;
     }
 
     /**
      * Gets an answer for a specific message from player for villager.
-     * Adds/Updates conversation context pair in {@link #openConversations openConversations}.
+     * Adds/Updates openConversation object in {@link #openConversations openConversations}.
      * @param player The player requesting the answer
      * @param villager The villager responding
      * @param msg The message
-     * @return
+     * @return {@code Optional.EMPTY} on error, Optional containing the answer to a message on success
      */
     public static Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         // Variables needed for later
         UUID villagerID = villager.getUuid();
-
+        OpenConversation previousConversationData = openConversations.getOrDefault(villagerID, new OpenConversation("", 0L));
         ResponseData response;
         // Fetch response data. Abort if error
         try {
             // Get required variables
             UUID playerID = player.getUuid();
             String playerName = player.getName().getString();
-            String sessionID = openConversations.getOrDefault(villagerID, "");
+            String sessionID = previousConversationData.sessionID;
             String resourceName = managedCharacters.get(villagerID);
 
             assert resourceName != null;
@@ -132,7 +128,7 @@ public class InworldAI {
         assert response != null;
 
         // Update sessionId for future interactions
-        openConversations.put(villagerID, response.sessionId);
+        openConversations.put(villagerID, new OpenConversation(response.sessionId, villager.getWorld().getTime()));
 
         // TODO! Use response data to modify heart level
 
@@ -163,9 +159,31 @@ public class InworldAI {
                 UUID villagerID = villager.getUuid();
                 // Add first match to managedCharacters
                 managedCharacters.put(villagerID, resourceName);
+                MCA.LOGGER.debug("InworldAI: Mapped %s (%s) to %s".formatted(searchName, villagerID, resourceName));
                 break;
             }
         }
+    }
+
+    /**
+     * Checks if a villager is managed by InworldAI
+     * @param villagerID UUID of the villager
+     * @return {@code true} if the villager is managed by InworldAI, {@code false} otherwise
+     */
+    public static boolean villagerManagedByInworld(UUID villagerID) {
+        return managedCharacters.containsKey(villagerID);
+    }
+
+    /**
+     * Checks if the player is in a conversation with a specific villager
+     * @param villager VillagerEntityMCA object of villager to be checked
+     * @param player ServerPlayerEntity object of player to be checked
+     * @return {@code true}, if last conversation was less than
+     */
+    public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
+        OpenConversation conversation = openConversations.getOrDefault(villager.getUuid(), new OpenConversation("", 0L));
+        return villager.distanceTo(player) < CONVERSATION_DISTANCE
+                && villager.getWorld().getTime() < conversation.lastInteractionTime + CONVERSATION_TIME;
     }
 
     /**
