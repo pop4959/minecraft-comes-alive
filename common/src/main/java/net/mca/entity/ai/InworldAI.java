@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static net.mca.entity.VillagerLike.VILLAGER_NAME;
 
@@ -35,7 +36,7 @@ public class InworldAI {
     /** Manages NPC UUID -> character resource name mappings */
     final static Map<UUID, String> managedCharacters = new HashMap<>();
     /** Map for open conversations */
-    final static Map<UUID, OpenConversation> openConversations = new HashMap<>();
+    final static Map<UUID, OpenConversation> openConversations = new ConcurrentHashMap<>();
 
     /**
      * Record to hold response data.
@@ -77,7 +78,7 @@ public class InworldAI {
         // Set connection properties
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("authorization", "Basic" + Config.getInstance().inworldAIToken);
+        con.setRequestProperty("authorization", "Basic " + Config.getInstance().inworldAIToken);
 
         // Enable input and output streams
         con.setDoOutput(true);
@@ -127,11 +128,12 @@ public class InworldAI {
         }
         assert response != null;
 
-        // Update sessionId for future interactions
+        // Update sessionId and time for future interactions
         openConversations.put(villagerID, new OpenConversation(response.sessionId, villager.getWorld().getTime()));
 
-        // TODO! Use response data to modify heart level
+        // TODO! Use response data to modify heart level and character emotion
 
+        // TODO: Consider replacing with String.join
         // Build response String
         StringBuilder builder = new StringBuilder();
         for (String part : response.textList) {
