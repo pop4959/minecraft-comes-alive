@@ -75,7 +75,7 @@ public class Command {
                         .then(register("addCharacter")
                                 .then(CommandManager.argument("villager_name", StringArgumentType.string())
                                         .then(CommandManager.argument("character_endpoint", StringArgumentType.string())
-                                                .executes(c -> Command.inworldAICharacter(c.getArgument("villager_name", String.class), c.getArgument("character_endpoint", String.class)))
+                                                .executes(c -> Command.inworldAICharacter(c, c.getArgument("villager_name", String.class), c.getArgument("character_endpoint", String.class)))
                                         )
                                 )
                         )
@@ -99,8 +99,9 @@ public class Command {
         return 0;
     }
 
-    private static int inworldAICharacter(String name, String endpoint) {
-        InworldAI.addManagedCharacter(name, endpoint);
+    private static int inworldAICharacter(CommandContext<ServerCommandSource> context, String name, String endpoint) {
+        ServerPlayerEntity player = context.getSource().getPlayer();
+        InworldAI.addManagedCharacter(player, name, endpoint);
         return 0;
     }
 
