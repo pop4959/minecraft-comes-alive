@@ -110,6 +110,11 @@ public final class Config implements Serializable {
     public String villagerChatAIToken = "";
     public String villagerChatAIModel = "mistral-small";
 
+    // Inworld AI
+    public boolean enableInworldAI = false;
+    public String inworldAIToken = "";
+    public String inworldAIStudioToken = "";
+
     // TTS
     public boolean enableOnlineTTS = false;
     public String villagerTTSServer = "http://api.rk.conczin.net/";

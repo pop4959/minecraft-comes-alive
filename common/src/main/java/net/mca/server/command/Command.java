@@ -13,6 +13,7 @@ import net.mca.client.OnlineSpeechManager;
 import net.mca.client.SpeechManager;
 import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.ai.GPT3;
+import net.mca.entity.ai.InworldAI;
 import net.mca.entity.ai.relationship.Personality;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
@@ -63,7 +64,23 @@ public class Command {
                 .then(register("tts")
                         .requires(p -> p.getServer().isSingleplayer())
                         .then(CommandManager.literal("enable").then(CommandManager.argument("enabled", BoolArgumentType.bool()).executes(Command::ttsEnable)))
-                        .then(CommandManager.literal("scan").then(CommandManager.argument("language", StringArgumentType.string()).requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan)))));
+                        .then(CommandManager.literal("scan").then(CommandManager.argument("language", StringArgumentType.string()).requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan))))
+                .then(register("inworldAI")
+                        .requires(p -> p.getServer().isSingleplayer())
+                        .then(register("keys")
+                                .then(CommandManager.argument("api_key", StringArgumentType.string())
+                                        .executes(c -> Command.inworldAIKeys(c.getArgument("api_key", String.class), ""))
+                                        .then(CommandManager.argument("studio_key", StringArgumentType.string())
+                                                .executes(c -> Command.inworldAIKeys(c.getArgument("api_key", String.class), c.getArgument("studio_key", String.class))))))
+                        .then(register("addCharacter")
+                                .then(CommandManager.argument("villager_name", StringArgumentType.string())
+                                        .then(CommandManager.argument("character_endpoint", StringArgumentType.string())
+                                                .executes(c -> Command.inworldAICharacter(c.getArgument("villager_name", String.class), c.getArgument("character_endpoint", String.class)))
+                                        )
+                                )
+                        )
+                )
+        );
     }
 
     private static int chatAIHelp(CommandContext<ServerCommandSource> context) {
@@ -72,6 +89,19 @@ public class Command {
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations")));
         sendMessage(context, styled);
         return chatAI((new Config()).villagerChatAIModel, (new Config()).villagerChatAIEndpoint, (new Config()).villagerChatAIToken);
+    }
+
+    private static int inworldAIKeys(String api_key, String studio_key) {
+        Config.getInstance().enableInworldAI = true;
+        Config.getInstance().inworldAIToken = api_key;
+        Config.getInstance().inworldAIStudioToken = studio_key;
+        Config.getInstance().save();
+        return 0;
+    }
+
+    private static int inworldAICharacter(String name, String endpoint) {
+        InworldAI.addManagedCharacter(name, endpoint);
+        return 0;
     }
 
     private static int chatAI(String model, String endpoint, String token) {
