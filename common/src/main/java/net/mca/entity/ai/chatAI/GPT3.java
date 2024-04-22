@@ -1,11 +1,11 @@
-package net.mca.entity.ai;
+package net.mca.entity.ai.chatAI;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.mca.Config;
 import net.mca.MCA;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.entity.ai.gpt3Modules.*;
+import net.mca.entity.ai.chatAI.gpt3Modules.*;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
@@ -22,18 +22,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static net.minecraft.util.Util.NIL_UUID;
-
-public class GPT3 {
+public class GPT3 implements ChatAIStrategy {
     private static final int MIN_MEMORY = 100;
     private static final int MAX_MEMORY = 600;
     private static final int MAX_MEMORY_TIME = 20 * 60 * 45;
-    private static final int CONVERSATION_TIME = 20 * 60;
-    private static final int CONVERSATION_DISTANCE = 16;
 
     private static final Map<UUID, List<Pair<String, String>>> memory = new HashMap<>();
     private static final Map<UUID, Long> lastInteractions = new HashMap<>();
-    private static final Map<UUID, UUID> lastInteraction = new HashMap<>();
 
     public static String translate(String phrase) {
         return phrase.replace("_", " ").toLowerCase(Locale.ROOT).replace("mca.", "");
@@ -97,7 +92,7 @@ public class GPT3 {
         }
     }
 
-    public static Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
+    public Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         try {
             String playerName = player.getName().getString();
             String villagerName = villager.getName().getString();
@@ -108,7 +103,6 @@ public class GPT3 {
                 memory.remove(villager.getUuid());
             }
             lastInteractions.put(villager.getUuid(), time);
-            lastInteraction.put(player.getUuid(), villager.getUuid());
 
             // remember phrase
             List<Pair<String, String>> pastDialogue = memory.computeIfAbsent(villager.getUuid(), key -> new LinkedList<>());
@@ -217,11 +211,5 @@ public class GPT3 {
         answer = answer.replace("\n", " ");
         String[] parts = answer.split(":", 2);
         return parts[parts.length - 1].strip();
-    }
-
-    public static boolean inConversationWith(VillagerEntityMCA villager, ServerPlayerEntity player) {
-        return villager.distanceTo(player) < CONVERSATION_DISTANCE
-                && villager.getWorld().getTime() < lastInteractions.getOrDefault(villager.getUuid(), 0L) + CONVERSATION_TIME
-                && lastInteraction.getOrDefault(player.getUuid(), NIL_UUID).equals(villager.getUuid());
     }
 }

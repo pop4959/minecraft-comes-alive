@@ -12,8 +12,9 @@ import net.mca.client.LanguageMap;
 import net.mca.client.OnlineSpeechManager;
 import net.mca.client.SpeechManager;
 import net.mca.cobalt.network.NetworkHandler;
-import net.mca.entity.ai.GPT3;
-import net.mca.entity.ai.InworldAI;
+import net.mca.entity.ai.chatAI.ChatAI;
+import net.mca.entity.ai.chatAI.GPT3;
+import net.mca.entity.ai.chatAI.InworldAI;
 import net.mca.entity.ai.relationship.Personality;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
@@ -101,7 +102,7 @@ public class Command {
 
     private static int inworldAICharacter(CommandContext<ServerCommandSource> context, String name, String endpoint) {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        InworldAI.addManagedCharacter(player, name, endpoint);
+        ChatAI.addChatAIStrategyToVillager(player, name, new InworldAI(endpoint));
         return 0;
     }
 

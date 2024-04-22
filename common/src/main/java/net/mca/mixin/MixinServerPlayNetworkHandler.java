@@ -2,8 +2,9 @@ package net.mca.mixin;
 
 import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
-import net.mca.entity.ai.GPT3;
-import net.mca.entity.ai.InworldAI;
+import net.mca.entity.ai.chatAI.ChatAI;
+import net.mca.entity.ai.chatAI.GPT3;
+import net.mca.entity.ai.chatAI.InworldAI;
 import net.mca.util.WorldUtils;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -38,45 +39,17 @@ public class MixinServerPlayNetworkHandler {
         if (Config.getInstance().enableVillagerChatAI) {
             String msg = StringUtils.normalizeSpace(message.chatMessage());
             if (!msg.startsWith("/")) {
-                List<VillagerEntityMCA> entities = WorldUtils.getCloseEntities(player.getWorld(), player, 32, VillagerEntityMCA.class);
-
-                // talk to specific villager
-                String search = normalize(msg);
-                // Did we enter the first block and have this conversation already? Needed because Mixins can't return
-                boolean talked = false;
-
-                // Have a conversation with a specific villager. If the message contains the name of a villager, talk to that villager
-                for (VillagerEntityMCA villager : entities) {
-                    String name = normalize(villager.getTrackedValue(VILLAGER_NAME));
-                    if (search.contains(name)) {
-                        runAsyncAnswerRequest(villager, player, msg);
-                        talked = true;
-                        break;
-                    }
-                }
-
-                // If the message was not directed at a specific villager, talk to the last villager the player talked to
-                if (!talked) {
-                    for (VillagerEntityMCA villager : entities) {
-                        if (GPT3.inConversationWith(villager, player) || InworldAI.inConversationWith(villager, player)) {
-                            runAsyncAnswerRequest(villager, player, msg);
-                            break;
-                        }
-                    }
-                }
+                // Check if there's an eligible villager for the conversation
+                Optional<VillagerEntityMCA> villager = ChatAI.getVillagerForConversation(player, msg);
+                // Yes? => Talk to it
+                villager.ifPresent(villagerEntityMCA -> runAsyncAnswerRequest(player, villagerEntityMCA, msg));
             }
         }
     }
 
-    private void runAsyncAnswerRequest(VillagerEntityMCA villager, ServerPlayerEntity player, String msg) {
+    private void runAsyncAnswerRequest(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         CompletableFuture.runAsync(() -> {
-            Optional<String> answer;
-            // Check if villager is managed by InworldAI
-            if (Config.getInstance().enableInworldAI && InworldAI.villagerManagedByInworld(villager.getUuid())) {
-                answer = InworldAI.answer(player, villager, msg);
-            } else {
-                answer = GPT3.answer(player, villager, msg);
-            }
+            Optional<String> answer = ChatAI.answer(player, villager, msg);
             answer.ifPresent(a -> villager.conversationManager.addMessage(player, Text.literal(a)));
         });
     }
