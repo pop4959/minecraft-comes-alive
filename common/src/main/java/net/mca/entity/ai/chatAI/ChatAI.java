@@ -92,25 +92,18 @@ public class ChatAI {
     }
 
     /**
-     * Checks if the player has a valid active conversation with a nearby villager.
-     * If not, checks if the message contains the name of any specific villagers and that villager is nearby. First match.
+     * Checks if the message contains the name of any specific villagers and that villager is nearby. First match.
+     * If not, checks if the player has a valid active conversation with a nearby villager.
      * @param player The player in the conversation
      * @param msg The message
      * @return {@code Optional.Empty} if no valid villager was found, Optional containing the VillagerEntityMCA object otherwise
      */
     public static Optional<VillagerEntityMCA> getVillagerForConversation(ServerPlayerEntity player, String msg) {
         UUID playerUUID = player.getUuid();
-        // Get current open conversation of player
-        OpenConversation conv = currentConversations.getOrDefault(playerUUID, new OpenConversation(playerUUID, 0L));
         // Get nearby villagers
         List<VillagerEntityMCA> nearbyVillagers = WorldUtils.getCloseEntities(player.getWorld(), player, VILLAGER_SEARCH_RANGE, VillagerEntityMCA.class);
-        // Find first nearby villager matching the UUID of the conversation
-        Optional<VillagerEntityMCA> optionalVillager = nearbyVillagers.stream().filter((v) -> conv.villagerUUID.equals(v.getUuid())).findFirst();
-        // Return if found
-        if (optionalVillager.isPresent() && isInConversationWith(player, optionalVillager.get())) {
-            return optionalVillager;
-        }
-        // Otherwise check the message for names
+
+        // Find name in message
         String normalizedMsg = normalizeString(msg);
         for (VillagerEntityMCA villager : nearbyVillagers) {
             String normalizedName = normalizeString(villager.getTrackedValue(VILLAGER_NAME));
@@ -118,6 +111,16 @@ public class ChatAI {
             if (normalizedMsg.contains(normalizedName)) {
                 return Optional.of(villager);
             }
+        }
+
+        // Otherwise get current open conversation of player
+        OpenConversation conv = currentConversations.getOrDefault(playerUUID, new OpenConversation(playerUUID, 0L));
+
+        // Find first nearby villager matching the UUID of the conversation
+        Optional<VillagerEntityMCA> optionalVillager = nearbyVillagers.stream().filter((v) -> conv.villagerUUID.equals(v.getUuid())).findFirst();
+        // Return if found
+        if (optionalVillager.isPresent() && isInConversationWith(player, optionalVillager.get())) {
+            return optionalVillager;
         }
 
         return Optional.empty();

@@ -120,7 +120,11 @@ public class InworldAI implements ChatAIStrategy {
         }
 
         // TODO! Use response data to modify heart level and character emotion
-        return Optional.of(String.join("", response.textList));
+        StringBuilder builder = new StringBuilder();
+        for (String s : response.textList) {
+            builder.append(s);
+        }
+        return Optional.of(builder.toString());
     }
 
 }
