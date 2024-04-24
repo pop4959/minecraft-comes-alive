@@ -68,7 +68,7 @@ public class InworldAI implements ChatAIStrategy {
         // Create endpoint
         URL endpoint = new URL(INWORLD_BASE_URL + this.resourceName + ":simpleSendText");
         // Log request
-        MCA.LOGGER.debug("InworldAI: Sending %s to %s".formatted(requestBody, endpoint.toString()));
+        MCA.LOGGER.info("InworldAI: Sending %s to %s".formatted(requestBody, endpoint.toString()));
         // Create connection
         HttpsURLConnection con = (HttpsURLConnection) endpoint.openConnection();
         // Set connection properties
@@ -89,7 +89,7 @@ public class InworldAI implements ChatAIStrategy {
         // Convert response to record
         ResponseData responseData = new Gson().fromJson(responseString, ResponseData.class);
         // Log response
-        MCA.LOGGER.debug("InworldAI: Received %s".formatted(responseString));
+        MCA.LOGGER.info("InworldAI: Received %s".formatted(responseString));
         // Update sessionID
         this.sessionID = responseData.sessionId;
         return responseData;
@@ -109,8 +109,6 @@ public class InworldAI implements ChatAIStrategy {
             // Get required variables
             UUID playerID = player.getUuid();
             String playerName = player.getName().getString();
-
-            assert resourceName != null;
 
             // Get response
             response = simpleSendTextRequest(msg, playerName, playerID);

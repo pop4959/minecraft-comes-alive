@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public final class Config implements Serializable {
     @Serial
@@ -114,6 +115,7 @@ public final class Config implements Serializable {
     public boolean enableInworldAI = false;
     public String inworldAIToken = "";
     public String inworldAIStudioToken = "";
+    public Map<UUID, String> inworldAIResourceNames = new HashMap<>();
 
     // TTS
     public boolean enableOnlineTTS = false;

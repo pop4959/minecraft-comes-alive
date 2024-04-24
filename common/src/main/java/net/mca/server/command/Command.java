@@ -12,6 +12,7 @@ import net.mca.client.LanguageMap;
 import net.mca.client.OnlineSpeechManager;
 import net.mca.client.SpeechManager;
 import net.mca.cobalt.network.NetworkHandler;
+import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.chatAI.ChatAI;
 import net.mca.entity.ai.chatAI.GPT3;
 import net.mca.entity.ai.chatAI.InworldAI;
@@ -22,6 +23,7 @@ import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.network.message.SentMessage;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -35,10 +37,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
+// TODO: Merge inworldAI and chatAI commands (somehow)
 public class Command {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal(MCA.MOD_ID)
@@ -102,7 +105,11 @@ public class Command {
 
     private static int inworldAICharacter(CommandContext<ServerCommandSource> context, String name, String endpoint) {
         ServerPlayerEntity player = context.getSource().getPlayer();
-        ChatAI.addChatAIStrategyToVillager(player, name, new InworldAI(endpoint));
+        Optional< VillagerEntityMCA> optionalVillager = ChatAI.findVillagerInArea(player, name);
+        optionalVillager.ifPresent((v) -> {
+            Config.getInstance().inworldAIResourceNames.put(v.getUuid(), endpoint);
+            Config.getInstance().save();
+        });
         return 0;
     }
 

@@ -1,5 +1,6 @@
 package net.mca.entity.ai.chatAI;
 
+import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.util.WorldUtils;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,7 +23,7 @@ public class ChatAI {
     private static final int CONVERSATION_DISTANCE = 16;
 
     /** Map of villager UUIDs to strategies (i.e. managed by InworldAI or GPT3) */
-    private static final Map<UUID, ChatAIStrategy> strategies = new ConcurrentHashMap<>();
+    private static final Map<UUID, ChatAIStrategy> strategies = new HashMap<>();
 
     /**
      * Current conversation of player. <p>
@@ -40,7 +41,7 @@ public class ChatAI {
      */
     public static Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         // Get villager-specific strategy
-        ChatAIStrategy strategy = getOrAddDefaultStrategy(villager.getUuid());
+        ChatAIStrategy strategy = getOrAddStrategy(villager.getUuid());
 
         // Update the current conversation
         long time = villager.getWorld().getTime();
@@ -50,45 +51,16 @@ public class ChatAI {
         return strategy.answer(player, villager, msg);
     }
 
-
     /**
-     * Adds a specific ChatAIStrategy to a nearby villager with specified name
-     * @param player ServerPlayerEntity object of the player
-     * @param villagerName Name of the villager
-     * @param strategy Strategy to be used
-     * @return {@code true} if villager was found nearby, {@code false} otherwise
-     */
-    public static boolean addChatAIStrategyToVillager(ServerPlayerEntity player, String villagerName, ChatAIStrategy strategy) {
-        Optional<VillagerEntityMCA> villager = findVillagerInArea(player, villagerName);
-        if (villager.isEmpty()) {
-            return false;
-        }
-        strategies.put(villager.get().getUuid(), strategy);
-        return true;
-    }
-
-    /**
-     * Removes any ChatAIStrategy from a nearby villager with a specified name
-     * @param player ServerPlayerEntity object of the player
-     * @param villagerName Name of the villager
-     * @return {@code true} if villager was found nearby, {@code false} otherwise
-     */
-    public static boolean removeChatAIStrategyFromVillager(ServerPlayerEntity player, String villagerName) {
-        Optional<VillagerEntityMCA> villager = findVillagerInArea(player, villagerName);
-        if (villager.isEmpty()) {
-            return false;
-        }
-        strategies.remove(villager.get().getUuid());
-        return true;
-    }
-
-    /**
-     * Gets a strategy for a specific villager or adds {@link GPT3} if none is found
+     * Searches Config for a map entry for UUID, uses Inworld with said entry if found, else GPT3 (default)
      * @param villagerID UUID of villager
      * @return Object implementing the ChatAIStrategy interface
      */
-    private static ChatAIStrategy getOrAddDefaultStrategy(UUID villagerID) {
-        return strategies.computeIfAbsent(villagerID, (v) -> new GPT3());
+    private static ChatAIStrategy getOrAddStrategy(UUID villagerID) {
+        return strategies.computeIfAbsent(villagerID, (v) -> {
+            String inworldResourceName = Config.getInstance().inworldAIResourceNames.getOrDefault(v, "");
+            return inworldResourceName.isEmpty() ? new GPT3() : new InworldAI(inworldResourceName);
+        });
     }
 
     /**
@@ -141,8 +113,8 @@ public class ChatAI {
     }
 
     /**
-     * Scans the local area in a {@value #VILLAGER_SEARCH_RANGE} block range of the player for a villager with searchName.
-     * searchName is normalized
+     * Scans the local area in a {@value #VILLAGER_SEARCH_RANGE} block range of the player for a villager with searchName. <p>
+     * searchName is {@link #normalizeString normalized}.
      * @param player ServerPlayerEntity object of the reference player
      * @param searchName Name of the villager
      * @return Optional containing the VillagerEntityMCA of the first villager with the matching name, empty Optional otherwise
@@ -164,8 +136,7 @@ public class ChatAI {
     }
 
     /**
-     * Normalizes the String according to NFD and removes any accents, umlauts etc. <p>
-     * Copy of net.mca.mixin.MixinServerPlayNetworkHandler.normalize
+     * Normalizes the String according to NFD and removes any accents, umlauts, etc.
      * @param string The String to be normalized
      * @see <a href="https://unicode.org/reports/tr15/#Examples">Unicode Normalization Forms</a>
      */
