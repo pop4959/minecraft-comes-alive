@@ -11,9 +11,11 @@ import java.util.*;
 
 public class InworldAI implements ChatAIStrategy {
     private final SessionModule sessionModule;
+    private final RelationshipModule relationshipModule;
 
     public InworldAI(String resourceName) {
         this.sessionModule = new SessionModule(resourceName);
+        this.relationshipModule = new RelationshipModule();
     }
 
     // We don't need conversational memory. Inworld does that for us. (Within the same session, which is enough for us)
@@ -34,7 +36,8 @@ public class InworldAI implements ChatAIStrategy {
         Optional<Interaction> optionalResponse = sessionModule.getResponse(player, msg); //sessionModule.simpleSendTextRequest(msg, playerName, playerID);
         if (optionalResponse.isPresent()) {
             Interaction response = optionalResponse.get();
-            // TODO: Use ResponseData to modify relationship etc.
+            // Use response data to update heart level
+            relationshipModule.updateRelationship(response, player, villager);
             // TODO: Use ResponseData to modify mood
             // TODO: Use ResponseData to modify change state (follow, stay, etc.)
             // Optional
