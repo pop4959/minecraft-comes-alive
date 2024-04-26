@@ -6,7 +6,8 @@ public record Interaction(String name,
                           Emotion emotion,
                           String sessionId,
                           RelationshipUpdate relationshipUpdate,
-                          TriggerEvent[] activeTriggers) {
+                          TriggerEvent[] activeTriggers,
+                          TriggerEvent[] outgoingTriggers) {
 
 
     public record Emotion(SpaffCode behaviour, Strength strength) {

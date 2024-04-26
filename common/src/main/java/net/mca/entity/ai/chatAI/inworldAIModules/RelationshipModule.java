@@ -15,8 +15,6 @@ public class RelationshipModule {
         previousUpdate = new Interaction.RelationshipUpdate(0,0,0,0,0);
     }
 
-    private final static int HEARTS_TO_UPDATE = 100;
-
     /**
      * Updates the villager's heart level according to the difference in the relationshipUpdate of this and the last interaction
      * @param interaction The new interaction
@@ -36,10 +34,11 @@ public class RelationshipModule {
 
         // Get total, with different weights applied to different relationship values
         // TODO: Some **serious*** balancing
-        int weightedTotal = 1 * differences.attraction()
+        int weightedTotal = 1 * differences.trust()
+                + 1 * differences.respect()
                 + 1 * differences.familiar()
-                + 2 * differences.respect()
-                + 1 * differences.flirtatious();
+                + 1 * differences.flirtatious()
+                + 1 * differences.attraction();
 
         int heartsUpdate = weightedTotal / 10;
 
