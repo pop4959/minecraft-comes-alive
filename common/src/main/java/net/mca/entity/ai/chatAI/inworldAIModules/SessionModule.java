@@ -1,69 +1,117 @@
 package net.mca.entity.ai.chatAI.inworldAIModules;
 
 import com.google.gson.Gson;
-import net.mca.Config;
+
 import net.mca.MCA;
 import net.mca.entity.ai.chatAI.inworldAIModules.api.Interaction;
 import net.mca.entity.ai.chatAI.inworldAIModules.api.Requests;
+import net.mca.entity.ai.chatAI.inworldAIModules.api.Session;
+import net.mca.server.world.data.PlayerSaveData;
+import net.minecraft.server.network.ServerPlayerEntity;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Class to manage a session for Inworld Fully Managed Integration
+ */
 public class SessionModule {
 
     private final static String INWORLD_BASE_URL = "https://api.inworld.ai/v1/";
+    private final static long SESSION_MAX_VALID_TIME = 28 * 60 * 1000;
 
-    private final String resourceName;
+    private final String characterResourceName;
+    private final String workspaceID;
     private final Gson gson;
+
+    /** Timestamp of last interaction. Needed for session management */
+    private long lastInteraction;
+    /** Contains latest response from openSessionRequest. Current session */
+    private Session session = null;
+    /** For SimpleSendText */
+    @Deprecated
     private String sessionID = "";
 
-    public SessionModule(String resourceName) {
-        this.resourceName = resourceName;
+    public SessionModule(String characterResourceName) {
+        this.characterResourceName = characterResourceName;
+        this.workspaceID = characterResourceName.split("/")[1];
         this.gson = new Gson();
     }
 
-    /**
-     * Sets common properties of all Inworld API Requests
-     * @param con Newly created HttpURLConnection
-     * @throws ProtocolException See {@link HttpURLConnection#setRequestMethod}
-     */
-    private void setCommonProperties(HttpURLConnection con) throws ProtocolException {
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("authorization", "Basic " + Config.getInstance().inworldAIToken);
-    }
+    public Optional<Interaction> getResponse(ServerPlayerEntity player, String msg) {
+        long currentTime = System.currentTimeMillis();
+        // Open session if needed
+        if (session == null || currentTime - lastInteraction > SESSION_MAX_VALID_TIME) {
+            Optional<Session> sessionOptional = openSessionRequest(player.getUuid().toString(),
+                    player.getName().getString(),
+                    PlayerSaveData.get(player).getGender().getDataName());
 
-    /**
-     * Gets a response String from a HttpURLConnection
-     * @param con HttpURLConnection with all properties set
-     * @param body Body of the request
-     * @return String with the response of the request
-     * @throws IOException if any part of the request fails (Opening connection, deserializing, etc.)
-     */
-    private String getResponse(HttpURLConnection con, String body) throws IOException{
-        // Enable input and output streams
-        con.setDoOutput(true);
-        try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-            wr.write(body.getBytes(StandardCharsets.UTF_8));
-            wr.flush();
+            if (sessionOptional.isEmpty()) {
+                MCA.LOGGER.error("Failed to open Inworld session. Consult logs");
+                return Optional.empty();
+            }
+
+            session = sessionOptional.get();
         }
 
-        // Get response
-        InputStream response = con.getInputStream();
-        return new String(response.readAllBytes(), StandardCharsets.UTF_8);
+        Optional<Interaction> interactionOptional = sendTextRequest(msg);
+        if (interactionOptional.isPresent()) {
+            this.lastInteraction = currentTime;
+        }
+        return interactionOptional;
     }
 
+    /**
+     * Makes a openSession request.
+     * @param playerId Unique ID of player
+     * @param playerName Name of player
+     * @param playerGender Gender of player
+     * @return {@code Optional.empty()} if error on request
+     */
+    private Optional<Session> openSessionRequest(String playerId, String playerName, String playerGender) {
+        Requests.OpenSessionRequest.EndUserConfig config = new Requests.OpenSessionRequest.EndUserConfig(playerId, playerName, playerGender, null, null);
+        Requests.OpenSessionRequest request = new Requests.OpenSessionRequest(this.characterResourceName, config);
+        String requestBody = gson.toJson(request);
+        // Make request
+        String endpoint = INWORLD_BASE_URL + this.characterResourceName + ":openSession";
+        Optional<String> response = Requests.makeRequest(endpoint, requestBody);
+        if (response.isEmpty()) {
+            return Optional.empty();
+        }
+        Session session = gson.fromJson(response.get(), Session.class);
+        return Optional.of(session);
+    }
 
     /**
-     * This is temporary and will only exist until Fully Managed Integration is added.
+     * Makes a sendText request to the Inworld API.
+     * @param message Player message used in the request
+     * @return {@code Optional.EMPTY} if request failed, else Optional containing Interaction object with response data
+     */
+    private Optional<Interaction> sendTextRequest(String message) {
+        Requests.SendTextRequest request = new Requests.SendTextRequest(message);
+        String requestBody = gson.toJson(request);
+        // Create endpoint
+        String endpoint = INWORLD_BASE_URL + getSessionCharacterResourceName() + ":sendText";
+        // Make request
+        Optional<String> response = Requests.makeRequest(endpoint, requestBody, session.name());
+        if (response.isEmpty()) {
+            return Optional.empty();
+        }
+        // Parse the response
+        Interaction data = gson.fromJson(response.get(), Interaction.class);
+        return Optional.of(data);
+    }
+
+    /**
+     * Creates the session character endpoint needed for sendText and sendTrigger requests.
+     * Uses workspaceID, session name and session character name
+     * @return A string representing the resource name for the session character.
+     */
+    private String getSessionCharacterResourceName() {
+        return "workspaces/%s/sessions/%s/sessionCharacters/%s".formatted(workspaceID, session.name(), session.sessionCharacters()[0].character());
+    }
+
+    /**
      * Sends a simpleSendTextRequest to INWORLD_BASE_URL + resourceName.
      * Updates sessionID if required
      * @param message Message sent by player
@@ -71,38 +119,23 @@ public class SessionModule {
      * @param userID UUID of minecraft player
      * @return ResponseData object, being the deserialized json of the response
      */
-    public Optional<Interaction> simpleSendTextRequest(String message, String userName, UUID userID) {
-
+    @Deprecated
+    private Optional<Interaction> simpleSendTextRequest(String message, String userName, UUID userID) {
         // Create request body
-        Requests.SimpleTextRequest request = new Requests.SimpleTextRequest(this.resourceName, message, this.sessionID, userName, userID.toString());
+        Requests.SimpleTextRequest request = new Requests.SimpleTextRequest(this.characterResourceName, message, this.sessionID, userName, userID.toString());
         String requestBody = gson.toJson(request);
-        try {
-            // Create endpoint
-            URL endpoint = new URL(INWORLD_BASE_URL + this.resourceName + ":simpleSendText");
-
-            // Log request
-            MCA.LOGGER.info("InworldAI: Sending %s to %s".formatted(request, endpoint.toString()));
-
-            // Create connection
-            HttpsURLConnection con = (HttpsURLConnection) endpoint.openConnection();
-            // Set connection properties
-            setCommonProperties(con);
-            // Make request
-            String responseString = getResponse(con, requestBody);
-
-            // Log response
-            MCA.LOGGER.info("InworldAI: Received %s".formatted(responseString));
-
-            // Parse the response
-            Interaction data =  gson.fromJson(responseString, Interaction.class);
-            // Update sessionID
-            this.sessionID = data.sessionId();
-
-            return Optional.of(data);
-
-        } catch (IOException e) {
-            MCA.LOGGER.error("InworldAISimpleSendTextRequestError:" + e);
+        // Create endpoint
+        String endpoint = INWORLD_BASE_URL + this.characterResourceName + ":simpleSendText";
+        // Make request
+        Optional<String> response = Requests.makeRequest(endpoint, requestBody);
+        if (response.isEmpty()) {
             return Optional.empty();
         }
+        // Parse the response
+        Interaction data =  gson.fromJson(response.get(), Interaction.class);
+        // Update sessionID
+        this.sessionID = data.sessionId();
+        return Optional.of(data);
     }
+
 }

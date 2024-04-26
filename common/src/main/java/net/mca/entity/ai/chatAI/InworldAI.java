@@ -30,8 +30,8 @@ public class InworldAI implements ChatAIStrategy {
         UUID playerID = player.getUuid();
         String playerName = player.getName().getString();
 
-        // Get response (This is currently a bit awkward because it's not fully managed api yet)
-        Optional<Interaction> optionalResponse = sessionModule.simpleSendTextRequest(msg, playerName, playerID);
+        // Get response
+        Optional<Interaction> optionalResponse = sessionModule.getResponse(player, msg); //sessionModule.simpleSendTextRequest(msg, playerName, playerID);
         if (optionalResponse.isPresent()) {
             Interaction response = optionalResponse.get();
             // TODO: Use ResponseData to modify relationship etc.
@@ -39,7 +39,7 @@ public class InworldAI implements ChatAIStrategy {
             // TODO: Use ResponseData to modify change state (follow, stay, etc.)
             // Optional
 
-            return Optional.of(String.join("", optionalResponse.get().textList()));
+            return Optional.of(String.join("", response.textList()));
         } else {
             player.sendMessage(Text.translatable("mca.ai_broken").formatted(Formatting.RED), false);
             return Optional.empty();

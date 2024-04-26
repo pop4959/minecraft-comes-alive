@@ -1,10 +1,62 @@
 package net.mca.entity.ai.chatAI.inworldAIModules.api;
 
+import net.mca.Config;
+import net.mca.MCA;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
 public class Requests {
     public record SimpleTextRequest(String character, String text, String session_id, String endUserFullName, String endUserId) {}
     public record OpenSessionRequest(String name, EndUserConfig user) {
-        public record EndUserConfig(String endUserId, String givenName, String gender, String role, long age) {}
+        public record EndUserConfig(String endUserId, String givenName, String gender, String role, Long age) {}
     }
-    public record SendTextRequest(String session_character, String text) {}
-    public record SendTriggerRequest(String session_character, TriggerEvent triggerEvent, String endUserId) {}
+    public record SendTextRequest(String text) {}
+    public record SendTriggerRequest(TriggerEvent triggerEvent, String endUserId) {}
+
+
+    public static Optional<String> makeRequest(String urlString, String body) {
+        return makeRequest(urlString, body, "");
+    }
+
+    public static Optional<String> makeRequest(String urlString, String body, String sessionIDAuth) {
+        try {
+            URL url = new URL(urlString);
+            // Log request
+            MCA.LOGGER.info("InworldAI: Sending %s to %s".formatted(body, url.toString()));
+
+            // Create connection
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("authorization", "Basic " + Config.getInstance().inworldAIToken);
+            // Set second header if necessary
+            if (!sessionIDAuth.isEmpty()) {
+                con.setRequestProperty("Grpc-Metadata-session-id", sessionIDAuth);
+            }
+
+            // Enable input and output streams
+            con.setDoOutput(true);
+            try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+                wr.write(body.getBytes(StandardCharsets.UTF_8));
+                wr.flush();
+            }
+
+            // Get response
+            InputStream response = con.getInputStream();
+            String responseString = new String(response.readAllBytes(), StandardCharsets.UTF_8);
+
+            MCA.LOGGER.info("InworldAI: Received %s".formatted(responseString));
+
+            return Optional.of(responseString);
+        } catch (IOException e) {
+            MCA.LOGGER.error(e);
+            return Optional.empty();
+        }
+    }
 }
