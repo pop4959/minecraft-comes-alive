@@ -10,8 +10,10 @@ import net.mca.entity.ai.chatAI.inworldAIModules.api.TriggerEvent;
 import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Class to manage a session for Inworld Fully Managed Integration
@@ -25,13 +27,7 @@ public class SessionModule {
     private final String workspaceID;
     private final Gson gson;
 
-    /** Timestamp of last interaction. Needed for session management */
-    private long lastInteraction;
-    /** Contains latest response from openSessionRequest. Current session */
-    private Session session = null;
-    /** For SimpleSendText */
-    @Deprecated
-    private String sessionID = "";
+    private final Map<UUID, OpenSession> openSessionMap = new ConcurrentHashMap<>();
 
     public SessionModule(String characterResourceName) {
         this.characterResourceName = characterResourceName;
@@ -46,13 +42,18 @@ public class SessionModule {
      * @return {@code Optional.EMPTY} if the request failed, Optional containing Interaction object otherwise
      */
     public Optional<Interaction> getResponse(ServerPlayerEntity player, String msg) {
+        // Creates a new session if needed
         long currentTime = System.currentTimeMillis();
         if(!openSessionIfNeeded(player, currentTime)) {
             return Optional.empty();
         }
-        Optional<Interaction> interactionOptional = sendTextRequest(msg);
+
+        // Gets current session for player with this character and makes request
+        OpenSession openSession = openSessionMap.get(player.getUuid());
+        Optional<Interaction> interactionOptional = sendTextRequest(openSession.session(), msg);
         if (interactionOptional.isPresent()) {
-            this.lastInteraction = currentTime;
+            // Updates lastInteraction in openSessionMap
+            openSessionMap.put(player.getUuid(), new OpenSession(openSession.session(), currentTime));
         }
         return interactionOptional;
     }
@@ -65,15 +66,18 @@ public class SessionModule {
      * @return {@code Optional.EMPTY} if the request failed, Optional containing Interaction object otherwise
      */
     public Optional<Interaction> sendTrigger(ServerPlayerEntity player, TriggerEvent event) {
+        // Creates a new session if needed
         long currentTime = System.currentTimeMillis();
         if(!openSessionIfNeeded(player, currentTime)) {
             return Optional.empty();
         }
 
-        TriggerEvent properEvent = new TriggerEvent("workspaces/%s/triggers/".formatted(workspaceID) + event.trigger(), event.parameters());
-        Optional<Interaction> interactionOptional = sendTriggerRequest(properEvent, player.getUuid().toString());
+        // Gets current session for player with this character and makes request
+        OpenSession openSession = openSessionMap.get(player.getUuid());
+        Optional<Interaction> interactionOptional = sendTriggerRequest(openSession.session(), event, player.getUuid().toString());
         if (interactionOptional.isPresent()) {
-            this.lastInteraction = currentTime;
+            // Updates lastInteraction in openSessionMap
+            openSessionMap.put(player.getUuid(), new OpenSession(openSession.session(), currentTime));
         }
         return interactionOptional;
     }
@@ -101,14 +105,15 @@ public class SessionModule {
 
     /**
      * Makes a sendText request to the Inworld API.
+     * @param session Session object for the endpoint
      * @param message Player message used in the request
      * @return {@code Optional.EMPTY} if request failed, else Optional containing Interaction object with response data
      */
-    private Optional<Interaction> sendTextRequest(String message) {
+    private Optional<Interaction> sendTextRequest(Session session, String message) {
         Requests.SendTextRequest request = new Requests.SendTextRequest(message);
         String requestBody = gson.toJson(request);
         // Create endpoint
-        String endpoint = INWORLD_BASE_URL + getSessionCharacterResourceName() + ":sendText";
+        String endpoint = INWORLD_BASE_URL + getSessionCharacterResourceName(session) + ":sendText";
         // Make request
         Optional<String> response = Requests.makeRequest(endpoint, requestBody, session.name());
         if (response.isEmpty()) {
@@ -121,15 +126,16 @@ public class SessionModule {
 
     /**
      * Makes a sendTrigger request to the Inworld API
-      * @param event The triggerEvent of the request
+     * @param session Session object for the endpoint
+     * @param event The triggerEvent of the request
      * @param endUserId ID of the user
      * @return {@code Optional.EMPTY} if request failed, else Optional containing Interaction object with response data
      */
-    private Optional<Interaction> sendTriggerRequest(TriggerEvent event, String endUserId) {
+    private Optional<Interaction> sendTriggerRequest(Session session, TriggerEvent event, String endUserId) {
         Requests.SendTriggerRequest request = new Requests.SendTriggerRequest(event, endUserId);
         String requestBody = gson.toJson(request);
         // Create endpoint
-        String endpoint = INWORLD_BASE_URL + getSessionCharacterResourceName() + ":sendTrigger";
+        String endpoint = INWORLD_BASE_URL + getSessionCharacterResourceName(session) + ":sendTrigger";
         // Make request
         Optional<String> response = Requests.makeRequest(endpoint, requestBody, session.name());
         if (response.isEmpty()) {
@@ -143,9 +149,10 @@ public class SessionModule {
     /**
      * Creates the session character endpoint needed for sendText and sendTrigger requests.
      * Uses workspaceID, session name and session character name
+     * @param session The session for the endpoint
      * @return A string representing the resource name for the session character.
      */
-    private String getSessionCharacterResourceName() {
+    private String getSessionCharacterResourceName(Session session) {
         return "workspaces/%s/sessions/%s/sessionCharacters/%s".formatted(workspaceID, session.name(), session.sessionCharacters()[0].character());
     }
 
@@ -156,7 +163,8 @@ public class SessionModule {
      * @return {@code true} if a valid session exists, {@code false} if creation of a new session failed
      */
     private boolean openSessionIfNeeded(ServerPlayerEntity player, long currentTime) {
-        if (session == null || currentTime - lastInteraction > SESSION_MAX_VALID_TIME) {
+        OpenSession openSession = openSessionMap.getOrDefault(player.getUuid(), new OpenSession(null, 0));
+        if (openSession.session == null || currentTime - openSession.lastInteraction > SESSION_MAX_VALID_TIME) {
             Optional<Session> sessionOptional = openSessionRequest(player.getUuid().toString(),
                     player.getName().getString(),
                     PlayerSaveData.get(player).getGender().getDataName());
@@ -165,37 +173,19 @@ public class SessionModule {
                 MCA.LOGGER.error("Failed to open Inworld session. Consult logs");
                 return false;
             } else {
-                session = sessionOptional.get();
+                OpenSession newSession = new OpenSession(sessionOptional.get(), currentTime);
+                openSessionMap.put(player.getUuid(), newSession);
             }
         }
         return true;
     }
 
     /**
-     * Sends a simpleSendTextRequest to INWORLD_BASE_URL + resourceName.
-     * Updates sessionID if required
-     * @param message Message sent by player
-     * @param userName UserName of minecraft player
-     * @param userID UUID of minecraft player
-     * @return ResponseData object, being the deserialized json of the response
+     * Object to hold data for open sessions.
+     * This is a bit of a duplicate of {@link net.mca.entity.ai.chatAI.ChatAI ChatAI's OpenConversation}
+     * but over there it manages what villager will respond if no name is in the message, here it's the actual session
+     * @param session
+     * @param lastInteraction
      */
-    @Deprecated
-    private Optional<Interaction> simpleSendTextRequest(String message, String userName, UUID userID) {
-        // Create request body
-        Requests.SimpleTextRequest request = new Requests.SimpleTextRequest(this.characterResourceName, message, this.sessionID, userName, userID.toString());
-        String requestBody = gson.toJson(request);
-        // Create endpoint
-        String endpoint = INWORLD_BASE_URL + this.characterResourceName + ":simpleSendText";
-        // Make request
-        Optional<String> response = Requests.makeRequest(endpoint, requestBody);
-        if (response.isEmpty()) {
-            return Optional.empty();
-        }
-        // Parse the response
-        Interaction data =  gson.fromJson(response.get(), Interaction.class);
-        // Update sessionID
-        this.sessionID = data.sessionId();
-        return Optional.of(data);
-    }
-
+    private record OpenSession(Session session, long lastInteraction) {}
 }

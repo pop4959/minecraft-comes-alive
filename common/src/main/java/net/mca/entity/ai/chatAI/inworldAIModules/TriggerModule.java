@@ -25,11 +25,6 @@ public class TriggerModule {
             "try-go-home", (p, v) -> v.getResidency().goHome(p)
     );
 
-    public TriggerModule(String characterResourceName) {
-        // Could use studio api to set up character goals here
-        // Seems like a lot of work to add tho
-    }
-
     /**
      * Looks for outgoing triggers from the last interaction
      * and executes {@link #triggerActions specific actions} associated with different trigger names

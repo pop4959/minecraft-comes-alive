@@ -41,7 +41,7 @@ public class ChatAI {
      */
     public static Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         // Get villager-specific strategy
-        ChatAIStrategy strategy = getOrAddStrategy(villager.getUuid());
+        ChatAIStrategy strategy = computeStrategyIfAbsent(villager.getUuid());
 
         // Update the current conversation
         long time = villager.getWorld().getTime();
@@ -56,7 +56,7 @@ public class ChatAI {
      * @param villagerID UUID of villager
      * @return Object implementing the ChatAIStrategy interface
      */
-    private static ChatAIStrategy getOrAddStrategy(UUID villagerID) {
+    private static ChatAIStrategy computeStrategyIfAbsent(UUID villagerID) {
         return strategies.computeIfAbsent(villagerID, (v) -> {
             String inworldResourceName = Config.getInstance().inworldAIResourceNames.getOrDefault(v, "");
             return inworldResourceName.isEmpty() ? new GPT3() : new InworldAI(inworldResourceName);

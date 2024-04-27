@@ -25,10 +25,9 @@ public class Requests {
     }
 
     public static Optional<String> makeRequest(String urlString, String body, String sessionIDAuth) {
+        String responseString = "No response";
         try {
             URL url = new URL(urlString);
-            // Log request
-            MCA.LOGGER.info("InworldAI: Sending %s to %s".formatted(body, url.toString()));
 
             // Create connection
             HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
@@ -49,12 +48,14 @@ public class Requests {
 
             // Get response
             InputStream response = con.getInputStream();
-            String responseString = new String(response.readAllBytes(), StandardCharsets.UTF_8);
+            responseString = new String(response.readAllBytes(), StandardCharsets.UTF_8);
 
-            MCA.LOGGER.info("InworldAI: Received %s".formatted(responseString));
 
             return Optional.of(responseString);
         } catch (IOException e) {
+            // Log request
+            MCA.LOGGER.error("InworldAI: Sending %s to %s".formatted(body, urlString));
+            MCA.LOGGER.error("InworldAI: Received %s".formatted(responseString));
             MCA.LOGGER.error(e);
             return Optional.empty();
         }

@@ -18,7 +18,7 @@ public class InworldAI implements ChatAIStrategy {
     public InworldAI(String resourceName) {
         this.sessionModule = new SessionModule(resourceName);
         this.relationshipModule = new RelationshipModule();
-        this.triggerModule = new TriggerModule(resourceName);
+        this.triggerModule = new TriggerModule();
     }
 
     // We don't need conversational memory. Inworld does that for us. (Within the same session, which is enough for us)

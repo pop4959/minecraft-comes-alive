@@ -15,7 +15,6 @@ import net.mca.cobalt.network.NetworkHandler;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.chatAI.ChatAI;
 import net.mca.entity.ai.chatAI.GPT3;
-import net.mca.entity.ai.chatAI.InworldAI;
 import net.mca.entity.ai.relationship.Personality;
 import net.mca.network.s2c.OpenGuiRequest;
 import net.mca.server.ServerInteractionManager;
@@ -23,7 +22,6 @@ import net.mca.server.world.data.PlayerSaveData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.network.message.SentMessage;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -70,7 +68,7 @@ public class Command {
                         .then(CommandManager.literal("enable").then(CommandManager.argument("enabled", BoolArgumentType.bool()).executes(Command::ttsEnable)))
                         .then(CommandManager.literal("scan").then(CommandManager.argument("language", StringArgumentType.string()).requires(p -> p.getPlayer() != null && p.getPlayer().getEntityName().contains("Player")).executes(Command::ttsScan))))
                 .then(register("inworldAI")
-                        .requires(p -> p.getServer().isSingleplayer())
+                        .requires(p -> p.hasPermissionLevel(2) || p.getServer().isSingleplayer())
                         .then(register("keys")
                                 .then(CommandManager.argument("api_key", StringArgumentType.string())
                                         .executes(c -> Command.inworldAIKey(c.getArgument("api_key", String.class)))))
