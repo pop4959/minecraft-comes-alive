@@ -84,5 +84,4 @@ goals:
       intent: 'try-go-home-intent'
     repeatable: true
     actions:
-      - instruction: "inform {player} you're trying to go home."
-        send_trigger: 'try-go-home'
+      - send_trigger: 'try-go-home'
