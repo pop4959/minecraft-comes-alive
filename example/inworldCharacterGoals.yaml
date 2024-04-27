@@ -17,7 +17,6 @@ intents:
       - "You can move around"
       - "You're free to move"
       - "Go wherever you want"
-      - "Stop following me"
   - name: 'wear-armor-intent'
     training_phrases:
       - "Wear armor"
@@ -38,6 +37,13 @@ intents:
       - "Make your way home"
 
 goals:
+  - name: 'relationship-update'
+    activation:
+      trigger: 'relationship-trigger'
+    repeatable: true
+    actions:
+      - character_changes:
+          set_relationship: '{{p.status}}'
   - name: 'follow-player'
     activation:
       intent: 'follow-player-intent'
@@ -64,7 +70,7 @@ goals:
       intent: 'wear-armor-intent'
     repeatable: true
     actions:
-      - instruction: "inform {player} you're now wearing armor at all times."
+      - instruction: "inform {player} you're now constantly wearing armor."
         send_trigger: 'wear-armor'
   - name: 'remove-armor'
     activation:
@@ -78,5 +84,5 @@ goals:
       intent: 'try-go-home-intent'
     repeatable: true
     actions:
-      - instruction: "inform {player} you're going home."
+      - instruction: "inform {player} you're trying to go home."
         send_trigger: 'try-go-home'

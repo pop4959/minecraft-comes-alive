@@ -37,7 +37,7 @@ public class TriggerModule {
      * @param player Player in the conversation
      * @param villager Villager in the conversation
      */
-    public void updateMoveState(Interaction interaction, ServerPlayerEntity player, VillagerEntityMCA villager) {
+    public void processTriggers(Interaction interaction, ServerPlayerEntity player, VillagerEntityMCA villager) {
         // Get triggers sent from server
         TriggerEvent[] triggerEvents = interaction.outgoingTriggers();
         for (TriggerEvent event : triggerEvents) {

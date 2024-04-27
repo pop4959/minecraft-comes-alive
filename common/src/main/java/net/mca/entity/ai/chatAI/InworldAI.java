@@ -3,6 +3,7 @@ package net.mca.entity.ai.chatAI;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.chatAI.inworldAIModules.*;
 import net.mca.entity.ai.chatAI.inworldAIModules.api.Interaction;
+import net.mca.entity.ai.chatAI.inworldAIModules.api.TriggerEvent;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -30,15 +31,19 @@ public class InworldAI implements ChatAIStrategy {
      * @return {@code Optional.EMPTY} on error, Optional containing the answer to a message on success
      */
     public Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
+        // Create character modifications for current relationship status
+        TriggerEvent relationshipTrigger = relationshipModule.getRelationshipTrigger(player, villager);
+        sessionModule.sendTrigger(player, relationshipTrigger);
+        // This could be expanded to inform the AI of job changes (role character modifier)
+
         // Get response
         Optional<Interaction> optionalResponse = sessionModule.getResponse(player, msg);
         if (optionalResponse.isPresent()) {
             Interaction response = optionalResponse.get();
             // Use response data to update heart level
             relationshipModule.updateRelationship(response, player, villager);
-            // TODO: Use ResponseData to modify mood
             // Use response data to update move state
-            triggerModule.updateMoveState(response, player, villager);
+            triggerModule.processTriggers(response, player, villager);
 
             return Optional.of(String.join("", response.textList()));
         } else {
