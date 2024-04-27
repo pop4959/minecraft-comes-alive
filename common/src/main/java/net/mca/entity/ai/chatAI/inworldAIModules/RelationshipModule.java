@@ -23,7 +23,7 @@ public class RelationshipModule {
         Interaction.RelationshipUpdate update = interaction.relationshipUpdate();
 
         // Get total, with different weights applied to different relationship values
-        // TODO: Some **serious*** balancing
+        // Can be customized if certain parameters seem more important for heart levels
         int weightedTotal = 1 * update.trust()
                 + 1 * update.respect()
                 + 1 * update.familiar()
@@ -85,7 +85,7 @@ public class RelationshipModule {
         ACQUAINTANCE(-15),
         FRIEND(25),
         CLOSE_FRIEND(100),
-        DATE(Integer.MAX_VALUE),
+        DATE(Integer.MAX_VALUE), // These are managed by IS_ENGAGED etc. so they don't have a heart level
         RELATIONSHIP(Integer.MAX_VALUE),
         LIFE_PARTNER(Integer.MAX_VALUE);
 

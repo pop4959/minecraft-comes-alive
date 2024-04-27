@@ -37,6 +37,7 @@ public class SessionModule {
 
     /**
      * Sends a text message from player to the Inworld character and tries to get a response
+     * Opens a new session if necessary
      * @param player The player the message is from
      * @param msg The message
      * @return {@code Optional.EMPTY} if the request failed, Optional containing Interaction object otherwise
@@ -60,6 +61,7 @@ public class SessionModule {
 
     /**
      * Sends a trigger for the Inworld character and tries to get a response
+     * Opens a new session if necessary
      * @param player The player interacting with the character
      * @param event The TriggerEvent to be sent.
      * {@code event.trigger} should only contain the trigger name. "workspaces/{workspace_id}/triggers/" is added here
@@ -83,11 +85,11 @@ public class SessionModule {
     }
 
     /**
-     * Makes a openSession request.
+     * Makes an openSession request.
      * @param playerId Unique ID of player
      * @param playerName Name of player
      * @param playerGender Gender of player
-     * @return {@code Optional.empty()} if error on request
+     * @return {@code Optional.empty()} if error on request, Optional containing new Session data otherwise
      */
     private Optional<Session> openSessionRequest(String playerId, String playerName, String playerGender) {
         Requests.OpenSessionRequest.EndUserConfig config = new Requests.OpenSessionRequest.EndUserConfig(playerId, playerName, playerGender, null, null);

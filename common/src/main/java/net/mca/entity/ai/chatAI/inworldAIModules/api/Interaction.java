@@ -9,7 +9,6 @@ public record Interaction(String name,
                           TriggerEvent[] activeTriggers,
                           TriggerEvent[] outgoingTriggers) {
 
-
     public record Emotion(SpaffCode behaviour, Strength strength) {
         public enum SpaffCode {
             SPAFF_CODE_UNSPECIFIED,
@@ -43,8 +42,5 @@ public record Interaction(String name,
     }
 
     public record RelationshipUpdate(int trust, int respect, int familiar, int flirtatious, int attraction) {}
-
-
-
 
 }

@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-// TODO: Merge inworldAI and chatAI commands (somehow)
+
 public class Command {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(CommandManager.literal(MCA.MOD_ID)

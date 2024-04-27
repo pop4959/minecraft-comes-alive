@@ -24,9 +24,9 @@ public class InworldAI implements ChatAIStrategy {
     // We don't need conversational memory. Inworld does that for us. (Within the same session, which is enough for us)
 
     /**
-     * Gets an answer for a specific message from player for villager.
+     * Informs the AI of the current relationship status and gets a reply to the player's message
      * @param player The player requesting the answer
-     * @param villager The villager responding (currently unused, but could be used to make response influence emotions)
+     * @param villager The villager responding
      * @param msg The message
      * @return {@code Optional.EMPTY} on error, Optional containing the answer to a message on success
      */
