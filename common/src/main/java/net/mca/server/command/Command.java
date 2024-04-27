@@ -73,9 +73,7 @@ public class Command {
                         .requires(p -> p.getServer().isSingleplayer())
                         .then(register("keys")
                                 .then(CommandManager.argument("api_key", StringArgumentType.string())
-                                        .executes(c -> Command.inworldAIKeys(c.getArgument("api_key", String.class), ""))
-                                        .then(CommandManager.argument("studio_key", StringArgumentType.string())
-                                                .executes(c -> Command.inworldAIKeys(c.getArgument("api_key", String.class), c.getArgument("studio_key", String.class))))))
+                                        .executes(c -> Command.inworldAIKey(c.getArgument("api_key", String.class)))))
                         .then(register("addCharacter")
                                 .then(CommandManager.argument("villager_name", StringArgumentType.string())
                                         .then(CommandManager.argument("character_endpoint", StringArgumentType.string())
@@ -95,10 +93,8 @@ public class Command {
         return chatAI((new Config()).villagerChatAIModel, (new Config()).villagerChatAIEndpoint, (new Config()).villagerChatAIToken);
     }
 
-    private static int inworldAIKeys(String api_key, String studio_key) {
-        Config.getInstance().enableInworldAI = true;
+    private static int inworldAIKey(String api_key) {
         Config.getInstance().inworldAIToken = api_key;
-        Config.getInstance().inworldAIStudioToken = studio_key;
         Config.getInstance().save();
         return 0;
     }

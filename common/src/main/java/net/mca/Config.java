@@ -111,10 +111,7 @@ public final class Config implements Serializable {
     public String villagerChatAIToken = "";
     public String villagerChatAIModel = "mistral-small";
 
-    // Inworld AI
-    public boolean enableInworldAI = false;
     public String inworldAIToken = "";
-    public String inworldAIStudioToken = "";
     public Map<UUID, String> inworldAIResourceNames = new HashMap<>();
 
     // TTS
