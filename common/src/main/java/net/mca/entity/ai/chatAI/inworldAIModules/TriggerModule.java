@@ -17,11 +17,12 @@ public class TriggerModule {
 
     /** Map for trigger name => actions */
     private final static Map<String, BiConsumer<ServerPlayerEntity, VillagerEntityMCA>> triggerActions = ImmutableMap.of(
-            "follow-trigger", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.FOLLOW, p),
-            "stay-trigger", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.STAY, p),
-            "move-trigger", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.MOVE, p),
-            "armor-trigger", (p, v) -> v.getVillagerBrain().setArmorWear(true),
-            "no-armor-trigger", (p, v) -> v.getVillagerBrain().setArmorWear(false)
+            "follow-player", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.FOLLOW, p),
+            "stay-here", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.STAY, p),
+            "move-freely", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.MOVE, p),
+            "wear-armor", (p, v) -> v.getVillagerBrain().setArmorWear(true),
+            "remove-armor", (p, v) -> v.getVillagerBrain().setArmorWear(false),
+            "try-go-home", (p, v) -> v.getResidency().goHome(p)
     );
 
     public TriggerModule(String characterResourceName) {
@@ -49,24 +50,4 @@ public class TriggerModule {
             }
         }
     }
-
-
-    /** This is temporary and will be moved somewhere else */
-    private final static String goals_yaml = """
-            intents:
-              - name: 'follow-player-intent'
-                training_phrases:
-                  - "Follow me"
-                  - "Come with me"
-                  - "Follow"
-                        
-            goals:
-              - name: 'follow-player'
-                activation:\s
-                  intent: 'follow-player-intent'
-                repeatable: true
-                actions:
-                  - instruction: "tell {player} you're going to follow them."
-                    send_trigger: 'follow-player'
-            """;
 }
