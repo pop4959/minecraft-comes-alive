@@ -36,17 +36,15 @@ public class RelationshipModule {
     }
 
     /**
-     * This method generates a TriggerEvent for the relationship status between a player and a villager.
-     * The TriggerEvent contains a single parameter, "status", which is the name of the current relationship status.
+     * This method generates a TriggerEvent Parameter for the relationship status between a player and a villager.
+     * The parameter is called "relationshipStatus".
      *
      * @param player The player involved in the relationship.
      * @param villager The villager involved in the relationship.
-     * @return A TriggerEvent representing the current relationship status.
+     * @return A TriggerEvent.Parameter representing the current relationship status.
      */
-    public TriggerEvent getRelationshipTrigger(ServerPlayerEntity player, VillagerEntityMCA villager) {
-        TriggerEvent.Parameter[] params = {
-                new TriggerEvent.Parameter("status", getRelationshipStatus(player, villager).name())};
-        return new TriggerEvent("relationship-trigger", params);
+    public TriggerEvent.Parameter getRelationshipTriggerParameter(ServerPlayerEntity player, VillagerEntityMCA villager) {
+        return new TriggerEvent.Parameter("relationshipStatus", getRelationshipStatus(player, villager).name());
     }
 
     /**

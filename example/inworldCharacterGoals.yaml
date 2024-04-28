@@ -37,19 +37,13 @@ intents:
       - "Make your way home"
 
 goals:
-  - name: 'relationship-update'
+  - name: 'status-update'
     activation:
-      trigger: 'relationship-trigger'
+      trigger: 'status-update'
     repeatable: true
     actions:
       - character_changes:
-          set_relationship: '{{p.status}}'
-  - name: 'emotion-setup'
-    activation:
-      trigger: 'emotion-setup'
-    repeatable: false
-    actions:
-      - character_changes:
+          set_relationship: '{{p.relationshipStatus}}'
           set_emotion: '{{p.emotion}}'
 
   - name: 'follow-player'

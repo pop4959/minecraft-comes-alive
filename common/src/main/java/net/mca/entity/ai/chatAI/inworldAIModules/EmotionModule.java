@@ -31,12 +31,11 @@ public class EmotionModule {
      * The SpaffCode is then used to modify the AI's initial mood
      *
      * @param villager The VillagerEntityMCA object whose mood is to be mapped to a SpaffCode.
-     * @return A new TriggerEvent object with the name "emotion-setup" and a single parameter. The parameter has the name "emotion" and the value being the name of the SpaffCode corresponding to the villager's mood.
+     * @return The parameter has the name "emotion" and the value being the name of the SpaffCode corresponding to the villager's mood.
      */
-    public TriggerEvent getEmotionTrigger(VillagerEntityMCA villager) {
+    public TriggerEvent.Parameter getEmotionTriggerParameter(VillagerEntityMCA villager) {
         String villagerMood = villager.getVillagerBrain().getMood().getName();
-        TriggerEvent.Parameter param = new TriggerEvent.Parameter("emotion", moodMap.getOrDefault(villagerMood, Interaction.Emotion.SpaffCode.NEUTRAL).name());
-        return new TriggerEvent("emotion-setup", new TriggerEvent.Parameter[]{param});
+        return new TriggerEvent.Parameter("emotion", moodMap.getOrDefault(villagerMood, Interaction.Emotion.SpaffCode.NEUTRAL).name());
     }
 
 }

@@ -15,30 +15,38 @@ public class InworldAI implements ChatAIStrategy {
     private final RelationshipModule relationshipModule;
     private final TriggerModule triggerModule;
     private final EmotionModule emotionModule;
+    private int interactionCount;
+    /** Determines how often triggers are sent with requests. Reduces Interaction cost from (at time of writing) 2/answer to ~(21/20)/answer */
+    private final static int TRIGGER_FREQUENCY = 20;
 
     public InworldAI(String resourceName) {
         this.sessionModule = new SessionModule(resourceName);
         this.relationshipModule = new RelationshipModule();
         this.triggerModule = new TriggerModule();
         this.emotionModule = new EmotionModule();
+        this.interactionCount = 0;
     }
 
     // We don't need conversational memory. Inworld does that for us. (Within the same session, which is enough for us)
 
     /**
-     * Informs the AI of the current relationship status and gets a reply to the player's message
+     * Gets a reply from InworldAI for a given message.
+     * Informs the AI of relationship and mood changes every {@value TRIGGER_FREQUENCY} answers
      * @param player The player requesting the answer
      * @param villager The villager responding
      * @param msg The message
      * @return {@code Optional.EMPTY} on error, Optional containing the answer to a message on success
      */
     public Optional<String> answer(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
-        // Create character modifications for current relationship status
-        TriggerEvent relationshipTrigger = relationshipModule.getRelationshipTrigger(player, villager);
-        sessionModule.sendTrigger(player, relationshipTrigger);
-        // Create character modification for intial mood (This will be sent every time, not ideal)
-        TriggerEvent emotionTrigger = emotionModule.getEmotionTrigger(villager);
-        sessionModule.sendTrigger(player, emotionTrigger);
+        // Limit the amount of triggers being sent to reduce interactions cost
+        if (interactionCount % TRIGGER_FREQUENCY == 0) {
+            // Create character modifications for current relationship status
+            TriggerEvent.Parameter relationshipTrigger = relationshipModule.getRelationshipTriggerParameter(player, villager);
+            TriggerEvent.Parameter emotionTrigger = emotionModule.getEmotionTriggerParameter(villager);
+            TriggerEvent event = new TriggerEvent("status-update", new TriggerEvent.Parameter[]{relationshipTrigger, emotionTrigger});
+            sessionModule.sendTrigger(player, event);
+        }
+        interactionCount++;
 
         // Get response
         Optional<Interaction> optionalResponse = sessionModule.getResponse(player, msg);
