@@ -22,6 +22,8 @@ public class SessionModule {
 
     private final static String INWORLD_BASE_URL = "https://api.inworld.ai/v1/";
     private final static long SESSION_MAX_VALID_TIME = 28 * 60 * 1000;
+    /** Determines how often status-update triggers are sent with requests. Reduces Interaction cost from (at time of writing) 2/answer to ~(21/20)/answer */
+    private final static int STATUS_UPDATE_FREQUENCY = 20;
 
     private final String characterResourceName;
     private final String workspaceID;
@@ -38,11 +40,13 @@ public class SessionModule {
     /**
      * Sends a text message from player to the Inworld character and tries to get a response
      * Opens a new session if necessary
+     * Sends the statusUpdate every {@value STATUS_UPDATE_FREQUENCY} messages in the session
      * @param player The player the message is from
      * @param msg The message
+     * @param statusUpdate status-update event for the Character.
      * @return {@code Optional.EMPTY} if the request failed, Optional containing Interaction object otherwise
      */
-    public Optional<Interaction> getResponse(ServerPlayerEntity player, String msg) {
+    public Optional<Interaction> getResponse(ServerPlayerEntity player, String msg, TriggerEvent statusUpdate) {
         // Creates a new session if needed
         long currentTime = System.currentTimeMillis();
         if(!openSessionIfNeeded(player, currentTime)) {
@@ -51,35 +55,16 @@ public class SessionModule {
 
         // Gets current session for player with this character and makes request
         OpenSession openSession = openSessionMap.get(player.getUuid());
-        Optional<Interaction> interactionOptional = sendTextRequest(openSession.session(), msg);
-        if (interactionOptional.isPresent()) {
-            // Updates lastInteraction in openSessionMap
-            openSessionMap.put(player.getUuid(), new OpenSession(openSession.session(), currentTime));
-        }
-        return interactionOptional;
-    }
 
-    /**
-     * Sends a trigger for the Inworld character and tries to get a response
-     * Opens a new session if necessary
-     * @param player The player interacting with the character
-     * @param event The TriggerEvent to be sent.
-     * {@code event.trigger} should only contain the trigger name. "workspaces/{workspace_id}/triggers/" is added here
-     * @return {@code Optional.EMPTY} if the request failed, Optional containing Interaction object otherwise
-     */
-    public Optional<Interaction> sendTrigger(ServerPlayerEntity player, TriggerEvent event) {
-        // Creates a new session if needed
-        long currentTime = System.currentTimeMillis();
-        if(!openSessionIfNeeded(player, currentTime)) {
-            return Optional.empty();
+        // Sends the status update every x messages
+        if (openSession.getInteractionCount() %  STATUS_UPDATE_FREQUENCY == 0) {
+            sendTriggerRequest(openSession.getSession(), statusUpdate, player.getUuid().toString());
         }
 
-        // Gets current session for player with this character and makes request
-        OpenSession openSession = openSessionMap.get(player.getUuid());
-        Optional<Interaction> interactionOptional = sendTriggerRequest(openSession.session(), event, player.getUuid().toString());
+        Optional<Interaction> interactionOptional = sendTextRequest(openSession.getSession(), msg);
         if (interactionOptional.isPresent()) {
             // Updates lastInteraction in openSessionMap
-            openSessionMap.put(player.getUuid(), new OpenSession(openSession.session(), currentTime));
+            openSession.updateSession(currentTime);
         }
         return interactionOptional;
     }
@@ -166,7 +151,7 @@ public class SessionModule {
      */
     private boolean openSessionIfNeeded(ServerPlayerEntity player, long currentTime) {
         OpenSession openSession = openSessionMap.getOrDefault(player.getUuid(), new OpenSession(null, 0));
-        if (openSession.session == null || currentTime - openSession.lastInteraction > SESSION_MAX_VALID_TIME) {
+        if (openSession.getSession() == null || currentTime - openSession.getLastInteractionMillis() > SESSION_MAX_VALID_TIME) {
             Optional<Session> sessionOptional = openSessionRequest(player.getUuid().toString(),
                     player.getName().getString(),
                     PlayerSaveData.get(player).getGender().getDataName());
@@ -186,8 +171,38 @@ public class SessionModule {
      * Object to hold data for open sessions.
      * This is a bit of a duplicate of {@link net.mca.entity.ai.chatAI.ChatAI ChatAI's OpenConversation}
      * but over there it manages what villager will respond if no name is in the message, here it's the actual session
-     * @param session
-     * @param lastInteraction
      */
-    private record OpenSession(Session session, long lastInteraction) {}
+    private static class OpenSession {
+        private final Session session;
+        private long lastInteractionMillis;
+        private int interactionCount;
+
+        public OpenSession(Session session, long lastInteractionMillis) {
+            this.session = session;
+            this.lastInteractionMillis = lastInteractionMillis;
+            this.interactionCount = 0;
+        }
+
+        public Session getSession() {
+            return session;
+        }
+
+        public int getInteractionCount() {
+            return this.interactionCount;
+        }
+
+        public long getLastInteractionMillis() {
+            return  this.lastInteractionMillis;
+        }
+
+        /**
+         * Update lastInteractionMillis and increase interactionCount by 1
+         * @param lastInteractionMillis Timestamp of last interaction of session
+         */
+        public void updateSession(long lastInteractionMillis) {
+            this.lastInteractionMillis = lastInteractionMillis;
+            this.interactionCount++;
+        }
+
+    }
 }
