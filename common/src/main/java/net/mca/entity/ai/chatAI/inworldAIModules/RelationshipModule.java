@@ -32,7 +32,7 @@ public class RelationshipModule {
 
         int heartsUpdate = weightedTotal / 10;
 
-        villager.getVillagerBrain().getMemoriesForPlayer(player).modHearts(heartsUpdate);
+        villager.getVillagerBrain().rewardHearts(player, heartsUpdate);
     }
 
     /**
@@ -54,7 +54,7 @@ public class RelationshipModule {
      * Depends on if married/engaged/promised or the heart level
      * @param player The player of the relationship
      * @param villager The villager of the relationship
-     * @return {@link RelationshipStatus}
+     * @return {@link RelationshipStatus} depending on heart level or relationship state
      */
     private RelationshipStatus getRelationshipStatus(ServerPlayerEntity player, VillagerEntityMCA villager) {
         if (Relationship.IS_ENGAGED.test(villager, player) || Relationship.IS_MARRIED.test(villager, player)) {

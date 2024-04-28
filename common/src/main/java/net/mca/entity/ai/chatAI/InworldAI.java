@@ -14,11 +14,13 @@ public class InworldAI implements ChatAIStrategy {
     private final SessionModule sessionModule;
     private final RelationshipModule relationshipModule;
     private final TriggerModule triggerModule;
+    private final EmotionModule emotionModule;
 
     public InworldAI(String resourceName) {
         this.sessionModule = new SessionModule(resourceName);
         this.relationshipModule = new RelationshipModule();
         this.triggerModule = new TriggerModule();
+        this.emotionModule = new EmotionModule();
     }
 
     // We don't need conversational memory. Inworld does that for us. (Within the same session, which is enough for us)
@@ -34,7 +36,9 @@ public class InworldAI implements ChatAIStrategy {
         // Create character modifications for current relationship status
         TriggerEvent relationshipTrigger = relationshipModule.getRelationshipTrigger(player, villager);
         sessionModule.sendTrigger(player, relationshipTrigger);
-        // This could be expanded to inform the AI of job changes (role character modifier)
+        // Create character modification for intial mood (This will be sent every time, not ideal)
+        TriggerEvent emotionTrigger = emotionModule.getEmotionTrigger(villager);
+        sessionModule.sendTrigger(player, emotionTrigger);
 
         // Get response
         Optional<Interaction> optionalResponse = sessionModule.getResponse(player, msg);

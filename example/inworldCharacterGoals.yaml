@@ -44,6 +44,13 @@ goals:
     actions:
       - character_changes:
           set_relationship: '{{p.status}}'
+  - name: 'emotion-setup'
+    activation:
+      trigger:
+    repeatable: false
+    actions:
+      - set_emotion: '{{p.emotion}}'
+
   - name: 'follow-player'
     activation:
       intent: 'follow-player-intent'
