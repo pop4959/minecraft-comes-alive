@@ -46,10 +46,11 @@ goals:
           set_relationship: '{{p.status}}'
   - name: 'emotion-setup'
     activation:
-      trigger:
+      trigger: 'emotion-setup'
     repeatable: false
     actions:
-      - set_emotion: '{{p.emotion}}'
+      - character_changes:
+          set_emotion: '{{p.emotion}}'
 
   - name: 'follow-player'
     activation:
