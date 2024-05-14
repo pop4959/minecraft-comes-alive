@@ -201,7 +201,7 @@ public class GPT3 implements ChatAIStrategy {
                 case '\f' -> "\\f";
                 case '\r' -> "\\r";
                 default -> //noinspection MalformedFormatString
-                        c < ' ' ? String.format("\\u%04x", c) : c;
+                        c < ' ' ? String.format(Locale.ROOT, "\\u%04x", c) : c;
             });
         return sb.append('"').toString();
     }
