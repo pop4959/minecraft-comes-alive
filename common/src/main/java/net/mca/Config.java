@@ -298,7 +298,7 @@ public final class Config implements Serializable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(this, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            MCA.LOGGER.error(e);
         }
     }
 
