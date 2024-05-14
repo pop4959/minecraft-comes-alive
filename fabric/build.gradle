@@ -31,8 +31,8 @@ dependencies {
         transitive false
     }
 
-    modImplementation "curse.maven:autotranslation-919497:4993675"
-    modImplementation "curse.maven:cloth-config-348521:4973440"
+    // modImplementation "curse.maven:autotranslation-919497:4993675"
+    // modImplementation "curse.maven:cloth-config-348521:4973440"
 }
 
 processResources {

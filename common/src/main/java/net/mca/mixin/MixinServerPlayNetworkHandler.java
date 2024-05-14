@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -31,12 +32,13 @@ public class MixinServerPlayNetworkHandler {
                 // Check if there's an eligible villager for the conversation
                 Optional<VillagerEntityMCA> villager = ChatAI.getVillagerForConversation(player, msg);
                 // Yes? => Talk to it
-                villager.ifPresent(villagerEntityMCA -> runAsyncAnswerRequest(player, villagerEntityMCA, msg));
+                villager.ifPresent(villagerEntityMCA -> mca$runAsyncAnswerRequest(player, villagerEntityMCA, msg));
             }
         }
     }
 
-    private void runAsyncAnswerRequest(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
+    @Unique
+    private void mca$runAsyncAnswerRequest(ServerPlayerEntity player, VillagerEntityMCA villager, String msg) {
         CompletableFuture.runAsync(() -> {
             Optional<String> answer = ChatAI.answer(player, villager, msg);
             answer.ifPresent(a -> villager.conversationManager.addMessage(player, Text.literal(a)));

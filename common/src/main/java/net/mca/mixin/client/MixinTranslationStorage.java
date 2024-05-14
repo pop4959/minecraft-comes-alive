@@ -22,7 +22,8 @@ abstract class MixinTranslationStorage extends Language {
     @Shadow
     private @Final Map<String, String> translations;
 
-    @Shadow public abstract String get(String key, String fallback);
+    @Shadow
+    public abstract String get(String key, String fallback);
 
     @Unique
     private PooledTranslationStorage mca$pool;
@@ -38,14 +39,17 @@ abstract class MixinTranslationStorage extends Language {
 
     @Inject(method = "get", at = @At("HEAD"), cancellable = true)
     private void mca$onGet(String key, String fallback, CallbackInfoReturnable<String> info) {
-        key = DialogueType.applyFallback(key);
+        String modifiedKey = DialogueType.applyFallback(key);
 
-        Pair<String, String> unpooled = mca$getPool().get(key);
+        Pair<String, String> unpooled = mca$getPool().get(modifiedKey);
         if (unpooled != null) {
             CommonSpeechManager.INSTANCE.lastResolvedKey = unpooled.getLeft();
             info.setReturnValue(get(unpooled.getLeft(), fallback));
         } else {
             CommonSpeechManager.INSTANCE.lastResolvedKey = null;
+            if (!key.equals(modifiedKey)) {
+                info.setReturnValue(get(modifiedKey, fallback));
+            }
         }
     }
 

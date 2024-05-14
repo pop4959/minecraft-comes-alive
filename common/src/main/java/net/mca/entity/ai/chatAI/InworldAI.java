@@ -43,12 +43,20 @@ public class InworldAI implements ChatAIStrategy {
         Optional<Interaction> optionalResponse = sessionModule.getResponse(player, msg, event);
         if (optionalResponse.isPresent()) {
             Interaction response = optionalResponse.get();
+
             // Use response data to update heart level
             relationshipModule.updateRelationship(response, player, villager);
+
             // Use response data to update move state
             triggerModule.processTriggers(response, player, villager);
 
-            return Optional.of(String.join("", response.textList()));
+            // Answer, or be silent if there is no answer (e.g., on triggers)
+            String answer = String.join("", response.textList());
+            if (answer.isEmpty()) {
+                return Optional.empty();
+            } else {
+                return Optional.of(answer);
+            }
         } else {
             player.sendMessage(Text.translatable("mca.ai_broken").formatted(Formatting.RED), false);
             return Optional.empty();

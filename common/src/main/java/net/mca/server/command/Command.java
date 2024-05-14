@@ -91,8 +91,8 @@ public class Command {
         return chatAI((new Config()).villagerChatAIModel, (new Config()).villagerChatAIEndpoint, (new Config()).villagerChatAIToken);
     }
 
-    private static int inworldAIKey(String api_key) {
-        Config.getInstance().inworldAIToken = api_key;
+    private static int inworldAIKey(String apiKey) {
+        Config.getInstance().inworldAIToken = apiKey;
         Config.getInstance().save();
         return 0;
     }
@@ -100,7 +100,7 @@ public class Command {
     private static int inworldAICharacter(CommandContext<ServerCommandSource> context, String name, String endpoint) {
         ServerPlayerEntity player = context.getSource().getPlayer();
         Optional< VillagerEntityMCA> optionalVillager = ChatAI.findVillagerInArea(player, name);
-        optionalVillager.ifPresent((v) -> {
+        optionalVillager.ifPresent(v -> {
             Config.getInstance().inworldAIResourceNames.put(v.getUuid(), endpoint);
             Config.getInstance().save();
         });
