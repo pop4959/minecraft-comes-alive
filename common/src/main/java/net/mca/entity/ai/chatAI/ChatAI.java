@@ -14,7 +14,7 @@ import static net.mca.entity.VillagerLike.VILLAGER_NAME;
 public class ChatAI {
 
     /** Max range to find a villager in */
-    private final static int VILLAGER_SEARCH_RANGE = 32;
+    private static final int VILLAGER_SEARCH_RANGE = 32;
 
     /** Max time until a conversation is considered invalid */
     private static final int CONVERSATION_TIME = 20 * 60;
@@ -57,10 +57,18 @@ public class ChatAI {
      * @return Object implementing the ChatAIStrategy interface
      */
     private static ChatAIStrategy computeStrategyIfAbsent(UUID villagerID) {
-        return strategies.computeIfAbsent(villagerID, (v) -> {
+        return strategies.computeIfAbsent(villagerID, v -> {
             String inworldResourceName = Config.getInstance().inworldAIResourceNames.getOrDefault(v, "");
             return inworldResourceName.isEmpty() ? new GPT3() : new InworldAI(inworldResourceName);
         });
+    }
+
+    /**
+     * Clears the strategy for a specific villager
+     * @param villagerID UUID of the villager
+     */
+    public static void clearStrategy(UUID villagerID) {
+        strategies.remove(villagerID);
     }
 
     /**
@@ -89,7 +97,7 @@ public class ChatAI {
         OpenConversation conv = currentConversations.getOrDefault(playerUUID, new OpenConversation(playerUUID, 0L));
 
         // Find first nearby villager matching the UUID of the conversation
-        Optional<VillagerEntityMCA> optionalVillager = nearbyVillagers.stream().filter((v) -> conv.villagerUUID.equals(v.getUuid())).findFirst();
+        Optional<VillagerEntityMCA> optionalVillager = nearbyVillagers.stream().filter(v -> conv.villagerUUID.equals(v.getUuid())).findFirst();
         // Return if found
         if (optionalVillager.isPresent() && isInConversationWith(player, optionalVillager.get())) {
             return optionalVillager;

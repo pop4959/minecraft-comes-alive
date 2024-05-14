@@ -102,6 +102,7 @@ public class Command {
         Optional< VillagerEntityMCA> optionalVillager = ChatAI.findVillagerInArea(player, name);
         optionalVillager.ifPresent(v -> {
             Config.getInstance().inworldAIResourceNames.put(v.getUuid(), endpoint);
+            ChatAI.clearStrategy(v.getUuid());
             Config.getInstance().save();
         });
         return 0;

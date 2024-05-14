@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
 public class TriggerModule {
 
     /** Map for trigger name => actions */
-    private final static Map<String, BiConsumer<ServerPlayerEntity, VillagerEntityMCA>> triggerActions = ImmutableMap.of(
+    private static final Map<String, BiConsumer<ServerPlayerEntity, VillagerEntityMCA>> triggerActions = ImmutableMap.of(
             "follow-player", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.FOLLOW, p),
             "stay-here", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.STAY, p),
             "move-freely", (p, v) -> v.getVillagerBrain().setMoveState(MoveState.MOVE, p),
