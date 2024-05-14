@@ -1,4 +1,4 @@
-package net.mca.entity.ai.gpt3Modules;
+package net.mca.entity.ai.chatAI.gpt3Modules;
 
 import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.mca.entity.ai.GPT3.translate;
+import static net.mca.entity.ai.chatAI.GPT3.translate;
 
 public class TraitsModule {
     private static final Map<String, String> traitDescription = new HashMap<>() {{

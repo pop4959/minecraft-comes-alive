@@ -10,6 +10,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public final class Config implements Serializable {
     @Serial
@@ -109,6 +110,9 @@ public final class Config implements Serializable {
     public String villagerChatAIEndpoint = "https://api.conczin.net/v1/mca/chat";
     public String villagerChatAIToken = "";
     public String villagerChatAIModel = "mistral-small";
+
+    public String inworldAIToken = "";
+    public Map<UUID, String> inworldAIResourceNames = new HashMap<>();
 
     // TTS
     public boolean enableOnlineTTS = false;

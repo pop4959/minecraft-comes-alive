@@ -1,4 +1,4 @@
-package net.mca.entity.ai.gpt3Modules;
+package net.mca.entity.ai.chatAI.gpt3Modules;
 
 import net.mca.Config;
 import net.mca.entity.VillagerEntityMCA;
@@ -8,7 +8,7 @@ import net.minecraft.village.VillagerProfession;
 
 import java.util.List;
 
-import static net.mca.entity.ai.GPT3.translate;
+import static net.mca.entity.ai.chatAI.GPT3.translate;
 
 public class PersonalityModule {
     public static void apply(List<String> input, VillagerEntityMCA villager, ServerPlayerEntity player) {

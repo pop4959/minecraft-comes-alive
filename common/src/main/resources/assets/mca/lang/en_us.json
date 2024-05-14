@@ -287,7 +287,7 @@
   "buildingType.armorer": "Armorer",
   "buildingType.butcher": "Butcher",
   "buildingType.cartographer": "Cartographer",
-  "buildingType.fishermans_mut": "Fisherman's Hut",
+  "buildingType.fishermans_hut": "Fisherman's Hut",
   "buildingType.fletcher": "Fletcher",
   "buildingType.leatherworker": "Leatherworker",
   "buildingType.bookkeeper": "Bookkeeper",
@@ -869,6 +869,7 @@
   "mca.limit.patreon": "You reached your hourly AI limit. Click here to open the tutorial on how to increase that limit!",
   "mca.limit.premium": "You reached your hourly AI limit, even with your patreon subscription enabled! Please take a break.",
   "mca.limit.patreon.hover": "Click me!",
+  "mca.inworldAI.setupError": "Could not assign villager to endpoint!",
 
   "key.mca.skin_library": "Open Skin Library"
 }
