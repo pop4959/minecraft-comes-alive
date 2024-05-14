@@ -47,6 +47,12 @@ allprojects {
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
 
+    repositories {
+        maven {
+            url "https://cursemaven.com"
+        }
+    }
+
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(17)
