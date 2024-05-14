@@ -30,6 +30,9 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) {
         transitive false
     }
+
+    modImplementation "curse.maven:autotranslation-919497:4993675"
+    modImplementation "curse.maven:cloth-config-348521:4973440"
 }
 
 processResources {
