@@ -44,6 +44,9 @@ public class Dialogues extends JsonDataLoader {
 
     private void loadDialogue(Identifier identifier, JsonElement element) {
         String id = identifier.getPath().substring(identifier.getPath().lastIndexOf('/') + 1);
+        if (!this.checkIsMcaDialogue(element)) {
+            MCA.LOGGER.warn("Dialogue {} is not properly formatted, not loading", identifier);
+        }
         Question q = Question.fromJson(id, element.getAsJsonObject());
 
         // Merge questions to allow injections
@@ -53,6 +56,11 @@ public class Dialogues extends JsonDataLoader {
         q.getAnswers().sort(Comparator.comparingInt(Answer::getPriority));
 
         this.questions.put(id, q);
+    }
+
+    private boolean checkIsMcaDialogue(JsonElement element) {
+        JsonElement answersElement = element.getAsJsonObject().get("answers");
+        return answersElement != null && answersElement.isJsonArray();
     }
 
     public Question getQuestion(String i) {
