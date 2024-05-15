@@ -5,7 +5,6 @@ import net.mca.ProfessionsMCA;
 import net.mca.entity.VillagerEntityMCA;
 import net.mca.entity.ai.relationship.Gender;
 import net.mca.server.world.data.Village;
-import net.mca.util.WorldUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.WanderingTraderEntity;
@@ -48,7 +47,7 @@ public class VillageInnManager {
     }
 
     private boolean trySpawnAdventurer(ServerWorld world, BlockPos blockPos) {
-        if (!WorldUtils.isChunkLoaded(world, blockPos)) {
+        if (!world.shouldTickEntity(blockPos)) {
             // prevent any additional retries
             return true;
         }
