@@ -110,6 +110,7 @@ public final class Config implements Serializable {
     public String villagerChatAIEndpoint = "https://api.conczin.net/v1/mca/chat";
     public String villagerChatAIToken = "";
     public String villagerChatAIModel = "mistral-small";
+    public String villagerChatAISystemPrompt = "";
 
     public String inworldAIToken = "";
     public Map<UUID, String> inworldAIResourceNames = new HashMap<>();

@@ -128,6 +128,10 @@ public class GPT3 implements ChatAIStrategy {
 
             // add variables
             StringBuilder sb = new StringBuilder();
+            if (!Config.getInstance().villagerChatAISystemPrompt.isEmpty()) {
+                sb.append(Config.getInstance().villagerChatAISystemPrompt);
+                sb.append("\n");
+            }
             for (String s : input) {
                 for (Map.Entry<String, String> entry : variables.entrySet()) {
                     s = s.replaceAll("\\$" + entry.getKey(), entry.getValue());
