@@ -1,3 +1,13 @@
+# 7.5.15
+
+* Merged [Inworld integration](https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations) branch (thanks CSCMe!)
+* Fixed incompatibility with Cobblemon (thanks Apion!)
+* Fixed issues when using Arabic numerals
+* Fixed crashes when using TTS
+* Fixed Inn spamming adventurers
+* Probably fixed deadlocks related to SpawnQueue and ReaperSpawner
+* Fixed incompatibility with AutoTranslation and related mods
+
 # 7.5.14
 
 * TTS language is now detected automatically
