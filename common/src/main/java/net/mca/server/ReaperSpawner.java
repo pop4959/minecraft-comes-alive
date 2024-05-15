@@ -7,6 +7,7 @@ import net.mca.block.BlocksMCA;
 import net.mca.entity.EntitiesMCA;
 import net.mca.entity.GrimReaperEntity;
 import net.mca.server.world.data.VillageManager;
+import net.mca.util.WorldUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,12 +17,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.world.ChunkTicketType;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -29,6 +33,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReaperSpawner {
+    public static final ChunkTicketType<BlockPos> REAPER = ChunkTicketType.create("mca:reaper", Vec3i::compareTo, 100);
+
     private static final Direction[] HORIZONTALS = new Direction[]{
             Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
     };
@@ -64,20 +70,13 @@ public class ReaperSpawner {
             return;
         }
 
-        // Make sure the neighboring chunks are loaded
-        // Fixes deadlock issues with getBlockState() below
         ServerChunkManager chunkManager = world.getChunkManager();
-        int chunkX = pos.getX() >> 4;
-        int chunkZ = pos.getZ() >> 4;
-        if (!(chunkManager.isChunkLoaded(chunkX, chunkZ) &&
-                chunkManager.isChunkLoaded(chunkX, chunkZ - 1) &&
-                chunkManager.isChunkLoaded(chunkX, chunkZ + 1) &&
-                chunkManager.isChunkLoaded(chunkX - 1, chunkZ - 1) &&
-                chunkManager.isChunkLoaded(chunkX - 1, chunkZ) &&
-                chunkManager.isChunkLoaded(chunkX - 1, chunkZ + 1) &&
-                chunkManager.isChunkLoaded(chunkX + 1, chunkZ - 1) &&
-                chunkManager.isChunkLoaded(chunkX + 1, chunkZ) &&
-                chunkManager.isChunkLoaded(chunkX + 1, chunkZ + 1))) {
+        ChunkPos chunkPos = new ChunkPos(pos);
+        chunkManager.addTicket(REAPER, chunkPos, 16, pos);
+
+        // Make sure the neighboring chunks are loaded
+        if (!WorldUtils.isAreaLoaded(world, chunkPos, 1)) {
+            chunkManager.removeTicket(REAPER, chunkPos, 16, pos);
             return;
         }
 
@@ -110,6 +109,8 @@ public class ReaperSpawner {
         totems.forEach(totem ->
                 world.setBlockState(totem, BlocksMCA.INFERNAL_FLAME.get().getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE)
         );
+
+        chunkManager.removeTicket(REAPER, chunkPos, 16, pos);
     }
 
     private void start(SummonPosition pos) {
@@ -215,6 +216,7 @@ public class ReaperSpawner {
         private SummonPosition position;
 
         ActiveSummon(long l) {
+            // nop
         }
 
         ActiveSummon(NbtCompound nbt) {

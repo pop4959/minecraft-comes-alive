@@ -10,6 +10,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.server.world.ChunkLevelType;
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
@@ -78,5 +79,17 @@ public interface WorldUtils {
             return worldChunk.getLevelType() == ChunkLevelType.ENTITY_TICKING && world.isChunkLoaded(chunkPos.toLong());
         }
         return false;
+    }
+
+    static boolean isAreaLoaded(ServerWorld world, ChunkPos pos, int radius) {
+        ServerChunkManager chunkManager = world.getChunkManager();
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                if (!chunkManager.isChunkLoaded(pos.x + x, pos.z + z)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
