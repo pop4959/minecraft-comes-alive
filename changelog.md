@@ -1,3 +1,7 @@
+# 7.5.16
+
+* Fixed issues with building jars
+
 # 7.5.15
 
 * Merged [Inworld integration](https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations) branch (thanks CSCMe!)

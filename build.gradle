@@ -59,7 +59,6 @@ allprojects {
         }
     }
 
-    group = rootProject.group
     description = rootProject.displayname
     archivesBaseName = rootProject.name
     version = getAppVersion()
@@ -88,7 +87,7 @@ allprojects {
 }
 
 forgix {
-    group = rootProject.group
+    group = rootProject.groupId
     mergedJarName = "${rootProject.name}-${rootProject.version}-universal.jar"
     outputDir = "build/libs"
 
