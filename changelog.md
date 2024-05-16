@@ -1,3 +1,7 @@
+# 7.5.17
+
+* Now its compatible with Cobblemon!
+
 # 7.5.16
 
 * Fixed issues with building jars
