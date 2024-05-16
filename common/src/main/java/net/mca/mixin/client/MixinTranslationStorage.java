@@ -45,11 +45,8 @@ abstract class MixinTranslationStorage extends Language {
         if (unpooled != null) {
             CommonSpeechManager.INSTANCE.lastResolvedKey = unpooled.getLeft();
             info.setReturnValue(get(unpooled.getLeft(), fallback));
-        } else {
-            CommonSpeechManager.INSTANCE.lastResolvedKey = null;
-            if (!key.equals(modifiedKey)) {
-                info.setReturnValue(get(modifiedKey, fallback));
-            }
+        } else if (!key.equals(modifiedKey)) {
+            info.setReturnValue(get(modifiedKey, fallback));
         }
     }
 

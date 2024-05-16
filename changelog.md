@@ -1,6 +1,7 @@
 # 7.5.17
 
 * Now its compatible with Cobblemon!
+* Fixed TTS again!
 
 # 7.5.16
 
