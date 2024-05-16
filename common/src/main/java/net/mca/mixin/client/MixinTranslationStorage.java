@@ -44,7 +44,12 @@ abstract class MixinTranslationStorage extends Language {
         Pair<String, String> unpooled = mca$getPool().get(modifiedKey);
         if (unpooled != null) {
             CommonSpeechManager.INSTANCE.lastResolvedKey = unpooled.getLeft();
-            info.setReturnValue(get(unpooled.getLeft(), fallback));
+            if (translations.containsKey(unpooled.getLeft()) && !translations.get(unpooled.getLeft()).equals(unpooled.getRight())) {
+                // In this case, the text has been dynamically created and we need to return directly
+                info.setReturnValue(unpooled.getRight());
+            } else {
+                info.setReturnValue(get(unpooled.getLeft(), fallback));
+            }
         } else if (!key.equals(modifiedKey)) {
             info.setReturnValue(get(modifiedKey, fallback));
         }
