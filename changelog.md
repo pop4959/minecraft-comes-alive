@@ -2,6 +2,7 @@
 
 * Merged [Inworld integration](https://github.com/Luke100000/minecraft-comes-alive/wiki/GPT3-based-conversations) branch (thanks CSCMe!)
 * Fixed incompatibility with Cobblemon (thanks Apion!)
+* Fixed AI issues with Grim Reapers, causing him to go much higher than intended
 * Fixed issues when using Arabic numerals
 * Fixed crashes when using TTS
 * Fixed Inn spamming adventurers
