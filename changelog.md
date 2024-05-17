@@ -1,3 +1,7 @@
+# 7.5.18
+
+* Updated contributor book
+
 # 7.5.17
 
 * Now its compatible with Cobblemon!
