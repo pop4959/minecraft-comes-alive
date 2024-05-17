@@ -11,6 +11,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+# noinspection SpellCheckingInspection
+replacements = {
+    "ALEJANDRO MARCELO PAUCAR CASTILLO": "Alejandro Castillo",
+    "Betancourt Guerrero Ramón": "Betancourt Ramón",
+    "Marco Antônio Gonçalves Aragão": "Marco Aragão",
+    "Manuel Giménez González": "Manuel González",
+    "juan marcelo casas gonzales": "Juan Gonzales",
+    "Jorge Quirós Fernández": "Jorge Fernández",
+    "Eddiee Ethian Quiriz Loaiza": "Eddiee Quiriz",
+    "Felipe Lizarrague Antona": "Felipe Antona",
+}
+
+
 class MCACrowdinClient(CrowdinClient):
     TOKEN = os.getenv("CROWDIN_KEY")
     PROJECT_ID = 456324
@@ -41,16 +54,6 @@ def fetch_translators():
     min_actions = 10
     ignored = 0
 
-    # noinspection SpellCheckingInspection
-    replacements = {
-        "ALEJANDRO MARCELO PAUCAR CASTILLO": "Alejandro Castillo",
-        "Betancourt Guerrero Ramón": "Betancourt Ramón",
-        "Marco Antônio Gonçalves Aragão": "Marco Aragão",
-        "Manuel Giménez González": "Manuel González",
-        "juan marcelo casas gonzales": "Juan Gonzales",
-        "Jorge Quirós Fernández": "Jorge Fernández",
-    }
-
     names = []
     for m in members["data"]:
         if (
@@ -77,5 +80,25 @@ def fetch_translators():
         json.dump(names, f, indent=2)
 
 
+def fetch_patrons():
+    patrons = requests.get("https://api.conczin.net/v1/patron_names").json()
+
+    names = []
+    for name in patrons:
+        if name in replacements:
+            name = replacements[name]
+
+        if len(name) > 22:
+            print(f"Name too long: {name}")
+
+        names.append(name.strip())
+
+    with open(
+        "../common/src/main/resources/assets/mca/api/supporters/patrons.json", "w"
+    ) as f:
+        json.dump(names, f, indent=2)
+
+
 if __name__ == "__main__":
     fetch_translators()
+    fetch_patrons()
