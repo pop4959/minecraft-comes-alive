@@ -18,7 +18,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ChunkTicketType;
-import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -27,13 +26,14 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ReaperSpawner {
-    public static final ChunkTicketType<BlockPos> REAPER = ChunkTicketType.create("mca:reaper", Vec3i::compareTo, 100);
+    public static final ChunkTicketType<BlockPos> REAPER_TICKET = ChunkTicketType.create("mca:reaper", Vec3i::compareTo, 100);
 
     private static final Direction[] HORIZONTALS = new Direction[]{
             Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST
@@ -70,15 +70,8 @@ public class ReaperSpawner {
             return;
         }
 
-        ServerChunkManager chunkManager = world.getChunkManager();
         ChunkPos chunkPos = new ChunkPos(pos);
-        chunkManager.addTicket(REAPER, chunkPos, 16, pos);
-
-        // Make sure the neighboring chunks are loaded
-        if (!WorldUtils.isAreaLoaded(world, chunkPos, 1)) {
-            chunkManager.removeTicket(REAPER, chunkPos, 16, pos);
-            return;
-        }
+        LogManager.getLogger().info("On world removed at %d, %d: %d".formatted(chunkPos.x, chunkPos.z, world.getServer().getTicks()));
 
         if (world.getBlockState(pos.down()).getBlock() != Blocks.EMERALD_BLOCK) {
             return;
@@ -110,7 +103,7 @@ public class ReaperSpawner {
                 world.setBlockState(totem, BlocksMCA.INFERNAL_FLAME.get().getDefaultState(), Block.NOTIFY_LISTENERS | Block.FORCE_STATE)
         );
 
-        chunkManager.removeTicket(REAPER, chunkPos, 16, pos);
+        world.getChunkManager().removeTicket(REAPER_TICKET, chunkPos, 1, pos);
     }
 
     private void start(SummonPosition pos) {
